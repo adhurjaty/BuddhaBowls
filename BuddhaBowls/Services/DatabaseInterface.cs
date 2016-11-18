@@ -17,10 +17,11 @@ namespace BuddhaBowls.Services
 
         public string[] GetRecord(string tableName, Dictionary<string, string> mapping)
         {
-            return GetRecords(tableName, mapping, 1)[0];
+            string[][] records = GetRecords(tableName, mapping, 1);
+            return records != null ? records[0] : null;
         }
 
-        public string[][] GetRecords(string tableName, Dictionary<string, string> mapping, int limit = 0)
+        public string[][] GetRecords(string tableName, Dictionary<string, string> mapping = null, int limit = 0)
         {
             List<string[]> records = new List<string[]>();
 
@@ -29,7 +30,7 @@ namespace BuddhaBowls.Services
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
                 string[] columnNames = GetColumnNames(tableName, parser);
-                string[] mappingKeys = mapping.Keys.ToArray();
+                string[] mappingKeys = mapping != null ? mapping.Keys.ToArray() : new string[0];
 
                 int[] columnIdxs = mappingKeys.Select(x => Array.IndexOf(columnNames, x)).ToArray();
 
@@ -151,7 +152,7 @@ namespace BuddhaBowls.Services
 
                         for(int i = 0; i < columnIdxs.Length; i++)
                         {
-                            fields[i] = setFields[setFieldKeys[i]];
+                            fields[columnIdxs[i]] = setFields[setFieldKeys[i]];
                         }
 
                         found = true;

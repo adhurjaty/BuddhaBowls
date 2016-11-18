@@ -50,6 +50,14 @@ namespace BuddahBowls.Test
         }
 
         [TestMethod]
+        public void GetAllRecordsTest()
+        {
+            string[][] records = _dbInt.GetRecords("Test");
+
+            Assert.AreEqual(4, records.Length);
+        }
+
+        [TestMethod]
         public void DeleteMultipleRecordsTest()
         {
             string dbFilePath = _dbInt.FilePath("Test");
@@ -107,6 +115,34 @@ namespace BuddahBowls.Test
             {
                 File.Delete(copyFilePath);
             }
+        }
+
+        [TestMethod]
+        public void UpdateRecordTest()
+        {
+            string dbFilePath = _dbInt.FilePath("Test");
+            string copyFilePath = CopyTable(dbFilePath);
+
+            int id = 1;
+            Dictionary<string, string> newVals = new Dictionary<string, string>()
+            {
+                { "Col2", "new col2" },
+                { "Another Col", "new another doe" }
+            };
+
+            try
+            {
+                bool result = _dbInt.UpdateRecord("TestCopy", newVals, id);
+                string[] record = _dbInt.GetRecord("TestCopy", new Dictionary<string, string>() { { "Id", id.ToString() } });
+
+                Assert.IsTrue(result);
+                Assert.AreEqual(record[4], "new another doe");
+            }
+            finally
+            {
+                File.Delete(copyFilePath);
+            }
+            
         }
 
         private string CopyTable(string dbFilePath)

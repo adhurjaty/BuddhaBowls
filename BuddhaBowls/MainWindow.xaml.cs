@@ -20,9 +20,23 @@ namespace BuddhaBowls
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(MainViewModel mvm)
         {
+            DataContext = mvm;
             InitializeComponent();
+            //Left = Properties.Settings.Default.WindowLocation.X;
+            //Top = Properties.Settings.Default.WindowLocation.Y;
+            //Height = Properties.Settings.Default.WindowSize.Height;
+            //Width = Properties.Settings.Default.WindowSize.Width;
+
+            //if ((WindowState)Properties.Settings.Default.windowState == WindowState.Minimized)
+            //{
+            //    WindowState = WindowState.Normal;
+            //}
+            //else
+            //{
+            //    WindowState = (WindowState)Properties.Settings.Default.windowState;
+            //}
         }
     }
 }

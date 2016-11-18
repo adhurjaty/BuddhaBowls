@@ -5,8 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BuddhaBowls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Buddha Bowls App Name TBD" Height="350" Width="525">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="textBox" HorizontalAlignment="Right" Height="25" Margin="10" TextWrapping="NoWrap" Text="{Binding DataFileFolder}" VerticalAlignment="Center" Width="180" />
+            <Button x:Name="button" Content="Browse..." Grid.Column="1" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Center" Height="25" Width="75" Command="{Binding BrowseButtonCommand}"/>
+            <Label x:Name="label" Content="Path to data files: " HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="10" VerticalAlignment="Center"/>
+        </Grid>
+        <Button x:Name="button1" Content="Generate Report" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Height="25" Width="125" Command="{Binding ReportCommand}"/>
     </Grid>
 </Window>
