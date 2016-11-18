@@ -1,115 +1,194 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace BuddhaBowls.Services
 {
     public class DatabaseInterface
     {
         private string _dataPath;
-        private Excel.Application _app;
-        private Excel.Workbook _workbook;
-        private Excel.Worksheet _table;
-        private bool _isOpen;
 
         public DatabaseInterface(string dataPath = null)
         {
             _dataPath = dataPath ?? Properties.Settings.Default.DBLocation;
-            _app = new Excel.Application();
-            _isOpen = false;
-        }
-
-        ~DatabaseInterface()
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
-            _app.Quit();
-            Marshal.ReleaseComObject(_app);
         }
 
         public string[] GetRecord(string tableName, Dictionary<string, string> mapping)
         {
-            Excel.Range data;
-            string[] columns;
-            int[] colIdxs;
-            string[] outRow = null;
+            return GetRecords(tableName, mapping, 1)[0];
+        }
 
-            try
+        public string[][] GetRecords(string tableName, Dictionary<string, string> mapping, int limit = 0)
+        {
+            List<string[]> records = new List<string[]>();
+
+            using (TextFieldParser parser = new TextFieldParser(FilePath(tableName)))
             {
-                Open(tableName);
-                data = _table.UsedRange;
-                columns = GetColumnNames();
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                string[] columnNames = GetColumnNames(tableName, parser);
                 string[] mappingKeys = mapping.Keys.ToArray();
-                colIdxs = mappingKeys.Select(x => Array.IndexOf(columns, x)).ToArray();
-                
-                for(int i = 1; i <= data.Rows.Count; i++)
-                {
-                    Excel.Range row = data.Rows[i];
-                    bool matchingRow = true;
 
-                    for(int j = 0; j < colIdxs.Length; j++)
+                int[] columnIdxs = mappingKeys.Select(x => Array.IndexOf(columnNames, x)).ToArray();
+
+                while (!parser.EndOfData)
+                {
+                    bool match = true;
+                    string[] fields = parser.ReadFields();
+
+                    for (int i = 0; i < columnIdxs.Length; i++)
                     {
-                        if(data.Cells[i, colIdxs[j] + 1] != mapping[mappingKeys[j]])
+                        if (fields[columnIdxs[i]] != mapping[mappingKeys[i]])
                         {
-                            matchingRow = false;
+                            match = false;
+                            break;
+                        }
+                    }
+                    if (match)
+                    {
+                        records.Add(fields);
+                        if (--limit == 0)
+                            return records.ToArray();
+                    }
+                }
+            }
+
+            if (records.Count > 0)
+                return records.ToArray();
+
+            return null;
+        }
+
+        public void WriteRecord(string tableName, Dictionary<string, string> mapping)
+        {
+            // Id column always first, don't get it here - auto-populated field
+            List<string> columns = GetColumnNames(tableName).Skip(1).ToList();
+            List<string> newRecord = columns.Select(x => mapping[x]).ToList();
+
+            int lastId = int.Parse(File.ReadLines(FilePath(tableName)).Last().Split(',')[0]);
+
+            newRecord.Insert(0, (lastId + 1).ToString());
+
+            File.AppendAllText(FilePath(tableName), string.Join(",", newRecord) + "\n");
+        }
+
+        public bool DeleteRecords(string tableName, Dictionary<string, string> mapping, int limit = int.MaxValue)
+        {
+            List<string[]> fileContents = new List<string[]>();
+            bool found = false;
+
+            using (TextFieldParser parser = new TextFieldParser(FilePath(tableName)))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                string[] columnNames = GetColumnNames(tableName, parser);
+                string[] mappingKeys = mapping.Keys.ToArray();
+
+                int[] columnIdxs = mappingKeys.Select(x => Array.IndexOf(columnNames, x)).ToArray();
+
+                fileContents.Add(columnNames);
+
+                while (!parser.EndOfData)
+                {
+                    bool match = true;
+                    string[] fields = parser.ReadFields();
+
+                    for (int i = 0; i < columnIdxs.Length; i++)
+                    {
+                        if (fields[columnIdxs[i]] != mapping[mappingKeys[i]])
+                        {
+                            match = false;
                             break;
                         }
                     }
 
-                    if(matchingRow)
+                    if (!match || limit <= 0)
+                        fileContents.Add(fields);
+                    if (match)
                     {
-                        outRow = row.Value;
+                        limit--;
+                        found = true;
                     }
                 }
             }
-            finally
+
+            if(found)
             {
-                Close();
+                File.WriteAllText(FilePath(tableName), string.Join("\n", fileContents.Select(x => string.Join(",", x))));
             }
 
-            return outRow;
+            return found;
         }
 
-        public void Open(string tableName)
+        public bool DeleteRecord(string tableName, Dictionary<string, string> mapping)
         {
-            string tablePath = Path.Combine(_dataPath, tableName + ".csv");
-            if (File.Exists(tablePath))
-            {
-                _workbook = _app.Workbooks.Open(Path.Combine(_dataPath, tableName));
-                _table = _workbook.Sheets[1];
-                _isOpen = true;
-            }
-            else
-            {
-                throw new ArgumentException("Invalid excel file: " + tablePath);
-            }
+            return DeleteRecords(tableName, mapping, 1);
         }
 
-        public void Close()
+        public bool UpdateRecord(string tableName, Dictionary<string, string> setFields, int id)
         {
-            if (_isOpen)
+            List<string[]> fileContents = new List<string[]>();
+            bool found = false;
+
+            using (TextFieldParser parser = new TextFieldParser(FilePath(tableName)))
             {
-                Marshal.ReleaseComObject(_table);
-                _workbook.Close();
-                Marshal.ReleaseComObject(_workbook);
-                _isOpen = false;
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+                string[] columnNames = GetColumnNames(tableName, parser);
+
+                fileContents.Add(columnNames);
+
+                while (!parser.EndOfData)
+                {
+                    string[] fields = parser.ReadFields();
+
+                    if (fields[0] == id.ToString())
+                    {
+                        string[] setFieldKeys = setFields.Keys.ToArray();
+                        int[] columnIdxs = setFieldKeys.Select(x => Array.IndexOf(columnNames, x)).ToArray();
+
+                        for(int i = 0; i < columnIdxs.Length; i++)
+                        {
+                            fields[i] = setFields[setFieldKeys[i]];
+                        }
+
+                        found = true;
+                    }
+
+                    fileContents.Add(fields);
+                }
             }
+
+            if (found)
+            {
+                File.WriteAllText(FilePath(tableName), string.Join("\n", fileContents.Select(x => string.Join(",", x))));
+            }
+
+            return found;
         }
 
-        public string[] GetColumnNames()
+        public string FilePath(string tableName)
         {
-            if(!_isOpen)
+            return Path.Combine(_dataPath, tableName + ".csv");
+        }
+
+        private string[] GetColumnNames(string tableName, TextFieldParser parser = null)
+        {
+            if (parser == null)
             {
-                throw new Exception("Worksheet must be open to use GetColumnNames");
+                using (TextFieldParser p = new TextFieldParser(FilePath(tableName)))
+                {
+                    p.TextFieldType = FieldType.Delimited;
+                    p.SetDelimiters(",");
+                    return p.ReadFields();
+                }
             }
 
-            return _table.Range["A1", "A1"].EntireRow.Value;
+            return parser.ReadFields();
         }
+
+
     }
 }
