@@ -13,5 +13,10 @@ namespace BuddhaBowls.Models
         public float price { get; set; }
         public string PurchasedUnit { get; set; }
         public int Conversion { get; set; }
+
+        public VendorItem()
+        {
+            _dbInt = null;
+        }
     }
 }

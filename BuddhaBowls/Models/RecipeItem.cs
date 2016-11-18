@@ -12,5 +12,10 @@ namespace BuddhaBowls.Models
         public int InventoryItemId { get; set; }
         public int Quantity { get; set; }
         public int Yield { get; set; }
+
+        public RecipeItem()
+        {
+            _dbInt = null;
+        }
     }
 }

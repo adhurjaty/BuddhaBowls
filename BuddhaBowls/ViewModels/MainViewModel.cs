@@ -66,7 +66,15 @@ namespace BuddhaBowls
 
         private void BrowseHelper(object obj)
         {
-            throw new NotImplementedException();
+            System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
+            dialog.Description = "Select data folder";
+
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                DataFileFolder = dialog.SelectedPath;
+                Properties.Settings.Default.DBLocation = DataFileFolder;
+                Properties.Settings.Default.Save();
+            }
         }
 
         public void InitializeWindow(MainWindow window)
@@ -77,7 +85,7 @@ namespace BuddhaBowls
         public void SaveSettings()
         {
             // TODO: add settings to save
-
+            Properties.Settings.Default.DBLocation = DataFileFolder;
             Properties.Settings.Default.Save();
         }
     }
