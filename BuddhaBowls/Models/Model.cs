@@ -24,10 +24,10 @@ namespace BuddhaBowls.Models
         /// Sets model's properties given a single database row. Used in all models' constructors
         /// </summary>
         /// <param name="row">csv row from table file</param>
-        public void InitializeObject(string[] row)
+        public void InitializeObject(string[] row, string[] columns = null)
         {
             string[] properties = GetPropertiesDB();
-            string[] columns = _dbInt.GetColumnNames(_tableName);
+            columns = columns ?? _dbInt.GetColumnNames(_tableName);
 
             foreach (string property in properties)
             {
@@ -35,7 +35,7 @@ namespace BuddhaBowls.Models
                 {
                     int idx = Array.IndexOf(columns, property);
                     if(row[idx] != null)
-                        SetProperty(property, Convert.ChangeType(row[idx], GetPropertyType(property)));
+                        SetProperty(property, row[idx]);
                 }
             }
         }
@@ -190,6 +190,8 @@ namespace BuddhaBowls.Models
         public virtual void SetProperty(string property, object value)
         {
             property = GetPropertyName(property);
+            if ((string)value == "")
+                value = null;
 
             if (property == null)
                 return;
@@ -211,6 +213,15 @@ namespace BuddhaBowls.Models
 
             if (thisType.ToString().Contains("Nullable"))
                 value = Convert.ChangeType(value, Nullable.GetUnderlyingType(thisType));
+
+            if(thisType == typeof(int) && value.GetType() == typeof(string))
+                value = int.Parse((string)value);
+
+            if (thisType == typeof(bool) && value.GetType() == typeof(string))
+                value = ((string)value).ToUpper() == "TRUE";
+
+            if (thisType == typeof(float) && value.GetType() == typeof(string))
+                value = float.Parse((string)value);
 
             GetType().GetProperty(property).SetValue(this, value);
         }

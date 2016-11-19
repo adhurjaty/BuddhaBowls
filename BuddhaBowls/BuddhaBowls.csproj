@@ -60,6 +60,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\MainHelper.cs" />
     <Compile Include="Helpers\ModelHelper.cs" />
     <Compile Include="MainClass.cs" />
     <Compile Include="Models\InventoryItem.cs" />

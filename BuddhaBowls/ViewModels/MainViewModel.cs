@@ -61,7 +61,9 @@ namespace BuddhaBowls
 
         private void ReportHelper(object obj)
         {
-            throw new NotImplementedException();
+            ReportGenerator generator = new ReportGenerator();
+            //generator.FillInventoryId("Mac & Cheese");
+            generator.MakeRecipeTable("Mac & Cheese", @"C:\Users\Developer\Documents\Visual Studio 2015\Projects\BuddhaBowls\Data\Recipes\MCReport.csv");
         }
 
         private void BrowseHelper(object obj)

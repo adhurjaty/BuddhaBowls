@@ -36,7 +36,7 @@ namespace BuddhaBowls.Helpers
         /// Create a list of Model type T that has all records in table
         /// </summary>
         /// <returns></returns>
-        public static List<T> InstantiateList<T>(string table) where T : Model, new()
+        public static List<T> InstantiateList<T>(string table, bool fileExists = true) where T : Model, new()
         {
             T listObj = new T();
             DatabaseInterface dbInt = new DatabaseInterface();
@@ -44,7 +44,7 @@ namespace BuddhaBowls.Helpers
 
             if (records != null)
             {
-                return InstantiateListHelper<T>(records);
+                return InstantiateListHelper<T>(records, fileExists);
             }
 
             return null;
@@ -55,20 +55,34 @@ namespace BuddhaBowls.Helpers
         /// </summary>
         /// <param name="records">Database collection of rows</param>
         /// <returns></returns>
-        private static List<T> InstantiateListHelper<T>(string[][] records) where T : Model, new()
+        private static List<T> InstantiateListHelper<T>(string[][] records, bool fileExists = true) where T : Model, new()
         {
-            T listObj = new T();
+            T listObj;
             List<T> returnList = new List<T>();
 
             foreach (string[] row in records)
             {
                 listObj = new T();
-                listObj.InitializeObject(row);
+                if (fileExists)
+                    listObj.InitializeObject(row);
+                else
+                {
+                    string[] columns = OrderColumns(listObj.GetProperties());
+                    listObj.InitializeObject(row, columns);
+                }
                 returnList.Add(listObj);
             }
             return returnList;
         }
 
+        private static string[] OrderColumns(string[] columns)
+        {
+            List<string> ordered = columns.ToList();
+            ordered.Insert(0, ordered.Last());
+            ordered.RemoveAt(ordered.Count - 1);
+
+            return ordered.ToArray();
+        }
         //public static bool CompareSingles(Single n1, Single n2)
         //{
 

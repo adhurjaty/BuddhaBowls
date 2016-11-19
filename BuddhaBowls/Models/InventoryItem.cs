@@ -12,11 +12,11 @@ namespace BuddhaBowls.Models
         public string Category { get; set; }
         public string Purchased { get; set; }
         public string CountUnit { get; set; }
-        public int Conversion { get; set; }
+        public float Conversion { get; set; }
         public string RecipeUnit { get; set; }
-        public int RecipeUnitConversion { get; set; }
-        public int Count { get; set; }
-        public int Yield { get; set; }
+        public float? RecipeUnitConversion { get; set; }
+        public float Count { get; set; }
+        public float? Yield { get; set; }
         public float LastPurchasedPrice { get; set; }
         public DateTime? LastPurchasedDate { get; set; }
 
