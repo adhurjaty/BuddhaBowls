@@ -9,9 +9,10 @@ namespace BuddhaBowls.Models
     public class RecipeItem : Model
     {
         public string Name { get; set; }
-        public int InventoryItemId { get; set; }
+        public int? InventoryItemId { get; set; }
+        public string Measure { get; set; }
         public int Quantity { get; set; }
-        public int Yield { get; set; }
+        public bool IsBatch { get; set; }
 
         public RecipeItem()
         {

@@ -175,7 +175,7 @@ namespace BuddhaBowls.Services
             return Path.Combine(_dataPath, tableName + ".csv");
         }
 
-        private string[] GetColumnNames(string tableName, TextFieldParser parser = null)
+        public string[] GetColumnNames(string tableName, TextFieldParser parser = null)
         {
             if (parser == null)
             {

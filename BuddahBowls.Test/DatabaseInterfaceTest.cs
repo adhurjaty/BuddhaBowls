@@ -13,7 +13,7 @@ namespace BuddahBowls.Test
 
         public DatabaseInterfaceTest()
         {
-            _dbInt = new DatabaseInterface();
+            _dbInt = new DatabaseInterface(@"C:\Users\Developer\Documents\Visual Studio 2015\Projects\BuddhaBowls\BuddahBowls.Test\Data");
         }
 
         [TestMethod]
@@ -61,7 +61,7 @@ namespace BuddahBowls.Test
         public void DeleteMultipleRecordsTest()
         {
             string dbFilePath = _dbInt.FilePath("Test");
-            string copyFilePath = CopyTable(dbFilePath);
+            string copyFilePath = Util.CopyTable(dbFilePath);
 
             Dictionary<string, string> mapping = new Dictionary<string, string>() { { "Col2", "7" } };
 
@@ -77,7 +77,7 @@ namespace BuddahBowls.Test
         public void DeleteSingleRecordTest()
         {
             string dbFilePath = _dbInt.FilePath("Test");
-            string copyFilePath = CopyTable(dbFilePath);
+            string copyFilePath = Util.CopyTable(dbFilePath);
 
             Dictionary<string, string> mapping = new Dictionary<string, string>() { { "Col2", "7" } };
 
@@ -93,7 +93,7 @@ namespace BuddahBowls.Test
         public void WriteRecordTest()
         {
             string dbFilePath = _dbInt.FilePath("Test");
-            string copyFilePath = CopyTable(dbFilePath);
+            string copyFilePath = Util.CopyTable(dbFilePath);
 
             try
             {
@@ -102,7 +102,7 @@ namespace BuddahBowls.Test
                     { "Col1", "Test1" },
                     { "Col2", "Another test value" },
                     { "Col3", "Here's one" },
-                    { "Another Col", "3912" }
+                    { "AnotherCol", "3912" }
                 };
 
                 _dbInt.WriteRecord("TestCopy", mapping);
@@ -121,13 +121,13 @@ namespace BuddahBowls.Test
         public void UpdateRecordTest()
         {
             string dbFilePath = _dbInt.FilePath("Test");
-            string copyFilePath = CopyTable(dbFilePath);
+            string copyFilePath = Util.CopyTable(dbFilePath);
 
             int id = 1;
             Dictionary<string, string> newVals = new Dictionary<string, string>()
             {
                 { "Col2", "new col2" },
-                { "Another Col", "new another doe" }
+                { "AnotherCol", "new another doe" }
             };
 
             try
@@ -145,18 +145,6 @@ namespace BuddahBowls.Test
             
         }
 
-        private string CopyTable(string dbFilePath)
-        {
-            string copyFilePath = dbFilePath.Split('.')[0] + "Copy.csv";
-
-            if(File.Exists(copyFilePath))
-            {
-                File.Delete(copyFilePath);
-            }
-
-            File.Copy(dbFilePath, copyFilePath);
-
-            return copyFilePath;
-        }
+        
     }
 }

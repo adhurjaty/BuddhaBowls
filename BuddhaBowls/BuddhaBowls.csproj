@@ -65,6 +65,7 @@
     <Compile Include="Models\InventoryItem.cs" />
     <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\VendorItem.cs" />
+    <Compile Include="ReportGenerator.cs" />
     <Compile Include="Services\DatabaseInterface.cs" />
     <Compile Include="Services\ModelContainer.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

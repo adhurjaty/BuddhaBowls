@@ -13,7 +13,7 @@ namespace BuddhaBowls.Models
         protected string _tableName;
         protected DatabaseInterface _dbInt;
 
-        public int Id { get; set; }
+        public int Id { get; set; } = -1;
 
         public Model()
         {
@@ -27,12 +27,13 @@ namespace BuddhaBowls.Models
         public void InitializeObject(string[] row)
         {
             string[] properties = GetPropertiesDB();
+            string[] columns = _dbInt.GetColumnNames(_tableName);
 
             foreach (string property in properties)
             {
-                if (property != null && row.Contains(property))
+                if (property != null && columns.Contains(property))
                 {
-                    int idx = Array.IndexOf(row, property);
+                    int idx = Array.IndexOf(columns, property);
                     if(row[idx] != null)
                         SetProperty(property, Convert.ChangeType(row[idx], GetPropertyType(property)));
                 }
