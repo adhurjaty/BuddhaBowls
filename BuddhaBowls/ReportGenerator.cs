@@ -48,7 +48,7 @@ namespace BuddhaBowls
             }
         }
 
-        public void MakeRecipeTable(string recipeName, string outputFilePath)
+        public List<string[]> MakeRecipeTable(string recipeName, string outputFilePath)
         {
             List<RecipeItem> recipe = GetRecipe(recipeName);
             List<string[]> outList = new List<string[]>();
@@ -95,8 +95,7 @@ namespace BuddhaBowls
 
             outList.Add(new string[] { "BATCH TOTAL", batchCost.ToString("c") });
 
-            string fileContents = string.Join("\n", outList.Select(x => string.Join(",", x)));
-            File.WriteAllText(outputFilePath, fileContents);
+            return outList;
         }
 
         private float GetCost(InventoryItem item)
