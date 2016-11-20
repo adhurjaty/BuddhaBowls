@@ -63,7 +63,7 @@ namespace BuddhaBowls
         {
             ReportGenerator generator = new ReportGenerator();
             //generator.FillInventoryId("Mac & Cheese");
-            generator.MakeRecipeTable("Mac & Cheese", @"C:\Users\Developer\Documents\Visual Studio 2015\Projects\BuddhaBowls\Data\Recipes\MCReport.csv");
+            generator.CreateBatchRecipeReport("Mac & Cheese");
         }
 
         private void BrowseHelper(object obj)
