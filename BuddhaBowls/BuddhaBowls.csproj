@@ -71,6 +71,7 @@
     <Compile Include="Helpers\MainHelper.cs" />
     <Compile Include="Helpers\ModelHelper.cs" />
     <Compile Include="MainClass.cs" />
+    <Compile Include="Models\BatchItem.cs" />
     <Compile Include="Models\InventoryItem.cs" />
     <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\VendorItem.cs" />

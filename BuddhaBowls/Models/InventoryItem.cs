@@ -34,5 +34,10 @@ namespace BuddhaBowls.Models
                 InitializeObject(record);
             }
         }
+
+        public float GetCost()
+        {
+            return LastPurchasedPrice / ((float)RecipeUnitConversion * (float)Yield);
+        }
     }
 }

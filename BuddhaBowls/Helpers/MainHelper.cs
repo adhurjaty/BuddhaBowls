@@ -1,5 +1,7 @@
-﻿using System;
+﻿using BuddhaBowls.Models;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +28,20 @@ namespace BuddhaBowls.Helpers
         public static IEnumerable<string> ChunkString(string str, int size)
         {
             return Enumerable.Range(0, str.Length / size).Select(i => str.Substring(i * size, size));
+        }
+
+        public static List<RecipeItem> GetRecipe(string recipeName)
+        {
+            string tableName = Path.Combine(Properties.Resources.RecipeFolder, recipeName);
+
+            return ModelHelper.InstantiateList<RecipeItem>(tableName, false);
+        }
+
+        public static List<VendorItem> GetVendorPrices(string vendorName)
+        {
+            string tableName = Path.Combine(Properties.Resources.VendorFolder, vendorName);
+
+            return ModelHelper.InstantiateList<VendorItem>(tableName, false);
         }
     }
 }

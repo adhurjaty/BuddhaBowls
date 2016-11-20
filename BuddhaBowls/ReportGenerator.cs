@@ -1,5 +1,6 @@
 ﻿using BuddhaBowls.Helpers;
 using BuddhaBowls.Models;
+using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,9 +16,10 @@ namespace BuddhaBowls
 {
     public class ReportGenerator
     {
-        List<InventoryItem> _inventoryItems;
         HashSet<string> _itemCategories;
         Dictionary<string, string> _categoryColors;
+
+        ModelContainer _models;
 
         Excel.Application _excelApp;
         Excel.Workbook _workbook;
@@ -25,7 +27,6 @@ namespace BuddhaBowls
 
         public ReportGenerator()
         {
-            _inventoryItems = ModelHelper.InstantiateList<InventoryItem>("InventoryItem");
             SetInventoryCategories();
             SetCategoryColors();
 
@@ -33,6 +34,8 @@ namespace BuddhaBowls
             _excelApp.DisplayAlerts = false;
             _workbook = _excelApp.Workbooks.Add();
             _sheets = _workbook.Sheets;
+
+            _models = new ModelContainer();
         }
 
         ~ReportGenerator()
@@ -52,34 +55,20 @@ namespace BuddhaBowls
             
         }
 
-        public List<RecipeItem> GetRecipe(string recipeName)
-        {
-            string tableName = Path.Combine(Properties.Resources.RecipeFolder, recipeName);
-
-            return ModelHelper.InstantiateList<RecipeItem>(tableName, false);
-        }
-
-        public List<VendorItem> GetVendorPrices(string vendorName)
-        {
-            string tableName = Path.Combine(Properties.Resources.VendorFolder, vendorName);
-
-            return ModelHelper.InstantiateList<VendorItem>(tableName, false);
-        }
-
         public void FillInventoryId(string recipeName)
         {
-            List<RecipeItem> recipe = GetRecipe(recipeName);
+            List<RecipeItem> recipe = MainHelper.GetRecipe(recipeName);
 
             foreach(RecipeItem ri in recipe)
             {
-                ri.InventoryItemId = _inventoryItems.First(x => x.Name == ri.Name).Id;
+                ri.InventoryItemId = _models.InventoryItems.First(x => x.Name == ri.Name).Id;
                 ri.Update(recipeName);
             }
         }
 
         public List<string[]> MakeBatchRecipeTable(string recipeName)
         {
-            List<RecipeItem> recipe = GetRecipe(recipeName);
+            List<RecipeItem> recipe = MainHelper.GetRecipe(recipeName);
             List<string[]> outList = new List<string[]>();
             Dictionary<string, List<string[]>> categoryDict = new Dictionary<string, List<string[]>>();
             Dictionary<string, float> categoryCosts = new Dictionary<string, float>();
@@ -88,14 +77,14 @@ namespace BuddhaBowls
 
             foreach(RecipeItem item in recipe)
             {
-                InventoryItem inv = _inventoryItems[(int)item.InventoryItemId];
+                InventoryItem inv = _models.InventoryItems[(int)item.InventoryItemId];
                 if(!categoryDict.Keys.Contains(inv.Category))
                 {
                     categoryDict[inv.Category] = new List<string[]>();
                     categoryCosts[inv.Category] = 0;
                 }
 
-                float cost = GetCost(inv);
+                float cost = inv.GetCost();
                 float lineCost = cost * item.Quantity;
                 categoryDict[inv.Category].Add(new string[] { inv.Name, item.Measure, inv.RecipeUnit,
                                                 item.Quantity.ToString(), cost.ToString(), lineCost.ToString() });
@@ -189,16 +178,11 @@ namespace BuddhaBowls
             return File.Exists(path);
         }
 
-        private float GetCost(InventoryItem item)
-        {
-            return item.LastPurchasedPrice / ((float)item.RecipeUnitConversion * (float)item.Yield);
-        }
-
         private void SetInventoryCategories()
         {
             _itemCategories = new HashSet<string>();
 
-            foreach(InventoryItem item in _inventoryItems)
+            foreach(InventoryItem item in _models.InventoryItems)
             {
                 _itemCategories.Add(item.Category.ToUpper());
             }
