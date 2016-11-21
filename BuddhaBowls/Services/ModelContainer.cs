@@ -22,6 +22,11 @@ namespace BuddhaBowls.Services
         {
             InventoryItems = ModelHelper.InstantiateList<InventoryItem>("InventoryItem");
             BatchItems = ModelHelper.InstantiateList<BatchItem>("BatchItem");
+
+            foreach(BatchItem bi in BatchItems)
+            {
+                bi.recipe = MainHelper.GetRecipe(bi.Name);
+            }
         }
 
         public float GetBatchItemCost(BatchItem item)
@@ -34,6 +39,21 @@ namespace BuddhaBowls.Services
             }
 
             return cost;
+        }
+
+        public Dictionary<string, float> GetCategoryCosts(BatchItem item)
+        {
+            Dictionary<string, float> costDict = new Dictionary<string, float>();
+
+            foreach(RecipeItem ri in item.recipe)
+            {
+                InventoryItem invItem = InventoryItems[(int)ri.InventoryItemId];
+                if(!costDict.Keys.Contains(invItem.Category))
+                    costDict[invItem.Category] = 0;
+                costDict[invItem.Category] += invItem.GetCost() * ri.Quantity;
+            }
+
+            return costDict;
         }
     }
 }

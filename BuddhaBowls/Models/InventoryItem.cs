@@ -10,7 +10,7 @@ namespace BuddhaBowls.Models
     {
         public string Name { get; set; }
         public string Category { get; set; }
-        public string Purchased { get; set; }
+        public string PurchasedUnit { get; set; }
         public string CountUnit { get; set; }
         public float Conversion { get; set; }
         public string RecipeUnit { get; set; }
@@ -37,6 +37,8 @@ namespace BuddhaBowls.Models
 
         public float GetCost()
         {
+            if (RecipeUnitConversion == null)
+                return 0;
             return LastPurchasedPrice / ((float)RecipeUnitConversion * (float)Yield);
         }
     }

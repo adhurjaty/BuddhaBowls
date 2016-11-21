@@ -63,7 +63,16 @@ namespace BuddhaBowls
         {
             ReportGenerator generator = new ReportGenerator();
             //generator.FillInventoryId("Mac & Cheese");
-            generator.CreateBatchRecipeReport("Mac & Cheese");
+            //generator.CreateBatchRecipeReport("Mac & Cheese");
+            //generator.MakeMasterInventoryTable();
+            try
+            {
+                generator.CreateMasterInventoryReport();
+            }
+            finally
+            {
+                generator.Close();
+            }
         }
 
         private void BrowseHelper(object obj)
