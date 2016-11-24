@@ -77,7 +77,10 @@ namespace BuddhaBowls.Models
             Dictionary<string, string> mapping = new Dictionary<string, string>();
 
             for (Int32 i = 0; i < propNames.Length; i++)
-                mapping[propNames[i]] = GetPropertyValue(propNames[i]).ToString();
+            {
+                if(GetPropertyValue(propNames[i]) != null)
+                    mapping[propNames[i]] = GetPropertyValue(propNames[i]).ToString();
+            }
 
             _dbInt.WriteRecord(_tableName, mapping);
         }
@@ -287,6 +290,16 @@ namespace BuddhaBowls.Models
                 propType = Nullable.GetUnderlyingType(propType);
 
             return propType;
+        }
+
+        public bool IsNullable(string propName)
+        {
+            propName = GetPropertyName(propName);
+            if (propName == null)
+                throw new ArgumentException("Property name does not exist");
+            Type propType = GetType().GetProperty(propName).PropertyType;
+
+            return propType.ToString().Contains("Nullable");
         }
 
         public DatabaseInterface GetDBInt()

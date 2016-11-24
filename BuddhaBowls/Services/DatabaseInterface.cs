@@ -66,7 +66,7 @@ namespace BuddhaBowls.Services
         {
             // Id column always first, don't get it here - auto-populated field
             List<string> columns = GetColumnNames(tableName).Skip(1).ToList();
-            List<string> newRecord = columns.Select(x => mapping[x]).ToList();
+            List<string> newRecord = columns.Select(x => mapping.Keys.Contains(x) ? mapping[x] : "").ToList();
 
             int lastId = int.Parse(File.ReadLines(FilePath(tableName)).Last().Split(',')[0]);
 

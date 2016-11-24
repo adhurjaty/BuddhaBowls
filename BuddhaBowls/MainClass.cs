@@ -3,17 +3,17 @@ using System.Windows;
 
 namespace BuddhaBowls
 {
-    class MainClass : Application
+    public partial class MainClass : Application
     {
         private MainViewModel _mv;
         private MainWindow _mainWindow;
 
-        [STAThread]
-        static void Main()
-        {
-            MainClass mainClass = new MainClass();
-            mainClass.Run();
-        }
+        //[STAThread]
+        //static void Main()
+        //{
+        //    MainClass mainClass = new MainClass();
+        //    mainClass.Run();
+        //}
 
         public MainClass()
         {
