@@ -23,6 +23,9 @@ namespace BuddhaBowls.Services
             InventoryItems = ModelHelper.InstantiateList<InventoryItem>("InventoryItem");
             BatchItems = ModelHelper.InstantiateList<BatchItem>("BatchItem");
 
+            if (InventoryItems == null || BatchItems == null)
+                return;
+
             foreach(BatchItem bi in BatchItems)
             {
                 bi.recipe = MainHelper.GetRecipe(bi.Name);

@@ -8,16 +8,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace BuddhaBowls
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        MainWindow _window;
-        ModelContainer _models;
+        private MainWindow _window;
+        private ModelContainer _models;
+        private bool _databaseFound;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -86,7 +86,34 @@ namespace BuddhaBowls
             }
         }
 
-        public ObservableCollection<InventoryItem> FilteredInventoryItems { get; set; }
+        private string _filterText;
+        public string FilterText
+        {
+            get
+            {
+                return _filterText;
+            }
+            set
+            {
+                _filterText = value;
+                NotifyPropertyChanged("FilterText");
+            }
+        }
+
+        ObservableCollection<InventoryItem> _filteredInventoryItems;
+        public ObservableCollection<InventoryItem> FilteredInventoryItems
+        {
+            get
+            {
+                return _filteredInventoryItems;
+            }
+            set
+            {
+                _filteredInventoryItems = value;
+                NotifyPropertyChanged("FilteredInventoryItems");
+            }
+        }
+
         public ObservableCollection<FieldSetting> FieldsCollection { get; set; }
         #endregion
 
@@ -98,12 +125,13 @@ namespace BuddhaBowls
         public ICommand EditInventoryItemCommand { get; set; }
         public ICommand SaveAddEditCommand { get; set; }
         public ICommand CancelAddEditCommand { get; set; }
+        public ICommand SaveSettingsCommand { get; set; }
 
         public bool ReportCanExecute
         {
             get
             {
-                return Directory.Exists(DataFileFolder);
+                return Directory.Exists(DataFileFolder) && _databaseFound;
             }
         }
 
@@ -111,7 +139,15 @@ namespace BuddhaBowls
         {
             get
             {
-                return SelectedInventoryItem != null;
+                return SelectedInventoryItem != null && _databaseFound;
+            }
+        }
+
+        public bool AddItemCanExecute
+        {
+            get
+            {
+                return _databaseFound;
             }
         }
 
@@ -128,14 +164,24 @@ namespace BuddhaBowls
         {
             BrowseButtonCommand = new RelayCommand(BrowseHelper);
             ReportCommand = new RelayCommand(ReportHelper, x => ReportCanExecute);
-            AddInventoryItemCommand = new RelayCommand(AddInventoryItem);
+            AddInventoryItemCommand = new RelayCommand(AddInventoryItem, x => AddItemCanExecute);
             DeleteInventoryItemCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute);
             EditInventoryItemCommand = new RelayCommand(EditInventoryItem, x => DeleteEditCanExecute);
             SaveAddEditCommand = new RelayCommand(SaveAddEdit, x => SaveAddEditCanExecute);
             CancelAddEditCommand = new RelayCommand(CancelAddEdit);
+            SaveSettingsCommand = new RelayCommand(SaveSettings, x => ReportCanExecute);
 
             _models = new ModelContainer();
-            LoadInventoryItems();
+            if (_models.InventoryItems != null)
+                LoadInventoryItems();
+            else
+                InventoryItemsNotFound();
+        }
+
+        private void InventoryItemsNotFound()
+        {
+            FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
+            _databaseFound = false;
         }
 
         #region ICommand Helpers
@@ -188,7 +234,15 @@ namespace BuddhaBowls
 
         private void DeleteInventoryItem(object obj)
         {
-
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete " + SelectedInventoryItem.Name,
+                                                      "Delete " + SelectedInventoryItem.Name + "?", MessageBoxButton.YesNo);
+            if(result == MessageBoxResult.Yes)
+            {
+                SelectedInventoryItem.Destroy();
+                _models.InventoryItems.Remove(SelectedInventoryItem);
+                SelectedInventoryItem = null;
+                RefreshInventoryList();
+            }
         }
 
         private void CancelAddEdit(object obj)
@@ -215,21 +269,73 @@ namespace BuddhaBowls
                     AddEditErrorMessage = field.Name + " must be set";
                     return;
                 }
+
+                if(field.Name == "Name" && _models.InventoryItems.FirstOrDefault(x => x.Name.ToUpper() == field.Value.ToUpper()) != null &&
+                   AddEditHeader.StartsWith("Add"))
+                {
+                    field.Error = 1;
+                    AddEditErrorMessage = field.Value + " already exists in the database";
+                    return;
+                }
+
+                if (item.GetPropertyType(field.Name) == typeof(int))
+                {
+                    int val = 0;
+                    int.TryParse(field.Value, out val);
+
+                    if(val == 0)
+                    {
+                        field.Error = 1;
+                        AddEditErrorMessage = field.Name + " must be an integer";
+                        return;
+                    }
+                }
+
+                if (item.GetPropertyType(field.Name) == typeof(float))
+                {
+                    float val = 0;
+                    float divisor = 1f;
+                    string valueStr = field.Value;
+
+                    if(valueStr.EndsWith("%"))
+                    {
+                        valueStr = valueStr.Remove(valueStr.Length - 1);
+                        divisor = 100f;
+                    }
+                    else if(valueStr.StartsWith("$"))
+                    {
+                        valueStr = valueStr.Remove(0, 1);
+                    }
+
+                    float.TryParse(valueStr, out val);
+
+                    if(val == 0)
+                    {
+                        field.Error = 1;
+                        AddEditErrorMessage = field.Name + " must be a number";
+                        return;
+                    }
+
+                    field.Value = (val / divisor).ToString();
+                }
+
                 field.Error = 0;
                 item.SetProperty(field.Name, field.Value);
             }
 
-            AddEditErrorMessage = "";
-
             if (AddEditHeader.StartsWith("Edit"))
                 item.Update();
             else if (AddEditHeader.StartsWith("Add"))
+            {
+                _models.InventoryItems.Add(item);
                 item.Insert();
+            }
             else
                 throw new NotImplementedException();
 
             AddEditErrorMessage = "";
             _window.DeleteEditAddTab();
+            RefreshInventoryList();
         }
         #endregion
 
@@ -238,7 +344,7 @@ namespace BuddhaBowls
             _window = window;
         }
 
-        public void SaveSettings()
+        public void SaveSettings(object obj = null)
         {
             // TODO: add settings to save
             Properties.Settings.Default.DBLocation = DataFileFolder;
@@ -254,6 +360,7 @@ namespace BuddhaBowls
                 FilteredInventoryItems.Add(item);
             }
 
+            _databaseFound = true;
             NotifyPropertyChanged("FilteredInventoryItems");
         }
 
@@ -265,7 +372,17 @@ namespace BuddhaBowls
                 FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems
                                                         .Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
                                                         .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
-            NotifyPropertyChanged("FilteredInventoryItems");
+        }
+
+        public void ClearErrors()
+        {
+            AddEditErrorMessage = "";
+            foreach(FieldSetting field in FieldsCollection)
+            {
+                field.Error = 0;
+            }
+
+            NotifyPropertyChanged("FieldsCollection");
         }
 
         private ObservableCollection<FieldSetting> GetFieldsAndValues(Type type, object obj = null)
@@ -289,6 +406,11 @@ namespace BuddhaBowls
             }
 
             return fieldsAndVals;
+        }
+
+        private void RefreshInventoryList()
+        {
+            FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
         }
     }
 

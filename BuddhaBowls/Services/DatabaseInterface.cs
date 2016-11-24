@@ -23,6 +23,9 @@ namespace BuddhaBowls.Services
 
         public string[][] GetRecords(string tableName, Dictionary<string, string> mapping = null, int limit = 0)
         {
+            if(!File.Exists(FilePath(tableName)))
+                return null;
+
             List<string[]> records = new List<string[]>();
 
             using (TextFieldParser parser = new TextFieldParser(FilePath(tableName)))
@@ -117,7 +120,7 @@ namespace BuddhaBowls.Services
 
             if(found)
             {
-                File.WriteAllText(FilePath(tableName), string.Join("\n", fileContents.Select(x => string.Join(",", x))));
+                File.WriteAllText(FilePath(tableName), string.Join("\n", fileContents.Select(x => string.Join(",", x))) + "\n");
             }
 
             return found;

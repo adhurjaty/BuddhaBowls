@@ -22,7 +22,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="Inventory Items" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30"/>
-                    <TextBox x:Name="FilterItemBox" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
+                    <TextBox x:Name="FilterItemBox" Grid.Row="1" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
                     <Label x:Name="label1" Grid.Row="1" Content="Inventory Item Name:" Margin="-330, 0, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
                     <Label Content="Name" Grid.Row="2" />
                     <Button Grid.Row="2" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" Margin="0, 0, 35, 0" Command="{Binding AddInventoryItemCommand}">
@@ -49,15 +49,15 @@
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="textBox" HorizontalAlignment="Right" Height="25" Margin="10" TextWrapping="NoWrap" Text="{Binding DataFileFolder}" VerticalAlignment="Center" Width="180" />
-                        <Button x:Name="button" Content="Browse..." Grid.Column="1" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Center" Height="25" Width="75" Command="{Binding BrowseButtonCommand}"/>
-                        <Label x:Name="label" Content="Path to data files: " HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="10" VerticalAlignment="Center"/>
+                        <Label x:Name="label" Grid.Column="0" Content="Path to data files: " HorizontalAlignment="Right" HorizontalContentAlignment="Right" Margin="10" VerticalAlignment="Center" />
+                        <TextBox x:Name="textBox" Grid.Column="1" HorizontalAlignment="Left" Height="25" Margin="10" TextWrapping="NoWrap" Text="{Binding DataFileFolder}" VerticalAlignment="Center" Width="180" />
+                        <Button x:Name="button" Content="Browse..." Grid.Column="1" HorizontalAlignment="Left" Margin="200, 0, 0, 0" VerticalAlignment="Center" Height="25" Width="75" Command="{Binding BrowseButtonCommand}"/>
                     </Grid>
-                    <Button x:Name="button1" Content="Generate Report" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Height="25" Width="125" Command="{Binding ReportCommand}"/>
-
+                    <Button x:Name="button1" Content="Save" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Height="25" Width="125" Command="{Binding SaveSettingsCommand}"/>
+                    <!--<Button x:Name="button1" Content="Generate Report" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Height="25" Width="125" Command="{Binding ReportCommand}"/>-->
                 </Grid>
             </TabItem>
         </TabControl>
