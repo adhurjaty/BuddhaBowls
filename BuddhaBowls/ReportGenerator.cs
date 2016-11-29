@@ -25,9 +25,9 @@ namespace BuddhaBowls
         Excel.Workbook _workbook;
         Excel.Sheets _sheets;
 
-        public ReportGenerator()
+        public ReportGenerator(ModelContainer models)
         {
-            _models = new ModelContainer();
+            _models = models;
 
             SetInventoryCategories();
             SetCategoryColors();
@@ -55,7 +55,11 @@ namespace BuddhaBowls
 
             foreach(RecipeItem ri in recipe)
             {
-                ri.InventoryItemId = _models.InventoryItems.First(x => x.Name == ri.Name).Id;
+                InventoryItem item = _models.InventoryItems.FirstOrDefault(x => x.Name == ri.Name);
+                if (item == null)
+                    ri.InventoryItemId = null;
+                else
+                    ri.InventoryItemId = item.Id;
                 ri.Update(recipeName);
             }
         }
@@ -206,7 +210,8 @@ namespace BuddhaBowls
 
                 outList.Add(new string[] { item.Name, item.PurchasedUnit, item.LastPurchasedPrice.ToString("c"), item.Conversion.ToString(),
                                            item.CountUnit, (item.LastPurchasedPrice / item.Conversion).ToString("c"), item.Count.ToString(),
-                                           (item.GetCost() / item.Conversion * item.Count).ToString("c") });
+                                           (item.LastPurchasedPrice / item.Conversion * item.Count).ToString("c") });
+                categoryCost += item.LastPurchasedPrice / item.Conversion * item.Count;
             }
 
             return outList;

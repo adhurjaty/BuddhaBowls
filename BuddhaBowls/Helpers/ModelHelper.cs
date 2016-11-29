@@ -44,7 +44,10 @@ namespace BuddhaBowls.Helpers
 
             if (records != null)
             {
-                return InstantiateListHelper<T>(records, fileExists);
+                if (fileExists)
+                    return InstantiateListHelper<T>(records);
+                else
+                    return InstantiateListHelper<T>(records, dbInt.GetColumnNames(table));
             }
 
             return null;
@@ -55,7 +58,7 @@ namespace BuddhaBowls.Helpers
         /// </summary>
         /// <param name="records">Database collection of rows</param>
         /// <returns></returns>
-        private static List<T> InstantiateListHelper<T>(string[][] records, bool fileExists = true) where T : Model, new()
+        private static List<T> InstantiateListHelper<T>(string[][] records, string[] columns = null) where T : Model, new()
         {
             T listObj;
             List<T> returnList = new List<T>();
@@ -63,11 +66,11 @@ namespace BuddhaBowls.Helpers
             foreach (string[] row in records)
             {
                 listObj = new T();
-                if (fileExists)
+                if (columns == null)
                     listObj.InitializeObject(row);
                 else
                 {
-                    string[] columns = OrderColumns(listObj.GetProperties());
+                    //string[] columns = OrderColumns(listObj.GetProperties());
                     listObj.InitializeObject(row, columns);
                 }
                 returnList.Add(listObj);

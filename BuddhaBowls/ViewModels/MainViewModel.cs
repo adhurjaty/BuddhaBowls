@@ -135,6 +135,14 @@ namespace BuddhaBowls
             }
         }
 
+        public bool SaveSettingsCanExecute
+        {
+            get
+            {
+                return Directory.Exists(DataFileFolder);
+            }
+        }
+        
         public bool DeleteEditCanExecute
         {
             get
@@ -169,13 +177,9 @@ namespace BuddhaBowls
             EditInventoryItemCommand = new RelayCommand(EditInventoryItem, x => DeleteEditCanExecute);
             SaveAddEditCommand = new RelayCommand(SaveAddEdit, x => SaveAddEditCanExecute);
             CancelAddEditCommand = new RelayCommand(CancelAddEdit);
-            SaveSettingsCommand = new RelayCommand(SaveSettings, x => ReportCanExecute);
+            SaveSettingsCommand = new RelayCommand(SaveSettings, x => SaveSettingsCanExecute);
 
-            _models = new ModelContainer();
-            if (_models.InventoryItems != null)
-                LoadInventoryItems();
-            else
-                InventoryItemsNotFound();
+            TryDBConnect();
         }
 
         private void InventoryItemsNotFound()
@@ -187,13 +191,23 @@ namespace BuddhaBowls
         #region ICommand Helpers
         private void ReportHelper(object obj)
         {
-            ReportGenerator generator = new ReportGenerator();
+            ReportGenerator generator = new ReportGenerator(_models);
             //generator.FillInventoryId("Mac & Cheese");
             //generator.CreateBatchRecipeReport("Mac & Cheese");
             //generator.MakeMasterInventoryTable();
             try
             {
-                generator.CreateMasterInventoryReport();
+                //generator.CreateMasterInventoryReport();
+                //generator.CreateBatchRecipeReport("Mac & Cheese");
+                foreach(string recipe in Directory.EnumerateFiles(Path.Combine(Properties.Settings.Default.DBLocation, "Recipes")))
+                {
+                    generator.FillInventoryId(Path.GetFileNameWithoutExtension(recipe));
+                }
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error has occurred generating report", "Report Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -349,6 +363,8 @@ namespace BuddhaBowls
             // TODO: add settings to save
             Properties.Settings.Default.DBLocation = DataFileFolder;
             Properties.Settings.Default.Save();
+
+            TryDBConnect();
         }
 
         public void LoadInventoryItems()
@@ -411,6 +427,15 @@ namespace BuddhaBowls
         private void RefreshInventoryList()
         {
             FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
+        }
+
+        private void TryDBConnect()
+        {
+            _models = new ModelContainer();
+            if (_models.InventoryItems != null)
+                LoadInventoryItems();
+            else
+                InventoryItemsNotFound();
         }
     }
 

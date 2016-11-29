@@ -34,8 +34,10 @@ namespace BuddhaBowls.Models
                 if (property != null && columns.Contains(property))
                 {
                     int idx = Array.IndexOf(columns, property);
-                    if(row[idx] != null)
+                    if (row[idx] != null)
+                    {
                         SetProperty(property, row[idx]);
+                    }
                 }
             }
         }

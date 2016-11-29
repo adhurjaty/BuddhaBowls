@@ -12,7 +12,6 @@ namespace BuddhaBowls.Models
         public string Name { get; set; }
         public string RecipeUnit { get; set; }
         public float Yield { get; set; }
-        public string RecipeFilePath { get; set; }
         public string Category { get; set; }
 
         public List<RecipeItem> recipe;

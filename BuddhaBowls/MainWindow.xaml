@@ -13,7 +13,21 @@
         Title="Buddha Bowls App Name TBD" Height="500" Width="800">
     <Grid>
         <TabControl Name="Tabs">
-            <TabItem Header="Invetory Items">
+            <TabItem Header="Orders">
+                <TabControl Name="OrdersTabs">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="1*" />
+                        </Grid.RowDefinitions>
+                        <Label Content="Open Orders" Grid.Row="0" />
+                        <ListBox Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0, 30" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                        <Label Content="Received Orders" Grid.Row="1" />
+                        <ListBox Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0, 30" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                    </Grid>
+                </TabControl>
+            </TabItem>
+            <TabItem Header="Invetory">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60" />
@@ -21,7 +35,7 @@
                         <RowDefinition Height="30" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="Inventory Items" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30"/>
+                    <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="Inventory" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30"/>
                     <TextBox x:Name="FilterItemBox" Grid.Row="1" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
                     <Label x:Name="label1" Grid.Row="1" Content="Inventory Item Name:" Margin="-330, 0, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
                     <Label Content="Name" Grid.Row="2" />
@@ -39,6 +53,11 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Reports">
+                <Grid>
+                    <Button x:Name="button3" Content="Generate Reports" HorizontalAlignment="Center" VerticalAlignment="Center" Width="125" Height="30" Command="{Binding ReportCommand}"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Settings">
