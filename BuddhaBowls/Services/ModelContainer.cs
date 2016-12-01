@@ -26,6 +26,8 @@ namespace BuddhaBowls.Services
             if (InventoryItems == null || BatchItems == null)
                 return;
 
+            ClearCountUpdated();
+
             foreach(BatchItem bi in BatchItems)
             {
                 bi.recipe = MainHelper.GetRecipe(bi.Name);
@@ -57,6 +59,14 @@ namespace BuddhaBowls.Services
             }
 
             return costDict;
+        }
+
+        private void ClearCountUpdated()
+        {
+            foreach(InventoryItem item in InventoryItems)
+            {
+                item.countUpdated = false;
+            }
         }
     }
 }

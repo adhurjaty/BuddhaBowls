@@ -13,6 +13,8 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
+    public delegate void ModelPropertyChanged(object sender);
+
     public class MainViewModel : INotifyPropertyChanged
     {
         private MainWindow _window;
@@ -100,7 +102,7 @@ namespace BuddhaBowls
             }
         }
 
-        ObservableCollection<InventoryItem> _filteredInventoryItems;
+        private ObservableCollection<InventoryItem> _filteredInventoryItems;
         public ObservableCollection<InventoryItem> FilteredInventoryItems
         {
             get
@@ -114,7 +116,39 @@ namespace BuddhaBowls
             }
         }
 
+        List<OrderItem> _filteredOrderItems;
+        public List<OrderItem> FilteredOrderItems
+        {
+            get
+            {
+                return _filteredOrderItems;
+            }
+            set
+            {
+                _filteredOrderItems = value;
+                NotifyPropertyChanged("FilteredOrderItems");
+            }
+        }
+
         public ObservableCollection<FieldSetting> FieldsCollection { get; set; }
+
+        public string OrderVendor { get; set; }
+
+        private ObservableCollection<BreakdownListItem> _priceBreakdown;
+        private bool _dbConnected;
+
+        public ObservableCollection<BreakdownListItem> PriceBreakdown
+        {
+            get
+            {
+                return _priceBreakdown;
+            }
+            set
+            {
+                _priceBreakdown = value;
+                NotifyPropertyChanged("PriceBreakdown");
+            }
+        }
         #endregion
 
         #region ICommand Bindings
@@ -126,6 +160,8 @@ namespace BuddhaBowls
         public ICommand SaveAddEditCommand { get; set; }
         public ICommand CancelAddEditCommand { get; set; }
         public ICommand SaveSettingsCommand { get; set; }
+        public ICommand SaveCountCommand { get; set; }
+        public ICommand ResetCountCommand { get; set; }
 
         public bool ReportCanExecute
         {
@@ -166,6 +202,8 @@ namespace BuddhaBowls
                 return string.IsNullOrWhiteSpace(AddEditErrorMessage);
             }
         }
+
+        public bool ChangeCountCanExecute { get; set; } = false;
         #endregion
 
         public MainViewModel()
@@ -178,14 +216,12 @@ namespace BuddhaBowls
             SaveAddEditCommand = new RelayCommand(SaveAddEdit, x => SaveAddEditCanExecute);
             CancelAddEditCommand = new RelayCommand(CancelAddEdit);
             SaveSettingsCommand = new RelayCommand(SaveSettings, x => SaveSettingsCanExecute);
+            SaveCountCommand = new RelayCommand(SaveCount, x => ChangeCountCanExecute);
+            ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
 
-            TryDBConnect();
-        }
+            _dbConnected = TryDBConnect();
+            InitCountChanged();
 
-        private void InventoryItemsNotFound()
-        {
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
-            _databaseFound = false;
         }
 
         #region ICommand Helpers
@@ -351,6 +387,28 @@ namespace BuddhaBowls
             _window.DeleteEditAddTab();
             RefreshInventoryList();
         }
+
+        private void ResetCount(object obj)
+        {
+            foreach (InventoryItem item in FilteredInventoryItems.Where(x => x.countUpdated))
+            {
+                item.Count = item.GetLastCount();
+                item.countUpdated = false;
+            }
+
+            RefreshInventoryList();
+            ChangeCountCanExecute = false;
+        }
+
+        private void SaveCount(object obj)
+        {
+            foreach(InventoryItem item in FilteredInventoryItems.Where(x => x.countUpdated))
+            {
+                item.Update();
+            }
+
+            ChangeCountCanExecute = false;
+        }
         #endregion
 
         public void InitializeWindow(MainWindow window)
@@ -367,17 +425,32 @@ namespace BuddhaBowls
             TryDBConnect();
         }
 
-        public void LoadInventoryItems()
+        public void LoadDisplayItems()
         {
             FilteredInventoryItems = new ObservableCollection<InventoryItem>();
+            FilteredOrderItems = new List<OrderItem>();
 
             foreach(InventoryItem item in _models.InventoryItems.OrderBy(x => x.Name))
             {
                 FilteredInventoryItems.Add(item);
+                FilteredOrderItems.Add((OrderItem)item);
             }
 
             _databaseFound = true;
             NotifyPropertyChanged("FilteredInventoryItems");
+            NotifyPropertyChanged("FilteredOrderItems");
+        }
+
+        private void DisplayItemsNotFound()
+        {
+            FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
+            FilteredOrderItems = new List<OrderItem>() { new OrderItem() { Name = "Database not found" } };
+            _databaseFound = false;
+        }
+
+        private void InitPriceBreakdown()
+        {
+
         }
 
         public void FilterInventoryItems(string filterStr)
@@ -388,6 +461,17 @@ namespace BuddhaBowls
                 FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems
                                                         .Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
                                                         .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
+        }
+
+        public void FilterOrderItems(string filterStr)
+        {
+            // really inefficient use of resources
+            if (string.IsNullOrWhiteSpace(filterStr))
+                FilteredOrderItems = _models.InventoryItems.OrderBy(x => x.Name).Select(x => (OrderItem)x).ToList();
+            else
+                FilteredOrderItems = _models.InventoryItems.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
+                                                        .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper()))
+                                                        .Select(x => (OrderItem)x).ToList();
         }
 
         public void ClearErrors()
@@ -429,13 +513,33 @@ namespace BuddhaBowls
             FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
         }
 
-        private void TryDBConnect()
+        private bool TryDBConnect()
         {
             _models = new ModelContainer();
             if (_models.InventoryItems != null)
-                LoadInventoryItems();
+            {
+                LoadDisplayItems();
+                return true;
+            }
             else
-                InventoryItemsNotFound();
+                DisplayItemsNotFound();
+            return false;
+        }
+
+        private void InventoryItemCountChanged(object sender)
+        {
+            ChangeCountCanExecute = true;
+        }
+
+        private void InitCountChanged()
+        {
+            if (_models != null && _models.InventoryItems != null)
+            {
+                foreach (InventoryItem item in _models.InventoryItems)
+                {
+                    item.CountChanged = InventoryItemCountChanged;
+                }
+            }
         }
     }
 
@@ -490,5 +594,32 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("Error");
             }
         }
+    }
+
+    public class OrderItem : InventoryItem
+    {
+        public float PriceExtention
+        {
+            get
+            {
+                return LastOrderAmount * LastPurchasedPrice;
+            }
+        }
+
+        public OrderItem() : base() { }
+
+        public OrderItem(InventoryItem item) : base()
+        {
+            foreach(string property in item.GetProperties())
+            {
+                SetProperty(property, item.GetPropertyValue(property));
+            }
+        }
+    }
+
+    public class BreakdownListItem
+    {
+        public string Background { get; set; }
+        public string Name { get; set; }
     }
 }
