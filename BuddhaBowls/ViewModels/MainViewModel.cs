@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace BuddhaBowls
         private MainWindow _window;
         private ModelContainer _models;
         private bool _databaseFound;
+        private Dictionary<string, List<BreakdownListItem>> _breakdownDict;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -116,27 +118,27 @@ namespace BuddhaBowls
             }
         }
 
-        List<OrderItem> _filteredOrderItems;
-        public List<OrderItem> FilteredOrderItems
-        {
-            get
-            {
-                return _filteredOrderItems;
-            }
-            set
-            {
-                _filteredOrderItems = value;
-                NotifyPropertyChanged("FilteredOrderItems");
-            }
-        }
+        //List<OrderItem> _filteredOrderItems;
+        //public List<OrderItem> FilteredOrderItems
+        //{
+        //    get
+        //    {
+        //        return _filteredOrderItems;
+        //    }
+        //    set
+        //    {
+        //        _filteredOrderItems = value;
+        //        NotifyPropertyChanged("FilteredOrderItems");
+        //    }
+        //}
 
         public ObservableCollection<FieldSetting> FieldsCollection { get; set; }
 
         public string OrderVendor { get; set; }
 
-        private ObservableCollection<BreakdownListItem> _priceBreakdown;
         private bool _dbConnected;
 
+        private ObservableCollection<BreakdownListItem> _priceBreakdown;
         public ObservableCollection<BreakdownListItem> PriceBreakdown
         {
             get
@@ -162,6 +164,8 @@ namespace BuddhaBowls
         public ICommand SaveSettingsCommand { get; set; }
         public ICommand SaveCountCommand { get; set; }
         public ICommand ResetCountCommand { get; set; }
+        public ICommand SaveNewOrderCommand { get; set; }
+        public ICommand CancelNewOrderCommand { get; set; }
 
         public bool ReportCanExecute
         {
@@ -204,6 +208,8 @@ namespace BuddhaBowls
         }
 
         public bool ChangeCountCanExecute { get; set; } = false;
+        public bool CancelOrderCanExecute { get; set; } = false;
+        public bool SaveOrderCanExecute { get; private set; }
         #endregion
 
         public MainViewModel()
@@ -218,10 +224,12 @@ namespace BuddhaBowls
             SaveSettingsCommand = new RelayCommand(SaveSettings, x => SaveSettingsCanExecute);
             SaveCountCommand = new RelayCommand(SaveCount, x => ChangeCountCanExecute);
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
+            SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
+            CancelNewOrderCommand = new RelayCommand(CancelOrder, x => CancelOrderCanExecute);
 
             _dbConnected = TryDBConnect();
-            InitCountChanged();
-
+            InitChangedEvents();
+            InitPriceBreakdown();
         }
 
         #region ICommand Helpers
@@ -409,6 +417,29 @@ namespace BuddhaBowls
 
             ChangeCountCanExecute = false;
         }
+
+        private void SaveOrder(object obj)
+        {
+            foreach(InventoryItem item in FilteredInventoryItems.Where(x => x.orderAmountUpdated))
+            {
+                item.Update();
+            }
+
+            OrderVendor = "";
+        }
+
+        private void CancelOrder(object obj)
+        {
+            foreach (InventoryItem item in FilteredInventoryItems.Where(x => x.orderAmountUpdated))
+            {
+                item.Count = item.GetPrevOrderAmount();
+                item.orderAmountUpdated = false;
+            }
+
+            RefreshInventoryList();
+            CancelOrderCanExecute = false;
+            OrderVendor = "";
+        }
         #endregion
 
         public void InitializeWindow(MainWindow window)
@@ -428,12 +459,12 @@ namespace BuddhaBowls
         public void LoadDisplayItems()
         {
             FilteredInventoryItems = new ObservableCollection<InventoryItem>();
-            FilteredOrderItems = new List<OrderItem>();
+            //FilteredOrderItems = new List<OrderItem>();
 
             foreach(InventoryItem item in _models.InventoryItems.OrderBy(x => x.Name))
             {
                 FilteredInventoryItems.Add(item);
-                FilteredOrderItems.Add((OrderItem)item);
+                //FilteredOrderItems.Add((OrderItem)((IItem)item));
             }
 
             _databaseFound = true;
@@ -444,13 +475,50 @@ namespace BuddhaBowls
         private void DisplayItemsNotFound()
         {
             FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
-            FilteredOrderItems = new List<OrderItem>() { new OrderItem() { Name = "Database not found" } };
+            //FilteredOrderItems = new List<OrderItem>() { new OrderItem() { Name = "Database not found" } };
             _databaseFound = false;
         }
 
         private void InitPriceBreakdown()
         {
+            _breakdownDict = new Dictionary<string, List<BreakdownListItem>>();
+            foreach(InventoryItem item in _models.InventoryItems)
+            {
+                if(!_breakdownDict.Keys.Contains(item.Category))
+                {
+                    _breakdownDict[item.Category] = new List<BreakdownListItem>();
+                }
+                if (item.LastOrderAmount > 0)
+                {
+                    _breakdownDict[item.Category].Add(new BreakdownListItem()
+                    {
+                        Name = item.Name,
+                        Background = MainHelper.ColorFromString(GlobalVar.BLANK_COLOR),
+                        Cost = item.PriceExtension
+                    });
+                }
+            }
 
+            SetPriceBreakdownList();
+        }
+
+        private void SetPriceBreakdownList()
+        {
+            PriceBreakdown = new ObservableCollection<BreakdownListItem>();
+
+            foreach (string key in _breakdownDict.Keys.OrderBy(x => x))
+            {
+                PriceBreakdown.Add(new BreakdownListItem() { Name = key, Background = _models.GetColorFromCategory(key) });
+                foreach (BreakdownListItem item in _breakdownDict[key])
+                {
+                    PriceBreakdown.Add(new BreakdownListItem()
+                    {
+                        Name = item.Name,
+                        Background = item.Background,
+                        Cost = item.Cost
+                    });
+                }
+            }
         }
 
         public void FilterInventoryItems(string filterStr)
@@ -463,16 +531,16 @@ namespace BuddhaBowls
                                                         .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
         }
 
-        public void FilterOrderItems(string filterStr)
-        {
-            // really inefficient use of resources
-            if (string.IsNullOrWhiteSpace(filterStr))
-                FilteredOrderItems = _models.InventoryItems.OrderBy(x => x.Name).Select(x => (OrderItem)x).ToList();
-            else
-                FilteredOrderItems = _models.InventoryItems.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
-                                                        .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper()))
-                                                        .Select(x => (OrderItem)x).ToList();
-        }
+        //public void FilterOrderItems(string filterStr)
+        //{
+        //    // really inefficient use of resources
+        //    if (string.IsNullOrWhiteSpace(filterStr))
+        //        FilteredOrderItems = _models.InventoryItems.OrderBy(x => x.Name).Select(x => (OrderItem)x).ToList();
+        //    else
+        //        FilteredOrderItems = _models.InventoryItems.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
+        //                                                .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper()))
+        //                                                .Select(x => (OrderItem)x).ToList();
+        //}
 
         public void ClearErrors()
         {
@@ -531,13 +599,20 @@ namespace BuddhaBowls
             ChangeCountCanExecute = true;
         }
 
-        private void InitCountChanged()
+        private void InventoryOrderAmountChanged(object sender)
+        {
+            //NotifyPropertyChanged("FilteredInventoryItems");
+            FilteredInventoryItems = new ObservableCollection<InventoryItem>(FilteredInventoryItems);
+        }
+
+        private void InitChangedEvents()
         {
             if (_models != null && _models.InventoryItems != null)
             {
                 foreach (InventoryItem item in _models.InventoryItems)
                 {
                     item.CountChanged = InventoryItemCountChanged;
+                    item.OrderAmountChanged = InventoryOrderAmountChanged;
                 }
             }
         }
@@ -596,30 +671,10 @@ namespace BuddhaBowls
         }
     }
 
-    public class OrderItem : InventoryItem
-    {
-        public float PriceExtention
-        {
-            get
-            {
-                return LastOrderAmount * LastPurchasedPrice;
-            }
-        }
-
-        public OrderItem() : base() { }
-
-        public OrderItem(InventoryItem item) : base()
-        {
-            foreach(string property in item.GetProperties())
-            {
-                SetProperty(property, item.GetPropertyValue(property));
-            }
-        }
-    }
-
     public class BreakdownListItem
     {
-        public string Background { get; set; }
+        public long Background { get; set; }
         public string Name { get; set; }
+        public float Cost { get; set; }
     }
 }

@@ -83,6 +83,7 @@
       <DependentUpon>EditItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="GlobalVar.cs" />
+    <Compile Include="Helpers\IItem.cs" />
     <Compile Include="Helpers\MainHelper.cs" />
     <Compile Include="Helpers\ModelHelper.cs" />
     <Compile Include="MainClass.cs" />

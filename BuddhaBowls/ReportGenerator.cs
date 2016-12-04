@@ -16,8 +16,8 @@ namespace BuddhaBowls
 {
     public class ReportGenerator
     {
-        HashSet<string> _itemCategories;
-        Dictionary<string, string> _categoryColors;
+        //HashSet<string> _itemCategories;
+        //Dictionary<string, string> _categoryColors;
 
         ModelContainer _models;
 
@@ -29,8 +29,8 @@ namespace BuddhaBowls
         {
             _models = models;
 
-            SetInventoryCategories();
-            SetCategoryColors();
+            //SetInventoryCategories();
+            //SetCategoryColors();
 
             _excelApp = new Excel.Application();
             _excelApp.DisplayAlerts = false;
@@ -150,11 +150,11 @@ namespace BuddhaBowls
 
                 // color the cells if it is a category line
                 string category = contents[i][0].Split(' ')[0].ToUpper();
-                string key = _itemCategories.FirstOrDefault(x => x.StartsWith(category));
+                string key = _models.ItemCategories.FirstOrDefault(x => x.StartsWith(category));
                 if (!string.IsNullOrEmpty(key))
                 {
                     ((Excel.Range)sheet.Range[sheet.Cells[i + 1, 1], sheet.Cells[i + 1, numCols]]).Interior.Color =
-                                    MainHelper.ColorFromString(_categoryColors[key]);
+                                    _models.GetColorFromCategory(key);
                 }
 
             }
@@ -240,8 +240,8 @@ namespace BuddhaBowls
                     sheet.Cells[i + 1, 2] = contents[i][1];
                     sheet.Cells[i + 1, 5] = contents[i][2];
 
-                    range1.Interior.Color = MainHelper.ColorFromString(_categoryColors[contents[i][0].ToUpper()]);
-                    range2.Interior.Color = MainHelper.ColorFromString(_categoryColors[contents[i][0].ToUpper()]);
+                    range1.Interior.Color = _models.GetColorFromCategory(contents[i][0].ToUpper());
+                    range2.Interior.Color = _models.GetColorFromCategory(contents[i][0].ToUpper());
                 }
                 else
                 {
@@ -272,11 +272,11 @@ namespace BuddhaBowls
 
                     // color the cells if it is a category line
                     string category = contents[i][0].Split(' ')[0].ToUpper();
-                    string key = _itemCategories.FirstOrDefault(x => x.StartsWith(category));
+                    string key = _models.ItemCategories.FirstOrDefault(x => x.StartsWith(category));
                     if (!string.IsNullOrEmpty(key))
                     {
                         ((Excel.Range)sheet.Range[sheet.Cells[i + 1, 1], sheet.Cells[i + 1, numCols]]).Interior.Color =
-                                        MainHelper.ColorFromString(_categoryColors[key]);
+                                        _models.GetColorFromCategory(key);
                     }
                 }
 
@@ -313,32 +313,32 @@ namespace BuddhaBowls
             _excelApp = null;
         }
 
-        private void SetInventoryCategories()
-        {
-            _itemCategories = new HashSet<string>();
+        //private void SetInventoryCategories()
+        //{
+        //    _itemCategories = new HashSet<string>();
 
-            foreach(InventoryItem item in _models.InventoryItems)
-            {
-                _itemCategories.Add(item.Category.ToUpper());
-            }
-        }
+        //    foreach (InventoryItem item in _models.InventoryItems)
+        //    {
+        //        _itemCategories.Add(item.Category.ToUpper());
+        //    }
+        //}
 
-        private void SetCategoryColors()
-        {
-            const string COLOR = "_COLOR";
+        //private void SetCategoryColors()
+        //{
+        //    const string COLOR = "_COLOR";
 
-            _categoryColors = new Dictionary<string, string>();
+        //    _categoryColors = new Dictionary<string, string>();
 
-            FieldInfo[] fields = typeof(GlobalVar).GetFields().Where(x => x.Name.IndexOf(COLOR) != -1).ToArray();
-            string[] fieldNames = fields.Select(x => x.Name).ToArray();
-            foreach(string category in _itemCategories)
-            {
-                int idx = Array.IndexOf(fieldNames, category.Replace(' ', '_') + COLOR);
-                if (idx > -1)
-                {
-                    _categoryColors[category] = (string)fields[idx].GetValue(null);
-                }
-            }
-        }
+        //    FieldInfo[] fields = typeof(GlobalVar).GetFields().Where(x => x.Name.IndexOf(COLOR) != -1).ToArray();
+        //    string[] fieldNames = fields.Select(x => x.Name).ToArray();
+        //    foreach (string category in _itemCategories)
+        //    {
+        //        int idx = Array.IndexOf(fieldNames, category.Replace(' ', '_') + COLOR);
+        //        if (idx > -1)
+        //        {
+        //            _categoryColors[category] = (string)fields[idx].GetValue(null);
+        //        }
+        //    }
+        //}
     }
 }

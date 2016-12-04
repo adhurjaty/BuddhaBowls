@@ -43,7 +43,9 @@
                                     <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
                                 <Label x:Name="label3" Content="Item Name:" HorizontalAlignment="Center" Margin="-260,20,0,0" Grid.Column="0" VerticalAlignment="Top"/>
-                                <TextBox x:Name="FilterOrderItemBox" HorizontalAlignment="Center" Height="22" Margin="0,20,0,0" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterOrderItems_TextChanged" />
+                                <TextBox x:Name="FilterOrderItemBox" HorizontalAlignment="Center" Height="22" Margin="0,20,0,0" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top"
+                                         Width="180" Controls:TextBoxHelper.Watermark="Filter by item name..."
+                                         TextChanged="FilterItems_TextChanged" />
                                 <DataGrid x:Name="dataGrid" HorizontalAlignment="Stretch" Margin="1,60,1,1" Grid.Column="0"
                                           ItemsSource="{Binding FilteredInventoryItems}" VerticalAlignment="Stretch"
                                           ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedOrderItem}"
@@ -51,21 +53,32 @@
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="3*"/>
                                         <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="3*"/>
-                                        <Controls:DataGridNumericUpDownColumn Header="Order Amt" Binding="{Binding LastOrderedAmount}" StringFormat="0.##" Width="2*" />
-                                        <Controls:DataGridNumericUpDownColumn Header="Price" Binding="{Binding LastPurchasedPrice}" StringFormat="c" Width="2*" />
-                                        <Controls:DataGridNumericUpDownColumn Header="Extention" Binding="{Binding LastPurchasedPrice}" StringFormat="c" Width="2*" />
+                                        <Controls:DataGridNumericUpDownColumn Header="Order Amt" Binding="{Binding LastOrderAmount}"
+                                                                              StringFormat="0.##" Width="2*" Minimum="0" />
+                                        <Controls:DataGridNumericUpDownColumn Header="Price" Binding="{Binding LastPurchasedPrice}"
+                                                                              StringFormat="c" Width="2*" Minimum="0" />
+                                        <DataGridTextColumn Header="Extension" Binding="{Binding Path=PriceExtension, Mode=OneWay, StringFormat=c}"
+                                                            Width="2*" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                                 <Border Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black" />
                                 <Label x:Name="label4" Grid.Column="1" Content="Total:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20, 5"/>
                                 <TextBlock Grid.Column="1" Text="{Binding Path=OrderTotal, StringFormat=C}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="70, 5"/>
                                 <TextBlock x:Name="textBlock1" Grid.Column="1" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="NoWrap" Text="Price Breakdown" VerticalAlignment="Top" FontSize="18"/>
-                                <StackPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0, 30, 0, 30">
-                                    <ItemsControl ItemsSource="{Binding PriceBreakdown}">
-                                        <TextBlock Background="{Binding Background}" Text="{Binding Name}" HorizontalAlignment="Stretch" />
+                                <!--<StackPanel Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0, 30, 0, 30"> 
+                                    <ItemsControl ItemsSource="{Binding PriceBreakdown}" >
+                                        <Label x:Name="breakdownText" Background="{Binding Background}" Content="{Binding Name}" HorizontalAlignment="Stretch" />
                                     </ItemsControl>
-                                </StackPanel>
+                                </StackPanel>-->
+                                <!--<DataGrid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0, 30, 0, 30"
+                                          ItemsSource="{Binding PriceBreakdown}">
+                                    
+                                </DataGrid>-->
                             </Grid>
+                            <Button x:Name="button4" Content="Save" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0"
+                                    Grid.Row="2" Width="75" Command="{Binding SaveNewOrderCommand}" />
+                            <Button x:Name="button5" Content="Cancel" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="85,0"
+                                    Grid.Row="2" Width="75" Command="{Binding CancelNewOrderCommand}" />
                         </Grid>
                     </TabItem>
                 </TabControl>

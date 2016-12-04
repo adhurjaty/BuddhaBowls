@@ -15,5 +15,6 @@ namespace BuddhaBowls
         public const string BREAD_COLOR = "F9EA9A";
         public const string MEATS_COLOR = "F0CDAE";
         public const string POULTRY_COLOR = "F0CDAE";
+        public const string BLANK_COLOR = "FFFFFF";
     }
 }

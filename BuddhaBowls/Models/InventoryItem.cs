@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuddhaBowls.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class InventoryItem : Model
+    public class InventoryItem : Model, IItem
     {
         private float _lastCount;
+        private float _prevOrderAmount;
 
         public string Name { get; set; }
         public string Category { get; set; }
@@ -19,11 +21,9 @@ namespace BuddhaBowls.Models
         public float? RecipeUnitConversion { get; set; }
         public float? Yield { get; set; }
         public float LastPurchasedPrice { get; set; }
-        public float LastOrderAmount { get; set; }
         public DateTime? LastPurchasedDate { get; set; }
 
         public bool countUpdated = false;
-
         private float _count;
         public float Count
         {
@@ -44,7 +44,37 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public bool orderAmountUpdated = false;
+        private float _lastOrderAmount;
+        public float LastOrderAmount
+        {
+            get
+            {
+                return _lastOrderAmount;
+            }
+            set
+            {
+                if(!orderAmountUpdated)
+                {
+                    _prevOrderAmount = _lastOrderAmount;
+                }
+                _lastOrderAmount = value;
+                if(OrderAmountChanged != null)
+                    OrderAmountChanged(this);
+            }
+        }
+
+
+        public float PriceExtension
+        {
+            get
+            {
+                return LastOrderAmount * LastPurchasedPrice;
+            }
+        }
+
         public ModelPropertyChanged CountChanged;
+        public ModelPropertyChanged OrderAmountChanged;
 
         public InventoryItem() : base()
         {
@@ -71,6 +101,11 @@ namespace BuddhaBowls.Models
         public float GetLastCount()
         {
             return _lastCount;
+        }
+
+        public float GetPrevOrderAmount()
+        {
+            return _prevOrderAmount;
         }
     }
 }

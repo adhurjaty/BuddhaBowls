@@ -76,11 +76,11 @@ namespace BuddhaBowls
             ((MainViewModel)DataContext).FilterInventoryItems(textBox.Text);
         }
 
-        private void FilterOrderItems_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox textBox = FilterOrderItemBox;
+        //private void FilterOrderItems_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    TextBox textBox = FilterOrderItemBox;
 
-            ((MainViewModel)DataContext).FilterOrderItems(textBox.Text);
-        }
+        //    ((MainViewModel)DataContext).FilterOrderItems(textBox.Text);
+        //}
     }
 }
