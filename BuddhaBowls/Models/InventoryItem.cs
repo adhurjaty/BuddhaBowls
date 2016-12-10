@@ -9,62 +9,18 @@ namespace BuddhaBowls.Models
 {
     public class InventoryItem : Model, IItem
     {
-        private float _lastCount;
-        private float _prevOrderAmount;
-
         public string Name { get; set; }
         public string Category { get; set; }
         public string PurchasedUnit { get; set; }
+        public float Count { get; set; }
         public string CountUnit { get; set; }
         public float Conversion { get; set; }
         public string RecipeUnit { get; set; }
         public float? RecipeUnitConversion { get; set; }
         public float? Yield { get; set; }
         public float LastPurchasedPrice { get; set; }
+        public float LastOrderAmount { get; set; }
         public DateTime? LastPurchasedDate { get; set; }
-
-        public bool countUpdated = false;
-        private float _count;
-        public float Count
-        {
-            get
-            {
-                return _count;
-            }
-            set
-            {
-                if (!countUpdated)
-                {
-                    _lastCount = _count;
-                    if (CountChanged != null)
-                        CountChanged(this);
-                }
-                _count = value;
-                countUpdated = true;
-            }
-        }
-
-        public bool orderAmountUpdated = false;
-        private float _lastOrderAmount;
-        public float LastOrderAmount
-        {
-            get
-            {
-                return _lastOrderAmount;
-            }
-            set
-            {
-                if(!orderAmountUpdated)
-                {
-                    _prevOrderAmount = _lastOrderAmount;
-                }
-                _lastOrderAmount = value;
-                if(OrderAmountChanged != null)
-                    OrderAmountChanged(this);
-                orderAmountUpdated = true;
-            }
-        }
-
 
         public float PriceExtension
         {
@@ -73,9 +29,6 @@ namespace BuddhaBowls.Models
                 return LastOrderAmount * LastPurchasedPrice;
             }
         }
-
-        public ModelPropertyChanged CountChanged;
-        public ModelPropertyChanged OrderAmountChanged;
 
         public InventoryItem() : base()
         {
@@ -101,12 +54,12 @@ namespace BuddhaBowls.Models
 
         public float GetLastCount()
         {
-            return _lastCount;
+            return new InventoryItem(new Dictionary<string, string>() { { "Id", Id.ToString() } }).Count;
         }
 
         public float GetPrevOrderAmount()
         {
-            return _prevOrderAmount;
+            return new InventoryItem(new Dictionary<string, string>() { { "Id", Id.ToString() } }).LastOrderAmount;
         }
 
         public override string[] GetPropertiesDB(string[] omit)

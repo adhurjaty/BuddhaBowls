@@ -14,14 +14,11 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public delegate void ModelPropertyChanged(object sender);
-
     public class MainViewModel : INotifyPropertyChanged
     {
         private MainWindow _window;
         private ModelContainer _models;
         private bool _databaseFound;
-        private Dictionary<string, List<BreakdownListItem>> _breakdownDict;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -156,6 +153,8 @@ namespace BuddhaBowls
         public ICommand SaveNewOrderCommand { get; set; }
         // Reset button in New Order form
         public ICommand CancelNewOrderCommand { get; set; }
+        // Clear Amts button in New Order form
+        public ICommand ClearOrderCommand { get; set; }
 
         public bool ReportCanExecute
         {
@@ -222,9 +221,9 @@ namespace BuddhaBowls
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
             SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
             CancelNewOrderCommand = new RelayCommand(CancelOrder, x => CancelOrderCanExecute);
+            ClearOrderCommand = new RelayCommand(ClearOrderAmounts);
 
             _dbConnected = TryDBConnect();
-            InitChangedEvents();
         }
 
         #region ICommand Helpers
@@ -282,7 +281,7 @@ namespace BuddhaBowls
         private void AddInventoryItem(object obj)
         {
             AddEditHeader = "Add New Inventory Item";
-            FieldsCollection = GetFieldsAndValues(typeof(InventoryItem));
+            FieldsCollection = GetFieldsAndValues<InventoryItem>();
 
             _window.DeleteEditAddTab();
             _window.AddTab("Add Inventory Item");
@@ -295,7 +294,7 @@ namespace BuddhaBowls
         private void EditInventoryItem(object obj)
         {
             AddEditHeader = "Edit " + SelectedInventoryItem.Name;
-            FieldsCollection = GetFieldsAndValues(SelectedInventoryItem.GetType(), SelectedInventoryItem);
+            FieldsCollection = GetFieldsAndValues(SelectedInventoryItem);
 
             _window.DeleteEditAddTab();
             _window.AddTab("Edit Inventory Item");
@@ -444,19 +443,22 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void ResetCount(object obj)
         {
-            foreach (InventoryItem item in FilteredInventoryItems.Where(x => x.countUpdated))
+            foreach (InventoryItem item in FilteredInventoryItems)
             {
                 item.Count = item.GetLastCount();
-                item.countUpdated = false;
             }
 
             RefreshInventoryList();
             ChangeCountCanExecute = false;
         }
 
+        /// <summary>
+        /// Writes the Inventory items to DB as they are in the Master List datagrid
+        /// </summary>
+        /// <param name="obj"></param>
         private void SaveCount(object obj)
         {
-            foreach(InventoryItem item in FilteredInventoryItems.Where(x => x.countUpdated))
+            foreach(InventoryItem item in FilteredInventoryItems)
             {
                 item.Update();
             }
@@ -464,9 +466,13 @@ namespace BuddhaBowls
             ChangeCountCanExecute = false;
         }
 
+        /// <summary>
+        /// Writes the inventory items to DB as they are in the New Order datagrid
+        /// </summary>
+        /// <param name="obj"></param>
         private void SaveOrder(object obj)
         {
-            foreach(InventoryItem item in FilteredInventoryItems.Where(x => x.orderAmountUpdated))
+            foreach(InventoryItem item in FilteredInventoryItems)
             {
                 item.Update();
             }
@@ -476,17 +482,35 @@ namespace BuddhaBowls
             OrderVendor = "";
         }
 
+        /// <summary>
+        /// Resets order amount values to last saved order amount value in New Order datagrid
+        /// </summary>
+        /// <param name="obj"></param>
         private void CancelOrder(object obj)
         {
-            foreach (InventoryItem item in FilteredInventoryItems.Where(x => x.orderAmountUpdated))
+            foreach (InventoryItem item in FilteredInventoryItems)
             {
                 item.LastOrderAmount = item.GetPrevOrderAmount();
-                item.orderAmountUpdated = false;
             }
 
             RefreshInventoryList();
             CancelOrderCanExecute = false;
             OrderVendor = "";
+        }
+
+        /// <summary>
+        /// Sets order amounts to 0 in New Order datagrid
+        /// </summary>
+        /// <param name="obj"></param>
+        private void ClearOrderAmounts(object obj)
+        {
+            foreach (InventoryItem item in FilteredInventoryItems)
+            {
+                item.LastOrderAmount = 0;
+            }
+
+            RefreshInventoryList();
+            CancelOrderCanExecute = true;
         }
         #endregion
 
@@ -497,35 +521,32 @@ namespace BuddhaBowls
         }
 
 
-        public void LoadDisplayItems()
+        public bool LoadDisplayItems()
         {
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>();
-            //FilteredOrderItems = new List<OrderItem>();
-
-            foreach(InventoryItem item in _models.InventoryItems.OrderBy(x => x.Name))
+            _models = new ModelContainer();
+            if (_models.InventoryItems != null)
             {
-                FilteredInventoryItems.Add(item);
-                //FilteredOrderItems.Add((OrderItem)((IItem)item));
-            }
+                FilteredInventoryItems = new ObservableCollection<InventoryItem>();
 
-            _databaseFound = true;
-            NotifyPropertyChanged("FilteredInventoryItems");
-            NotifyPropertyChanged("FilteredOrderItems");
-        }
-
-        private void InitChangedEvents()
-        {
-            if (_models != null && _models.InventoryItems != null)
-            {
-                foreach (InventoryItem item in _models.InventoryItems)
+                foreach (InventoryItem item in _models.InventoryItems.OrderBy(x => x.Name))
                 {
-                    item.CountChanged = InventoryItemCountChanged;
-                    item.OrderAmountChanged = InventoryOrderAmountChanged;
+                    FilteredInventoryItems.Add(item);
                 }
+
+                _databaseFound = true;
+                NotifyPropertyChanged("FilteredInventoryItems");
+
+                return true;
             }
+
+            return false;
         }
         #endregion
 
+        /// <summary>
+        /// Saves the application settings when Save Settings button is pressed or the application is closed
+        /// </summary>
+        /// <param name="obj"></param>
         public void SaveSettings(object obj = null)
         {
             // TODO: add settings to save
@@ -535,13 +556,19 @@ namespace BuddhaBowls
             TryDBConnect();
         }
 
+        /// <summary>
+        /// Display on the datagrids that the inventory items could not be found
+        /// </summary>
         private void DisplayItemsNotFound()
         {
             FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
-            //FilteredOrderItems = new List<OrderItem>() { new OrderItem() { Name = "Database not found" } };
             _databaseFound = false;
         }
 
+        /// <summary>
+        /// Filter list of inventory items based on the string in the filter box above datagrids
+        /// </summary>
+        /// <param name="filterStr"></param>
         public void FilterInventoryItems(string filterStr)
         {
             if (string.IsNullOrWhiteSpace(filterStr))
@@ -563,18 +590,25 @@ namespace BuddhaBowls
             NotifyPropertyChanged("FieldsCollection");
         }
 
-        private ObservableCollection<FieldSetting> GetFieldsAndValues(Type type, object obj = null)
+        /// <summary>
+        /// Collects the property names and values for display in the add/edit form
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private ObservableCollection<FieldSetting> GetFieldsAndValues<T>(T obj = null) where T : Model, new()
         {
             ObservableCollection<FieldSetting> fieldsAndVals = new ObservableCollection<FieldSetting>();
+            string[] properties = new T().GetPropertiesDB();
 
-            foreach (PropertyInfo prop in type.GetProperties().Where(x => x.Name != "Id"))
+            foreach (string prop in properties)
             {
                 FieldSetting fs = new FieldSetting();
-                fs.Name = prop.Name;
+                fs.Name = prop;
 
                 if (obj != null)
-                    if (prop.GetValue(obj) != null)
-                        fs.Value = prop.GetValue(obj).ToString();
+                    if (obj.GetPropertyValue(prop) != null)
+                        fs.Value = obj.GetPropertyValue(prop).ToString();
                     else
                         fs.Value = "";
                 else
@@ -586,30 +620,39 @@ namespace BuddhaBowls
             return fieldsAndVals;
         }
 
+        /// <summary>
+        /// Update the datagrid displays for inventory items
+        /// </summary>
         private void RefreshInventoryList()
         {
             FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
         }
 
+        /// <summary>
+        /// Attempt to connect to the data - display a warning message in the datagrid if unsuccessful
+        /// </summary>
+        /// <returns></returns>
         private bool TryDBConnect()
         {
-            _models = new ModelContainer();
-            if (_models.InventoryItems != null)
-            {
-                LoadDisplayItems();
+            if (LoadDisplayItems())
                 return true;
-            }
             else
                 DisplayItemsNotFound();
             return false;
         }
 
-        private void InventoryItemCountChanged(object sender)
+        /// <summary>
+        /// Called when Master List is edited
+        /// </summary>
+        public void InventoryItemCountChanged()
         {
             ChangeCountCanExecute = true;
         }
 
-        private void InventoryOrderAmountChanged(object sender)
+        /// <summary>
+        /// Called when New Order is edited
+        /// </summary>
+        public void InventoryOrderAmountChanged()
         {
             //NotifyPropertyChanged("FilteredInventoryItems");
             FilteredInventoryItems = new ObservableCollection<InventoryItem>(FilteredInventoryItems);

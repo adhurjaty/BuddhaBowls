@@ -32,8 +32,6 @@ namespace BuddhaBowls.Services
             if (InventoryItems == null || BatchItems == null)
                 return;
 
-            ClearInventoryUpdated();
-
             foreach(BatchItem bi in BatchItems)
             {
                 bi.recipe = MainHelper.GetRecipe(bi.Name);
@@ -75,15 +73,6 @@ namespace BuddhaBowls.Services
             }
 
             return MainHelper.ColorFromString(GlobalVar.BLANK_COLOR);
-        }
-
-        private void ClearInventoryUpdated()
-        {
-            foreach(InventoryItem item in InventoryItems)
-            {
-                item.countUpdated = false;
-                item.orderAmountUpdated = false;
-            }
         }
 
         private void SetInventoryCategories()

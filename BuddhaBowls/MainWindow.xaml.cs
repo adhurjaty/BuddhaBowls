@@ -78,8 +78,12 @@ namespace BuddhaBowls
 
         private void MasterList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            int debug = 1;
-            debug = 2;
+            ((MainViewModel)DataContext).InventoryItemCountChanged();
+        }
+
+        private void OrderList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            ((MainViewModel)DataContext).InventoryOrderAmountChanged();
         }
 
         //private void FilterOrderItems_TextChanged(object sender, TextChangedEventArgs e)

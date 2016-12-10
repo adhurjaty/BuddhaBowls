@@ -39,8 +39,8 @@
                             <Border Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="1" />
                             <Grid Grid.Row="1">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="4*" />
-                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="2*" />
                                 </Grid.ColumnDefinitions>
                                 <Label x:Name="label3" Content="Item Name:" HorizontalAlignment="Center" Margin="-260,20,0,0" Grid.Column="0" VerticalAlignment="Top"/>
                                 <TextBox x:Name="FilterOrderItemBox" HorizontalAlignment="Center" Height="22" Margin="0,20,0,0" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top"
@@ -49,7 +49,7 @@
                                 <DataGrid x:Name="dataGrid" HorizontalAlignment="Stretch" Margin="1,60,1,1" Grid.Column="0"
                                           ItemsSource="{Binding FilteredInventoryItems}" VerticalAlignment="Stretch"
                                           ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedOrderItem}"
-                                          AutoGenerateColumns="False" CellEditEnding="MasterList_CellEditEnding">
+                                          AutoGenerateColumns="False" CellEditEnding="OrderList_CellEditEnding">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="3*"/>
                                         <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="3*"/>
@@ -61,7 +61,10 @@
                                 <Border Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black" />
                                 <Label x:Name="label4" Grid.Column="1" Content="Total:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20, 5"/>
                                 <TextBlock Grid.Column="1" Text="{Binding Path=OrderTotal, StringFormat=C}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="70, 5"/>
-                                <TextBlock x:Name="textBlock1" Grid.Column="1" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="NoWrap" Text="Price Breakdown" VerticalAlignment="Top" FontSize="18"/>
+                                <TextBlock x:Name="textBlock1" Grid.Column="1" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="NoWrap" Text="Price Breakdown"
+                                           VerticalAlignment="Top" FontSize="18"/>
+                                <Button x:Name="button6" Content="Clear Amts" HorizontalAlignment="Right" Margin="10,20" VerticalAlignment="Top" Width="75"
+                                        Command="{Binding ClearOrderCommand}"/>
                             </Grid>
                             <Button x:Name="button4" Content="Save" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0"
                                     Grid.Row="2" Width="75" Command="{Binding SaveNewOrderCommand}" />
@@ -92,10 +95,10 @@
                     <Button x:Name="button2" Content="Edit" HorizontalAlignment="Right" Margin="0,0,65,0" Grid.Row="2" VerticalAlignment="Center" Width="75" Command="{Binding EditInventoryItemCommand}"/>
                     <DataGrid Grid.Row="3" ItemsSource="{Binding FilteredInventoryItems}" HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                              SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False" >
+                              SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False" CellEditEnding="MasterList_CellEditEnding">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*"/>
-                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="1*"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
+                            <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="1*"/>
                             <Controls:DataGridNumericUpDownColumn Header="Count" Binding="{Binding Count}" StringFormat="0.##" Width="1*" />
                         </DataGrid.Columns>
                     </DataGrid>
