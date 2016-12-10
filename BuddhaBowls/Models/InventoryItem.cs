@@ -61,6 +61,7 @@ namespace BuddhaBowls.Models
                 _lastOrderAmount = value;
                 if(OrderAmountChanged != null)
                     OrderAmountChanged(this);
+                orderAmountUpdated = true;
             }
         }
 
@@ -106,6 +107,11 @@ namespace BuddhaBowls.Models
         public float GetPrevOrderAmount()
         {
             return _prevOrderAmount;
+        }
+
+        public override string[] GetPropertiesDB(string[] omit)
+        {
+            return base.GetPropertiesDB(new string[] { "PriceExtension" });
         }
     }
 }

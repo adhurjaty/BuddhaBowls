@@ -65,17 +65,20 @@ namespace BuddhaBowls.Services
             return null;
         }
 
-        public void WriteRecord(string tableName, Dictionary<string, string> mapping)
+        public int WriteRecord(string tableName, Dictionary<string, string> mapping)
         {
             // Id column always first, don't get it here - auto-populated field
             List<string> columns = GetColumnNames(tableName).Skip(1).ToList();
             List<string> newRecord = columns.Select(x => mapping.Keys.Contains(x) ? mapping[x] : "").ToList();
 
             int lastId = int.Parse(File.ReadLines(FilePath(tableName)).Last().Split(',')[0]);
+            int newId = lastId + 1;
 
             newRecord.Insert(0, (lastId + 1).ToString());
 
             File.AppendAllText(FilePath(tableName), string.Join(",", newRecord) + "\n");
+
+            return newId;
         }
 
         public bool DeleteRecords(string tableName, Dictionary<string, string> mapping, int limit = int.MaxValue)
@@ -193,6 +196,12 @@ namespace BuddhaBowls.Services
             return parser.ReadFields();
         }
 
-
+        public void CreateTable(string[] colHeaders, string[][] rows, string tableName)
+        {
+            List<string> contents = new List<string>();
+            contents.Add(string.Join(",", colHeaders));
+            contents = contents.Concat(rows.Select(x => string.Join(",", x))).ToList();
+            File.WriteAllLines(FilePath(tableName), contents);
+        }
     }
 }

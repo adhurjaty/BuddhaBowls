@@ -86,6 +86,15 @@ namespace BuddhaBowls.Helpers
 
             return ordered.ToArray();
         }
+
+        public static void CreateTable<T>(List<T> records, string tableName) where T : Model, new()
+        {
+            string[] columns = records[0].GetPropertiesDB();
+            string[][] rows = records.Select(x => columns.Select(y => x.GetPropertyValue(y).ToString()).ToArray()).ToArray();
+
+            DatabaseInterface dbInt = new DatabaseInterface();
+            dbInt.CreateTable(columns, rows, tableName);
+        }
         //public static bool CompareSingles(Single n1, Single n2)
         //{
 

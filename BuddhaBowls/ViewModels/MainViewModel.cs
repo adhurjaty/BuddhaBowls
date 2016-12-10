@@ -153,7 +153,7 @@ namespace BuddhaBowls
         }
         #endregion
 
-        #region ICommand Bindings
+        #region ICommand Bindings and Can Execute
         public ICommand BrowseButtonCommand { get; set; }
         public ICommand ReportCommand { get; set; }
         public ICommand AddInventoryItemCommand { get; set; }
@@ -209,7 +209,13 @@ namespace BuddhaBowls
 
         public bool ChangeCountCanExecute { get; set; } = false;
         public bool CancelOrderCanExecute { get; set; } = false;
-        public bool SaveOrderCanExecute { get; private set; }
+        public bool SaveOrderCanExecute
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(OrderVendor) && _models.InventoryItems.FirstOrDefault(x => x.LastOrderAmount > 0) != null;
+            }
+        }
         #endregion
 
         public MainViewModel()
@@ -425,6 +431,8 @@ namespace BuddhaBowls
                 item.Update();
             }
 
+            PurchaseOrder po = new PurchaseOrder(OrderVendor, _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList());
+
             OrderVendor = "";
         }
 
@@ -432,7 +440,7 @@ namespace BuddhaBowls
         {
             foreach (InventoryItem item in FilteredInventoryItems.Where(x => x.orderAmountUpdated))
             {
-                item.Count = item.GetPrevOrderAmount();
+                item.LastOrderAmount = item.GetPrevOrderAmount();
                 item.orderAmountUpdated = false;
             }
 
@@ -442,19 +450,12 @@ namespace BuddhaBowls
         }
         #endregion
 
+        #region Initializers
         public void InitializeWindow(MainWindow window)
         {
             _window = window;
         }
 
-        public void SaveSettings(object obj = null)
-        {
-            // TODO: add settings to save
-            Properties.Settings.Default.DBLocation = DataFileFolder;
-            Properties.Settings.Default.Save();
-
-            TryDBConnect();
-        }
 
         public void LoadDisplayItems()
         {
@@ -472,19 +473,12 @@ namespace BuddhaBowls
             NotifyPropertyChanged("FilteredOrderItems");
         }
 
-        private void DisplayItemsNotFound()
-        {
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
-            //FilteredOrderItems = new List<OrderItem>() { new OrderItem() { Name = "Database not found" } };
-            _databaseFound = false;
-        }
-
         private void InitPriceBreakdown()
         {
             _breakdownDict = new Dictionary<string, List<BreakdownListItem>>();
-            foreach(InventoryItem item in _models.InventoryItems)
+            foreach (InventoryItem item in _models.InventoryItems)
             {
-                if(!_breakdownDict.Keys.Contains(item.Category))
+                if (!_breakdownDict.Keys.Contains(item.Category))
                 {
                     _breakdownDict[item.Category] = new List<BreakdownListItem>();
                 }
@@ -500,6 +494,23 @@ namespace BuddhaBowls
             }
 
             SetPriceBreakdownList();
+        }
+        #endregion
+
+        public void SaveSettings(object obj = null)
+        {
+            // TODO: add settings to save
+            Properties.Settings.Default.DBLocation = DataFileFolder;
+            Properties.Settings.Default.Save();
+
+            TryDBConnect();
+        }
+
+        private void DisplayItemsNotFound()
+        {
+            FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
+            //FilteredOrderItems = new List<OrderItem>() { new OrderItem() { Name = "Database not found" } };
+            _databaseFound = false;
         }
 
         private void SetPriceBreakdownList()
@@ -530,17 +541,6 @@ namespace BuddhaBowls
                                                         .Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
                                                         .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
         }
-
-        //public void FilterOrderItems(string filterStr)
-        //{
-        //    // really inefficient use of resources
-        //    if (string.IsNullOrWhiteSpace(filterStr))
-        //        FilteredOrderItems = _models.InventoryItems.OrderBy(x => x.Name).Select(x => (OrderItem)x).ToList();
-        //    else
-        //        FilteredOrderItems = _models.InventoryItems.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
-        //                                                .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper()))
-        //                                                .Select(x => (OrderItem)x).ToList();
-        //}
 
         public void ClearErrors()
         {
@@ -603,6 +603,7 @@ namespace BuddhaBowls
         {
             //NotifyPropertyChanged("FilteredInventoryItems");
             FilteredInventoryItems = new ObservableCollection<InventoryItem>(FilteredInventoryItems);
+            CancelOrderCanExecute = true;
         }
 
         private void InitChangedEvents()

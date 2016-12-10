@@ -32,7 +32,7 @@ namespace BuddhaBowls.Services
             if (InventoryItems == null || BatchItems == null)
                 return;
 
-            ClearCountUpdated();
+            ClearInventoryUpdated();
 
             foreach(BatchItem bi in BatchItems)
             {
@@ -77,11 +77,12 @@ namespace BuddhaBowls.Services
             return MainHelper.ColorFromString(GlobalVar.BLANK_COLOR);
         }
 
-        private void ClearCountUpdated()
+        private void ClearInventoryUpdated()
         {
             foreach(InventoryItem item in InventoryItems)
             {
                 item.countUpdated = false;
+                item.orderAmountUpdated = false;
             }
         }
 

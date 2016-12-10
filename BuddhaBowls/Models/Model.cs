@@ -45,7 +45,6 @@ namespace BuddhaBowls.Models
         /// <summary>
         /// Writes model to DB
         /// </summary>
-        /// <param name="idCol">Name of the primary key column in the DB (usually "Id")</param>
         public void Update()
         {
             Dictionary<string, string> setDict = new Dictionary<string, string>();
@@ -84,7 +83,7 @@ namespace BuddhaBowls.Models
                     mapping[propNames[i]] = GetPropertyValue(propNames[i]).ToString();
             }
 
-            _dbInt.WriteRecord(_tableName, mapping);
+            Id = _dbInt.WriteRecord(_tableName, mapping);
         }
 
         /// <summary>
