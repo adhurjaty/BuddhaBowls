@@ -76,6 +76,12 @@ namespace BuddhaBowls
             ((MainViewModel)DataContext).FilterInventoryItems(textBox.Text);
         }
 
+        private void MasterList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            int debug = 1;
+            debug = 2;
+        }
+
         //private void FilterOrderItems_TextChanged(object sender, TextChangedEventArgs e)
         //{
         //    TextBox textBox = FilterOrderItemBox;

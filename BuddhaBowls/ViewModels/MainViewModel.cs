@@ -32,6 +32,7 @@ namespace BuddhaBowls
         }
 
         #region Data Bindings
+        // Value in text box for selecting the folder location of DB files
         private string _dataFileFolder;
         public string DataFileFolder
         {
@@ -48,6 +49,7 @@ namespace BuddhaBowls
             }
         }
 
+        // Inventory item selected in the datagrids for Orders and Master List
         private InventoryItem _selectedInventoryItem;
         public InventoryItem SelectedInventoryItem
         {
@@ -62,6 +64,7 @@ namespace BuddhaBowls
             }
         }
 
+        // Header of the add/edit tab
         private string _addEditHeader;
         public string AddEditHeader
         {
@@ -104,6 +107,7 @@ namespace BuddhaBowls
             }
         }
 
+        // Collection used for both Master List and New Order List
         private ObservableCollection<InventoryItem> _filteredInventoryItems;
         public ObservableCollection<InventoryItem> FilteredInventoryItems
         {
@@ -118,53 +122,39 @@ namespace BuddhaBowls
             }
         }
 
-        //List<OrderItem> _filteredOrderItems;
-        //public List<OrderItem> FilteredOrderItems
-        //{
-        //    get
-        //    {
-        //        return _filteredOrderItems;
-        //    }
-        //    set
-        //    {
-        //        _filteredOrderItems = value;
-        //        NotifyPropertyChanged("FilteredOrderItems");
-        //    }
-        //}
-
+        // Collection of fields and values for use in Model edit forms
         public ObservableCollection<FieldSetting> FieldsCollection { get; set; }
 
+        // name of the vendor in the New Order form
         public string OrderVendor { get; set; }
 
         private bool _dbConnected;
-
-        private ObservableCollection<BreakdownListItem> _priceBreakdown;
-        public ObservableCollection<BreakdownListItem> PriceBreakdown
-        {
-            get
-            {
-                return _priceBreakdown;
-            }
-            set
-            {
-                _priceBreakdown = value;
-                NotifyPropertyChanged("PriceBreakdown");
-            }
-        }
         #endregion
 
         #region ICommand Bindings and Can Execute
+        // Browse button in settings form
         public ICommand BrowseButtonCommand { get; set; }
+        // Generate Report button in settings form
         public ICommand ReportCommand { get; set; }
+        // Plus button in Master invententory list form
         public ICommand AddInventoryItemCommand { get; set; }
+        // Minus button in Master invententory list form
         public ICommand DeleteInventoryItemCommand { get; set; }
+        // Edit button in Master invententory list form
         public ICommand EditInventoryItemCommand { get; set; }
+        // Save button in Add/Edit form
         public ICommand SaveAddEditCommand { get; set; }
+        // Cancel button in Add/Edit form
         public ICommand CancelAddEditCommand { get; set; }
+        // Save button in Settings form
         public ICommand SaveSettingsCommand { get; set; }
+        // Save button in Master inventory form
         public ICommand SaveCountCommand { get; set; }
+        // Reset button in Master inventory form
         public ICommand ResetCountCommand { get; set; }
+        // Save button in New Order form
         public ICommand SaveNewOrderCommand { get; set; }
+        // Reset button in New Order form
         public ICommand CancelNewOrderCommand { get; set; }
 
         public bool ReportCanExecute
@@ -235,10 +225,13 @@ namespace BuddhaBowls
 
             _dbConnected = TryDBConnect();
             InitChangedEvents();
-            InitPriceBreakdown();
         }
 
         #region ICommand Helpers
+        /// <summary>
+        /// Testing function right now - triggered with Generate Report
+        /// </summary>
+        /// <param name="obj"></param>
         private void ReportHelper(object obj)
         {
             ReportGenerator generator = new ReportGenerator(_models);
@@ -265,6 +258,10 @@ namespace BuddhaBowls
             }
         }
 
+        /// <summary>
+        /// Summons folder dialog for choosing DB location - Browse...
+        /// </summary>
+        /// <param name="obj"></param>
         private void BrowseHelper(object obj)
         {
             System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog();
@@ -278,6 +275,10 @@ namespace BuddhaBowls
             }
         }
 
+        /// <summary>
+        /// Creates new tab called Add Inventory Item and populates form - Plus button
+        /// </summary>
+        /// <param name="obj"></param>
         private void AddInventoryItem(object obj)
         {
             AddEditHeader = "Add New Inventory Item";
@@ -287,6 +288,10 @@ namespace BuddhaBowls
             _window.AddTab("Add Inventory Item");
         }
 
+        /// <summary>
+        /// Creates a new tab called Edit Inventory Item and populates form - Edit button
+        /// </summary>
+        /// <param name="obj"></param>
         private void EditInventoryItem(object obj)
         {
             AddEditHeader = "Edit " + SelectedInventoryItem.Name;
@@ -296,6 +301,10 @@ namespace BuddhaBowls
             _window.AddTab("Edit Inventory Item");
         }
 
+        /// <summary>
+        /// Presents user with warning dialog, then removes item from DB and in-memory list - Minus button
+        /// </summary>
+        /// <param name="obj"></param>
         private void DeleteInventoryItem(object obj)
         {
             MessageBoxResult result = MessageBox.Show("Are you sure you want to delete " + SelectedInventoryItem.Name,
@@ -309,12 +318,92 @@ namespace BuddhaBowls
             }
         }
 
+        /// <summary>
+        /// Removes the add/edit tab - Cancel button
+        /// </summary>
+        /// <param name="obj"></param>
         private void CancelAddEdit(object obj)
         {
             AddEditErrorMessage = "";
             _window.DeleteEditAddTab();
         }
 
+        /// <summary>
+        /// Looks through fields in add/edit form to ensure that user-supplied values are valid and changes types when necessary
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private bool SetOrErrorAddEditItem(ref InventoryItem item)
+        {
+            foreach (FieldSetting field in FieldsCollection)
+            {
+                if (!item.IsNullable(field.Name) && string.IsNullOrWhiteSpace(field.Value))
+                {
+                    field.Error = 1;
+                    AddEditErrorMessage = field.Name + " must be set";
+                    return false;
+                }
+
+                if (field.Name == "Name" && _models.InventoryItems.FirstOrDefault(x => x.Name.ToUpper() == field.Value.ToUpper()) != null &&
+                   AddEditHeader.StartsWith("Add"))
+                {
+                    field.Error = 1;
+                    AddEditErrorMessage = field.Value + " already exists in the database";
+                    return false;
+                }
+
+                if (item.GetPropertyType(field.Name) == typeof(int))
+                {
+                    int val = 0;
+                    int.TryParse(field.Value, out val);
+
+                    if (val == 0)
+                    {
+                        field.Error = 1;
+                        AddEditErrorMessage = field.Name + " must be an integer";
+                        return false;
+                    }
+                }
+
+                if (item.GetPropertyType(field.Name) == typeof(float))
+                {
+                    float val = 0;
+                    float divisor = 1f;
+                    string valueStr = field.Value;
+
+                    if (valueStr.EndsWith("%"))
+                    {
+                        valueStr = valueStr.Remove(valueStr.Length - 1);
+                        divisor = 100f;
+                    }
+                    else if (valueStr.StartsWith("$"))
+                    {
+                        valueStr = valueStr.Remove(0, 1);
+                    }
+
+                    float.TryParse(valueStr, out val);
+
+                    if (val == 0)
+                    {
+                        field.Error = 1;
+                        AddEditErrorMessage = field.Name + " must be a number";
+                        return false;
+                    }
+
+                    field.Value = (val / divisor).ToString();
+                }
+
+                field.Error = 0;
+                item.SetProperty(field.Name, field.Value);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks for invalid input, then saves the input values to DB
+        /// </summary>
+        /// <param name="obj"></param>
         private void SaveAddEdit(object obj)
         {
             InventoryItem item = null;
@@ -325,83 +414,34 @@ namespace BuddhaBowls
             else
                 throw new NotImplementedException();
 
-            foreach(FieldSetting field in FieldsCollection)
+
+            if (SetOrErrorAddEditItem(ref item))
             {
-                if(!item.IsNullable(field.Name) && string.IsNullOrWhiteSpace(field.Value))
+
+                if (AddEditHeader.StartsWith("Edit"))
                 {
-                    field.Error = 1;
-                    AddEditErrorMessage = field.Name + " must be set";
-                    return;
+                    item.Update();
+                }
+                else if (AddEditHeader.StartsWith("Add"))
+                {
+                    _models.InventoryItems.Add(item);
+                    item.Insert();
+                }
+                else
+                {
+                    throw new NotImplementedException();
                 }
 
-                if(field.Name == "Name" && _models.InventoryItems.FirstOrDefault(x => x.Name.ToUpper() == field.Value.ToUpper()) != null &&
-                   AddEditHeader.StartsWith("Add"))
-                {
-                    field.Error = 1;
-                    AddEditErrorMessage = field.Value + " already exists in the database";
-                    return;
-                }
-
-                if (item.GetPropertyType(field.Name) == typeof(int))
-                {
-                    int val = 0;
-                    int.TryParse(field.Value, out val);
-
-                    if(val == 0)
-                    {
-                        field.Error = 1;
-                        AddEditErrorMessage = field.Name + " must be an integer";
-                        return;
-                    }
-                }
-
-                if (item.GetPropertyType(field.Name) == typeof(float))
-                {
-                    float val = 0;
-                    float divisor = 1f;
-                    string valueStr = field.Value;
-
-                    if(valueStr.EndsWith("%"))
-                    {
-                        valueStr = valueStr.Remove(valueStr.Length - 1);
-                        divisor = 100f;
-                    }
-                    else if(valueStr.StartsWith("$"))
-                    {
-                        valueStr = valueStr.Remove(0, 1);
-                    }
-
-                    float.TryParse(valueStr, out val);
-
-                    if(val == 0)
-                    {
-                        field.Error = 1;
-                        AddEditErrorMessage = field.Name + " must be a number";
-                        return;
-                    }
-
-                    field.Value = (val / divisor).ToString();
-                }
-
-                field.Error = 0;
-                item.SetProperty(field.Name, field.Value);
+                AddEditErrorMessage = "";
+                _window.DeleteEditAddTab();
+                RefreshInventoryList();
             }
-
-            if (AddEditHeader.StartsWith("Edit"))
-                item.Update();
-            else if (AddEditHeader.StartsWith("Add"))
-            {
-                _models.InventoryItems.Add(item);
-                item.Insert();
-            }
-            else
-                throw new NotImplementedException();
-
-            AddEditErrorMessage = "";
-            _window.DeleteEditAddTab();
-            RefreshInventoryList();
         }
 
+        /// <summary>
+        /// Resets the inventory count to the saved value before changing the datagrid
+        /// </summary>
+        /// <param name="obj"></param>
         private void ResetCount(object obj)
         {
             foreach (InventoryItem item in FilteredInventoryItems.Where(x => x.countUpdated))
@@ -473,27 +513,16 @@ namespace BuddhaBowls
             NotifyPropertyChanged("FilteredOrderItems");
         }
 
-        private void InitPriceBreakdown()
+        private void InitChangedEvents()
         {
-            _breakdownDict = new Dictionary<string, List<BreakdownListItem>>();
-            foreach (InventoryItem item in _models.InventoryItems)
+            if (_models != null && _models.InventoryItems != null)
             {
-                if (!_breakdownDict.Keys.Contains(item.Category))
+                foreach (InventoryItem item in _models.InventoryItems)
                 {
-                    _breakdownDict[item.Category] = new List<BreakdownListItem>();
-                }
-                if (item.LastOrderAmount > 0)
-                {
-                    _breakdownDict[item.Category].Add(new BreakdownListItem()
-                    {
-                        Name = item.Name,
-                        Background = MainHelper.ColorFromString(GlobalVar.BLANK_COLOR),
-                        Cost = item.PriceExtension
-                    });
+                    item.CountChanged = InventoryItemCountChanged;
+                    item.OrderAmountChanged = InventoryOrderAmountChanged;
                 }
             }
-
-            SetPriceBreakdownList();
         }
         #endregion
 
@@ -511,25 +540,6 @@ namespace BuddhaBowls
             FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
             //FilteredOrderItems = new List<OrderItem>() { new OrderItem() { Name = "Database not found" } };
             _databaseFound = false;
-        }
-
-        private void SetPriceBreakdownList()
-        {
-            PriceBreakdown = new ObservableCollection<BreakdownListItem>();
-
-            foreach (string key in _breakdownDict.Keys.OrderBy(x => x))
-            {
-                PriceBreakdown.Add(new BreakdownListItem() { Name = key, Background = _models.GetColorFromCategory(key) });
-                foreach (BreakdownListItem item in _breakdownDict[key])
-                {
-                    PriceBreakdown.Add(new BreakdownListItem()
-                    {
-                        Name = item.Name,
-                        Background = item.Background,
-                        Cost = item.Cost
-                    });
-                }
-            }
         }
 
         public void FilterInventoryItems(string filterStr)
@@ -606,17 +616,7 @@ namespace BuddhaBowls
             CancelOrderCanExecute = true;
         }
 
-        private void InitChangedEvents()
-        {
-            if (_models != null && _models.InventoryItems != null)
-            {
-                foreach (InventoryItem item in _models.InventoryItems)
-                {
-                    item.CountChanged = InventoryItemCountChanged;
-                    item.OrderAmountChanged = InventoryOrderAmountChanged;
-                }
-            }
-        }
+        
     }
 
     public class FieldSetting : INotifyPropertyChanged
