@@ -71,7 +71,9 @@ namespace BuddhaBowls.Services
             List<string> columns = GetColumnNames(tableName).Skip(1).ToList();
             List<string> newRecord = columns.Select(x => mapping.Keys.Contains(x) ? mapping[x] : "").ToList();
 
-            int lastId = int.Parse(File.ReadLines(FilePath(tableName)).Last().Split(',')[0]);
+            int lastId = 0;
+            if (!int.TryParse(File.ReadLines(FilePath(tableName)).Last().Split(',')[0], out lastId))
+                lastId = -1;
             int newId = lastId + 1;
 
             newRecord.Insert(0, (lastId + 1).ToString());

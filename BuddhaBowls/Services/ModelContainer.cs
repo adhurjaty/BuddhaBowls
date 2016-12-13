@@ -16,6 +16,7 @@ namespace BuddhaBowls.Services
         public List<InventoryItem> InventoryItems { get; set; }
         public List<BatchItem> BatchItems { get; set; }
         public HashSet<string> ItemCategories { get; set; }
+        public List<PurchaseOrder> PurchaseOrders { get; set; }
 
         public ModelContainer()
         {
@@ -28,6 +29,7 @@ namespace BuddhaBowls.Services
         {
             InventoryItems = ModelHelper.InstantiateList<InventoryItem>("InventoryItem");
             BatchItems = ModelHelper.InstantiateList<BatchItem>("BatchItem");
+            PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder");
 
             if (InventoryItems == null || BatchItems == null)
                 return;
@@ -73,6 +75,12 @@ namespace BuddhaBowls.Services
             }
 
             return MainHelper.ColorFromString(GlobalVar.BLANK_COLOR);
+        }
+
+        public string GetCategoryColorHex(string category)
+        {
+            return "#" + (_categoryColors.Keys.Contains(category.ToUpper()) ?
+                            _categoryColors[category.ToUpper()] : GlobalVar.BLANK_COLOR);
         }
 
         private void SetInventoryCategories()

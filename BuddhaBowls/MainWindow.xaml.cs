@@ -1,4 +1,5 @@
-﻿using MahApps.Metro.Controls;
+﻿using BuddhaBowls.Models;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,8 @@ namespace BuddhaBowls
         {
             DataContext = mvm;
             InitializeComponent();
+
+            // put settings back in when it is clear what GUI will look like
             //Left = Properties.Settings.Default.WindowLocation.X;
             //Top = Properties.Settings.Default.WindowLocation.Y;
             //Height = Properties.Settings.Default.WindowSize.Height;
@@ -78,12 +81,20 @@ namespace BuddhaBowls
 
         private void MasterList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
+            SetBlankToZero((TextBox)e.EditingElement);
             ((MainViewModel)DataContext).InventoryItemCountChanged();
         }
 
         private void OrderList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
+            SetBlankToZero((TextBox)e.EditingElement);
             ((MainViewModel)DataContext).InventoryOrderAmountChanged();
+        }
+
+        private void SetBlankToZero(TextBox tb)
+        {
+            if (string.IsNullOrWhiteSpace(tb.Text))
+                tb.Text = "0";
         }
 
         //private void FilterOrderItems_TextChanged(object sender, TextChangedEventArgs e)

@@ -7,7 +7,35 @@ namespace BuddhaBowls.Models
     public class PurchaseOrder : Model
     {
         public string Company { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime OrderDate { get; set; }
+
+        private DateTime? _receivedDate;
+        public DateTime? ReceivedDate
+        {
+            get
+            {
+                return _receivedDate;
+            }
+            set
+            {
+                if(ReceivedDate != null)
+                    _received = true;
+                _receivedDate = value;
+            }
+        }
+
+        private bool _received;
+        public bool Received
+        {
+            get
+            {
+                return _received;
+            }
+            set
+            {
+                _received = value;
+            }
+        }
 
         public PurchaseOrder() : base()
         {
@@ -17,11 +45,16 @@ namespace BuddhaBowls.Models
         public PurchaseOrder(string vendor, List<InventoryItem> inventoryItems) : this()
         {
             Company = vendor;
-            Timestamp = DateTime.Now;
+            OrderDate = DateTime.Now;
 
             Insert();
 
             ModelHelper.CreateTable(inventoryItems, @"Orders\" + vendor + "_" + Id.ToString());
+        }
+
+        public override string[] GetPropertiesDB(string[] omit = null)
+        {
+            return base.GetPropertiesDB(new string[] { "Received" });
         }
     }
 }

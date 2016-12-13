@@ -227,6 +227,9 @@ namespace BuddhaBowls.Models
             if (thisType == typeof(float) && value.GetType() == typeof(string))
                 value = float.Parse((string)value);
 
+            if (thisType == typeof(DateTime) || thisType == typeof(DateTime?) && value.GetType() == typeof(string))
+                value = DateTime.Parse((string)value);
+
             GetType().GetProperty(property).SetValue(this, value);
         }
 

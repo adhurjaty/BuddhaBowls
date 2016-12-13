@@ -122,6 +122,12 @@ namespace BuddhaBowls
         // Collection of fields and values for use in Model edit forms
         public ObservableCollection<FieldSetting> FieldsCollection { get; set; }
 
+        public ObservableCollection<BreakdownListItem> BreakdownList { get; set; }
+
+        public ObservableCollection<PurchaseOrder> OpenOrders { get; set; }
+        public ObservableCollection<PurchaseOrder> ReceivedOrders { get; set; }
+        public PurchaseOrder SelectedOrder { get; set; }
+
         // name of the vendor in the New Order form
         public string OrderVendor { get; set; }
 
@@ -205,6 +211,20 @@ namespace BuddhaBowls
                 return !string.IsNullOrWhiteSpace(OrderVendor) && _models.InventoryItems.FirstOrDefault(x => x.LastOrderAmount > 0) != null;
             }
         }
+
+        private float _orderCost;
+        public float OrderTotal
+        {
+            get
+            {
+                return _orderCost;
+            }
+            set
+            {
+                _orderCost = value;
+                NotifyPropertyChanged("OrderCost");
+            }
+        }
         #endregion
 
         public MainViewModel()
@@ -224,6 +244,8 @@ namespace BuddhaBowls
             ClearOrderCommand = new RelayCommand(ClearOrderAmounts);
 
             _dbConnected = TryDBConnect();
+
+            MakeBreakdownDisplay();
         }
 
         #region ICommand Helpers
@@ -541,6 +563,143 @@ namespace BuddhaBowls
 
             return false;
         }
+
+        /// <summary>
+        /// Populate the 2 dataGrids in the Orders overview
+        /// </summary>
+        /// <returns></returns>
+        private bool LoadPreviousOrders()
+        {
+            if (_models != null && _models.PurchaseOrders != null)
+            {
+                OpenOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => !x.Received).OrderBy(x => x.OrderDate));
+                ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received).OrderBy(x => x.ReceivedDate));
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Display on the datagrids that the inventory items could not be found
+        /// </summary>
+        private void DisplayItemsNotFound()
+        {
+            FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
+            _databaseFound = false;
+        }
+
+        private void OrdersNotFound()
+        {
+            OpenOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { Company = "Orders not found" } };
+            ReceivedOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { Company = "Orders not found" } };
+        }
+
+        /// <summary>
+        /// Attempt to connect to the data - display a warning message in the datagrid if unsuccessful
+        /// </summary>
+        /// <returns></returns>
+        private bool TryDBConnect()
+        {
+            if (!LoadDisplayItems())
+            {
+                DisplayItemsNotFound();
+                return false;
+            }
+            if(!LoadPreviousOrders())
+            {
+                OrdersNotFound();
+                return false;
+            }
+            return true;
+        }
+
+        private void MakeBreakdownDisplay()
+        {
+            BreakdownList = new ObservableCollection<BreakdownListItem>();
+
+            string category = "";
+            OrderTotal = 0;
+            float categoryTotal = 0;
+            foreach (InventoryItem item in _models.InventoryItems.Where(x => x.LastOrderAmount > 0).OrderBy(x => x.Category))
+            {
+                if(category != "" && item.Category != category)
+                {
+                    BreakdownList.Add(new BreakdownListItem()
+                    {
+                        Name = category + " Total",
+                        Background = _models.GetCategoryColorHex(category),
+                        Cost = categoryTotal
+                    });
+                    categoryTotal = 0;
+                }
+                if (item.Category != category)
+                {
+                    category = item.Category;
+                    BreakdownList.Add(new BreakdownListItem()
+                    {
+                        Name = item.Category,
+                        Background = _models.GetCategoryColorHex(category),
+                        IsHeader = true
+                    });
+                }
+                BreakdownList.Add(new BreakdownListItem()
+                {
+                    Name = item.Name,
+                    Cost = item.PriceExtension,
+                    Background = _models.GetCategoryColorHex("default")
+                });
+
+                OrderTotal += item.PriceExtension;
+                categoryTotal += item.PriceExtension;
+            }
+        }
+        #endregion
+
+        #region Update UI Methods
+
+        public void ClearErrors()
+        {
+            AddEditErrorMessage = "";
+            foreach (FieldSetting field in FieldsCollection)
+            {
+                field.Error = 0;
+            }
+
+            NotifyPropertyChanged("FieldsCollection");
+        }
+
+        /// <summary>
+        /// Update the datagrid displays for inventory items
+        /// </summary>
+        private void RefreshInventoryList()
+        {
+            FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
+        }
+
+        /// <summary>
+        /// Called when Master List is edited
+        /// </summary>
+        public void InventoryItemCountChanged()
+        {
+            ChangeCountCanExecute = true;
+        }
+
+        /// <summary>
+        /// Called when New Order is edited
+        /// </summary>
+        public void InventoryOrderAmountChanged()
+        {
+            //NotifyPropertyChanged("FilteredInventoryItems");
+            FilteredInventoryItems = new ObservableCollection<InventoryItem>(FilteredInventoryItems);
+            CancelOrderCanExecute = true;
+        }
+
+        public void MoveOrderToReceived(PurchaseOrder po)
+        {
+            po.ReceivedDate = DateTime.Now;
+            LoadPreviousOrders();
+        }
         #endregion
 
         /// <summary>
@@ -557,15 +716,6 @@ namespace BuddhaBowls
         }
 
         /// <summary>
-        /// Display on the datagrids that the inventory items could not be found
-        /// </summary>
-        private void DisplayItemsNotFound()
-        {
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
-            _databaseFound = false;
-        }
-
-        /// <summary>
         /// Filter list of inventory items based on the string in the filter box above datagrids
         /// </summary>
         /// <param name="filterStr"></param>
@@ -577,17 +727,6 @@ namespace BuddhaBowls
                 FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems
                                                         .Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
                                                         .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
-        }
-
-        public void ClearErrors()
-        {
-            AddEditErrorMessage = "";
-            foreach(FieldSetting field in FieldsCollection)
-            {
-                field.Error = 0;
-            }
-
-            NotifyPropertyChanged("FieldsCollection");
         }
 
         /// <summary>
@@ -619,49 +758,11 @@ namespace BuddhaBowls
 
             return fieldsAndVals;
         }
-
-        /// <summary>
-        /// Update the datagrid displays for inventory items
-        /// </summary>
-        private void RefreshInventoryList()
-        {
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
-        }
-
-        /// <summary>
-        /// Attempt to connect to the data - display a warning message in the datagrid if unsuccessful
-        /// </summary>
-        /// <returns></returns>
-        private bool TryDBConnect()
-        {
-            if (LoadDisplayItems())
-                return true;
-            else
-                DisplayItemsNotFound();
-            return false;
-        }
-
-        /// <summary>
-        /// Called when Master List is edited
-        /// </summary>
-        public void InventoryItemCountChanged()
-        {
-            ChangeCountCanExecute = true;
-        }
-
-        /// <summary>
-        /// Called when New Order is edited
-        /// </summary>
-        public void InventoryOrderAmountChanged()
-        {
-            //NotifyPropertyChanged("FilteredInventoryItems");
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>(FilteredInventoryItems);
-            CancelOrderCanExecute = true;
-        }
-
-        
     }
 
+    /// <summary>
+    /// Class to store Model property names and values for display in add/edit form
+    /// </summary>
     public class FieldSetting : INotifyPropertyChanged
     {
         private string _name;
@@ -717,8 +818,16 @@ namespace BuddhaBowls
 
     public class BreakdownListItem
     {
-        public long Background { get; set; }
+        public string Background { get; set; }
         public string Name { get; set; }
         public float Cost { get; set; }
+        public bool IsHeader { get; set; } = false;
+        public Visibility ShowPrice
+        {
+            get
+            {
+                return IsHeader ? Visibility.Hidden : Visibility.Visible;
+            }
+        }
     }
 }

@@ -22,9 +22,29 @@
                                 <RowDefinition Height="1*" />
                             </Grid.RowDefinitions>
                             <Label Content="Open Orders" Grid.Row="0" />
-                            <ListBox Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0, 30" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                            <DataGrid x:Name="dataGrid1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                      Margin="0, 25, 0, 0" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding OpenOrders}"
+                                      SelectedItem="{Binding SelectedOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Vendor" Binding="{Binding Company}" Width="2*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Order Date" Binding="{Binding Path=OrderDate, StringFormat={}{0:MM/dd/yy}}"
+                                                        Width="2*" IsReadOnly="True" />
+                                    <DataGridCheckBoxColumn Header="Received" Binding="{Binding Received}" Width="1*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
                             <Label Content="Received Orders" Grid.Row="1" />
-                            <ListBox Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0, 30" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                            <DataGrid x:Name="dataGrid2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                      Margin="0, 25, 0, 0" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding PastOrders}"
+                                      SelectedItem="{Binding SelectedOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Vendor" Binding="{Binding Company}" Width="2*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Order Date" Binding="{Binding Path=OrderDate, StringFormat={}{0:MM/dd/yy}}"
+                                                        Width="2*" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="Received Date" Binding="{Binding ReceivedDate}" Width="1*" IsReadOnly="True" />
+                                </DataGrid.Columns>
+                            </DataGrid>
                         </Grid>
                     </TabItem>
                     <TabItem Header="New Order">
@@ -60,11 +80,27 @@
                                 </DataGrid>
                                 <Border Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black" />
                                 <Label x:Name="label4" Grid.Column="1" Content="Total:" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20, 5"/>
-                                <TextBlock Grid.Column="1" Text="{Binding Path=OrderTotal, StringFormat=C}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="70, 5"/>
-                                <TextBlock x:Name="textBlock1" Grid.Column="1" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="NoWrap" Text="Price Breakdown"
-                                           VerticalAlignment="Top" FontSize="18"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Path=OrderTotal, StringFormat=C}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="70, 10"/>
                                 <Button x:Name="button6" Content="Clear Amts" HorizontalAlignment="Right" Margin="10,20" VerticalAlignment="Top" Width="75"
                                         Command="{Binding ClearOrderCommand}"/>
+                                <TextBlock x:Name="textBlock1" Grid.Column="1" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="NoWrap" Text="Price Breakdown"
+                                           VerticalAlignment="Top" FontSize="18"/>
+                                <ItemsControl x:Name="priceBreakdown" Grid.Column="1" ItemsSource="{Binding BreakdownList}"
+                                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3, 40, 3, 30" >
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Background="{Binding Background}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="4*" />
+                                                    <ColumnDefinition Width="1*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Name}" Grid.Column="0" HorizontalAlignment="Left"/>
+                                                <TextBlock Text="{Binding Path=Cost, StringFormat=c}" Grid.Column="1" HorizontalAlignment="Right"
+                                                           Visibility="{Binding ShowPrice}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </Grid>
                             <Button x:Name="button4" Content="Save" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0"
                                     Grid.Row="2" Width="75" Command="{Binding SaveNewOrderCommand}" />
@@ -99,7 +135,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
                             <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="1*"/>
-                            <Controls:DataGridNumericUpDownColumn Header="Count" Binding="{Binding Count}" StringFormat="0.##" Width="1*" />
+                            <DataGridTextColumn Header="Count" Binding="{Binding Path=Count, StringFormat=0.##}" Width="1*" />
                         </DataGrid.Columns>
                     </DataGrid>
                     <Button Grid.Row="4" Height ="25" Width="80" Content="Save" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding SaveCountCommand}" />

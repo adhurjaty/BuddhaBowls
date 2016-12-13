@@ -65,6 +65,8 @@ namespace BuddhaBowls.Helpers
 
             foreach (string[] row in records)
             {
+                if (row.Where(x => string.IsNullOrWhiteSpace(x)).Count() == row.Length)
+                    continue;
                 listObj = new T();
                 if (columns == null)
                     listObj.InitializeObject(row);
@@ -76,6 +78,17 @@ namespace BuddhaBowls.Helpers
                 returnList.Add(listObj);
             }
             return returnList;
+        }
+
+        public static string[][] ConvertToRowStrings<T>(List<T> records) where T : Model, new()
+        {
+            string[] columns = records[0].GetPropertiesDB();
+            return records.OrderBy(x => x.Id)
+                                    .Select(x =>
+                                                columns.Select(y => x.GetPropertyValue(y) == null ? "" : 
+                                                                            x.GetPropertyValue(y).ToString()
+                                                              ).ToArray()
+                                           ).ToArray();
         }
 
         private static string[] OrderColumns(string[] columns)
@@ -90,7 +103,7 @@ namespace BuddhaBowls.Helpers
         public static void CreateTable<T>(List<T> records, string tableName) where T : Model, new()
         {
             string[] columns = records[0].GetPropertiesDB();
-            string[][] rows = records.Select(x => columns.Select(y => x.GetPropertyValue(y).ToString()).ToArray()).ToArray();
+            string[][] rows = ConvertToRowStrings(records);
 
             DatabaseInterface dbInt = new DatabaseInterface();
             dbInt.CreateTable(columns, rows, tableName);
