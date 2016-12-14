@@ -74,24 +74,24 @@ namespace BuddhaBowls
                 tabs.SelectedIndex = _lastTab;
         }
 
-        private void FilterItems_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox textBox = FilterItemBox;
+        //private void FilterItems_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    TextBox textBox = FilterItemBox;
 
-            ((MainViewModel)DataContext).FilterInventoryItems(textBox.Text);
-        }
+        //    ((MainViewModel)DataContext).FilterInventoryItems(textBox.Text);
+        //}
 
-        private void MasterList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            SetBlankToZero((TextBox)e.EditingElement);
-            ((MainViewModel)DataContext).InventoryItemCountChanged();
-        }
+        //private void MasterList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        //{
+        //    SetBlankToZero((TextBox)e.EditingElement);
+        //    ((MainViewModel)DataContext).InventoryItemCountChanged();
+        //}
 
-        private void SetBlankToZero(TextBox tb)
-        {
-            if (string.IsNullOrWhiteSpace(tb.Text))
-                tb.Text = "0";
-        }
+        //private void SetBlankToZero(TextBox tb)
+        //{
+        //    if (string.IsNullOrWhiteSpace(tb.Text))
+        //        tb.Text = "0";
+        //}
 
         //private void FilterOrderItems_TextChanged(object sender, TextChangedEventArgs e)
         //{

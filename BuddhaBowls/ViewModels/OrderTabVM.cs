@@ -1,5 +1,6 @@
 ﻿using BuddhaBowls.Models;
 using BuddhaBowls.Services;
+using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,6 +27,8 @@ namespace BuddhaBowls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        public MainViewModel ParentContext { get; set; }
+
         #region Content Binders
         public ObservableCollection<BreakdownCategoryItem> BreakdownList { get; set; }
 
@@ -44,17 +47,15 @@ namespace BuddhaBowls
         }
 
         // Collection used for both Master List and New Order List
-        private ObservableCollection<InventoryItem> _filteredInventoryItems;
         public ObservableCollection<InventoryItem> FilteredInventoryItems
         {
             get
             {
-                return _filteredInventoryItems;
+                return ParentContext.FilteredInventoryItems;
             }
             set
             {
-                _filteredInventoryItems = value;
-                NotifyPropertyChanged("FilteredInventoryItems");
+                ParentContext.FilteredInventoryItems = value;
             }
         }
 
@@ -145,8 +146,9 @@ namespace BuddhaBowls
         }
         #endregion
 
-        public OrderTabVM(ModelContainer models)
+        public OrderTabVM(ModelContainer models, MainViewModel parent)
         {
+            ParentContext = parent;
             if (models == null)
             {
                 TryDBConnect(false);
@@ -379,6 +381,22 @@ namespace BuddhaBowls
                 return false;
             }
             return true;
+        }
+    }
+
+    public class BreakdownCategoryItem
+    {
+        public string Background { get; set; }
+        public string Category { get; set; }
+        public float TotalAmount { get; set; }
+        public ObservableCollection<InventoryItem> Items { get; set; }
+
+        public BreakdownCategoryItem(IEnumerable<InventoryItem> items)
+        {
+            Items = new ObservableCollection<InventoryItem>(items);
+            Category = Items.First().Category;
+
+            TotalAmount = Items.Sum(x => x.PriceExtension);
         }
     }
 }

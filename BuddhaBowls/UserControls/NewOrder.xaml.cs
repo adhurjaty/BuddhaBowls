@@ -13,17 +13,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BuddhaBowls
+namespace BuddhaBowls.UserControls
 {
     /// <summary>
     /// Interaction logic for NewOrder.xaml
     /// </summary>
     public partial class NewOrder : UserControl
     {
-        public NewOrder(object context)
+        public NewOrder()
+        {
+            InitializeComponent();
+        }
+
+        public NewOrder(object context) : this()
         {
             DataContext = context;
-            InitializeComponent();
         }
 
         private void FilterItems_TextChanged(object sender, TextChangedEventArgs e)
@@ -36,8 +40,7 @@ namespace BuddhaBowls
         private void OrderList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             SetBlankToZero((TextBox)e.EditingElement);
-            // not crazy about referencing InventoryOrderAmountChanged through the MainViewModel
-            ((MainViewModel)DataContext).OrderTab.InventoryOrderAmountChanged();
+            ((OrderTabVM)DataContext).InventoryOrderAmountChanged();
         }
 
         private void SetBlankToZero(TextBox tb)

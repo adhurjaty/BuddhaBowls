@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BuddhaBowls
+namespace BuddhaBowls.UserControls
 {
     /// <summary>
     /// Interaction logic for OrderTabControl.xaml
@@ -23,6 +23,11 @@ namespace BuddhaBowls
         public OrderTabControl()
         {
             InitializeComponent();
+        }
+
+        public OrderTabControl(OrderTabVM viewModel) : this()
+        {
+            DataContext = viewModel;
         }
     }
 }

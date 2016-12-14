@@ -1,9 +1,10 @@
-﻿<UserControl x:Class="BuddhaBowls.EditItem"
+﻿<UserControl x:Class="BuddhaBowls.UserControls.EditItem"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BuddhaBowls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:parent="clr-namespace:BuddhaBowls"
+             xmlns:local="clr-namespace:BuddhaBowls.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -17,7 +18,7 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding FieldsCollection}">
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type local:FieldSetting}">
+                    <DataTemplate DataType="{x:Type parent:FieldSetting}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1*"></ColumnDefinition>

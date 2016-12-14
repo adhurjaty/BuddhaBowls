@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace BuddhaBowls
+namespace BuddhaBowls.UserControls
 {
     /// <summary>
     /// Interaction logic for EditItem.xaml
@@ -12,9 +12,14 @@ namespace BuddhaBowls
             InitializeComponent();
         }
 
+        public EditItem(object context) : this()
+        {
+            DataContext = context;
+        }
+
         private void FieldValue_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ((MainViewModel)DataContext).ClearErrors();
+            ((InventoryTabVM)DataContext).ClearErrors();
         }
     }
 }

@@ -79,10 +79,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BreakdownDisplay.xaml.cs">
+    <Compile Include="UserControls\BreakdownDisplay.xaml.cs">
       <DependentUpon>BreakdownDisplay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EditItem.xaml.cs">
+    <Compile Include="UserControls\EditItem.xaml.cs">
       <DependentUpon>EditItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="GlobalVar.cs" />
@@ -95,26 +95,30 @@
     <Compile Include="Models\PurchaseOrder.cs" />
     <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\VendorItem.cs" />
-    <Compile Include="NewOrder.xaml.cs">
+    <Compile Include="UserControls\InventoryTabControl.xaml.cs">
+      <DependentUpon>InventoryTabControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\NewOrder.xaml.cs">
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
-    <Compile Include="OrderTabControl.xaml.cs">
+    <Compile Include="UserControls\OrderTabControl.xaml.cs">
       <DependentUpon>OrderTabControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ReportGenerator.cs" />
     <Compile Include="Services\DatabaseInterface.cs" />
     <Compile Include="Services\ModelContainer.cs" />
-    <Compile Include="BreakdownCategory.xaml.cs">
+    <Compile Include="UserControls\BreakdownCategory.xaml.cs">
       <DependentUpon>BreakdownCategory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\InventoryTabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\OrderTabVM.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
-    <Page Include="BreakdownDisplay.xaml">
+    <Page Include="UserControls\BreakdownDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="EditItem.xaml">
+    <Page Include="UserControls\EditItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -130,15 +134,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="NewOrder.xaml">
+    <Page Include="UserControls\InventoryTabControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BreakdownCategory.xaml">
+    <Page Include="UserControls\NewOrder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="OrderTabControl.xaml">
+    <Page Include="UserControls\BreakdownCategory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\OrderTabControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
