@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="BuddhaBowls.OrderTabControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BuddhaBowls"
+            xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Label Content="Open Orders" Grid.Row="0" />
+        <DataGrid x:Name="dataGrid1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                Margin="0, 25, 0, 0" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding OpenOrders}"
+                                SelectedItem="{Binding SelectedOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Vendor" Binding="{Binding Company}" Width="2*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Order Date" Binding="{Binding Path=OrderDate, StringFormat={}{0:MM/dd/yy}}"
+                                                Width="2*" IsReadOnly="True" />
+                <DataGridCheckBoxColumn Header="Received" Binding="{Binding Received}" Width="1*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Grid.Row="0" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Margin="35, 0" Command="{Binding AddNewOrderCommand}">
+            <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </Button>
+        <Button Grid.Row="0" Height="15" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Margin="5, 0" Command="{Binding DeleteOrderCommand}">
+            <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </Button>
+        <Button Content="Received" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="15" Width="60"
+                            Margin="70, 0" Command="{Binding ReceivedOrdersCommand}"/>
+        <Button Content="Clear" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="15" Width="60"
+                            Margin="130, 0" Command="{Binding ClearReceivedCheckCommand}"/>
+        <Button Content="View" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="15" Width="60"
+                            Margin="190, 0" Command="{Binding ViewOrderCommand}" />
+        <Label Content="Received Orders" Grid.Row="1" />
+        <DataGrid x:Name="dataGrid2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                Margin="0, 25, 0, 0" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}"
+                                SelectedItem="{Binding SelectedOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Vendor" Binding="{Binding Company}" Width="2*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Order Date" Binding="{Binding Path=OrderDate, StringFormat={}{0:MM/dd/yy}}"
+                                                Width="2*" IsReadOnly="True" />
+                <DataGridTextColumn Header="Received Date" Binding="{Binding ReceivedDate}" Width="1*" IsReadOnly="True" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Grid.Row="1" Width="25" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Margin="5, 0" Command="{Binding DeleteReceivedOrderCommand}">
+            <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </Button>
+        <Button Content="View" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Height="15" Width="60"
+                            Margin="35, 0" Command="{Binding ViewOrderCommand}" />
+    </Grid>
+</UserControl>

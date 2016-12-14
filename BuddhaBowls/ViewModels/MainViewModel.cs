@@ -28,6 +28,8 @@ namespace BuddhaBowls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        public OrderTabVM OrderTab { get; set; }
+
         #region Data Bindings
         // Value in text box for selecting the folder location of DB files
         private string _dataFileFolder;
@@ -122,53 +124,53 @@ namespace BuddhaBowls
         // Collection of fields and values for use in Model edit forms
         public ObservableCollection<FieldSetting> FieldsCollection { get; set; }
 
-        public ObservableCollection<BreakdownCategoryItem> BreakdownList { get; set; }
+        //public ObservableCollection<BreakdownCategoryItem> BreakdownList { get; set; }
 
-        private ObservableCollection<PurchaseOrder> _openOrders;
-        public ObservableCollection<PurchaseOrder> OpenOrders
-        {
-            get
-            {
-                return _openOrders;
-            }
-            set
-            {
-                _openOrders = value;
-                NotifyPropertyChanged("OpenOrders");
-            }
-        }
+        //private ObservableCollection<PurchaseOrder> _openOrders;
+        //public ObservableCollection<PurchaseOrder> OpenOrders
+        //{
+        //    get
+        //    {
+        //        return _openOrders;
+        //    }
+        //    set
+        //    {
+        //        _openOrders = value;
+        //        NotifyPropertyChanged("OpenOrders");
+        //    }
+        //}
 
-        private ObservableCollection<PurchaseOrder> _receivedOrders;
-        public ObservableCollection<PurchaseOrder> ReceivedOrders
-        {
-            get
-            {
-                return _receivedOrders;
-            }
-            set
-            {
-                _receivedOrders = value;
-                NotifyPropertyChanged("ReceivedOrders");
-            }
-        }
-        public PurchaseOrder SelectedOrder { get; set; }
+        //private ObservableCollection<PurchaseOrder> _receivedOrders;
+        //public ObservableCollection<PurchaseOrder> ReceivedOrders
+        //{
+        //    get
+        //    {
+        //        return _receivedOrders;
+        //    }
+        //    set
+        //    {
+        //        _receivedOrders = value;
+        //        NotifyPropertyChanged("ReceivedOrders");
+        //    }
+        //}
+        //public PurchaseOrder SelectedOrder { get; set; }
 
         // name of the vendor in the New Order form
-        public string OrderVendor { get; set; }
+        //public string OrderVendor { get; set; }
 
-        private float _orderCost;
-        public float OrderTotal
-        {
-            get
-            {
-                return _orderCost;
-            }
-            set
-            {
-                _orderCost = value;
-                NotifyPropertyChanged("OrderCost");
-            }
-        }
+        //private float _orderCost;
+        //public float OrderTotal
+        //{
+        //    get
+        //    {
+        //        return _orderCost;
+        //    }
+        //    set
+        //    {
+        //        _orderCost = value;
+        //        NotifyPropertyChanged("OrderCost");
+        //    }
+        //}
 
         private bool _dbConnected;
         #endregion
@@ -194,24 +196,24 @@ namespace BuddhaBowls
         public ICommand SaveCountCommand { get; set; }
         // Reset button in Master inventory form
         public ICommand ResetCountCommand { get; set; }
-        // Save button in New Order form
-        public ICommand SaveNewOrderCommand { get; set; }
-        // Reset button in New Order form
-        public ICommand CancelNewOrderCommand { get; set; }
-        // Clear Amts button in New Order form
-        public ICommand ClearOrderCommand { get; set; }
-        // Received button in Order Overview form
-        public ICommand ReceivedOrdersCommand { get; set; }
-        // Clear button in Order Overview form
-        public ICommand ClearReceivedCheckCommand { get; set; }
-        // View button in Order Overview form
-        public ICommand ViewOrderCommand { get; set; }
-        // Plus button in Order Overview form
-        public ICommand AddNewOrderCommand { get; set; }
-        // Minus button in Order Overview form for open orders
-        public ICommand DeleteOrderCommand { get; set; }
-        // Minus button in Order Overview form for received orders
-        public ICommand DeleteReceivedOrderCommand { get; set; }
+        //// Save button in New Order form
+        //public ICommand SaveNewOrderCommand { get; set; }
+        //// Reset button in New Order form
+        //public ICommand CancelNewOrderCommand { get; set; }
+        //// Clear Amts button in New Order form
+        //public ICommand ClearOrderCommand { get; set; }
+        //// Received button in Order Overview form
+        //public ICommand ReceivedOrdersCommand { get; set; }
+        //// Clear button in Order Overview form
+        //public ICommand ClearReceivedCheckCommand { get; set; }
+        //// View button in Order Overview form
+        //public ICommand ViewOrderCommand { get; set; }
+        //// Plus button in Order Overview form
+        //public ICommand AddNewOrderCommand { get; set; }
+        //// Minus button in Order Overview form for open orders
+        //public ICommand DeleteOrderCommand { get; set; }
+        //// Minus button in Order Overview form for received orders
+        //public ICommand DeleteReceivedOrderCommand { get; set; }
 
         public bool ReportCanExecute
         {
@@ -254,37 +256,37 @@ namespace BuddhaBowls
         }
 
         public bool ChangeCountCanExecute { get; set; } = false;
-        public bool SaveOrderCanExecute
-        {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(OrderVendor) && _models.InventoryItems.FirstOrDefault(x => x.LastOrderAmount > 0) != null;
-            }
-        }
+        //public bool SaveOrderCanExecute
+        //{
+        //    get
+        //    {
+        //        return !string.IsNullOrWhiteSpace(OrderVendor) && _models.InventoryItems.FirstOrDefault(x => x.LastOrderAmount > 0) != null;
+        //    }
+        //}
 
-        public bool ViewOrderCanExecute
-        {
-            get
-            {
-                return SelectedOrder != null;
-            }
-        }
+        //public bool ViewOrderCanExecute
+        //{
+        //    get
+        //    {
+        //        return SelectedOrder != null;
+        //    }
+        //}
 
-        public bool RemoveOpenOrderCanExecute
-        {
-            get
-            {
-                return SelectedOrder != null && SelectedOrder.ReceivedDate == null;
-            }
-        }
+        //public bool RemoveOpenOrderCanExecute
+        //{
+        //    get
+        //    {
+        //        return SelectedOrder != null && SelectedOrder.ReceivedDate == null;
+        //    }
+        //}
 
-        public bool RemoveReceivedOrderCanExecute
-        {
-            get
-            {
-                return SelectedOrder != null && SelectedOrder.ReceivedDate != null;
-            }
-        }
+        //public bool RemoveReceivedOrderCanExecute
+        //{
+        //    get
+        //    {
+        //        return SelectedOrder != null && SelectedOrder.ReceivedDate != null;
+        //    }
+        //}
         #endregion
 
         public MainViewModel()
@@ -299,19 +301,21 @@ namespace BuddhaBowls
             SaveSettingsCommand = new RelayCommand(SaveSettings, x => SaveSettingsCanExecute);
             SaveCountCommand = new RelayCommand(SaveCount, x => ChangeCountCanExecute);
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
-            SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
-            CancelNewOrderCommand = new RelayCommand(CancelOrder);
-            ClearOrderCommand = new RelayCommand(ClearOrderAmounts);
-            ReceivedOrdersCommand = new RelayCommand(MoveReceivedOrders);
-            ClearReceivedCheckCommand = new RelayCommand(ClearReceivedChecks);
-            ViewOrderCommand = new RelayCommand(ViewOrder, x => ViewOrderCanExecute);
-            AddNewOrderCommand = new RelayCommand(StartNewOrder);
-            DeleteOrderCommand = new RelayCommand(RemoveOpenOrder, x => RemoveOpenOrderCanExecute);
-            DeleteReceivedOrderCommand = new RelayCommand(RemoveReceivedOrder, x => RemoveReceivedOrderCanExecute);
+            //SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
+            //CancelNewOrderCommand = new RelayCommand(CancelOrder);
+            //ClearOrderCommand = new RelayCommand(ClearOrderAmounts);
+            //ReceivedOrdersCommand = new RelayCommand(MoveReceivedOrders);
+            //ClearReceivedCheckCommand = new RelayCommand(ClearReceivedChecks);
+            //ViewOrderCommand = new RelayCommand(ViewOrder, x => ViewOrderCanExecute);
+            //AddNewOrderCommand = new RelayCommand(StartNewOrder);
+            //DeleteOrderCommand = new RelayCommand(RemoveOpenOrder, x => RemoveOpenOrderCanExecute);
+            //DeleteReceivedOrderCommand = new RelayCommand(RemoveReceivedOrder, x => RemoveReceivedOrderCanExecute);
 
             _dbConnected = TryDBConnect();
 
-            MakeBreakdownDisplay();
+            OrderTab = new OrderTabVM(_models);
+
+            //MakeBreakdownDisplay();
         }
 
         #region ICommand Helpers
@@ -552,119 +556,120 @@ namespace BuddhaBowls
             ChangeCountCanExecute = false;
         }
 
-        /// <summary>
-        /// Writes the inventory items to DB as they are in the New Order datagrid
-        /// </summary>
-        /// <param name="obj"></param>
-        private void SaveOrder(object obj)
-        {
-            foreach(InventoryItem item in FilteredInventoryItems)
-            {
-                item.Update();
-            }
+        ///// <summary>
+        ///// Writes the inventory items to DB as they are in the New Order datagrid
+        ///// </summary>
+        ///// <param name="obj"></param>
+        //private void SaveOrder(object obj)
+        //{
+        //    foreach(InventoryItem item in FilteredInventoryItems)
+        //    {
+        //        item.Update();
+        //    }
 
-            PurchaseOrder po = new PurchaseOrder(OrderVendor, _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList());
+        //    PurchaseOrder po = new PurchaseOrder(OrderVendor, _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList());
 
-            OrderVendor = "";
-            _window.DeleteTempTab();
-        }
+        //    OrderVendor = "";
+        //    _window.DeleteTempTab();
+        //}
 
-        /// <summary>
-        /// Resets order amount values to last saved order amount value in New Order datagrid
-        /// </summary>
-        /// <param name="obj"></param>
-        private void CancelOrder(object obj)
-        {
-            foreach (InventoryItem item in FilteredInventoryItems)
-            {
-                item.LastOrderAmount = item.GetPrevOrderAmount();
-            }
+        ///// <summary>
+        ///// Resets order amount values to last saved order amount value in New Order datagrid
+        ///// </summary>
+        ///// <param name="obj"></param>
+        //private void CancelOrder(object obj)
+        //{
+        //    foreach (InventoryItem item in FilteredInventoryItems)
+        //    {
+        //        item.LastOrderAmount = item.GetPrevOrderAmount();
+        //    }
 
-            RefreshInventoryList();
-            OrderVendor = "";
-            _window.DeleteTempTab();
-        }
+        //    RefreshInventoryList();
+        //    OrderVendor = "";
+        //    _window.DeleteTempTab();
+        //}
 
-        /// <summary>
-        /// Sets order amounts to 0 in New Order datagrid
-        /// </summary>
-        /// <param name="obj"></param>
-        private void ClearOrderAmounts(object obj)
-        {
-            foreach (InventoryItem item in FilteredInventoryItems)
-            {
-                item.LastOrderAmount = 0;
-            }
+        ///// <summary>
+        ///// Sets order amounts to 0 in New Order datagrid
+        ///// </summary>
+        ///// <param name="obj"></param>
+        //private void ClearOrderAmounts(object obj)
+        //{
+        //    foreach (InventoryItem item in FilteredInventoryItems)
+        //    {
+        //        item.LastOrderAmount = 0;
+        //    }
 
-            RefreshInventoryList();
-        }
+        //    RefreshInventoryList();
+        //}
 
-        /// <summary>
-        /// Reset the check boxes in open orders data grid to unchecked
-        /// </summary>
-        /// <param name="obj"></param>
-        private void ClearReceivedChecks(object obj)
-        {
-            foreach (PurchaseOrder order in OpenOrders)
-            {
-                order.Received = false;
-            }
+        ///// <summary>
+        ///// Reset the check boxes in open orders data grid to unchecked
+        ///// </summary>
+        ///// <param name="obj"></param>
+        //private void ClearReceivedChecks(object obj)
+        //{
+        //    foreach (PurchaseOrder order in OpenOrders)
+        //    {
+        //        order.Received = false;
+        //    }
 
-            NotifyPropertyChanged("OpenOrders");
-        }
+        //    NotifyPropertyChanged("OpenOrders");
+        //}
 
-        /// <summary>
-        /// Move the received orders
-        /// </summary>
-        /// <param name="obj"></param>
-        private void MoveReceivedOrders(object obj)
-        {
-            foreach(PurchaseOrder order in OpenOrders.Where(x => x.Received))
-            {
-                order.ReceivedDate = DateTime.Now;
-                order.Update();
-            }
+        ///// <summary>
+        ///// Move the received orders
+        ///// </summary>
+        ///// <param name="obj"></param>
+        //private void MoveReceivedOrders(object obj)
+        //{
+        //    foreach(PurchaseOrder order in OpenOrders.Where(x => x.Received))
+        //    {
+        //        order.ReceivedDate = DateTime.Now;
+        //        order.Update();
+        //    }
 
-            LoadPreviousOrders();
-        }
+        //    LoadPreviousOrders();
+        //}
 
-        private void ViewOrder(object obj)
-        {
-            _window.AddTempTab("PO#: " + SelectedOrder.Id, new NewOrder());
-        }
+        //private void ViewOrder(object obj)
+        //{
+        //    _window.AddTempTab("PO#: " + SelectedOrder.Id, new NewOrder());
+        //}
 
-        /// <summary>
-        /// Display dialog to user to delete, unreceive, or partial receive received order and take appropriate action on user input
-        /// </summary>
-        /// <param name="obj"></param>
-        private void RemoveReceivedOrder(object obj)
-        {
-            throw new NotImplementedException();
-        }
+        ///// <summary>
+        ///// Display dialog to user to delete, unreceive, or partial receive received order and take appropriate action on user input
+        ///// </summary>
+        ///// <param name="obj"></param>
+        //private void RemoveReceivedOrder(object obj)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        /// <summary>
-        /// Display dialog to user to delete open order
-        /// </summary>
-        /// <param name="obj"></param>
-        private void RemoveOpenOrder(object obj)
-        {
-            throw new NotImplementedException();
-        }
+        ///// <summary>
+        ///// Display dialog to user to delete open order
+        ///// </summary>
+        ///// <param name="obj"></param>
+        //private void RemoveOpenOrder(object obj)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        /// <summary>
-        /// Open new tab to create a new order
-        /// </summary>
-        /// <param name="obj"></param>
-        private void StartNewOrder(object obj)
-        {
-            _window.AddTempTab("New Order", new NewOrder());
-        }
+        ///// <summary>
+        ///// Open new tab to create a new order
+        ///// </summary>
+        ///// <param name="obj"></param>
+        //private void StartNewOrder(object obj)
+        //{
+        //    _window.AddTempTab("New Order", new NewOrder());
+        //}
         #endregion
 
         #region Initializers
         public void InitializeWindow(MainWindow window)
         {
             _window = window;
+            OrderTab.InitializeWindow(window);
         }
 
         public bool LoadDisplayItems()
@@ -688,21 +693,21 @@ namespace BuddhaBowls
             return false;
         }
 
-        /// <summary>
-        /// Populate the 2 dataGrids in the Orders overview
-        /// </summary>
-        /// <returns></returns>
-        private bool LoadPreviousOrders()
-        {
-            if (_models != null && _models.PurchaseOrders != null)
-            {
-                OpenOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => !x.Received).OrderBy(x => x.OrderDate));
-                ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received).OrderBy(x => x.ReceivedDate));
-                return true;
-            }
+        ///// <summary>
+        ///// Populate the 2 dataGrids in the Orders overview
+        ///// </summary>
+        ///// <returns></returns>
+        //private bool LoadPreviousOrders()
+        //{
+        //    if (_models != null && _models.PurchaseOrders != null)
+        //    {
+        //        OpenOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => !x.Received).OrderBy(x => x.OrderDate));
+        //        ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received).OrderBy(x => x.ReceivedDate));
+        //        return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         /// <summary>
         /// Display on the datagrids that the inventory items could not be found
@@ -713,11 +718,11 @@ namespace BuddhaBowls
             _databaseFound = false;
         }
 
-        private void OrdersNotFound()
-        {
-            OpenOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { Company = "Orders not found" } };
-            ReceivedOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { Company = "Orders not found" } };
-        }
+        //private void OrdersNotFound()
+        //{
+        //    OpenOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { Company = "Orders not found" } };
+        //    ReceivedOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { Company = "Orders not found" } };
+        //}
 
         /// <summary>
         /// Attempt to connect to the data - display a warning message in the datagrid if unsuccessful
@@ -730,11 +735,11 @@ namespace BuddhaBowls
                 DisplayItemsNotFound();
                 return false;
             }
-            if(!LoadPreviousOrders())
-            {
-                OrdersNotFound();
-                return false;
-            }
+            //if(!LoadPreviousOrders())
+            //{
+            //    OrdersNotFound();
+            //    return false;
+            //}
             return true;
         }
 
@@ -778,26 +783,26 @@ namespace BuddhaBowls
         //        categoryTotal += item.PriceExtension;
         //    }
         //}
-        private void MakeBreakdownDisplay()
-        {
-            BreakdownList = new ObservableCollection<BreakdownCategoryItem>();
-            OrderTotal = 0;
+        //private void MakeBreakdownDisplay()
+        //{
+        //    BreakdownList = new ObservableCollection<BreakdownCategoryItem>();
+        //    OrderTotal = 0;
 
-            foreach (string category in _models.ItemCategories)
-            {
-                IEnumerable<InventoryItem> items = _models.InventoryItems.Where(x =>
-                                                        x.Category.ToUpper() == category.ToUpper() && x.LastOrderAmount > 0
-                                                    );
-                if(items.Count() > 0)
-                {
-                    BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
-                    bdItem.Background = _models.GetCategoryColorHex(category);
-                    BreakdownList.Add(bdItem);
+        //    foreach (string category in _models.ItemCategories)
+        //    {
+        //        IEnumerable<InventoryItem> items = _models.InventoryItems.Where(x =>
+        //                                                x.Category.ToUpper() == category.ToUpper() && x.LastOrderAmount > 0
+        //                                            );
+        //        if(items.Count() > 0)
+        //        {
+        //            BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
+        //            bdItem.Background = _models.GetCategoryColorHex(category);
+        //            BreakdownList.Add(bdItem);
 
-                    OrderTotal += bdItem.TotalAmount;
-                }
-            }
-        }
+        //            OrderTotal += bdItem.TotalAmount;
+        //        }
+        //    }
+        //}
         #endregion
 
         #region Update UI Methods
@@ -828,20 +833,20 @@ namespace BuddhaBowls
             ChangeCountCanExecute = true;
         }
 
-        /// <summary>
-        /// Called when New Order is edited
-        /// </summary>
-        public void InventoryOrderAmountChanged()
-        {
-            //NotifyPropertyChanged("FilteredInventoryItems");
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>(FilteredInventoryItems);
-        }
+        ///// <summary>
+        ///// Called when New Order is edited
+        ///// </summary>
+        //public void InventoryOrderAmountChanged()
+        //{
+        //    //NotifyPropertyChanged("FilteredInventoryItems");
+        //    FilteredInventoryItems = new ObservableCollection<InventoryItem>(FilteredInventoryItems);
+        //}
 
-        public void MoveOrderToReceived(PurchaseOrder po)
-        {
-            po.ReceivedDate = DateTime.Now;
-            LoadPreviousOrders();
-        }
+        //public void MoveOrderToReceived(PurchaseOrder po)
+        //{
+        //    po.ReceivedDate = DateTime.Now;
+        //    LoadPreviousOrders();
+        //}
         #endregion
 
         /// <summary>

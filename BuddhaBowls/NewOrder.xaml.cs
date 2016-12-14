@@ -20,8 +20,9 @@ namespace BuddhaBowls
     /// </summary>
     public partial class NewOrder : UserControl
     {
-        public NewOrder()
+        public NewOrder(object context)
         {
+            DataContext = context;
             InitializeComponent();
         }
 
@@ -29,13 +30,14 @@ namespace BuddhaBowls
         {
             TextBox textBox = FilterOrderItemBox;
 
-            ((MainViewModel)DataContext).FilterInventoryItems(textBox.Text);
+            ((OrderTabVM)DataContext).FilterInventoryItems(textBox.Text);
         }
 
         private void OrderList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             SetBlankToZero((TextBox)e.EditingElement);
-            ((MainViewModel)DataContext).InventoryOrderAmountChanged();
+            // not crazy about referencing InventoryOrderAmountChanged through the MainViewModel
+            ((MainViewModel)DataContext).OrderTab.InventoryOrderAmountChanged();
         }
 
         private void SetBlankToZero(TextBox tb)

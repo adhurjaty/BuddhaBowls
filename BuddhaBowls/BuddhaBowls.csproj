@@ -98,6 +98,9 @@
     <Compile Include="NewOrder.xaml.cs">
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
+    <Compile Include="OrderTabControl.xaml.cs">
+      <DependentUpon>OrderTabControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ReportGenerator.cs" />
     <Compile Include="Services\DatabaseInterface.cs" />
     <Compile Include="Services\ModelContainer.cs" />
@@ -105,6 +108,7 @@
       <DependentUpon>BreakdownCategory.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\OrderTabVM.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
     <Page Include="BreakdownDisplay.xaml">
       <SubType>Designer</SubType>
@@ -131,6 +135,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BreakdownCategory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="OrderTabControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

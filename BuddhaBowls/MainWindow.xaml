@@ -15,7 +15,8 @@
         <TabControl Name="Tabs">
             <TabItem Header="Orders">
                 <Grid>
-                    <Grid.RowDefinitions>
+                    <local:OrderTabControl DataContext="{Binding OrderTab}" />
+                    <!--<Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
@@ -62,7 +63,7 @@
                         <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                     </Button>
                     <Button Content="View" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Height="15" Width="60"
-                            Margin="35, 0" Command="{Binding ViewOrderCommand}" />
+                            Margin="35, 0" Command="{Binding ViewOrderCommand}" />-->
                 </Grid>
             </TabItem>
             <TabItem Header="Invetory">
