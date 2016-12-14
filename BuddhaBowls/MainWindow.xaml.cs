@@ -22,6 +22,7 @@ namespace BuddhaBowls
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        private const string TEMP_TAB_NAME = "tempTab";
         private int _lastTab = -1;
 
         public MainWindow(MainViewModel mvm)
@@ -45,25 +46,26 @@ namespace BuddhaBowls
             //}
         }
 
-        public void AddTab(string headerName)
+        public void AddTempTab(string headerName, UserControl userControl)
         {
             TabControl tabs = Tabs;
 
-            TabItem newTab = new TabItem() { Header = headerName };
+            DeleteTempTab();
+            TabItem newTab = new TabItem() { Header = headerName, Name = TEMP_TAB_NAME };
 
-            newTab.Content = new EditItem();
+            newTab.Content = userControl;
 
             _lastTab = tabs.SelectedIndex;
             tabs.Items.Add(newTab);
             tabs.SelectedIndex = tabs.Items.Count - 1;
         }
 
-        internal void DeleteEditAddTab()
+        internal void DeleteTempTab()
         {
             TabControl tabs = Tabs;
 
             TabItem lastTab = (TabItem)tabs.Items[tabs.Items.Count - 1];
-            if (((string)lastTab.Header).StartsWith("Add") || ((string)lastTab.Header).StartsWith("Edit"))
+            if (lastTab.Name == TEMP_TAB_NAME)
             {
                 tabs.Items.RemoveAt(tabs.Items.Count - 1);
             }
@@ -83,12 +85,6 @@ namespace BuddhaBowls
         {
             SetBlankToZero((TextBox)e.EditingElement);
             ((MainViewModel)DataContext).InventoryItemCountChanged();
-        }
-
-        private void OrderList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            SetBlankToZero((TextBox)e.EditingElement);
-            ((MainViewModel)DataContext).InventoryOrderAmountChanged();
         }
 
         private void SetBlankToZero(TextBox tb)

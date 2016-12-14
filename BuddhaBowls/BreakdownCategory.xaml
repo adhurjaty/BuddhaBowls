@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="BuddhaBowls.BreakdownCategory"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BuddhaBowls"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="15" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="15" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding Background}" />
+        <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Stretch" Text="{Binding Category}"
+                   Background="{Binding Background}" FontWeight="Bold"/>
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding Items}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Name}" Grid.Column="0" HorizontalAlignment="Left" Margin="10, 0"/>
+                        <TextBlock Text="{Binding Path=PriceExtension, StringFormat=c}" Grid.Column="1" HorizontalAlignment="Right" Margin="10, 0" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Border Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding Background}" />
+        <TextBlock Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Text="{Binding Category, StringFormat={}{0} Total: }"
+                   Margin="10, 0" />
+        <TextBlock Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Stretch" Text="{Binding TotalAmount, StringFormat=c}"
+                   Margin="10, 0" />
+    </Grid>
+</UserControl>

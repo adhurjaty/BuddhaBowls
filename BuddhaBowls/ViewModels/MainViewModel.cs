@@ -122,14 +122,53 @@ namespace BuddhaBowls
         // Collection of fields and values for use in Model edit forms
         public ObservableCollection<FieldSetting> FieldsCollection { get; set; }
 
-        public ObservableCollection<BreakdownListItem> BreakdownList { get; set; }
+        public ObservableCollection<BreakdownCategoryItem> BreakdownList { get; set; }
 
-        public ObservableCollection<PurchaseOrder> OpenOrders { get; set; }
-        public ObservableCollection<PurchaseOrder> ReceivedOrders { get; set; }
+        private ObservableCollection<PurchaseOrder> _openOrders;
+        public ObservableCollection<PurchaseOrder> OpenOrders
+        {
+            get
+            {
+                return _openOrders;
+            }
+            set
+            {
+                _openOrders = value;
+                NotifyPropertyChanged("OpenOrders");
+            }
+        }
+
+        private ObservableCollection<PurchaseOrder> _receivedOrders;
+        public ObservableCollection<PurchaseOrder> ReceivedOrders
+        {
+            get
+            {
+                return _receivedOrders;
+            }
+            set
+            {
+                _receivedOrders = value;
+                NotifyPropertyChanged("ReceivedOrders");
+            }
+        }
         public PurchaseOrder SelectedOrder { get; set; }
 
         // name of the vendor in the New Order form
         public string OrderVendor { get; set; }
+
+        private float _orderCost;
+        public float OrderTotal
+        {
+            get
+            {
+                return _orderCost;
+            }
+            set
+            {
+                _orderCost = value;
+                NotifyPropertyChanged("OrderCost");
+            }
+        }
 
         private bool _dbConnected;
         #endregion
@@ -161,6 +200,18 @@ namespace BuddhaBowls
         public ICommand CancelNewOrderCommand { get; set; }
         // Clear Amts button in New Order form
         public ICommand ClearOrderCommand { get; set; }
+        // Received button in Order Overview form
+        public ICommand ReceivedOrdersCommand { get; set; }
+        // Clear button in Order Overview form
+        public ICommand ClearReceivedCheckCommand { get; set; }
+        // View button in Order Overview form
+        public ICommand ViewOrderCommand { get; set; }
+        // Plus button in Order Overview form
+        public ICommand AddNewOrderCommand { get; set; }
+        // Minus button in Order Overview form for open orders
+        public ICommand DeleteOrderCommand { get; set; }
+        // Minus button in Order Overview form for received orders
+        public ICommand DeleteReceivedOrderCommand { get; set; }
 
         public bool ReportCanExecute
         {
@@ -203,7 +254,6 @@ namespace BuddhaBowls
         }
 
         public bool ChangeCountCanExecute { get; set; } = false;
-        public bool CancelOrderCanExecute { get; set; } = false;
         public bool SaveOrderCanExecute
         {
             get
@@ -212,17 +262,27 @@ namespace BuddhaBowls
             }
         }
 
-        private float _orderCost;
-        public float OrderTotal
+        public bool ViewOrderCanExecute
         {
             get
             {
-                return _orderCost;
+                return SelectedOrder != null;
             }
-            set
+        }
+
+        public bool RemoveOpenOrderCanExecute
+        {
+            get
             {
-                _orderCost = value;
-                NotifyPropertyChanged("OrderCost");
+                return SelectedOrder != null && SelectedOrder.ReceivedDate == null;
+            }
+        }
+
+        public bool RemoveReceivedOrderCanExecute
+        {
+            get
+            {
+                return SelectedOrder != null && SelectedOrder.ReceivedDate != null;
             }
         }
         #endregion
@@ -240,8 +300,14 @@ namespace BuddhaBowls
             SaveCountCommand = new RelayCommand(SaveCount, x => ChangeCountCanExecute);
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
             SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
-            CancelNewOrderCommand = new RelayCommand(CancelOrder, x => CancelOrderCanExecute);
+            CancelNewOrderCommand = new RelayCommand(CancelOrder);
             ClearOrderCommand = new RelayCommand(ClearOrderAmounts);
+            ReceivedOrdersCommand = new RelayCommand(MoveReceivedOrders);
+            ClearReceivedCheckCommand = new RelayCommand(ClearReceivedChecks);
+            ViewOrderCommand = new RelayCommand(ViewOrder, x => ViewOrderCanExecute);
+            AddNewOrderCommand = new RelayCommand(StartNewOrder);
+            DeleteOrderCommand = new RelayCommand(RemoveOpenOrder, x => RemoveOpenOrderCanExecute);
+            DeleteReceivedOrderCommand = new RelayCommand(RemoveReceivedOrder, x => RemoveReceivedOrderCanExecute);
 
             _dbConnected = TryDBConnect();
 
@@ -305,8 +371,7 @@ namespace BuddhaBowls
             AddEditHeader = "Add New Inventory Item";
             FieldsCollection = GetFieldsAndValues<InventoryItem>();
 
-            _window.DeleteEditAddTab();
-            _window.AddTab("Add Inventory Item");
+            _window.AddTempTab("Add Inventory Item", new EditItem());
         }
 
         /// <summary>
@@ -318,8 +383,7 @@ namespace BuddhaBowls
             AddEditHeader = "Edit " + SelectedInventoryItem.Name;
             FieldsCollection = GetFieldsAndValues(SelectedInventoryItem);
 
-            _window.DeleteEditAddTab();
-            _window.AddTab("Edit Inventory Item");
+            _window.AddTempTab("Edit Inventory Item", new EditItem());
         }
 
         /// <summary>
@@ -346,7 +410,7 @@ namespace BuddhaBowls
         private void CancelAddEdit(object obj)
         {
             AddEditErrorMessage = "";
-            _window.DeleteEditAddTab();
+            _window.DeleteTempTab();
         }
 
         /// <summary>
@@ -454,7 +518,7 @@ namespace BuddhaBowls
                 }
 
                 AddEditErrorMessage = "";
-                _window.DeleteEditAddTab();
+                _window.DeleteTempTab();
                 RefreshInventoryList();
             }
         }
@@ -502,6 +566,7 @@ namespace BuddhaBowls
             PurchaseOrder po = new PurchaseOrder(OrderVendor, _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList());
 
             OrderVendor = "";
+            _window.DeleteTempTab();
         }
 
         /// <summary>
@@ -516,8 +581,8 @@ namespace BuddhaBowls
             }
 
             RefreshInventoryList();
-            CancelOrderCanExecute = false;
             OrderVendor = "";
+            _window.DeleteTempTab();
         }
 
         /// <summary>
@@ -532,7 +597,67 @@ namespace BuddhaBowls
             }
 
             RefreshInventoryList();
-            CancelOrderCanExecute = true;
+        }
+
+        /// <summary>
+        /// Reset the check boxes in open orders data grid to unchecked
+        /// </summary>
+        /// <param name="obj"></param>
+        private void ClearReceivedChecks(object obj)
+        {
+            foreach (PurchaseOrder order in OpenOrders)
+            {
+                order.Received = false;
+            }
+
+            NotifyPropertyChanged("OpenOrders");
+        }
+
+        /// <summary>
+        /// Move the received orders
+        /// </summary>
+        /// <param name="obj"></param>
+        private void MoveReceivedOrders(object obj)
+        {
+            foreach(PurchaseOrder order in OpenOrders.Where(x => x.Received))
+            {
+                order.ReceivedDate = DateTime.Now;
+                order.Update();
+            }
+
+            LoadPreviousOrders();
+        }
+
+        private void ViewOrder(object obj)
+        {
+            _window.AddTempTab("PO#: " + SelectedOrder.Id, new NewOrder());
+        }
+
+        /// <summary>
+        /// Display dialog to user to delete, unreceive, or partial receive received order and take appropriate action on user input
+        /// </summary>
+        /// <param name="obj"></param>
+        private void RemoveReceivedOrder(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Display dialog to user to delete open order
+        /// </summary>
+        /// <param name="obj"></param>
+        private void RemoveOpenOrder(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Open new tab to create a new order
+        /// </summary>
+        /// <param name="obj"></param>
+        private void StartNewOrder(object obj)
+        {
+            _window.AddTempTab("New Order", new NewOrder());
         }
         #endregion
 
@@ -541,7 +666,6 @@ namespace BuddhaBowls
         {
             _window = window;
         }
-
 
         public bool LoadDisplayItems()
         {
@@ -614,50 +738,69 @@ namespace BuddhaBowls
             return true;
         }
 
+        //private void MakeBreakdownDisplay()
+        //{
+        //    BreakdownList = new ObservableCollection<BreakdownListItem>();
+
+        //    string category = "";
+        //    OrderTotal = 0;
+        //    float categoryTotal = 0;
+        //    foreach (InventoryItem item in _models.InventoryItems.Where(x => x.LastOrderAmount > 0).OrderBy(x => x.Category))
+        //    {
+        //        if(category != "" && item.Category != category)
+        //        {
+        //            BreakdownList.Add(new BreakdownListItem()
+        //            {
+        //                Name = category + " Total",
+        //                Background = _models.GetCategoryColorHex(category),
+        //                Cost = categoryTotal
+        //            });
+        //            categoryTotal = 0;
+        //        }
+        //        if (item.Category != category)
+        //        {
+        //            category = item.Category;
+        //            BreakdownList.Add(new BreakdownListItem()
+        //            {
+        //                Name = item.Category,
+        //                Background = _models.GetCategoryColorHex(category),
+        //                IsHeader = true
+        //            });
+        //        }
+        //        BreakdownList.Add(new BreakdownListItem()
+        //        {
+        //            Name = item.Name,
+        //            Cost = item.PriceExtension,
+        //            Background = _models.GetCategoryColorHex("default")
+        //        });
+
+        //        OrderTotal += item.PriceExtension;
+        //        categoryTotal += item.PriceExtension;
+        //    }
+        //}
         private void MakeBreakdownDisplay()
         {
-            BreakdownList = new ObservableCollection<BreakdownListItem>();
-
-            string category = "";
+            BreakdownList = new ObservableCollection<BreakdownCategoryItem>();
             OrderTotal = 0;
-            float categoryTotal = 0;
-            foreach (InventoryItem item in _models.InventoryItems.Where(x => x.LastOrderAmount > 0).OrderBy(x => x.Category))
-            {
-                if(category != "" && item.Category != category)
-                {
-                    BreakdownList.Add(new BreakdownListItem()
-                    {
-                        Name = category + " Total",
-                        Background = _models.GetCategoryColorHex(category),
-                        Cost = categoryTotal
-                    });
-                    categoryTotal = 0;
-                }
-                if (item.Category != category)
-                {
-                    category = item.Category;
-                    BreakdownList.Add(new BreakdownListItem()
-                    {
-                        Name = item.Category,
-                        Background = _models.GetCategoryColorHex(category),
-                        IsHeader = true
-                    });
-                }
-                BreakdownList.Add(new BreakdownListItem()
-                {
-                    Name = item.Name,
-                    Cost = item.PriceExtension,
-                    Background = _models.GetCategoryColorHex("default")
-                });
 
-                OrderTotal += item.PriceExtension;
-                categoryTotal += item.PriceExtension;
+            foreach (string category in _models.ItemCategories)
+            {
+                IEnumerable<InventoryItem> items = _models.InventoryItems.Where(x =>
+                                                        x.Category.ToUpper() == category.ToUpper() && x.LastOrderAmount > 0
+                                                    );
+                if(items.Count() > 0)
+                {
+                    BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
+                    bdItem.Background = _models.GetCategoryColorHex(category);
+                    BreakdownList.Add(bdItem);
+
+                    OrderTotal += bdItem.TotalAmount;
+                }
             }
         }
         #endregion
 
         #region Update UI Methods
-
         public void ClearErrors()
         {
             AddEditErrorMessage = "";
@@ -692,7 +835,6 @@ namespace BuddhaBowls
         {
             //NotifyPropertyChanged("FilteredInventoryItems");
             FilteredInventoryItems = new ObservableCollection<InventoryItem>(FilteredInventoryItems);
-            CancelOrderCanExecute = true;
         }
 
         public void MoveOrderToReceived(PurchaseOrder po)
@@ -760,6 +902,7 @@ namespace BuddhaBowls
         }
     }
 
+    #region Classes for display
     /// <summary>
     /// Class to store Model property names and values for display in add/edit form
     /// </summary>
@@ -816,18 +959,20 @@ namespace BuddhaBowls
         }
     }
 
-    public class BreakdownListItem
+    public class BreakdownCategoryItem
     {
         public string Background { get; set; }
-        public string Name { get; set; }
-        public float Cost { get; set; }
-        public bool IsHeader { get; set; } = false;
-        public Visibility ShowPrice
+        public string Category { get; set; }
+        public float TotalAmount { get; set; }
+        public ObservableCollection<InventoryItem> Items { get; set; }
+
+        public BreakdownCategoryItem(IEnumerable<InventoryItem> items)
         {
-            get
-            {
-                return IsHeader ? Visibility.Hidden : Visibility.Visible;
-            }
+            Items = new ObservableCollection<InventoryItem>(items);
+            Category = Items.First().Category;
+
+            TotalAmount = Items.Sum(x => x.PriceExtension);
         }
     }
+    #endregion
 }
