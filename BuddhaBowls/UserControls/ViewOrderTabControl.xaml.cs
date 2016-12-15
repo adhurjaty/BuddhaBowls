@@ -1,7 +1,5 @@
-﻿using BuddhaBowls.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,11 +16,11 @@ using System.Windows.Shapes;
 namespace BuddhaBowls.UserControls
 {
     /// <summary>
-    /// Interaction logic for BreakdownDisplay.xaml
+    /// Interaction logic for ViewOrderTabControl.xaml
     /// </summary>
-    public partial class BreakdownDisplay : UserControl
+    public partial class ViewOrderTabControl : UserControl
     {
-        public BreakdownDisplay()
+        public ViewOrderTabControl()
         {
             InitializeComponent();
         }

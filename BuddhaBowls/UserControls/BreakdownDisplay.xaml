@@ -15,14 +15,17 @@
         <Border Grid.RowSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black" />
         <TextBlock x:Name="textBlock1" Grid.Row="0" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="NoWrap" Text="Price Breakdown"
                                            VerticalAlignment="Top" FontSize="18"/>
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding BreakdownList}" ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <local:BreakdownCategory />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <TextBlock Grid.Row="2" Text="Total:" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10, 0" />
-        <TextBlock Grid.Row="2" Text="{Binding OrderTotal, StringFormat=c}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10, 0" />
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl Name="BreakdownItemsDisplay" ItemsSource="{Binding BreakdownList}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:BreakdownCategory/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        <TextBlock Grid.Row="2" Text="Total:" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10, 0" FontWeight="Bold"/>
+        <TextBlock Name="TotalCost" Grid.Row="2" Text="{Binding OrderTotal, StringFormat=c}" VerticalAlignment="Center" HorizontalAlignment="Right"
+                   Margin="10, 0" FontWeight="Bold" />
     </Grid>
 </UserControl>

@@ -6,6 +6,18 @@
              xmlns:local="clr-namespace:BuddhaBowls.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style x:Key="NoHighlight" TargetType="ListBoxItem">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="15" />
@@ -15,20 +27,16 @@
         <Border Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding Background}" />
         <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Stretch" Text="{Binding Category}"
                    Background="{Binding Background}" FontWeight="Bold"/>
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding Items}">
-            <ItemsControl.ItemTemplate>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" ItemContainerStyle="{StaticResource NoHighlight}">
+            <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Name}" Grid.Column="0" HorizontalAlignment="Left" Margin="10, 0"/>
-                        <TextBlock Text="{Binding Path=PriceExtension, StringFormat=c}" Grid.Column="1" HorizontalAlignment="Right" Margin="10, 0" />
+                    <Grid Background="{Binding ElementName=BreakdownList, Path=DataContext.Background}">
+                        <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" Margin="10, 0"/>
+                        <TextBlock Text="{Binding Path=PriceExtension, StringFormat=c}" HorizontalAlignment="Right" Margin="10, 0" />
                     </Grid>
                 </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <Border Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding Background}" />
         <TextBlock Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Text="{Binding Category, StringFormat={}{0} Total: }"
                    Margin="10, 0" />

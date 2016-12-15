@@ -39,7 +39,7 @@
             </DataGrid>
             <Button x:Name="button6" Content="Clear Amts" HorizontalAlignment="Right" Margin="10,20" VerticalAlignment="Top" Width="75"
                                         Command="{Binding ClearOrderCommand}"/>
-            <local:BreakdownDisplay Grid.Column="1" />
+            <local:BreakdownDisplay DataContext="{Binding BreakdownContext}" Grid.Column="1" />
 
         </Grid>
         <Button x:Name="button4" Content="Save" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,0"

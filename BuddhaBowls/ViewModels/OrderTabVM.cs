@@ -17,7 +17,6 @@ namespace BuddhaBowls
     {
         private MainWindow _window;
         private ModelContainer _models;
-        private bool _databaseFound;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -30,17 +29,17 @@ namespace BuddhaBowls
         public MainViewModel ParentContext { get; set; }
 
         #region Content Binders
-        private ObservableCollection<BreakdownCategoryItem> _breakdownList;
-        public ObservableCollection<BreakdownCategoryItem> BreakdownList
+        private OrderBreakdownVM _breakdownContext;
+        public OrderBreakdownVM BreakdownContext
         {
             get
             {
-                return _breakdownList;
+                return _breakdownContext;
             }
             set
             {
-                _breakdownList = value;
-                NotifyPropertyChanged("BreakdownList");
+                _breakdownContext = value;
+                NotifyPropertyChanged("BreakdownContext");
             }
         }
 
@@ -91,19 +90,6 @@ namespace BuddhaBowls
         // name of the vendor in the New Order form
         public string OrderVendor { get; set; }
 
-        private float _orderCost;
-        public float OrderTotal
-        {
-            get
-            {
-                return _orderCost;
-            }
-            set
-            {
-                _orderCost = value;
-                NotifyPropertyChanged("OrderCost");
-            }
-        }
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -290,7 +276,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void StartNewOrder(object obj)
         {
-            MakeBreakdownDisplay();
+            SetLastOrderBreakdown();
             _window.AddTempTab("New Order", new NewOrder(this));
         }
         #endregion
@@ -323,25 +309,35 @@ namespace BuddhaBowls
             ReceivedOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { Company = "Orders not found" } };
         }
 
-        private void MakeBreakdownDisplay()
+        private ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)
         {
-            BreakdownList = new ObservableCollection<BreakdownCategoryItem>();
-            OrderTotal = 0;
+            ObservableCollection<BreakdownCategoryItem> breakdown = new ObservableCollection<BreakdownCategoryItem>();
+            total = 0;
 
             foreach (string category in _models.ItemCategories)
             {
-                IEnumerable<InventoryItem> items = _models.InventoryItems.Where(x =>
-                                                        x.Category.ToUpper() == category.ToUpper() && x.LastOrderAmount > 0
-                                                    );
+                IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
                 if (items.Count() > 0)
                 {
                     BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
                     bdItem.Background = _models.GetCategoryColorHex(category);
-                    BreakdownList.Add(bdItem);
+                    breakdown.Add(bdItem);
 
-                    OrderTotal += bdItem.TotalAmount;
+                    total += bdItem.TotalAmount;
                 }
             }
+
+            return breakdown;
+        }
+
+        private void SetLastOrderBreakdown()
+        {
+            float oTotal = 0;
+            BreakdownContext = new OrderBreakdownVM()
+            {
+                BreakdownList = GetOrderBreakdown(_models.InventoryItems.Where(x => x.LastOrderAmount > 0), out oTotal),
+                OrderTotal = oTotal
+            };
         }
         #endregion
 
@@ -353,7 +349,7 @@ namespace BuddhaBowls
         {
             //FilteredOrderItems = new ObservableCollection<InventoryItem>(FilteredOrderItems);
             NotifyPropertyChanged("FilteredOrderItems");
-            MakeBreakdownDisplay();
+            SetLastOrderBreakdown();
         }
 
         public void MoveOrderToReceived(PurchaseOrder po)
@@ -389,22 +385,6 @@ namespace BuddhaBowls
         {
             ParentContext.RefreshInventoryList();
             NotifyPropertyChanged("FilteredInvetoryItems");
-        }
-    }
-
-    public class BreakdownCategoryItem
-    {
-        public string Background { get; set; }
-        public string Category { get; set; }
-        public float TotalAmount { get; set; }
-        public ObservableCollection<InventoryItem> Items { get; set; }
-
-        public BreakdownCategoryItem(IEnumerable<InventoryItem> items)
-        {
-            Items = new ObservableCollection<InventoryItem>(items);
-            Category = Items.First().Category;
-
-            TotalAmount = Items.Sum(x => x.PriceExtension);
         }
     }
 }
