@@ -26,14 +26,14 @@
                                          Width="180" Controls:TextBoxHelper.Watermark="Filter by item name..."
                                          TextChanged="FilterItems_TextChanged" />
             <DataGrid x:Name="dataGrid" HorizontalAlignment="Stretch" Margin="1,60,1,1" Grid.Column="0"
-                                          ItemsSource="{Binding FilteredInventoryItems}" VerticalAlignment="Stretch"
-                                          ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedOrderItem}"
-                                          AutoGenerateColumns="False" CellEditEnding="OrderList_CellEditEnding">
+                                          ItemsSource="{Binding FilteredOrderItems}" VerticalAlignment="Stretch"
+                                          ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedOrderItem, UpdateSourceTrigger=PropertyChanged}"
+                                          AutoGenerateColumns="False" RowEditEnding="OrderList_RowEditEnding" CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="3*"/>
                     <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="3*"/>
-                    <DataGridTextColumn Header="Order Amt" Binding="{Binding Path=LastOrderAmount, StringFormat=0.## }" Width="2*" />
-                    <DataGridTextColumn Header="Price" Binding="{Binding Path=LastPurchasedPrice, StringFormat=c }" Width="2*" />
+                    <DataGridTextColumn Header="Order Amt" Binding="{Binding Path=LastOrderAmount, StringFormat=0.##}" Width="2*" />
+                    <DataGridTextColumn Header="Price" Binding="{Binding Path=LastPurchasedPrice, StringFormat=c}" Width="2*" />
                     <DataGridTextColumn Header="Extension" Binding="{Binding Path=PriceExtension, Mode=OneWay, StringFormat=c}" Width="2*" />
                 </DataGrid.Columns>
             </DataGrid>

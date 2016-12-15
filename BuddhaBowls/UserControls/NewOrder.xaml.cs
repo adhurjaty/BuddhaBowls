@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows.Controls;
 
 namespace BuddhaBowls.UserControls
 {
@@ -37,9 +24,16 @@ namespace BuddhaBowls.UserControls
             ((OrderTabVM)DataContext).FilterInventoryItems(textBox.Text);
         }
 
-        private void OrderList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        private void OrderList_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-            SetBlankToZero((TextBox)e.EditingElement);
+            //SetBlankToZero((TextBox)e.EditingElement);
+            if (this.dataGrid.SelectedItem != null)
+            {
+                ((DataGrid)sender).RowEditEnding -= OrderList_RowEditEnding;
+                ((DataGrid)sender).CommitEdit();
+                ((DataGrid)sender).Items.Refresh();
+                ((DataGrid)sender).RowEditEnding += OrderList_RowEditEnding;
+            }
             ((OrderTabVM)DataContext).InventoryOrderAmountChanged();
         }
 

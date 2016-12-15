@@ -170,80 +170,7 @@ namespace BuddhaBowls
             OrderTab.InitializeWindow(window);
             InventoryTab.InitializeWindow(window);
         }
-
-        //public bool LoadDisplayItems()
-        //{
-        //    _models = new ModelContainer();
-        //    if (_models.InventoryItems != null)
-        //    {
-        //        FilteredInventoryItems = new ObservableCollection<InventoryItem>();
-
-        //        foreach (InventoryItem item in _models.InventoryItems.OrderBy(x => x.Name))
-        //        {
-        //            FilteredInventoryItems.Add(item);
-        //        }
-
-        //        _databaseFound = true;
-        //        NotifyPropertyChanged("FilteredInventoryItems");
-
-        //        return true;
-        //    }
-
-        //    return false;
-        //}
-
-        ///// <summary>
-        ///// Display on the datagrids that the inventory items could not be found
-        ///// </summary>
-        //private void DisplayItemsNotFound()
-        //{
-        //    FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
-        //    _databaseFound = false;
-        //}
-
-        ///// <summary>
-        ///// Attempt to connect to the data - display a warning message in the datagrid if unsuccessful
-        ///// </summary>
-        ///// <returns></returns>
-        //private bool TryDBConnect()
-        //{
-        //    if (!LoadDisplayItems())
-        //    {
-        //        DisplayItemsNotFound();
-        //        return false;
-        //    }
-        //    return true;
-        //}
         #endregion
-
-        //#region Update UI Methods
-        //public void ClearErrors()
-        //{
-        //    AddEditErrorMessage = "";
-        //    foreach (FieldSetting field in FieldsCollection)
-        //    {
-        //        field.Error = 0;
-        //    }
-
-        //    NotifyPropertyChanged("FieldsCollection");
-        //}
-
-        ///// <summary>
-        ///// Update the datagrid displays for inventory items
-        ///// </summary>
-        //private void RefreshInventoryList()
-        //{
-        //    FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
-        //}
-
-        ///// <summary>
-        ///// Called when Master List is edited
-        ///// </summary>
-        //public void InventoryItemCountChanged()
-        //{
-        //    ChangeCountCanExecute = true;
-        //}
-        //#endregion
 
         /// <summary>
         /// Saves the application settings when Save Settings button is pressed or the application is closed
@@ -256,49 +183,57 @@ namespace BuddhaBowls
             Properties.Settings.Default.Save();
         }
 
-        ///// <summary>
-        ///// Filter list of inventory items based on the string in the filter box above datagrids
-        ///// </summary>
-        ///// <param name="filterStr"></param>
-        //public void FilterInventoryItems(string filterStr)
-        //{
-        //    if (string.IsNullOrWhiteSpace(filterStr))
-        //        FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
-        //    else
-        //        FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems
-        //                                                .Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
-        //                                                .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
-        //}
+        /// <summary>
+        /// Filter list of inventory items based on the string in the filter box above datagrids
+        /// </summary>
+        /// <param name="filterStr"></param>
+        public void FilterInventoryItems(string filterStr)
+        {
+            if (string.IsNullOrWhiteSpace(filterStr))
+                FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
+            else
+                FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems
+                                                        .Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
+                                                        .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
+        }
 
-        ///// <summary>
-        ///// Collects the property names and values for display in the add/edit form
-        ///// </summary>
-        ///// <param name="type"></param>
-        ///// <param name="obj"></param>
-        ///// <returns></returns>
-        //private ObservableCollection<FieldSetting> GetFieldsAndValues<T>(T obj = null) where T : Model, new()
-        //{
-        //    ObservableCollection<FieldSetting> fieldsAndVals = new ObservableCollection<FieldSetting>();
-        //    string[] properties = new T().GetPropertiesDB();
+        /// <summary>
+        /// Update the datagrid displays for inventory items
+        /// </summary>
+        public void RefreshInventoryList()
+        {
+            FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
+        }
 
-        //    foreach (string prop in properties)
-        //    {
-        //        FieldSetting fs = new FieldSetting();
-        //        fs.Name = prop;
+        /// <summary>
+        /// Collects the property names and values for display in the add/edit form
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public ObservableCollection<FieldSetting> GetFieldsAndValues<T>(T obj = null) where T : Model, new()
+        {
+            ObservableCollection<FieldSetting> fieldsAndVals = new ObservableCollection<FieldSetting>();
+            string[] properties = new T().GetPropertiesDB();
 
-        //        if (obj != null)
-        //            if (obj.GetPropertyValue(prop) != null)
-        //                fs.Value = obj.GetPropertyValue(prop).ToString();
-        //            else
-        //                fs.Value = "";
-        //        else
-        //            fs.Value = "";
+            foreach (string prop in properties)
+            {
+                FieldSetting fs = new FieldSetting();
+                fs.Name = prop;
 
-        //        fieldsAndVals.Add(fs);
-        //    }
+                if (obj != null)
+                    if (obj.GetPropertyValue(prop) != null)
+                        fs.Value = obj.GetPropertyValue(prop).ToString();
+                    else
+                        fs.Value = "";
+                else
+                    fs.Value = "";
 
-        //    return fieldsAndVals;
-        //}
+                fieldsAndVals.Add(fs);
+            }
+
+            return fieldsAndVals;
+        }
     }
 
     #region Classes for display

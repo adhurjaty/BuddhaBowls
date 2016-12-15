@@ -30,7 +30,19 @@ namespace BuddhaBowls
         public MainViewModel ParentContext { get; set; }
 
         #region Content Binders
-        public ObservableCollection<BreakdownCategoryItem> BreakdownList { get; set; }
+        private ObservableCollection<BreakdownCategoryItem> _breakdownList;
+        public ObservableCollection<BreakdownCategoryItem> BreakdownList
+        {
+            get
+            {
+                return _breakdownList;
+            }
+            set
+            {
+                _breakdownList = value;
+                NotifyPropertyChanged("BreakdownList");
+            }
+        }
 
         private ObservableCollection<PurchaseOrder> _openOrders;
         public ObservableCollection<PurchaseOrder> OpenOrders
@@ -47,7 +59,7 @@ namespace BuddhaBowls
         }
 
         // Collection used for both Master List and New Order List
-        public ObservableCollection<InventoryItem> FilteredInventoryItems
+        public ObservableCollection<InventoryItem> FilteredOrderItems
         {
             get
             {
@@ -56,6 +68,7 @@ namespace BuddhaBowls
             set
             {
                 ParentContext.FilteredInventoryItems = value;
+                NotifyPropertyChanged("FilteredOrderItems");
             }
         }
 
@@ -168,7 +181,6 @@ namespace BuddhaBowls
                 DeleteReceivedOrderCommand = new RelayCommand(RemoveReceivedOrder, x => RemoveReceivedOrderCanExecute);
 
                 TryDBConnect(true);
-                MakeBreakdownDisplay();
             }
         }
 
@@ -179,7 +191,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void SaveOrder(object obj)
         {
-            foreach (InventoryItem item in FilteredInventoryItems)
+            foreach (InventoryItem item in FilteredOrderItems)
             {
                 item.Update();
             }
@@ -196,7 +208,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void CancelOrder(object obj)
         {
-            foreach (InventoryItem item in FilteredInventoryItems)
+            foreach (InventoryItem item in FilteredOrderItems)
             {
                 item.LastOrderAmount = item.GetPrevOrderAmount();
             }
@@ -212,7 +224,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void ClearOrderAmounts(object obj)
         {
-            foreach (InventoryItem item in FilteredInventoryItems)
+            foreach (InventoryItem item in FilteredOrderItems)
             {
                 item.LastOrderAmount = 0;
             }
@@ -278,6 +290,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void StartNewOrder(object obj)
         {
+            MakeBreakdownDisplay();
             _window.AddTempTab("New Order", new NewOrder(this));
         }
         #endregion
@@ -338,8 +351,9 @@ namespace BuddhaBowls
         /// </summary>
         public void InventoryOrderAmountChanged()
         {
-            //NotifyPropertyChanged("FilteredInventoryItems");
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>(FilteredInventoryItems);
+            //FilteredOrderItems = new ObservableCollection<InventoryItem>(FilteredOrderItems);
+            NotifyPropertyChanged("FilteredOrderItems");
+            MakeBreakdownDisplay();
         }
 
         public void MoveOrderToReceived(PurchaseOrder po)
@@ -349,25 +363,13 @@ namespace BuddhaBowls
         }
 
         /// <summary>
-        /// Update the datagrid displays for inventory items
-        /// </summary>
-        private void RefreshInventoryList()
-        {
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
-        }
-
-        /// <summary>
         /// Filter list of inventory items based on the string in the filter box above datagrids
         /// </summary>
         /// <param name="filterStr"></param>
         public void FilterInventoryItems(string filterStr)
         {
-            if (string.IsNullOrWhiteSpace(filterStr))
-                FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
-            else
-                FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems
-                                                        .Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
-                                                        .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
+            ParentContext.FilterInventoryItems(filterStr);
+            NotifyPropertyChanged("FilteredOrderItems");
         }
         #endregion
 
@@ -381,6 +383,12 @@ namespace BuddhaBowls
                 return false;
             }
             return true;
+        }
+
+        private void RefreshInventoryList()
+        {
+            ParentContext.RefreshInventoryList();
+            NotifyPropertyChanged("FilteredInvetoryItems");
         }
     }
 

@@ -26,13 +26,16 @@
                 Command="{Binding AddInventoryItemCommand}">
             <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
-        <Button Grid.Row="2" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" Margin="0, 0, 5, 0" Command="{Binding DeleteInventoryItemCommand}">
+        <Button Grid.Row="2" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" Margin="0, 0, 5, 0"
+                Command="{Binding DeleteInventoryItemCommand}">
             <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
-        <Button x:Name="button2" Content="Edit" HorizontalAlignment="Right" Margin="0,0,65,0" Grid.Row="2" VerticalAlignment="Center" Width="75" Command="{Binding EditInventoryItemCommand}"/>
+        <Button x:Name="button2" Content="Edit" HorizontalAlignment="Right" Margin="0,0,65,0" Grid.Row="2" VerticalAlignment="Center" Width="75"
+                Command="{Binding EditInventoryItemCommand}"/>
         <DataGrid Grid.Row="3" ItemsSource="{Binding FilteredInventoryItems}" HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                              SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False" CellEditEnding="MasterList_CellEditEnding">
+                              SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False"
+                              CellEditEnding="MasterList_CellEditEnding" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
                 <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="1*"/>
