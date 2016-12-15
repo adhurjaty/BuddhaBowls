@@ -63,7 +63,7 @@ namespace BuddhaBowls.Models
         /// <summary>
         /// Deletes model from DB
         /// </summary>
-        public void Destroy()
+        public virtual void Destroy()
         {
             _dbInt.DeleteRecords(_tableName, new Dictionary<string, string>() { { "Id", Id.ToString() } });
         }

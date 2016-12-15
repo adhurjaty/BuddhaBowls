@@ -94,24 +94,29 @@ namespace BuddhaBowls
         #region ICommand Helpers
         private void MoveToReceived(object obj)
         {
-            List<InventoryItem> fromList = OpenBreakdownContext.GetInventoryItems();
-            List<InventoryItem> toList = ReceivedBreakdownContext.GetInventoryItems();
-
-            InventoryItem selected = OpenBreakdownContext.SelectedItem;
-            fromList.Remove(selected);
-            toList.Add(selected);
-
-            float oTotal = 0;
-            OpenBreakdownContext.BreakdownList = ParentContext.GetOrderBreakdown(fromList, out oTotal);
-            OpenBreakdownContext.OrderTotal = oTotal;
-
-            ReceivedBreakdownContext.BreakdownList = ParentContext.GetOrderBreakdown(toList, out oTotal);
-            ReceivedBreakdownContext.OrderTotal = oTotal;
+            MoveItem(OpenBreakdownContext, ReceivedBreakdownContext);
         }
 
         private void MoveToOpen(object obj)
         {
-            throw new NotImplementedException();
+            MoveItem(ReceivedBreakdownContext, OpenBreakdownContext);
+        }
+
+        private void MoveItem(OrderBreakdownVM fromContext, OrderBreakdownVM toContext)
+        {
+            List<InventoryItem> fromList = fromContext.GetInventoryItems();
+            List<InventoryItem> toList = toContext.GetInventoryItems();
+
+            InventoryItem selected = fromContext.SelectedItem;
+            fromList.Remove(selected);
+            toList.Add(selected);
+
+            float oTotal = 0;
+            fromContext.BreakdownList = ParentContext.GetOrderBreakdown(fromList, out oTotal);
+            fromContext.OrderTotal = oTotal;
+
+            toContext.BreakdownList = ParentContext.GetOrderBreakdown(toList, out oTotal);
+            toContext.OrderTotal = oTotal;
         }
         #endregion
 

@@ -15,7 +15,7 @@
         <Label Content="Open Orders" Grid.Row="0" />
         <DataGrid x:Name="dataGrid1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 Margin="0, 25, 0, 0" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding OpenOrders}"
-                                SelectedItem="{Binding SelectedOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
+                                SelectedItem="{Binding SelectedOpenOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Vendor" Binding="{Binding Company}" Width="2*" IsReadOnly="True"/>
@@ -29,7 +29,7 @@
             <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
         <Button Grid.Row="0" Height="15" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" VerticalAlignment="Top"
-                            Margin="5, 0" Command="{Binding DeleteOrderCommand}">
+                            Margin="5, 0" Command="{Binding DeleteOpenOrderCommand}">
             <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
         <Button Content="Received" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="15" Width="60"
@@ -37,11 +37,11 @@
         <Button Content="Clear" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="15" Width="60"
                             Margin="130, 0" Command="{Binding ClearReceivedCheckCommand}"/>
         <Button Content="View" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Height="15" Width="60"
-                            Margin="190, 0" Command="{Binding ViewOrderCommand}" />
+                            Margin="190, 0" Command="{Binding ViewOpenOrderCommand}" />
         <Label Content="Received Orders" Grid.Row="1" />
         <DataGrid x:Name="dataGrid2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 Margin="0, 25, 0, 0" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}"
-                                SelectedItem="{Binding SelectedOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
+                                SelectedItem="{Binding SelectedReceivedOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Vendor" Binding="{Binding Company}" Width="2*" IsReadOnly="True"/>
@@ -51,10 +51,10 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button Grid.Row="1" Width="25" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" VerticalAlignment="Top"
-                            Margin="5, 0" Command="{Binding DeleteReceivedOrderCommand}">
+                            Margin="5, 0" Command="{Binding DeleteOrderCommand}">
             <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
         <Button Content="View" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Height="15" Width="60"
-                            Margin="35, 0" Command="{Binding ViewOrderCommand}" />
+                            Margin="35, 0" Command="{Binding ViewReceivedOrderCommand}" />
     </Grid>
 </UserControl>

@@ -49,7 +49,7 @@ namespace BuddhaBowls.Models
 
             Insert();
 
-            ModelHelper.CreateTable(inventoryItems, @"Orders\" + vendor + "_" + Id.ToString());
+            ModelHelper.CreateTable(inventoryItems, GetOrderTableName());
         }
 
         public override string[] GetPropertiesDB(string[] omit = null)
@@ -59,7 +59,18 @@ namespace BuddhaBowls.Models
 
         public List<InventoryItem> GetPOItems()
         {
-            return ModelHelper.InstantiateList<InventoryItem>(@"Orders\" + Company + "_" + Id.ToString(), false);
+            return ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), false);
+        }
+
+        public override void Destroy()
+        {
+            _dbInt.DestroyTable(GetOrderTableName());
+            base.Destroy();
+        }
+
+        private string GetOrderTableName()
+        {
+            return @"Orders\" + Company + "_" + Id.ToString();
         }
     }
 }

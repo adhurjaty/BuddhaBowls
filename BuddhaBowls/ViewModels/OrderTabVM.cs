@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace BuddhaBowls
@@ -85,6 +86,9 @@ namespace BuddhaBowls
             }
         }
 
+        public PurchaseOrder SelectedOpenOrder { get; set; }
+        public PurchaseOrder SelectedReceivedOrder { get; set; }
+
         public PurchaseOrder SelectedOrder { get; set; }
 
         // name of the vendor in the New Order form
@@ -104,11 +108,13 @@ namespace BuddhaBowls
         // Clear button in Order Overview form
         public ICommand ClearReceivedCheckCommand { get; set; }
         // View button in Order Overview form
-        public ICommand ViewOrderCommand { get; set; }
+        public ICommand ViewOpenOrderCommand { get; set; }
+        // View button in Received order data grid
+        public ICommand ViewReceivedOrderCommand { get; set; }
         // Plus button in Order Overview form
         public ICommand AddNewOrderCommand { get; set; }
         // Minus button in Order Overview form for open orders
-        public ICommand DeleteOrderCommand { get; set; }
+        public ICommand DeleteOpenOrderCommand { get; set; }
         // Minus button in Order Overview form for received orders
         public ICommand DeleteReceivedOrderCommand { get; set; }
 
@@ -120,11 +126,19 @@ namespace BuddhaBowls
             }
         }
 
-        public bool ViewOrderCanExecute
+        public bool ViewOpenOrderCanExecute
         {
             get
             {
-                return SelectedOrder != null;
+                return SelectedOpenOrder != null;
+            }
+        }
+
+        public bool ViewReceivedOrderCanExecute
+        {
+            get
+            {
+                return SelectedReceivedOrder != null;
             }
         }
 
@@ -132,7 +146,7 @@ namespace BuddhaBowls
         {
             get
             {
-                return SelectedOrder != null && SelectedOrder.ReceivedDate == null;
+                return SelectedOpenOrder != null;
             }
         }
 
@@ -140,7 +154,7 @@ namespace BuddhaBowls
         {
             get
             {
-                return SelectedOrder != null && SelectedOrder.ReceivedDate != null;
+                return SelectedReceivedOrder != null;
             }
         }
         #endregion
@@ -161,9 +175,10 @@ namespace BuddhaBowls
                 ClearOrderCommand = new RelayCommand(ClearOrderAmounts);
                 ReceivedOrdersCommand = new RelayCommand(MoveReceivedOrders);
                 ClearReceivedCheckCommand = new RelayCommand(ClearReceivedChecks);
-                ViewOrderCommand = new RelayCommand(ViewOrder, x => ViewOrderCanExecute);
+                ViewOpenOrderCommand = new RelayCommand(ViewOpenOrder, x => ViewOpenOrderCanExecute);
+                ViewReceivedOrderCommand = new RelayCommand(ViewOpenOrder, x => ViewReceivedOrderCanExecute);
                 AddNewOrderCommand = new RelayCommand(StartNewOrder);
-                DeleteOrderCommand = new RelayCommand(RemoveOpenOrder, x => RemoveOpenOrderCanExecute);
+                DeleteOpenOrderCommand = new RelayCommand(RemoveOpenOrder, x => RemoveOpenOrderCanExecute);
                 DeleteReceivedOrderCommand = new RelayCommand(RemoveReceivedOrder, x => RemoveReceivedOrderCanExecute);
 
                 TryDBConnect(true);
@@ -186,6 +201,9 @@ namespace BuddhaBowls
 
             OrderVendor = "";
             _window.DeleteTempTab();
+
+            _models.PurchaseOrders.Add(po);
+            RefreshOrderList();
         }
 
         /// <summary>
@@ -247,10 +265,18 @@ namespace BuddhaBowls
             LoadPreviousOrders();
         }
 
-        private void ViewOrder(object obj)
+        private void ViewOpenOrder(object obj)
         {
-            List<InventoryItem> orderedItems = SelectedOrder.GetPOItems();
+            List<InventoryItem> orderedItems = SelectedOpenOrder.GetPOItems();
             ViewOrderVM context = new ViewOrderVM(this, openItems: orderedItems);
+            ViewOrderTabControl userControl = new ViewOrderTabControl(context);
+            _window.AddTempTab("PO#: " + SelectedOrder.Id, userControl);
+        }
+
+        private void ViewReceivedOrder(object obj)
+        {
+            List<InventoryItem> orderedItems = SelectedReceivedOrder.GetPOItems();
+            ViewOrderVM context = new ViewOrderVM(this, receivedItems: orderedItems);
             ViewOrderTabControl userControl = new ViewOrderTabControl(context);
             _window.AddTempTab("PO#: " + SelectedOrder.Id, userControl);
         }
@@ -261,7 +287,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void RemoveReceivedOrder(object obj)
         {
-            throw new NotImplementedException();
+            DeleteOrder(SelectedReceivedOrder);
         }
 
         /// <summary>
@@ -270,7 +296,19 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void RemoveOpenOrder(object obj)
         {
-            throw new NotImplementedException();
+            DeleteOrder(SelectedOpenOrder);
+        }
+
+        private void DeleteOrder(PurchaseOrder order)
+        {
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete PO# " + order.Id.ToString(),
+                                                      "Delete PO# " + order.Id.ToString() + "?", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                order.Destroy();
+                _models.PurchaseOrders.Remove(order);
+                RefreshOrderList();
+            }
         }
 
         /// <summary>
@@ -359,7 +397,7 @@ namespace BuddhaBowls
         public void MoveOrderToReceived(PurchaseOrder po)
         {
             po.ReceivedDate = DateTime.Now;
-            LoadPreviousOrders();
+            RefreshOrderList();
         }
 
         /// <summary>
@@ -389,6 +427,11 @@ namespace BuddhaBowls
         {
             ParentContext.RefreshInventoryList();
             NotifyPropertyChanged("FilteredInvetoryItems");
+        }
+
+        private void RefreshOrderList()
+        {
+            LoadPreviousOrders();
         }
     }
 }

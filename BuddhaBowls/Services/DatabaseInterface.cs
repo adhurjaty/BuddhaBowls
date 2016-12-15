@@ -205,5 +205,10 @@ namespace BuddhaBowls.Services
             contents = contents.Concat(rows.Select(x => string.Join(",", x))).ToList();
             File.WriteAllLines(FilePath(tableName), contents);
         }
+
+        public void DestroyTable(string tableName)
+        {
+            File.Delete(FilePath(tableName));
+        }
     }
 }
