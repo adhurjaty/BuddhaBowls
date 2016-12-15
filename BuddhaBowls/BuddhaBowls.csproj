@@ -110,9 +110,6 @@
     <Compile Include="UserControls\BreakdownCategory.xaml.cs">
       <DependentUpon>BreakdownCategory.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\ViewOrderControl.xaml.cs">
-      <DependentUpon>ViewOrderControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControls\ViewOrderTabControl.xaml.cs">
       <DependentUpon>ViewOrderTabControl.xaml</DependentUpon>
     </Compile>
@@ -155,10 +152,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\OrderTabControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\ViewOrderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -249,7 +249,10 @@ namespace BuddhaBowls
 
         private void ViewOrder(object obj)
         {
-            _window.AddTempTab("PO#: " + SelectedOrder.Id, new NewOrder(this));
+            List<InventoryItem> orderedItems = SelectedOrder.GetPOItems();
+            ViewOrderVM context = new ViewOrderVM(this, openItems: orderedItems);
+            ViewOrderTabControl userControl = new ViewOrderTabControl(context);
+            _window.AddTempTab("PO#: " + SelectedOrder.Id, userControl);
         }
 
         /// <summary>
@@ -309,7 +312,7 @@ namespace BuddhaBowls
             ReceivedOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { Company = "Orders not found" } };
         }
 
-        private ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)
+        public ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)
         {
             ObservableCollection<BreakdownCategoryItem> breakdown = new ObservableCollection<BreakdownCategoryItem>();
             total = 0;
@@ -336,7 +339,8 @@ namespace BuddhaBowls
             BreakdownContext = new OrderBreakdownVM()
             {
                 BreakdownList = GetOrderBreakdown(_models.InventoryItems.Where(x => x.LastOrderAmount > 0), out oTotal),
-                OrderTotal = oTotal
+                OrderTotal = oTotal,
+                Header = "Price Breakdown"
             };
         }
         #endregion

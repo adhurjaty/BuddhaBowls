@@ -215,19 +215,19 @@ namespace BuddhaBowls.Models
             if ((thisType == typeof(Int16) || thisType == typeof(Int16?)) && (value.GetType() == typeof(Int32) || value.GetType() == typeof(Int32?)))
                 value = Convert.ChangeType(value, typeof(Int16));
 
-            if (thisType.ToString().Contains("Nullable"))
-                value = Convert.ChangeType(value, Nullable.GetUnderlyingType(thisType));
+            //if (thisType.ToString().Contains("Nullable"))
+            //    value = Convert.ChangeType(value, Nullable.GetUnderlyingType(thisType));
 
-            if(thisType == typeof(int) && value.GetType() == typeof(string))
+            if((thisType == typeof(int) || thisType == typeof(int?)) && value.GetType() == typeof(string))
                 value = int.Parse((string)value);
 
-            if (thisType == typeof(bool) && value.GetType() == typeof(string))
+            if ((thisType == typeof(bool) || thisType == typeof(bool?)) && value.GetType() == typeof(string))
                 value = ((string)value).ToUpper() == "TRUE";
 
-            if (thisType == typeof(float) && value.GetType() == typeof(string))
+            if ((thisType == typeof(float) || thisType == typeof(float?)) && value.GetType() == typeof(string))
                 value = float.Parse((string)value);
 
-            if (thisType == typeof(DateTime) || thisType == typeof(DateTime?) && value.GetType() == typeof(string))
+            if ((thisType == typeof(DateTime) || thisType == typeof(DateTime?)) && value.GetType() == typeof(string))
                 value = DateTime.Parse((string)value);
 
             GetType().GetProperty(property).SetValue(this, value);

@@ -24,5 +24,22 @@ namespace BuddhaBowls.UserControls
         {
             InitializeComponent();
         }
+
+        public ViewOrderTabControl(ViewOrderVM context) : this()
+        {
+            DataContext = context;
+        }
+
+        private void OpenOrder_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //((ViewOrderVM)DataContext).ClearSelectedItems();
+            ((OrderBreakdownVM)((UserControl)sender).DataContext).ClearSelectedItems();
+        }
+
+        private void ReceivedOrder_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //((ViewOrderVM)DataContext).ClearSelectedItems();
+            ((OrderBreakdownVM)((UserControl)sender).DataContext).ClearSelectedItems();
+        }
     }
 }

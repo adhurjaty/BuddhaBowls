@@ -10,6 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="80" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         <TextBlock Text="View Order Header" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" />
         <Grid Grid.Row="1">

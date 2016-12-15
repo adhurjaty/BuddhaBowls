@@ -1,15 +1,15 @@
 ﻿using BuddhaBowls.Models;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace BuddhaBowls
 {
+    public delegate void BreakdownSelectionChanged();
+
     public class OrderBreakdownVM : INotifyPropertyChanged
     {
         // INotifyPropertyChanged event and method
@@ -30,6 +30,10 @@ namespace BuddhaBowls
             set
             {
                 _breakdownList = value;
+                foreach(BreakdownCategoryItem bci in _breakdownList)
+                {
+                    bci.ClearSelected = ClearSelectedItems;
+                }
                 NotifyPropertyChanged("BreakdownList");
             }
         }
@@ -47,6 +51,54 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("OrderCost");
             }
         }
+
+        private string _header;
+        public string Header
+        {
+            get
+            {
+                return _header;
+            }
+            set
+            {
+                _header = value;
+                NotifyPropertyChanged("Header");
+            }
+        }
+
+        public InventoryItem SelectedItem
+        {
+            get
+            {
+                BreakdownCategoryItem item = BreakdownList.FirstOrDefault(x => x.SelectedItem != null);
+                if (item == null)
+                    return null;
+                return item.SelectedItem;
+            }
+        }
+
+        public List<InventoryItem> GetInventoryItems()
+        {
+            List<InventoryItem> outItems = new List<InventoryItem>();
+
+            foreach(BreakdownCategoryItem bci in BreakdownList)
+            {
+                foreach(InventoryItem item in bci.Items)
+                {
+                    outItems.Add(item);
+                }
+            }
+
+            return outItems;
+        }
+
+        internal void ClearSelectedItems()
+        {
+            foreach(BreakdownCategoryItem bci in _breakdownList)
+            {
+                bci.SelectedItem = null;
+            }
+        }
     }
 
     public class BreakdownCategoryItem
@@ -55,6 +107,24 @@ namespace BuddhaBowls
         public string Category { get; set; }
         public float TotalAmount { get; set; }
         public ObservableCollection<InventoryItem> Items { get; set; }
+
+        private InventoryItem _selectedItem;
+        public InventoryItem SelectedItem
+        {
+            get
+            {
+                return _selectedItem;
+            }
+            set
+            {
+                if (ClearSelected != null && value != null)
+                    ClearSelected();
+
+                _selectedItem = value;
+            }
+        }
+
+        public BreakdownSelectionChanged ClearSelected;
 
         public BreakdownCategoryItem(IEnumerable<InventoryItem> items)
         {

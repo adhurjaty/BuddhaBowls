@@ -56,5 +56,10 @@ namespace BuddhaBowls.Models
         {
             return base.GetPropertiesDB(new string[] { "Received" });
         }
+
+        public List<InventoryItem> GetPOItems()
+        {
+            return ModelHelper.InstantiateList<InventoryItem>(@"Orders\" + Company + "_" + Id.ToString(), false);
+        }
     }
 }

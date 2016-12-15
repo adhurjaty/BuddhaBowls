@@ -13,7 +13,7 @@
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <Border Grid.RowSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black" />
-        <TextBlock x:Name="textBlock1" Grid.Row="0" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="NoWrap" Text="Price Breakdown"
+        <TextBlock x:Name="textBlock1" Grid.Row="0" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="NoWrap" Text="{Binding Header}"
                                            VerticalAlignment="Top" FontSize="18"/>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ItemsControl Name="BreakdownItemsDisplay" ItemsSource="{Binding BreakdownList}">
