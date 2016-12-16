@@ -12,7 +12,7 @@ namespace BuddhaBowls.UserControls
             InitializeComponent();
         }
 
-        public NewOrder(object context) : this()
+        public NewOrder(NewOrderVM context) : this()
         {
             DataContext = context;
         }
@@ -21,7 +21,7 @@ namespace BuddhaBowls.UserControls
         {
             TextBox textBox = FilterOrderItemBox;
 
-            ((OrderTabVM)DataContext).FilterInventoryItems(textBox.Text);
+            ((NewOrderVM)DataContext).FilterInventoryItems(textBox.Text);
         }
 
         private void OrderList_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
@@ -34,7 +34,7 @@ namespace BuddhaBowls.UserControls
                 ((DataGrid)sender).Items.Refresh();
                 ((DataGrid)sender).RowEditEnding += OrderList_RowEditEnding;
             }
-            ((OrderTabVM)DataContext).InventoryOrderAmountChanged();
+            ((NewOrderVM)DataContext).InventoryOrderAmountChanged();
         }
 
         private void SetBlankToZero(TextBox tb)

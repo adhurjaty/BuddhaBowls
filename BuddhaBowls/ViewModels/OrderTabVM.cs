@@ -89,8 +89,6 @@ namespace BuddhaBowls
         public PurchaseOrder SelectedOpenOrder { get; set; }
         public PurchaseOrder SelectedReceivedOrder { get; set; }
 
-        public PurchaseOrder SelectedOrder { get; set; }
-
         // name of the vendor in the New Order form
         public string OrderVendor { get; set; }
 
@@ -171,7 +169,7 @@ namespace BuddhaBowls
                 _models = models;
 
                 SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
-                CancelNewOrderCommand = new RelayCommand(CancelOrder);
+                //CancelNewOrderCommand = new RelayCommand(CancelOrder);
                 ClearOrderCommand = new RelayCommand(ClearOrderAmounts);
                 ReceivedOrdersCommand = new RelayCommand(MoveReceivedOrders);
                 ClearReceivedCheckCommand = new RelayCommand(ClearReceivedChecks);
@@ -209,16 +207,8 @@ namespace BuddhaBowls
         /// <summary>
         /// Resets order amount values to last saved order amount value in New Order datagrid
         /// </summary>
-        /// <param name="obj"></param>
-        private void CancelOrder(object obj)
+        public void DeleteTempTab()
         {
-            foreach (InventoryItem item in FilteredOrderItems)
-            {
-                item.LastOrderAmount = item.GetPrevOrderAmount();
-            }
-
-            RefreshInventoryList();
-            OrderVendor = "";
             _window.DeleteTempTab();
         }
 
@@ -270,7 +260,7 @@ namespace BuddhaBowls
             List<InventoryItem> orderedItems = SelectedOpenOrder.GetPOItems();
             ViewOrderVM context = new ViewOrderVM(this, openItems: orderedItems);
             ViewOrderTabControl userControl = new ViewOrderTabControl(context);
-            _window.AddTempTab("PO#: " + SelectedOrder.Id, userControl);
+            _window.AddTempTab("PO#: " + SelectedOpenOrder.Id, userControl);
         }
 
         private void ViewReceivedOrder(object obj)
@@ -278,7 +268,7 @@ namespace BuddhaBowls
             List<InventoryItem> orderedItems = SelectedReceivedOrder.GetPOItems();
             ViewOrderVM context = new ViewOrderVM(this, receivedItems: orderedItems);
             ViewOrderTabControl userControl = new ViewOrderTabControl(context);
-            _window.AddTempTab("PO#: " + SelectedOrder.Id, userControl);
+            _window.AddTempTab("PO#: " + SelectedReceivedOrder.Id, userControl);
         }
 
         /// <summary>
@@ -317,8 +307,8 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void StartNewOrder(object obj)
         {
-            SetLastOrderBreakdown();
-            _window.AddTempTab("New Order", new NewOrder(this));
+            //SetLastOrderBreakdown();
+            _window.AddTempTab("New Order", new NewOrder(new NewOrderVM(_models, this)));
         }
         #endregion
 
@@ -429,7 +419,7 @@ namespace BuddhaBowls
             NotifyPropertyChanged("FilteredInvetoryItems");
         }
 
-        private void RefreshOrderList()
+        public void RefreshOrderList()
         {
             LoadPreviousOrders();
         }

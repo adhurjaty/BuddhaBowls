@@ -115,6 +115,7 @@
     </Compile>
     <Compile Include="ViewModels\InventoryTabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\NewOrderVM.cs" />
     <Compile Include="ViewModels\OrderBreakdownVM.cs" />
     <Compile Include="ViewModels\OrderTabVM.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
