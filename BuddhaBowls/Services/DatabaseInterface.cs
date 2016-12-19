@@ -78,7 +78,14 @@ namespace BuddhaBowls.Services
 
             newRecord.Insert(0, (lastId + 1).ToString());
 
-            File.AppendAllText(FilePath(tableName), string.Join(",", newRecord) + "\n");
+            // sometimes files end with \n sometimes not. Deal with this by checking and adding a newline if necessary
+            string newline = "";
+            if(!File.ReadLines(FilePath(tableName)).Last().EndsWith("\n"))
+            {
+                newline = "\n";
+            }
+
+            File.AppendAllText(FilePath(tableName), newline + string.Join(",", newRecord) + "\n");
 
             return newId;
         }

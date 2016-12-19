@@ -48,7 +48,7 @@ namespace BuddhaBowls
             set
             {
                 _orderCost = value;
-                NotifyPropertyChanged("OrderCost");
+                NotifyPropertyChanged("OrderTotal");
             }
         }
 

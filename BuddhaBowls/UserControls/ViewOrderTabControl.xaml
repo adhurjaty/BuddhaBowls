@@ -32,5 +32,7 @@
             </Grid>
             <local:BreakdownDisplay Grid.Column="2" DataContext="{Binding ReceivedBreakdownContext}" />
         </Grid>
+        <Button Content="Save" Grid.Row="2" Height="25" Width="60" HorizontalAlignment="Right" Margin="5" Command="{Binding SaveCommand}" />
+        <Button Content="Cancel" Grid.Row="2" Height="25" Width="60" HorizontalAlignment="Right" Margin="65, 0" Command="{Binding CancelCommand}" />
     </Grid>
 </UserControl>

@@ -16,6 +16,7 @@ namespace BuddhaBowls
     {
         //private MainWindow _window;
         //private ModelContainer _models;
+        private PurchaseOrder _order;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -55,6 +56,17 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("ReceivedBreakdownContext");
             }
         }
+        #endregion
+
+        #region ICommand and CanExecute Properties 
+        // > Button
+        public ICommand MoveToReceivedCommand { get; set; }
+        // < Button
+        public ICommand MoveToOpenCommand { get; set; }
+        // Save Button
+        public ICommand SaveCommand { get; set; }
+        // Cancel Button
+        public ICommand CancelCommand { get; set; }
 
         public bool MoveToReceivedCanExecute
         {
@@ -71,24 +83,27 @@ namespace BuddhaBowls
                 return ReceivedBreakdownContext.SelectedItem != null;
             }
         }
-        #endregion
 
-        #region ICommand and CanExecute Properties 
-        // > Button
-        public ICommand MoveToReceivedCommand { get; set; }
-        // < Button
-        public ICommand MoveToOpenCommand { get; set; }
-        #endregion
-
-        public ViewOrderVM(OrderTabVM parent, IEnumerable<InventoryItem> openItems = null, IEnumerable<InventoryItem> receivedItems = null)
+        public bool SaveButtonCanExecute
         {
-            //_models = models;
+            get
+            {
+                return true;
+            }
+        }
+        #endregion
+
+        public ViewOrderVM(OrderTabVM parent, PurchaseOrder po)
+        {
             ParentContext = parent;
+            _order = po;
 
             MoveToReceivedCommand = new RelayCommand(MoveToReceived, x => MoveToReceivedCanExecute);
             MoveToOpenCommand = new RelayCommand(MoveToOpen, x => MoveToOpenCanExecute);
+            SaveCommand = new RelayCommand(SavePartialOrder, x => SaveButtonCanExecute);
+            CancelCommand = new RelayCommand(CancelView);
 
-            InitBreakdown(openItems, receivedItems);
+            InitBreakdown(po);
         }
 
         #region ICommand Helpers
@@ -118,42 +133,53 @@ namespace BuddhaBowls
             toContext.BreakdownList = ParentContext.GetOrderBreakdown(toList, out oTotal);
             toContext.OrderTotal = oTotal;
         }
+
+        private void CancelView(object obj)
+        {
+            ParentContext.DeleteTempTab();
+        }
+
+        private void SavePartialOrder(object obj)
+        {
+            List<InventoryItem> openItems = OpenBreakdownContext.GetInventoryItems();
+            List<InventoryItem> receivedItems = ReceivedBreakdownContext.GetInventoryItems();
+
+            if (receivedItems.Count == 0)
+            {
+                _order.ReceivedDate = null;
+                _order.Update();
+            }
+            else if (openItems.Count != 0)
+            {
+                _order.SplitToPartials(openItems, receivedItems);
+            }
+
+            ParentContext.LoadPreviousOrders();
+            ParentContext.DeleteTempTab();
+        }
         #endregion
 
         #region Initializers
-        private void InitBreakdown(IEnumerable<InventoryItem> openItems, IEnumerable<InventoryItem> receivedItems)
+        private void InitBreakdown(PurchaseOrder po)
         {
+            List<InventoryItem>[] poItems = po.GetPOItems();
+            List<InventoryItem> openItems = poItems[0];
+            List<InventoryItem> receivedItems = poItems[1];
+
             float oTotal = 0;
-            if (openItems != null)
+            OpenBreakdownContext = new OrderBreakdownVM()
             {
-                OpenBreakdownContext = new OrderBreakdownVM()
-                {
-                    BreakdownList = ParentContext.GetOrderBreakdown(openItems, out oTotal),
-                    OrderTotal = oTotal,
-                    Header = "Open Ordered Items"
-                };
+                BreakdownList = ParentContext.GetOrderBreakdown(openItems, out oTotal),
+                OrderTotal = oTotal,
+                Header = "Open Ordered Items"
+            };
 
-                ReceivedBreakdownContext = new OrderBreakdownVM()
-                {
-                    BreakdownList = new ObservableCollection<BreakdownCategoryItem>(),
-                    Header = "Received Ordered Items"
-                };
-            }
-            else if (receivedItems != null)
+            ReceivedBreakdownContext = new OrderBreakdownVM()
             {
-                ReceivedBreakdownContext = new OrderBreakdownVM()
-                {
-                    BreakdownList = ParentContext.GetOrderBreakdown(receivedItems, out oTotal),
-                    OrderTotal = oTotal,
-                    Header = "Received Ordered Items"
-                };
-
-                OpenBreakdownContext = new OrderBreakdownVM()
-                {
-                    BreakdownList = new ObservableCollection<BreakdownCategoryItem>(),
-                    Header = "Open Ordered Items"
-                };
-            }
+                BreakdownList = ParentContext.GetOrderBreakdown(receivedItems, out oTotal),
+                OrderTotal = oTotal,
+                Header = "Received Ordered Items"
+            };
         }
         #endregion
     }

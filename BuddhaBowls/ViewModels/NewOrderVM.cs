@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+// TODO: Deal with all of the ParentContext weirdness
+
 namespace BuddhaBowls
 {
     public class NewOrderVM : INotifyPropertyChanged
@@ -104,7 +106,8 @@ namespace BuddhaBowls
                 item.Update();
             }
 
-            PurchaseOrder po = new PurchaseOrder(OrderVendor, _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList());
+            List<InventoryItem> purchasedItems = _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList();
+            PurchaseOrder po = new PurchaseOrder(OrderVendor, purchasedItems);
 
             OrderVendor = "";
             ParentContext.DeleteTempTab();
@@ -141,6 +144,7 @@ namespace BuddhaBowls
             }
 
             RefreshInventoryList();
+            SetLastOrderBreakdown();
         }
         #endregion
 
@@ -195,7 +199,7 @@ namespace BuddhaBowls
         /// <param name="filterStr"></param>
         public void FilterInventoryItems(string filterStr)
         {
-            ParentContext.FilterInventoryItems(filterStr);
+            ParentContext.ParentContext.FilterInventoryItems(filterStr);
             NotifyPropertyChanged("FilteredOrderItems");
         }
         #endregion
