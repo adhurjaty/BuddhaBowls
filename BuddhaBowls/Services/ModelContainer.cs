@@ -17,6 +17,7 @@ namespace BuddhaBowls.Services
         public List<BatchItem> BatchItems { get; set; }
         public HashSet<string> ItemCategories { get; set; }
         public List<PurchaseOrder> PurchaseOrders { get; set; }
+        public List<Vendor> Vendors { get; set; }
 
         public ModelContainer()
         {
@@ -30,6 +31,7 @@ namespace BuddhaBowls.Services
             InventoryItems = ModelHelper.InstantiateList<InventoryItem>("InventoryItem");
             BatchItems = ModelHelper.InstantiateList<BatchItem>("BatchItem");
             PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder");
+            Vendors = ModelHelper.InstantiateList<Vendor>("Vendor");
 
             if (InventoryItems == null || BatchItems == null)
                 return;

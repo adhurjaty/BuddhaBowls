@@ -61,8 +61,9 @@ namespace BuddhaBowls
         public InventoryItem SelectedOrderItem { get; set; }
 
         // name of the vendor in the New Order form
-        public string OrderVendor { get; set; }
-
+        public Vendor OrderVendor { get; set; }
+        // vendors in the Vendor dropdown
+        public ObservableCollection<Vendor> VendorList { get; set; }
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -77,7 +78,7 @@ namespace BuddhaBowls
         {
             get
             {
-                return !string.IsNullOrWhiteSpace(OrderVendor) && _models.InventoryItems.FirstOrDefault(x => x.LastOrderAmount > 0) != null;
+                return OrderVendor != null && _models.InventoryItems.FirstOrDefault(x => x.LastOrderAmount > 0) != null;
             }
         }
         #endregion
@@ -92,6 +93,7 @@ namespace BuddhaBowls
             ClearOrderCommand = new RelayCommand(ClearOrderAmounts);
 
             SetLastOrderBreakdown();
+            VendorList = new ObservableCollection<Vendor>(_models.Vendors);
         }
 
         #region ICommand Helpers
@@ -107,9 +109,9 @@ namespace BuddhaBowls
             }
 
             List<InventoryItem> purchasedItems = _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList();
-            PurchaseOrder po = new PurchaseOrder(OrderVendor, purchasedItems);
+            PurchaseOrder po = new PurchaseOrder(OrderVendor.Name, purchasedItems);
 
-            OrderVendor = "";
+            OrderVendor = null;
             ParentContext.DeleteTempTab();
 
             _models.PurchaseOrders.Add(po);
@@ -128,7 +130,7 @@ namespace BuddhaBowls
             }
 
             RefreshInventoryList();
-            OrderVendor = "";
+            OrderVendor = null;
             ParentContext.DeleteTempTab();
         }
 

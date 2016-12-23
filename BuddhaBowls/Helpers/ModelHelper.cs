@@ -108,6 +108,20 @@ namespace BuddhaBowls.Helpers
             DatabaseInterface dbInt = new DatabaseInterface();
             dbInt.CreateTable(columns, rows, tableName);
         }
+
+        public static string[] CombineArrays(string[] arr1, string[] arr2)
+        {
+            if (arr1 == null)
+                arr1 = new string[0];
+            if (arr2 == null)
+                arr2 = new string[0];
+
+            string[] newArr = new string[arr1.Length + arr2.Length];
+            Array.Copy(arr1, newArr, arr1.Length);
+            Array.Copy(arr2, 0, newArr, arr1.Length, arr2.Length);
+
+            return newArr;
+        }
         //public static bool CompareSingles(Single n1, Single n2)
         //{
 

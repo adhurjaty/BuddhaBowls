@@ -14,7 +14,12 @@ namespace BuddhaBowls.UserControls
 
         public void FilterItems_TextChanged(object sender, TextChangedEventArgs e)
         {
+            ((VendorTabVM)DataContext).FilterVendors(FilterVendorBox.Text);
+        }
 
+        public void VendorList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            ((VendorTabVM)DataContext).AlterVendorCanExecute = true;
         }
     }
 }

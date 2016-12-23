@@ -118,7 +118,8 @@ namespace BuddhaBowls.Models
         #region Overrides
         public override string[] GetPropertiesDB(string[] omit = null)
         {
-            return base.GetPropertiesDB(new string[] { "Received", "ReceivedCheck" });
+            string[] theseOmissions = new string[] { "Received", "ReceivedCheck" };
+            return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
 
         public override void Destroy()

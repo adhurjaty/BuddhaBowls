@@ -62,9 +62,10 @@ namespace BuddhaBowls.Models
             return new InventoryItem(new Dictionary<string, string>() { { "Id", Id.ToString() } }).LastOrderAmount;
         }
 
-        public override string[] GetPropertiesDB(string[] omit)
+        public override string[] GetPropertiesDB(string[] omit = null)
         {
-            return base.GetPropertiesDB(new string[] { "PriceExtension" });
+            string[] theseOmissions = new string[] { "PriceExtension" };
+            return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
     }
 }

@@ -26,5 +26,15 @@ namespace BuddhaBowls.Models
                 InitializeObject(record);
             }
         }
+
+        public void Reset()
+        {
+            string[] record = _dbInt.GetRecord(_tableName, new Dictionary<string, string>() { { "Id", Id.ToString() } });
+
+            if (record != null)
+            {
+                InitializeObject(record);
+            }
+        }
     }
 }

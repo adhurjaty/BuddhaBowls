@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace BuddhaBowls
@@ -30,6 +31,7 @@ namespace BuddhaBowls
 
         public OrderTabVM OrderTab { get; set; }
         public InventoryTabVM InventoryTab { get; set; }
+        public VendorTabVM VendorTab { get; set; }
 
         #region Data Bindings
         // Value in text box for selecting the folder location of DB files
@@ -97,19 +99,13 @@ namespace BuddhaBowls
         {
             BrowseButtonCommand = new RelayCommand(BrowseHelper);
             ReportCommand = new RelayCommand(ReportHelper, x => ReportCanExecute);
-            //AddInventoryItemCommand = new RelayCommand(AddInventoryItem, x => AddItemCanExecute);
-            //DeleteInventoryItemCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute);
-            //EditInventoryItemCommand = new RelayCommand(EditInventoryItem, x => DeleteEditCanExecute);
-            //SaveAddEditCommand = new RelayCommand(SaveAddEdit, x => SaveAddEditCanExecute);
-            //CancelAddEditCommand = new RelayCommand(CancelAddEdit);
-            //SaveCountCommand = new RelayCommand(SaveCount, x => ChangeCountCanExecute);
-            //ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
             SaveSettingsCommand = new RelayCommand(SaveSettings, x => SaveSettingsCanExecute);
 
             _models = new ModelContainer();
 
             OrderTab = new OrderTabVM(_models, this);
             InventoryTab = new InventoryTabVM(_models, this);
+            VendorTab = new VendorTabVM(_models, this);
 
             //MakeBreakdownDisplay();
         }
@@ -168,7 +164,6 @@ namespace BuddhaBowls
         {
             _window = window;
             OrderTab.InitializeWindow(window);
-            InventoryTab.InitializeWindow(window);
         }
         #endregion
 
@@ -214,7 +209,7 @@ namespace BuddhaBowls
         public ObservableCollection<FieldSetting> GetFieldsAndValues<T>(T obj = null) where T : Model, new()
         {
             ObservableCollection<FieldSetting> fieldsAndVals = new ObservableCollection<FieldSetting>();
-            string[] properties = new T().GetPropertiesDB();
+            string[] properties = new T().GetPropertiesDB(new string[] { "Id" });
 
             foreach (string prop in properties)
             {
@@ -233,6 +228,84 @@ namespace BuddhaBowls
             }
 
             return fieldsAndVals;
+        }
+
+        public void AddTempTab(string header, UserControl dataContext)
+        {
+            _window.AddTempTab(header, dataContext);
+        }
+
+        public void DeleteTempTab()
+        {
+            _window.DeleteTempTab();
+        }
+
+
+        /// <summary>
+        /// Looks through fields in add/edit form to ensure that user-supplied values are valid and changes types when necessary
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public string SetOrErrorAddEditItem<T>(ref T item, IEnumerable<FieldSetting> fieldsCollection, bool newItem) where T : Model, new()
+        {
+            foreach (FieldSetting field in fieldsCollection)
+            {
+                if (!item.IsNullable(field.Name) && string.IsNullOrWhiteSpace(field.Value))
+                {
+                    field.Error = 1;
+                    return field.Name + " must be set";
+                }
+
+                if (field.Name == "Name" && _models.InventoryItems.FirstOrDefault(x => x.Name.ToUpper() == field.Value.ToUpper()) != null &&
+                   newItem)
+                {
+                    field.Error = 1;
+                    return field.Value + " already exists in the database";
+                }
+
+                if (item.GetPropertyType(field.Name) == typeof(int))
+                {
+                    int val = 0;
+                    int.TryParse(field.Value, out val);
+
+                    if (val == 0)
+                    {
+                        field.Error = 1;
+                        return field.Name + " must be an integer";
+                    }
+                }
+
+                if (item.GetPropertyType(field.Name) == typeof(float))
+                {
+                    float val = 0;
+                    float divisor = 1f;
+                    string valueStr = field.Value;
+
+                    if (valueStr.EndsWith("%"))
+                    {
+                        valueStr = valueStr.Remove(valueStr.Length - 1);
+                        divisor = 100f;
+                    }
+                    else if (valueStr.StartsWith("$"))
+                    {
+                        valueStr = valueStr.Remove(0, 1);
+                    }
+
+                    float.TryParse(valueStr, out val);
+
+                    if (val == 0)
+                    {
+                        field.Error = 1;
+                        return field.Name + " must be a number";
+                    }
+
+                    field.Value = (val / divisor).ToString();
+                }
+
+                field.Error = 0;
+                item.SetProperty(field.Name, field.Value);
+            }
+            return "";
         }
     }
 
