@@ -111,11 +111,15 @@ namespace BuddhaBowls
             List<InventoryItem> purchasedItems = _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList();
             PurchaseOrder po = new PurchaseOrder(OrderVendor.Name, purchasedItems);
 
+            ReportGenerator generator = new ReportGenerator(_models);
+            generator.GenerateOrder(po, OrderVendor);
+
             OrderVendor = null;
             ParentContext.DeleteTempTab();
 
             _models.PurchaseOrders.Add(po);
             ParentContext.RefreshOrderList();
+
         }
 
         /// <summary>

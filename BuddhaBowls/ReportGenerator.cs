@@ -296,6 +296,77 @@ namespace BuddhaBowls
             return File.Exists(path);
         }
 
+        public void GenerateOrder(PurchaseOrder po, Vendor vendor)
+        {
+            List<InventoryItem> items = po.GetOpenPOItems();
+            HashSet<string> categories = new HashSet<string>(items.Select(x => x.Category));
+            Dictionary<string, float> categoryCosts = new Dictionary<string, float>();
+
+            Excel.Worksheet sheet = _sheets.Add();
+
+            sheet.Name = vendor.Name + " Purchase Order";
+
+            int row = 1;
+            sheet.Cells[row, 1] = vendor.Name + " Purchase Order";
+            row++;
+            row++;
+
+            sheet.Cells[row, 1] = "Contact";
+            sheet.Cells[row, 2] = vendor.Contact;
+            sheet.Cells[row, 3] = "Purchase Order #";
+            sheet.Cells[row, 4] = po.Id.ToString();
+            row++;
+            sheet.Cells[row, 1] = "Phone:";
+            sheet.Cells[row, 2] = vendor.PhoneNumber;
+            sheet.Cells[row, 3] = "Date:";
+            sheet.Cells[row, 4] = po.OrderDate.ToString("MM/dd/yy");
+            row++;
+            row++;
+
+            foreach(string category in categories)
+            {
+                sheet.Cells[row, 1] = "Pack Size";
+                sheet.Cells[row, 2] = "Purchased Unit";
+                sheet.Cells[row, 3] = category;
+                sheet.Cells[row, 4] = "Order Amt";
+                sheet.Cells[row, 5] = "Current Price";
+                sheet.Cells[row, 6] = "Extension";
+                row++;
+
+                categoryCosts[category] = 0;
+                foreach(InventoryItem item in items)
+                {
+                    sheet.Cells[row, 1] = item.Conversion.ToString();
+                    sheet.Cells[row, 2] = item.PurchasedUnit;
+                    sheet.Cells[row, 3] = item.Name;
+                    sheet.Cells[row, 4] = item.LastOrderAmount;
+                    sheet.Cells[row, 5] = item.LastPurchasedPrice.ToString("c");
+                    sheet.Cells[row, 6] = item.PriceExtension.ToString("c");
+                    categoryCosts[category] += item.PriceExtension;
+                    row++;
+                }
+
+                sheet.Cells[row, 5] = category + " Total:";
+                sheet.Cells[row, 6] = categoryCosts[category].ToString("c");
+                row++;
+            }
+            row++;
+
+            foreach(KeyValuePair<string, float> kvp in categoryCosts)
+            {
+                sheet.Cells[row, 5] = kvp.Key + " Total";
+                sheet.Cells[row, 6] = kvp.Value.ToString("c");
+                row++;
+            }
+
+            _workbook.SaveAs(Path.Combine(Properties.Settings.Default.DBLocation, "PO_" + po.Id.ToString() + ".xlsx"));
+        }
+
+        public void GenerateReceivingList()
+        {
+
+        }
+
         public void Close()
         {
             GC.Collect();
@@ -312,33 +383,5 @@ namespace BuddhaBowls
 
             _excelApp = null;
         }
-
-        //private void SetInventoryCategories()
-        //{
-        //    _itemCategories = new HashSet<string>();
-
-        //    foreach (InventoryItem item in _models.InventoryItems)
-        //    {
-        //        _itemCategories.Add(item.Category.ToUpper());
-        //    }
-        //}
-
-        //private void SetCategoryColors()
-        //{
-        //    const string COLOR = "_COLOR";
-
-        //    _categoryColors = new Dictionary<string, string>();
-
-        //    FieldInfo[] fields = typeof(GlobalVar).GetFields().Where(x => x.Name.IndexOf(COLOR) != -1).ToArray();
-        //    string[] fieldNames = fields.Select(x => x.Name).ToArray();
-        //    foreach (string category in _itemCategories)
-        //    {
-        //        int idx = Array.IndexOf(fieldNames, category.Replace(' ', '_') + COLOR);
-        //        if (idx > -1)
-        //        {
-        //            _categoryColors[category] = (string)fields[idx].GetValue(null);
-        //        }
-        //    }
-        //}
     }
 }

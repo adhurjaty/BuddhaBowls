@@ -14,7 +14,6 @@
             <RowDefinition Height="60" />
         </Grid.RowDefinitions>
         <Label x:Name="label2" Content="Vendor:" HorizontalAlignment="Center" Margin="-180,25,0,0" VerticalAlignment="Top"/>
-        <!--<TextBox x:Name="textBox1" HorizontalAlignment="Center" Height="25" Margin="0,25,0,0" TextWrapping="Wrap" Text="{Binding OrderVendor, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>-->
         <ComboBox x:Name="comboBox1" HorizontalAlignment="Center" Height="25" Margin="0,25,0,0" SelectedItem="{Binding OrderVendor}"
                   ItemsSource="{Binding VendorList}" DisplayMemberPath="Name" VerticalAlignment="Top" Width="120"/>
         <Border Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="1" />
