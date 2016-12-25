@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -17,6 +18,7 @@ namespace BuddhaBowls
     public class NewOrderVM : INotifyPropertyChanged
     {
         private ModelContainer _models;
+        private Thread _thread;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -111,10 +113,16 @@ namespace BuddhaBowls
             List<InventoryItem> purchasedItems = _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList();
             PurchaseOrder po = new PurchaseOrder(OrderVendor.Name, purchasedItems);
 
-            ReportGenerator generator = new ReportGenerator(_models);
-            generator.GenerateOrder(po, OrderVendor);
+            _thread = new Thread(delegate()
+            {
+                ReportGenerator generator = new ReportGenerator(_models);
+                string xlsPath = generator.GenerateOrder(po, OrderVendor);
+                generator.Close();
+                OrderVendor = null;
+                System.Diagnostics.Process.Start(xlsPath);
+            });
+            _thread.Start();
 
-            OrderVendor = null;
             ParentContext.DeleteTempTab();
 
             _models.PurchaseOrders.Add(po);
