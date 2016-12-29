@@ -307,8 +307,8 @@ namespace BuddhaBowls
 
         private void OrdersNotFound()
         {
-            OpenOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { Company = "Orders not found" } };
-            ReceivedOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { Company = "Orders not found" } };
+            OpenOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { VendorName = "Orders not found" } };
+            ReceivedOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { VendorName = "Orders not found" } };
         }
 
         public ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)

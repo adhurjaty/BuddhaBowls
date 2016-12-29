@@ -63,7 +63,21 @@ namespace BuddhaBowls
         public InventoryItem SelectedOrderItem { get; set; }
 
         // name of the vendor in the New Order form
-        public Vendor OrderVendor { get; set; }
+        private Vendor _orderVendor;
+        public Vendor OrderVendor
+        {
+            get
+            {
+                return _orderVendor;
+            }
+            set
+            {
+                _orderVendor = value;
+                if(_orderVendor != null)
+                    SetVendorPrices();
+            }
+        }
+
         // vendors in the Vendor dropdown
         public ObservableCollection<Vendor> VendorList { get; set; }
         #endregion
@@ -215,6 +229,25 @@ namespace BuddhaBowls
         {
             ParentContext.ParentContext.FilterInventoryItems(filterStr);
             NotifyPropertyChanged("FilteredOrderItems");
+        }
+
+        /// <summary>
+        /// When user selects a vendor, the prices update to match the last purchased price from that vendor
+        /// </summary>
+        private void SetVendorPrices()
+        {
+            List<InventoryItem> priceListItems = OrderVendor.GetFromPriceList();
+            if (priceListItems != null)
+            {
+                foreach (InventoryItem item in FilteredOrderItems)
+                {
+                    InventoryItem matchingItem = priceListItems.FirstOrDefault(x => x.Id == item.Id);
+                    if (matchingItem != null)
+                        item.LastPurchasedPrice = matchingItem.LastPurchasedPrice;
+                }
+            }
+            RefreshInventoryList();
+            SetLastOrderBreakdown();
         }
         #endregion
 

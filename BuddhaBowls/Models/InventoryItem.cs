@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class InventoryItem : Model, IItem
+    public class InventoryItem : Model
     {
         public string Name { get; set; }
         public string Category { get; set; }

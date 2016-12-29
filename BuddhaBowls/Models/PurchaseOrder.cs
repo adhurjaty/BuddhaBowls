@@ -1,13 +1,14 @@
 ﻿using BuddhaBowls.Helpers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace BuddhaBowls.Models
 {
     public class PurchaseOrder : Model
     {
-        public string Company { get; set; }
+        public string VendorName { get; set; }
         public DateTime OrderDate { get; set; }
         public bool IsPartial { get; set; }
 
@@ -30,7 +31,7 @@ namespace BuddhaBowls.Models
 
         public PurchaseOrder(string vendor, List<InventoryItem> inventoryItems) : this()
         {
-            Company = vendor;
+            VendorName = vendor;
             OrderDate = DateTime.Now;
 
             Insert();
@@ -40,6 +41,25 @@ namespace BuddhaBowls.Models
                 item.LastPurchasedDate = DateTime.Now;
             }
             ModelHelper.CreateTable(inventoryItems, GetOrderTableName());
+            UpdatePrices(inventoryItems);
+        }
+
+        private void UpdatePrices(List<InventoryItem> inventoryItems)
+        {
+            if(_dbInt.TableExists(GetPriceTableName()))
+            {
+                foreach (InventoryItem item in inventoryItems)
+                {
+                    if (!_dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id))
+                    {
+                        _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict());
+                    }
+                }
+            }
+            else
+            {
+                File.Copy(_dbInt.FilePath("InventoryItem"), _dbInt.FilePath(GetPriceTableName()));
+            }
         }
 
         public void Receive()
@@ -94,17 +114,22 @@ namespace BuddhaBowls.Models
 
         private string GetOrderTableName()
         {
-            return @"Orders\" + Company + "_" + Id.ToString();
+            return @"Orders\" + VendorName + "_" + Id.ToString();
         }
 
         private string GetReceivedPartialOrderTableName()
         {
-            return @"Orders\Partial_Received_" + Company + "_" + Id.ToString();
+            return @"Orders\Partial_Received_" + VendorName + "_" + Id.ToString();
         }
 
         private string GetOpenPartialOrderTableName()
         {
-            return @"Orders\Partial_Open_" + Company + "_" + Id.ToString();
+            return @"Orders\Partial_Open_" + VendorName + "_" + Id.ToString();
+        }
+
+        private string GetPriceTableName()
+        {
+            return @"Vendor Prices\" + VendorName + "_Prices";
         }
 
         private void CombinePartial()

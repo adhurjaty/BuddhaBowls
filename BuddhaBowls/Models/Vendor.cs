@@ -1,5 +1,7 @@
-﻿using System;
+﻿using BuddhaBowls.Helpers;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +38,14 @@ namespace BuddhaBowls.Models
             {
                 InitializeObject(record);
             }
+        }
+
+        public List<InventoryItem> GetFromPriceList()
+        {
+            string tableName = @"Vendor Prices\" + Name + "_Prices";
+            if(_dbInt.TableExists(tableName))
+                return ModelHelper.InstantiateList<InventoryItem>(tableName, false);
+            return null;
         }
     }
 }

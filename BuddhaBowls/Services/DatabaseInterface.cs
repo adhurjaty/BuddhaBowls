@@ -23,7 +23,7 @@ namespace BuddhaBowls.Services
 
         public string[][] GetRecords(string tableName, Dictionary<string, string> mapping = null, int limit = 0)
         {
-            if(!File.Exists(FilePath(tableName)))
+            if(!TableExists(tableName))
                 return null;
 
             List<string[]> records = new List<string[]>();
@@ -132,7 +132,7 @@ namespace BuddhaBowls.Services
 
             if(found)
             {
-                File.WriteAllText(FilePath(tableName), string.Join("\n", fileContents.Select(x => string.Join(",", x))) + "\n");
+                File.WriteAllText(FilePath(tableName), string.Join("\n", fileContents.Select(x => string.Join(",", x))));
             }
 
             return found;
@@ -188,6 +188,11 @@ namespace BuddhaBowls.Services
         public string FilePath(string tableName)
         {
             return Path.Combine(_dataPath, tableName + ".csv");
+        }
+
+        public bool TableExists(string tableName)
+        {
+            return File.Exists(FilePath(tableName));
         }
 
         public string[] GetColumnNames(string tableName, TextFieldParser parser = null)

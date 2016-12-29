@@ -47,15 +47,16 @@ namespace BuddhaBowls.Models
         /// </summary>
         public void Update()
         {
-            Dictionary<string, string> setDict = new Dictionary<string, string>();
-            object value;
+            Dictionary<string, string> setDict = FieldsToDict();
+            //Dictionary<string, string> setDict = new Dictionary<string, string>();
+            //object value;
 
-            foreach (string prop in GetPropertiesDB())
-            {
-                value = GetPropertyValue(prop);
-                if (value != null && prop != "Id")
-                    setDict[prop] = value.ToString();
-            }
+            //foreach (string prop in GetPropertiesDB())
+            //{
+            //    value = GetPropertyValue(prop);
+            //    if (value != null && prop != "Id")
+            //        setDict[prop] = value.ToString();
+            //}
 
             _dbInt.UpdateRecord(_tableName, setDict, Id);
         }
@@ -73,17 +74,24 @@ namespace BuddhaBowls.Models
         /// </summary>
         public void Insert()
         {
+
+            Dictionary<string, string> mapping = FieldsToDict();
+            Id = _dbInt.WriteRecord(_tableName, mapping);
+        }
+
+        public Dictionary<string, string> FieldsToDict()
+        {
             string[] propNames = GetPropertiesDB(new string[] { "Id" }); // don't include ID - DB creates a unique one
 
             Dictionary<string, string> mapping = new Dictionary<string, string>();
 
             for (Int32 i = 0; i < propNames.Length; i++)
             {
-                if(GetPropertyValue(propNames[i]) != null)
+                if (GetPropertyValue(propNames[i]) != null)
                     mapping[propNames[i]] = GetPropertyValue(propNames[i]).ToString();
             }
 
-            Id = _dbInt.WriteRecord(_tableName, mapping);
+            return mapping;
         }
 
         /// <summary>

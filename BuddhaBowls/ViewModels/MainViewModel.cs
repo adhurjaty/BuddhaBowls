@@ -133,7 +133,7 @@ namespace BuddhaBowls
             }
             catch (Exception e)
             {
-                MessageBox.Show("Error has occurred generating report", "Report Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Error has occurred generating report:\n" + e.Message, "Report Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
