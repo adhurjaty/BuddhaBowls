@@ -1,0 +1,7 @@
+Id,Name,InventoryItemId,Measure,Quantity,IsBatch
+0,Butter,4,1/4 LB,3,False
+1,Thyme,44,0.25,0.25,False
+2,Pepper,48,0.25,0.25,False
+3,Salt,49,0.25,0.25,False
+4,Mushrooms,59,27.25,27.25,False
+5,Garlic Peeled,71,1,1,False

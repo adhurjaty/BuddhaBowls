@@ -1,0 +1,5 @@
+Id,Name,InventoryItemId,Measure,Quantity,IsBatch
+0,Roasted Bell Peppers,23,1/4 PAN,38,False
+1,Canola Oil,34,SQUIRT,2.1,False
+2,Pepper,48,1 TSP,0.25,False
+3,Salt,49,1 TSP,0.25,False

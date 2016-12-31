@@ -1,0 +1,7 @@
+Name,Category,PurchasedUnit,Count,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate,Id
+Yogurt,Dairy,6 QUARTS,13,QUART,6,OZ-wt,18,1,14.5,10,12/16/2016 2:20:10 PM,10
+Stewed Tomatoes,Dry Goods,6# CANS,4,CAN,6,EA,6,1,14.94,4,12/16/2016 2:20:10 PM,14
+Black Beans,Dry Goods,6# CANS,2,CAN,6,EA,6,1,25.78,5,12/16/2016 2:20:10 PM,15
+Sriracha,Dry Goods,12 EACH,12,BOTTLE,12,EA,12,1,21.38,2,12/16/2016 2:20:10 PM,32
+Strawberries (Costco),Produce,2lbs,0,BASKET,1,OZ-wt,32,0.85,3.49,5,12/16/2016 2:20:10 PM,68
+Bacon Bits,Meats,10lb CASE,4,BAG,2,OZ-wt,160,1,48.44,4,12/16/2016 2:20:10 PM,75
