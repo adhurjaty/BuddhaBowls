@@ -36,7 +36,7 @@
                               CellEditEnding="VendorList_CellEditEnding" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1*"/>
-                <DataGridTextColumn Header="Contact" Binding="{Binding Name}" Width="1*"/>
+                <DataGridTextColumn Header="Contact" Binding="{Binding Contact}" Width="1*"/>
                 <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="1*"/>
                 <DataGridTextColumn Header="Phone #" Binding="{Binding PhoneNumber}" Width="1*" />
             </DataGrid.Columns>

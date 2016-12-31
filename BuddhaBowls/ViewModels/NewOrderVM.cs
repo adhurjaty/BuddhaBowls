@@ -18,7 +18,6 @@ namespace BuddhaBowls
     public class NewOrderVM : INotifyPropertyChanged
     {
         private ModelContainer _models;
-        private Thread _thread;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -110,6 +109,7 @@ namespace BuddhaBowls
 
             SetLastOrderBreakdown();
             VendorList = new ObservableCollection<Vendor>(_models.Vendors);
+            OrderVendor = null;
         }
 
         #region ICommand Helpers
@@ -127,21 +127,12 @@ namespace BuddhaBowls
             List<InventoryItem> purchasedItems = _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList();
             PurchaseOrder po = new PurchaseOrder(OrderVendor.Name, purchasedItems);
 
-            _thread = new Thread(delegate()
-            {
-                ReportGenerator generator = new ReportGenerator(_models);
-                string xlsPath = generator.GenerateOrder(po, OrderVendor);
-                generator.Close();
-                OrderVendor = null;
-                System.Diagnostics.Process.Start(xlsPath);
-            });
-            _thread.Start();
+            ParentContext.ParentContext.GenerateAfterOrderSaved(po, OrderVendor);
 
             ParentContext.DeleteTempTab();
 
             _models.PurchaseOrders.Add(po);
             ParentContext.RefreshOrderList();
-
         }
 
         /// <summary>

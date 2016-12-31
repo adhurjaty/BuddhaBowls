@@ -25,7 +25,7 @@ namespace BuddhaBowls.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Developer\\Documents\\Visual Studio 2015\\Projects\\BuddhaBowls\\Data")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Developer\\Documents\\Visual Studio 2015\\Projects\\BuddhaBowlsasdfsdf\\Data")]
         public string DBLocation {
             get {
                 return ((string)(this["DBLocation"]));

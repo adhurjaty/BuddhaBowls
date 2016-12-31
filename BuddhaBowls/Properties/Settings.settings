@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="DBLocation" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\Developer\Documents\Visual Studio 2015\Projects\BuddhaBowls\Data</Value>
+      <Value Profile="(Default)">C:\Users\Developer\Documents\Visual Studio 2015\Projects\BuddhaBowlsasdfsdf\Data</Value>
     </Setting>
   </Settings>
 </SettingsFile>

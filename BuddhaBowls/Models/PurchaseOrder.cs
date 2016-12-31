@@ -101,6 +101,11 @@ namespace BuddhaBowls.Models
             return GetPOItems()[0];
         }
 
+        public List<InventoryItem> GetReceivedPOItems()
+        {
+            return GetPOItems()[1];
+        }
+
         public void SplitToPartials(List<InventoryItem> openItems, List<InventoryItem> receivedItems)
         {
             IsPartial = true;

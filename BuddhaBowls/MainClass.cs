@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace BuddhaBowls
 {
@@ -23,6 +24,7 @@ namespace BuddhaBowls
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            DispatcherUnhandledException += MainClass_DispatcherUnhandledException;
             Show();
         }
 
@@ -41,5 +43,10 @@ namespace BuddhaBowls
             _mv.SaveSettings();
         }
 
+        private void MainClass_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.Message + "\n" + e.Exception.StackTrace, "Unhandled Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+        }
     }
 }

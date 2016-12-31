@@ -20,7 +20,7 @@
                                 SelectedItem="{Binding SelectedOpenOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Vendor" Binding="{Binding Company}" Width="2*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Vendor" Binding="{Binding VendorName}" Width="2*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Order Date" Binding="{Binding Path=OrderDate, StringFormat={}{0:MM/dd/yy}}"
                                                 Width="2*" IsReadOnly="True" />
                 <DataGridCheckBoxColumn Header="Received" Binding="{Binding ReceivedCheck}" Width="1*"/>
@@ -40,13 +40,15 @@
                             Margin="130, 0" Command="{Binding ClearReceivedCheckCommand}"/>
         <Button Content="View" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
                             Margin="190, 0" Command="{Binding ViewOpenOrderCommand}" />
+        <Button Content="Open PO" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
+                            Margin="250, 0" Command="{Binding OpenOpenPOCommand}" />
         <Label Content="Received Orders" Grid.Row="2" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" />
         <DataGrid x:Name="dataGrid2" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}"
                                 SelectedItem="{Binding SelectedReceivedOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Vendor" Binding="{Binding Company}" Width="2*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Vendor" Binding="{Binding VendorName}" Width="2*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Order Date" Binding="{Binding Path=OrderDate, StringFormat={}{0:MM/dd/yy}}"
                                                 Width="2*" IsReadOnly="True" />
                 <DataGridTextColumn Header="Received Date" Binding="{Binding ReceivedDate}" Width="1*" IsReadOnly="True" />
@@ -60,5 +62,7 @@
                             Margin="35, 0" Command="{Binding ReOpenOrderCommand}" />
         <Button Content="View" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
                             Margin="95, 0" Command="{Binding ViewReceivedOrderCommand}" />
+        <Button Content="Open PO" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
+                            Margin="155, 0" Command="{Binding OpenReceivedPOCommand}" />
     </Grid>
 </UserControl>

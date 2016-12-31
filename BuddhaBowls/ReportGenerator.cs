@@ -299,6 +299,9 @@ namespace BuddhaBowls
         public string GenerateOrder(PurchaseOrder po, Vendor vendor)
         {
             List<InventoryItem> items = po.GetOpenPOItems();
+            if (items == null)
+                items = po.GetReceivedPOItems();
+
             HashSet<string> categories = new HashSet<string>(items.Select(x => x.Category));
             Dictionary<string, float> categoryCosts = new Dictionary<string, float>();
 
@@ -410,7 +413,7 @@ namespace BuddhaBowls
             range.Borders.Weight = Excel.XlBorderWeight.xlMedium;
             range.BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
 
-            string filepath = Path.Combine(Properties.Settings.Default.DBLocation, "PO_" + po.Id.ToString() + ".xlsx");
+            string filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + po.Id.ToString() + ".xlsx");
             _workbook.SaveAs(filepath);
 
             return filepath;
@@ -502,7 +505,7 @@ namespace BuddhaBowls
             }
             row++;
 
-            string filepath = Path.Combine(Properties.Settings.Default.DBLocation, "ReceivingList_" + po.Id.ToString() + ".xlsx");
+            string filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Receiving Lists", "ReceivingList_" + po.Id.ToString() + ".xlsx");
             _workbook.SaveAs(filepath);
 
             return filepath;

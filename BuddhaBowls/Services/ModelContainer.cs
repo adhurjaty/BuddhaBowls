@@ -22,8 +22,11 @@ namespace BuddhaBowls.Services
         public ModelContainer()
         {
             InitializeModels();
-            SetInventoryCategories();
-            SetCategoryColors();
+            if (InventoryItems != null)
+            {
+                SetInventoryCategories();
+                SetCategoryColors();
+            }
         }
 
         public void InitializeModels()

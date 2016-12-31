@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,6 +20,7 @@ namespace BuddhaBowls
     {
         private MainWindow _window;
         private ModelContainer _models;
+        private Thread _thread;
         private bool _databaseFound;
 
         // INotifyPropertyChanged event and method
@@ -29,9 +31,47 @@ namespace BuddhaBowls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public OrderTabVM OrderTab { get; set; }
-        public InventoryTabVM InventoryTab { get; set; }
-        public VendorTabVM VendorTab { get; set; }
+        private OrderTabVM _orderTab;
+        public OrderTabVM OrderTab
+        {
+            get
+            {
+                return _orderTab;
+            }
+            set
+            {
+                _orderTab = value;
+                NotifyPropertyChanged("OrderTab");
+            }
+        }
+
+        private InventoryTabVM _inventoryTab;
+        public InventoryTabVM InventoryTab
+        {
+            get
+            {
+                return _inventoryTab;
+            }
+            set
+            {
+                _inventoryTab = value;
+                NotifyPropertyChanged("InventoryTab");
+            }
+        }
+
+        private VendorTabVM _vendorTab;
+        public VendorTabVM VendorTab
+        {
+            get
+            {
+                return _vendorTab;
+            }
+            set
+            {
+                _vendorTab = value;
+                NotifyPropertyChanged("VendorTab");
+            }
+        }
 
         #region Data Bindings
         // Value in text box for selecting the folder location of DB files
@@ -99,14 +139,9 @@ namespace BuddhaBowls
         {
             BrowseButtonCommand = new RelayCommand(BrowseHelper);
             ReportCommand = new RelayCommand(ReportHelper, x => ReportCanExecute);
-            SaveSettingsCommand = new RelayCommand(SaveSettings, x => SaveSettingsCanExecute);
+            SaveSettingsCommand = new RelayCommand(SaveSettingsHelper, x => SaveSettingsCanExecute);
 
-            _models = new ModelContainer();
-
-            OrderTab = new OrderTabVM(_models, this);
-            InventoryTab = new InventoryTabVM(_models, this);
-            VendorTab = new VendorTabVM(_models, this);
-
+            InitTabsAndModel();
             //MakeBreakdownDisplay();
         }
 
@@ -157,26 +192,34 @@ namespace BuddhaBowls
                 Properties.Settings.Default.Save();
             }
         }
+
+        /// <summary>
+        /// Saves the application settings when Save Settings button is pressed or the application is closed
+        /// </summary>
+        /// <param name="obj"></param>
+        public void SaveSettingsHelper(object obj)
+        {
+            SaveSettings();
+
+            InitTabsAndModel();
+        }
         #endregion
 
         #region Initializers
         public void InitializeWindow(MainWindow window)
         {
             _window = window;
-            OrderTab.InitializeWindow(window);
+        }
+
+        public void InitTabsAndModel()
+        {
+            _models = new ModelContainer();
+
+            OrderTab = new OrderTabVM(_models, this);
+            InventoryTab = new InventoryTabVM(_models, this);
+            VendorTab = new VendorTabVM(_models, this);
         }
         #endregion
-
-        /// <summary>
-        /// Saves the application settings when Save Settings button is pressed or the application is closed
-        /// </summary>
-        /// <param name="obj"></param>
-        public void SaveSettings(object obj = null)
-        {
-            // TODO: add settings to save
-            Properties.Settings.Default.DBLocation = DataFileFolder;
-            Properties.Settings.Default.Save();
-        }
 
         /// <summary>
         /// Filter list of inventory items based on the string in the filter box above datagrids
@@ -306,6 +349,50 @@ namespace BuddhaBowls
                 item.SetProperty(field.Name, field.Value);
             }
             return "";
+        }
+
+        public void SaveSettings()
+        {
+            // TODO: add settings to save
+            Properties.Settings.Default.DBLocation = DataFileFolder;
+            Properties.Settings.Default.Save();
+        }
+
+        public void GenerateAfterOrderSaved(PurchaseOrder po, Vendor vendor)
+        {
+            _thread = new Thread(delegate ()
+            {
+                ReportGenerator generator = new ReportGenerator(_models);
+                string xlsPath = generator.GenerateOrder(po, vendor);
+                generator.GenerateReceivingList(po, vendor);
+                generator.Close();
+                System.Diagnostics.Process.Start(xlsPath);
+            });
+            _thread.Start();
+        }
+
+        public void GeneratePO(PurchaseOrder po, Vendor vendor)
+        {
+            _thread = new Thread(delegate ()
+            {
+                ReportGenerator generator = new ReportGenerator(_models);
+                string xlsPath = generator.GenerateOrder(po, vendor);
+                generator.Close();
+                System.Diagnostics.Process.Start(xlsPath);
+            });
+            _thread.Start();
+        }
+
+        public void GenerateReceivingList(PurchaseOrder po, Vendor vendor)
+        {
+            _thread = new Thread(delegate ()
+            {
+                ReportGenerator generator = new ReportGenerator(_models);
+                string xlsPath = generator.GenerateReceivingList(po, vendor);
+                generator.Close();
+                System.Diagnostics.Process.Start(xlsPath);
+            });
+            _thread.Start();
         }
     }
 

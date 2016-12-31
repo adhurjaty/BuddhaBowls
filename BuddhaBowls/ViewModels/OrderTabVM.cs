@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -16,7 +17,6 @@ namespace BuddhaBowls
 {
     public class OrderTabVM : INotifyPropertyChanged
     {
-        private MainWindow _window;
         private ModelContainer _models;
 
         // INotifyPropertyChanged event and method
@@ -118,6 +118,10 @@ namespace BuddhaBowls
         public ICommand DeleteReceivedOrderCommand { get; set; }
         // Re-Open button
         public ICommand ReOpenOrderCommand { get; set; }
+        // Open PO button in Open orders
+        public ICommand OpenOpenPOCommand { get; set; }
+        // Open PO button in Received orders
+        public ICommand OpenReceivedPOCommand { get; set; }
 
         public bool ViewOpenOrderCanExecute
         {
@@ -171,6 +175,8 @@ namespace BuddhaBowls
                 DeleteOpenOrderCommand = new RelayCommand(RemoveOpenOrder, x => RemoveOpenOrderCanExecute);
                 DeleteReceivedOrderCommand = new RelayCommand(RemoveReceivedOrder, x => RemoveReceivedOrderCanExecute);
                 ReOpenOrderCommand = new RelayCommand(ReOpenOrder, x => ViewReceivedOrderCanExecute);
+                OpenOpenPOCommand = new RelayCommand(ShowOpenPO, x => ViewOpenOrderCanExecute);
+                OpenReceivedPOCommand = new RelayCommand(ShowReceivedPO, x => ViewReceivedOrderCanExecute);
 
                 TryDBConnect(true);
             }
@@ -225,7 +231,7 @@ namespace BuddhaBowls
         {
             ViewOrderVM context = new ViewOrderVM(this, order);
             ViewOrderTabControl userControl = new ViewOrderTabControl(context);
-            _window.AddTempTab("PO#: " + order.Id, userControl);
+            ParentContext.AddTempTab("PO#: " + order.Id, userControl);
         }
 
         /// <summary>
@@ -265,26 +271,49 @@ namespace BuddhaBowls
         private void StartNewOrder(object obj)
         {
             //SetLastOrderBreakdown();
-            _window.AddTempTab("New Order", new NewOrder(new NewOrderVM(_models, this)));
+            ParentContext.AddTempTab("New Order", new NewOrder(new NewOrderVM(_models, this)));
         }
+
+        private void ShowOpenPO(object obj)
+        {
+            ShowPO(SelectedOpenOrder);
+        }
+
+        private void ShowReceivedPO(object obj)
+        {
+            ShowPO(SelectedReceivedOrder);
+        }
+
+        private void ShowPO(PurchaseOrder po)
+        {
+            string poPath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + po.Id.ToString());
+            if (File.Exists(poPath))
+            {
+                System.Diagnostics.Process.Start(poPath);
+            }
+            else
+            {
+                Vendor v = _models.Vendors.FirstOrDefault(x => x.Name == po.VendorName);
+                if(v != null)
+                {
+                    ParentContext.GeneratePO(po, v);
+                }
+            }
+        }
+
         #endregion
 
         #region Initializers
         private bool TryDBConnect(bool connection)
         {
-            RefreshInventoryList();
-
             if (!LoadPreviousOrders() || !connection)
             {
                 OrdersNotFound();
                 return false;
             }
-            return true;
-        }
 
-        public void InitializeWindow(MainWindow window)
-        {
-            _window = window;
+            RefreshInventoryList();
+            return true;
         }
 
         /// <summary>
@@ -357,7 +386,7 @@ namespace BuddhaBowls
 
         public void DeleteTempTab()
         {
-            _window.DeleteTempTab();
+            ParentContext.DeleteTempTab();
         }
     }
 }
