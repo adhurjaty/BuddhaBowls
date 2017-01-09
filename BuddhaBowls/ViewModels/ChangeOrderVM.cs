@@ -135,6 +135,7 @@ namespace BuddhaBowls
             {
                 Properties.Settings.Default.InventoryOrder = NewOrder.ToList();
                 Properties.Settings.Default.Save();
+                ParentContext.LoadDisplayItems();
                 ParentContext.ParentContext.DeleteTempTab();
             }
         }
@@ -151,6 +152,27 @@ namespace BuddhaBowls
         #endregion
 
         #region Update UI Methods
+
+        public void ReorderNewList(string droppedData, string target)
+        {
+            int removeIdx = NewOrder.IndexOf(droppedData);
+            int targetIdx = NewOrder.IndexOf(target);
+
+            if (removeIdx < targetIdx)
+            {
+                NewOrder.Insert(targetIdx + 1, droppedData);
+                NewOrder.RemoveAt(removeIdx);
+            }
+            else
+            {
+                int remIdx = removeIdx + 1;
+                if(remIdx < NewOrder.Count)
+                {
+                    NewOrder.Insert(targetIdx, droppedData);
+                    NewOrder.RemoveAt(remIdx);
+                }
+            }
+        }
 
         #endregion
     }

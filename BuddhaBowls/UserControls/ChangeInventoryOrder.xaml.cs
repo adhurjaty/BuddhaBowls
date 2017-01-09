@@ -29,5 +29,20 @@ namespace BuddhaBowls.UserControls
         {
             DataContext = context;
         }
+
+        public void listBox_StartDrag(object sender, MouseButtonEventArgs e)
+        {
+            ListBoxItem item = (ListBoxItem)sender;
+            DragDrop.DoDragDrop(item, item.DataContext, DragDropEffects.Move);
+            item.IsSelected = true;
+        }
+
+        public void listBox_EndDrag(object sender, DragEventArgs e)
+        {
+            string droppedData = (string)e.Data.GetData(typeof(string));
+            string target = (string)((ListBoxItem)sender).DataContext;
+
+            ((ChangeOrderVM)DataContext).ReorderNewList(droppedData, target);
+        }
     }
 }

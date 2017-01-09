@@ -32,7 +32,15 @@
                         FontSize="24" Command="{Binding MoveToOriginalCommand}" />
             </Grid>
             <ListBox Grid.Column="2" ItemsSource="{Binding NewOrder}" SelectedItem="{Binding SelectedNew}" HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch" />
+                     VerticalAlignment="Stretch">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="AllowDrop" Value="True" />
+                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="listBox_StartDrag" />
+                        <EventSetter Event="Drop" Handler="listBox_EndDrag" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
         </Grid>
         <Button Content="Save" Grid.Row="2" Height="25" Width="60" HorizontalAlignment="Right" Margin="5" Command="{Binding SaveCommand}" />
         <Button Content="Cancel" Grid.Row="2" Height="25" Width="60" HorizontalAlignment="Right" Margin="65, 0" Command="{Binding CancelCommand}" />
