@@ -14,7 +14,7 @@
             <RowDefinition Height="30" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <Label Content="Open Orders" Grid.Row="0" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+        <Label Content="Open Orders" Grid.Row="0" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="-80, 0, 0, 0" />
         <DataGrid x:Name="dataGrid1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding OpenOrders}"
                                 SelectedItem="{Binding SelectedOpenOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
@@ -42,7 +42,9 @@
                             Margin="190, 0" Command="{Binding ViewOpenOrderCommand}" />
         <Button Content="Open PO" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
                             Margin="250, 0" Command="{Binding OpenOpenPOCommand}" />
-        <Label Content="Received Orders" Grid.Row="2" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" />
+        <Button Content="Open Rec" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
+                            Margin="310, 0" Command="{Binding OpenRecListCommand}" />
+        <Label Content="Received Orders" Grid.Row="2" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="-80, 0, 0, 0" />
         <DataGrid x:Name="dataGrid2" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}"
                                 SelectedItem="{Binding SelectedReceivedOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
@@ -64,5 +66,7 @@
                             Margin="95, 0" Command="{Binding ViewReceivedOrderCommand}" />
         <Button Content="Open PO" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
                             Margin="155, 0" Command="{Binding OpenReceivedPOCommand}" />
+        <Button Content="Open Rec" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
+                            Margin="215, 0" Command="{Binding ReceivedRecListCommand}" />
     </Grid>
 </UserControl>

@@ -125,6 +125,8 @@ namespace BuddhaBowls
         public ICommand SaveCountCommand { get; set; }
         // Reset button in Master inventory form
         public ICommand ResetCountCommand { get; set; }
+        // Change display order button in Master inventory form
+        public ICommand ChangeOrderCommand { get; set; }
 
         public bool DeleteEditCanExecute
         {
@@ -165,6 +167,7 @@ namespace BuddhaBowls
             CancelAddEditCommand = new RelayCommand(CancelAddEdit);
             SaveCountCommand = new RelayCommand(SaveCount, x => ChangeCountCanExecute);
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
+            ChangeOrderCommand = new RelayCommand(StartChangeOrder);
 
             TryDBConnect();
         }
@@ -288,6 +291,13 @@ namespace BuddhaBowls
             ModelHelper.CreateTable(_models.InventoryItems.OrderBy(x => x.Id).ToList(), tableName);
             ChangeCountCanExecute = false;
         }
+
+        private void StartChangeOrder(object obj)
+        {
+            RefreshInventoryList();
+            ParentContext.AddTempTab("Change Inv Order", new ChangeInventoryOrder(new ChangeOrderVM(this)));
+        }
+
         #endregion
 
         #region Initializers
@@ -295,12 +305,7 @@ namespace BuddhaBowls
         {
             if (_models.InventoryItems != null)
             {
-                FilteredInventoryItems = new ObservableCollection<InventoryItem>();
-
-                foreach (InventoryItem item in _models.InventoryItems.OrderBy(x => x.Name))
-                {
-                    FilteredInventoryItems.Add(item);
-                }
+                FilteredInventoryItems = new ObservableCollection<InventoryItem>(ParentContext.SortItems(_models.InventoryItems));
 
                 _databaseFound = true;
                 NotifyPropertyChanged("FilteredInventoryItems");

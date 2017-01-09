@@ -44,5 +44,7 @@
         </DataGrid>
         <Button Grid.Row="4" Height ="25" Width="80" Content="Save" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding SaveCountCommand}" />
         <Button Grid.Row="4" Height ="25" Width="80" Content="Reset" HorizontalAlignment="Right" Margin="85, 0" Command="{Binding ResetCountCommand}" />
+        <Button x:Name="ChangeOrderButton" Content="Change Display Order" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0"
+                Grid.Row="1" Width="137" Command="{Binding ChangeOrderCommand}"/>
     </Grid>
 </UserControl>

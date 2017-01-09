@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>3</ApplicationRevision>
+    <ApplicationRevision>5</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -108,8 +108,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\Vendor.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="UserControls\BreakdownDisplay.xaml.cs">
       <DependentUpon>BreakdownDisplay.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ChangeInventoryOrder.xaml.cs">
+      <DependentUpon>ChangeInventoryOrder.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\EditItem.xaml.cs">
       <DependentUpon>EditItem.xaml</DependentUpon>
@@ -145,6 +149,7 @@
     <Compile Include="UserControls\ViewOrderTabControl.xaml.cs">
       <DependentUpon>ViewOrderTabControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ChangeOrderVM.cs" />
     <Compile Include="ViewModels\InventoryTabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NewOrderVM.cs" />
@@ -154,6 +159,10 @@
     <Compile Include="ViewModels\VendorTabVM.cs" />
     <Compile Include="ViewModels\ViewOrderVM.cs" />
     <Page Include="UserControls\BreakdownDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\ChangeInventoryOrder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

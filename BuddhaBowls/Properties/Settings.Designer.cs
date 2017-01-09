@@ -34,5 +34,16 @@ namespace BuddhaBowls.Properties {
                 this["DBLocation"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Generic.List<System.String> InventoryOrder {
+            get {
+                return ((global::System.Collections.Generic.List<System.String>)(this["InventoryOrder"]));
+            }
+            set {
+                this["InventoryOrder"] = value;
+            }
+        }
     }
 }

@@ -5,5 +5,8 @@
     <Setting Name="DBLocation" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Users\Developer\Documents\Visual Studio 2015\Projects\BuddhaBowlsasdfsdf\Data</Value>
     </Setting>
+    <Setting Name="InventoryOrder" Type="System.Collections.Generic.List&lt;System.String&gt;" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

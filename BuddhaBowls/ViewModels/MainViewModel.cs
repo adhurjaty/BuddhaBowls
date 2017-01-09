@@ -228,7 +228,7 @@ namespace BuddhaBowls
         public void FilterInventoryItems(string filterStr)
         {
             if (string.IsNullOrWhiteSpace(filterStr))
-                FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
+                FilteredInventoryItems = new ObservableCollection<InventoryItem>(SortItems(_models.InventoryItems));
             else
                 FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems
                                                         .Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
@@ -240,7 +240,7 @@ namespace BuddhaBowls
         /// </summary>
         public void RefreshInventoryList()
         {
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems.OrderBy(x => x.Name));
+            FilteredInventoryItems = new ObservableCollection<InventoryItem>(SortItems(_models.InventoryItems));
         }
 
         /// <summary>
@@ -393,6 +393,17 @@ namespace BuddhaBowls
                 System.Diagnostics.Process.Start(xlsPath);
             });
             _thread.Start();
+        }
+
+        public IEnumerable<InventoryItem> SortItems(IEnumerable<InventoryItem> items)
+        {
+            if (Properties.Settings.Default.InventoryOrder == null || Properties.Settings.Default.InventoryOrder.Count < items.Count())
+            {
+                Properties.Settings.Default.InventoryOrder = _models.InventoryItems.Select(x => x.Name).OrderBy(x => x).ToList();
+                Properties.Settings.Default.Save();
+            }
+
+            return items.OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.Name));
         }
     }
 

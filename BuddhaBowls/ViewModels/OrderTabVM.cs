@@ -122,6 +122,10 @@ namespace BuddhaBowls
         public ICommand OpenOpenPOCommand { get; set; }
         // Open PO button in Received orders
         public ICommand OpenReceivedPOCommand { get; set; }
+        // Open Rec button in Open orders
+        public ICommand OpenRecListCommand { get; set; }
+        // Open Rec button in Open orders
+        public ICommand ReceivedRecListCommand { get; set; }
 
         public bool ViewOpenOrderCanExecute
         {
@@ -177,6 +181,8 @@ namespace BuddhaBowls
                 ReOpenOrderCommand = new RelayCommand(ReOpenOrder, x => ViewReceivedOrderCanExecute);
                 OpenOpenPOCommand = new RelayCommand(ShowOpenPO, x => ViewOpenOrderCanExecute);
                 OpenReceivedPOCommand = new RelayCommand(ShowReceivedPO, x => ViewReceivedOrderCanExecute);
+                OpenRecListCommand = new RelayCommand(ShowOpenRecList, x => ViewOpenOrderCanExecute);
+                ReceivedRecListCommand = new RelayCommand(ShowReceivedRecList, x => ViewReceivedOrderCanExecute);
 
                 TryDBConnect(true);
             }
@@ -297,6 +303,33 @@ namespace BuddhaBowls
                 if(v != null)
                 {
                     ParentContext.GeneratePO(po, v);
+                }
+            }
+        }
+
+        private void ShowOpenRecList(object obj)
+        {
+            ShowRecList(SelectedOpenOrder);
+        }
+
+        private void ShowReceivedRecList(object obj)
+        {
+            ShowRecList(SelectedReceivedOrder);
+        }
+
+        private void ShowRecList(PurchaseOrder po)
+        {
+            string poPath = Path.Combine(Properties.Settings.Default.DBLocation, "Receiving Lists", "ReceivingList_" + po.Id.ToString());
+            if (File.Exists(poPath))
+            {
+                System.Diagnostics.Process.Start(poPath);
+            }
+            else
+            {
+                Vendor v = _models.Vendors.FirstOrDefault(x => x.Name == po.VendorName);
+                if (v != null)
+                {
+                    ParentContext.GenerateReceivingList(po, v);
                 }
             }
         }

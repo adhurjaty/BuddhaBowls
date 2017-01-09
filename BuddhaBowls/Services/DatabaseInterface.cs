@@ -85,7 +85,7 @@ namespace BuddhaBowls.Services
                 newline = "\n";
             }
 
-            File.AppendAllText(FilePath(tableName), newline + string.Join(",", newRecord) + "\n");
+            File.AppendAllText(FilePath(tableName), newline + string.Join(",", newRecord));
 
             return newId;
         }
