@@ -73,7 +73,7 @@ namespace BuddhaBowls
             {
                 _orderVendor = value;
                 if(_orderVendor != null)
-                    SetVendorPrices();
+                    LoadVendorItems();
             }
         }
 
@@ -119,7 +119,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void SaveOrder(object obj)
         {
-            foreach (InventoryItem item in FilteredOrderItems)
+            foreach (InventoryItem item in FilteredOrderItems.Where(x => x.LastOrderAmount > 0))
             {
                 item.Update();
             }
@@ -129,10 +129,10 @@ namespace BuddhaBowls
 
             ParentContext.ParentContext.GenerateAfterOrderSaved(po, OrderVendor);
 
-            ParentContext.DeleteTempTab();
-
             _models.PurchaseOrders.Add(po);
             ParentContext.RefreshOrderList();
+
+            ParentContext.DeleteTempTab();
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace BuddhaBowls
         /// <summary>
         /// When user selects a vendor, the prices update to match the last purchased price from that vendor
         /// </summary>
-        private void SetVendorPrices()
+        private void LoadVendorItems()
         {
             List<InventoryItem> priceListItems = OrderVendor.GetFromPriceList();
             if (priceListItems != null)
@@ -234,13 +234,32 @@ namespace BuddhaBowls
                 {
                     InventoryItem matchingItem = priceListItems.FirstOrDefault(x => x.Id == item.Id);
                     if (matchingItem != null)
+                    {
                         item.LastPurchasedPrice = matchingItem.LastPurchasedPrice;
+                        item.LastOrderAmount = matchingItem.LastOrderAmount;
+                    }
+                    else
+                    {
+                        item.LastOrderAmount = 0;
+                    }
                 }
+
+                FilteredOrderItems = new ObservableCollection<InventoryItem>(SortVendorItems(priceListItems));
             }
-            RefreshInventoryList();
+            else
+            {
+                RefreshInventoryList();
+            }
             SetLastOrderBreakdown();
         }
+
         #endregion
+
+        private IEnumerable<InventoryItem> SortVendorItems(IEnumerable<InventoryItem> items)
+        {
+            return FilteredOrderItems.OrderBy(x => (items.Select(a => a.Id).Contains(x.Id) ? 0 : 1000) +
+                                                    Properties.Settings.Default.InventoryOrder.IndexOf(x.Name));
+        }
 
         private void RefreshInventoryList()
         {

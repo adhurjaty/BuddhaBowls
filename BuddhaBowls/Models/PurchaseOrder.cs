@@ -46,7 +46,8 @@ namespace BuddhaBowls.Models
 
         private void UpdatePrices(List<InventoryItem> inventoryItems)
         {
-            if(_dbInt.TableExists(GetPriceTableName()))
+            string tableName = GetPriceTableName();
+            if (_dbInt.TableExists(tableName))
             {
                 foreach (InventoryItem item in inventoryItems)
                 {
@@ -58,7 +59,12 @@ namespace BuddhaBowls.Models
             }
             else
             {
-                File.Copy(_dbInt.FilePath("InventoryItem"), _dbInt.FilePath(GetPriceTableName()));
+                File.Copy(_dbInt.FilePath("InventoryItem"), _dbInt.FilePath(tableName));
+                List<InventoryItem> allItems = ModelHelper.InstantiateList<InventoryItem>(tableName, false);
+                foreach(InventoryItem item in allItems.Where(x => !inventoryItems.Select(y => y.Id).Contains(x.Id)))
+                {
+                    _dbInt.DeleteRecord(tableName, new Dictionary<string, string>() { { "Id", item.Id.ToString() } });
+                }
             }
         }
 
