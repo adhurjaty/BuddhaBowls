@@ -222,5 +222,10 @@ namespace BuddhaBowls.Services
         {
             File.Delete(FilePath(tableName));
         }
+
+        public void RenameTable(string tableName, string newTableName)
+        {
+            File.Move(FilePath(tableName), FilePath(newTableName));
+        }
     }
 }

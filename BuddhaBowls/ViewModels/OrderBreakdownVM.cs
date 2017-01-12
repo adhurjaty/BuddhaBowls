@@ -101,8 +101,16 @@ namespace BuddhaBowls
         }
     }
 
-    public class BreakdownCategoryItem
+    public class BreakdownCategoryItem : INotifyPropertyChanged
     {
+        // INotifyPropertyChanged event and method
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public string Background { get; set; }
         public string Category { get; set; }
         public float TotalAmount { get; set; }
@@ -121,6 +129,7 @@ namespace BuddhaBowls
                     ClearSelected();
 
                 _selectedItem = value;
+                NotifyPropertyChanged("SelectedItem");
             }
         }
 

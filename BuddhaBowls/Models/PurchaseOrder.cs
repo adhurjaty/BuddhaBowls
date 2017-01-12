@@ -123,6 +123,15 @@ namespace BuddhaBowls.Models
             ModelHelper.CreateTable(receivedItems, GetReceivedPartialOrderTableName());
         }
 
+        public void DeleteOpenPartial()
+        {
+            IsPartial = false;
+            Update();
+
+            _dbInt.DestroyTable(GetOpenPartialOrderTableName());
+            _dbInt.RenameTable(GetReceivedPartialOrderTableName(), GetOrderTableName());
+        }
+
         private string GetOrderTableName()
         {
             return @"Orders\" + VendorName + "_" + Id.ToString();

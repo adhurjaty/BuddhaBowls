@@ -27,7 +27,7 @@
         <Border Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding Background}" />
         <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Stretch" Text="{Binding Category}"
                    Background="{Binding Background}" FontWeight="Bold"/>
-        <ListBox Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" ItemContainerStyle="{StaticResource NoHighlight}">
+        <!--<ListBox Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Background="{Binding ElementName=BreakdownList, Path=DataContext.Background}">
@@ -36,7 +36,15 @@
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
+        </ListBox>-->
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" HeadersVisibility="None" CanUserAddRows="False"
+                  AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Path=Name, Mode=OneWay}" Width="2*" />
+                <DataGridTextColumn Binding="{Binding Path=LastOrderAmount}" Width="1*" />
+                <DataGridTextColumn Binding="{Binding Path=LastPurchasedPrice, StringFormat=c}" Width="1*" />
+            </DataGrid.Columns>
+        </DataGrid>
         <Border Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding Background}" />
         <TextBlock Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Text="{Binding Category, StringFormat={}{0} Total: }"
                    Margin="10, 0" />

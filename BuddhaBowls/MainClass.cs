@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -25,6 +26,7 @@ namespace BuddhaBowls
         {
             base.OnStartup(e);
             DispatcherUnhandledException += MainClass_DispatcherUnhandledException;
+
             Show();
         }
 

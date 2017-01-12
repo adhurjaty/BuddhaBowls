@@ -16,5 +16,6 @@ namespace BuddhaBowls
         public const string MEATS_COLOR = "F0CDAE";
         public const string POULTRY_COLOR = "F0CDAE";
         public const string BLANK_COLOR = "FFFFFF";
+        public const string INV_ORDER_FILE = "InventoryOrder.txt";
     }
 }

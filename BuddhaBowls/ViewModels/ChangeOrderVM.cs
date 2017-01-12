@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -39,7 +40,19 @@ namespace BuddhaBowls
             }
         }
 
-        public string SelectedOriginal { get; set; }
+        public string _selectedOriginal;
+        public string SelectedOriginal
+        {
+            get
+            {
+                return _selectedOriginal;
+            }
+            set
+            {
+                _selectedOriginal = value;
+                NotifyPropertyChanged("SelectedOriginal");
+            }
+        }
 
         private ObservableCollection<string> _newOrder;
         public ObservableCollection<string> NewOrder
@@ -55,7 +68,19 @@ namespace BuddhaBowls
             }
         }
 
-        public string SelectedNew { get; set; }
+        private string _selectedNew;
+        public string SelectedNew
+        {
+            get
+            {
+                return _selectedNew;
+            }
+            set
+            {
+                _selectedNew = value;
+                NotifyPropertyChanged("SelectedNew");
+            }
+        }
 
         #endregion
 
@@ -110,14 +135,14 @@ namespace BuddhaBowls
         {
             NewOrder.Add(SelectedOriginal);
             OriginalOrder.Remove(SelectedOriginal);
-            SelectedOriginal = null;
+            SelectedOriginal = OriginalOrder.FirstOrDefault();
         }
 
         private void MoveToOriginal(object obj)
         {
             OriginalOrder.Add(SelectedNew);
             NewOrder.Remove(SelectedNew);
-            SelectedNew = null;
+            SelectedNew = NewOrder.FirstOrDefault();
         }
 
         private void SaveHelper(object obj)
@@ -136,6 +161,11 @@ namespace BuddhaBowls
                 Properties.Settings.Default.InventoryOrder = NewOrder.ToList();
                 Properties.Settings.Default.Save();
                 ParentContext.LoadDisplayItems();
+
+                string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
+                Directory.CreateDirectory(dir);
+                File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), NewOrder); 
+
                 ParentContext.ParentContext.DeleteTempTab();
             }
         }

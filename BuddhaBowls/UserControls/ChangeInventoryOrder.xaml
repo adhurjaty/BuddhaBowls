@@ -19,8 +19,9 @@
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="5*" />
             </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Old Order" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="24"/>
             <ListBox Grid.Column="0" ItemsSource="{Binding OriginalOrder}" SelectedItem="{Binding SelectedOriginal}" HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch" />
+                     VerticalAlignment="Stretch" Margin="0, 30, 0, 0"/>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -31,8 +32,9 @@
                 <Button Content="&lt;" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Width="50" Height="50" Margin="0, 20"
                         FontSize="24" Command="{Binding MoveToOriginalCommand}" />
             </Grid>
+            <TextBlock Grid.Column="2" Text="New Order" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="24"/>
             <ListBox Grid.Column="2" ItemsSource="{Binding NewOrder}" SelectedItem="{Binding SelectedNew}" HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch">
+                     VerticalAlignment="Stretch" Margin="0, 30, 0, 0">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="AllowDrop" Value="True" />

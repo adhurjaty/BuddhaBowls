@@ -255,7 +255,20 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void RemoveOpenOrder(object obj)
         {
-            DeleteOrder(SelectedOpenOrder);
+            if (SelectedOpenOrder.IsPartial)
+            {
+                MessageBoxResult result = MessageBox.Show("Are you sure you want to delete partial order PO# " + SelectedOpenOrder.Id.ToString(),
+                                                          "Delete PO# " + SelectedOpenOrder.Id.ToString() + "?", MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    SelectedOpenOrder.DeleteOpenPartial();
+                    RefreshOrderList();
+                }
+            }
+            else
+            {
+                DeleteOrder(SelectedOpenOrder);
+            }
         }
 
         private void DeleteOrder(PurchaseOrder order)
@@ -292,18 +305,25 @@ namespace BuddhaBowls
 
         private void ShowPO(PurchaseOrder po)
         {
-            string poPath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + po.Id.ToString());
-            if (File.Exists(poPath))
+            try
             {
-                System.Diagnostics.Process.Start(poPath);
-            }
-            else
-            {
-                Vendor v = _models.Vendors.FirstOrDefault(x => x.Name == po.VendorName);
-                if(v != null)
+                string poPath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + po.Id.ToString());
+                if (File.Exists(poPath))
                 {
-                    ParentContext.GeneratePO(po, v);
+                    System.Diagnostics.Process.Start(poPath);
                 }
+                else
+                {
+                    Vendor v = _models.Vendors.FirstOrDefault(x => x.Name == po.VendorName);
+                    if (v != null)
+                    {
+                        ParentContext.GeneratePO(po, v);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Purchase order is open. Close it if you wish to overwrite");
             }
         }
 
@@ -319,18 +339,25 @@ namespace BuddhaBowls
 
         private void ShowRecList(PurchaseOrder po)
         {
-            string poPath = Path.Combine(Properties.Settings.Default.DBLocation, "Receiving Lists", "ReceivingList_" + po.Id.ToString());
-            if (File.Exists(poPath))
+            try
             {
-                System.Diagnostics.Process.Start(poPath);
-            }
-            else
-            {
-                Vendor v = _models.Vendors.FirstOrDefault(x => x.Name == po.VendorName);
-                if (v != null)
+                string poPath = Path.Combine(Properties.Settings.Default.DBLocation, "Receiving Lists", "ReceivingList_" + po.Id.ToString());
+                if (File.Exists(poPath))
                 {
-                    ParentContext.GenerateReceivingList(po, v);
+                    System.Diagnostics.Process.Start(poPath);
                 }
+                else
+                {
+                    Vendor v = _models.Vendors.FirstOrDefault(x => x.Name == po.VendorName);
+                    if (v != null)
+                    {
+                        ParentContext.GenerateReceivingList(po, v);
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show("Receiving list is open. Close it if you wish to overwrite");
             }
         }
 

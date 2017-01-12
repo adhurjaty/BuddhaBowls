@@ -137,6 +137,8 @@ namespace BuddhaBowls
 
         public MainViewModel()
         {
+            SetInvOrderSetting();
+
             BrowseButtonCommand = new RelayCommand(BrowseHelper);
             ReportCommand = new RelayCommand(ReportHelper, x => ReportCanExecute);
             SaveSettingsCommand = new RelayCommand(SaveSettingsHelper, x => SaveSettingsCanExecute);
@@ -206,6 +208,7 @@ namespace BuddhaBowls
         #endregion
 
         #region Initializers
+
         public void InitializeWindow(MainWindow window)
         {
             _window = window;
@@ -219,6 +222,17 @@ namespace BuddhaBowls
             InventoryTab = new InventoryTabVM(_models, this);
             VendorTab = new VendorTabVM(_models, this);
         }
+
+        private void SetInvOrderSetting()
+        {
+            string orderPath = Path.Combine(Properties.Settings.Default.DBLocation, "Settings", GlobalVar.INV_ORDER_FILE);
+            if (File.Exists(orderPath) && Properties.Settings.Default.InventoryOrder == null)
+            {
+                Properties.Settings.Default.InventoryOrder = new List<string>(File.ReadAllLines(orderPath));
+                Properties.Settings.Default.Save();
+            }
+        }
+
         #endregion
 
         /// <summary>
