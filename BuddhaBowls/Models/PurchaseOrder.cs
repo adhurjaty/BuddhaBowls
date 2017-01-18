@@ -149,7 +149,7 @@ namespace BuddhaBowls.Models
 
         private string GetPriceTableName()
         {
-            return @"Vendor Prices\" + VendorName + "_Prices";
+            return @"Vendors\" + VendorName + "_Prices";
         }
 
         private void CombinePartial()

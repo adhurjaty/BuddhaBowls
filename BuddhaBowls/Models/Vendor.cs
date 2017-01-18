@@ -42,10 +42,30 @@ namespace BuddhaBowls.Models
 
         public List<InventoryItem> GetFromPriceList()
         {
-            string tableName = @"Vendor Prices\" + Name + "_Prices";
+            string tableName = @"Vendors\" + Name + "_Prices";
             if(_dbInt.TableExists(tableName))
                 return ModelHelper.InstantiateList<InventoryItem>(tableName, false);
             return null;
+        }
+
+        public void SaveItemOrder(IEnumerable<string> listOrder)
+        {
+            File.WriteAllLines(GetOrderFile(), listOrder);
+        }
+
+        public List<string> GetRecListOrder()
+        {
+            if(File.Exists(GetOrderFile()))
+            {
+                return File.ReadAllLines(GetOrderFile()).ToList();
+            }
+
+            return Properties.Settings.Default.InventoryOrder;
+        }
+
+        private string GetOrderFile()
+        {
+            return Path.Combine(Properties.Settings.Default.DBLocation, "Vendors", Name + "_order.txt");
         }
     }
 }

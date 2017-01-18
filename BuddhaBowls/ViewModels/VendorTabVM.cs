@@ -14,7 +14,7 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class VendorTabVM : INotifyPropertyChanged
+    public class VendorTabVM : INotifyPropertyChanged, ITabVM
     {
         private ModelContainer _models;
 
@@ -26,7 +26,7 @@ namespace BuddhaBowls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public MainViewModel ParentContext { get; private set; }
+        public MainViewModel ParentContext { get; set; }
 
         #region Data Bindings
         public string FilterText { get; set; }
@@ -181,7 +181,7 @@ namespace BuddhaBowls
 
         private void ChangeRecOrder(object obj)
         {
-            throw new NotImplementedException();
+            ParentContext.AddTempTab("Rec List Order", new ChangeInventoryOrder(new ChangeOrderVM(this, SelectedVendor)));
         }
 
         #endregion

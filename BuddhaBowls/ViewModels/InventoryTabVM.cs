@@ -16,7 +16,7 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class InventoryTabVM : INotifyPropertyChanged
+    public class InventoryTabVM : INotifyPropertyChanged, ITabVM
     {
         private ModelContainer _models;
         private bool _databaseFound;
@@ -29,7 +29,7 @@ namespace BuddhaBowls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public MainViewModel ParentContext { get; private set; }
+        public MainViewModel ParentContext { get; set; }
 
         #region Data Bindings
         // Inventory item selected in the datagrids for Orders and Master List

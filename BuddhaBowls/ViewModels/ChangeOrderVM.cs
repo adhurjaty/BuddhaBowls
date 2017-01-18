@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuddhaBowls.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -14,6 +15,8 @@ namespace BuddhaBowls
 {
     public class ChangeOrderVM : INotifyPropertyChanged
     {
+        private Vendor _vendor;
+
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -22,7 +25,7 @@ namespace BuddhaBowls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public InventoryTabVM ParentContext { get; set; }
+        public ITabVM ParentContext { get; set; }
 
         #region Data Bindings
 
@@ -116,17 +119,30 @@ namespace BuddhaBowls
         }
         #endregion
 
-        public ChangeOrderVM(InventoryTabVM parent)
+        public ChangeOrderVM()
         {
-            ParentContext = parent;
-
             MoveToNewCommand = new RelayCommand(MoveToNew, x => MoveToNewCanExecute);
             MoveToOriginalCommand = new RelayCommand(MoveToOriginal, x => MoveToOriginalCanExecute);
-            SaveCommand = new RelayCommand(SaveHelper, x => SaveCanExecute);
             CancelCommand = new RelayCommand(CancelHelper);
 
-            OriginalOrder = new ObservableCollection<string>(ParentContext.FilteredInventoryItems.Select(x => x.Name));
             NewOrder = new ObservableCollection<string>();
+        }
+
+        public ChangeOrderVM(InventoryTabVM parent) : this()
+        {
+            ParentContext = parent;
+            
+            SaveCommand = new RelayCommand(SaveInventoryHelper, x => SaveCanExecute);
+            OriginalOrder = new ObservableCollection<string>(((InventoryTabVM)ParentContext).FilteredInventoryItems.Select(x => x.Name));
+        }
+
+        public ChangeOrderVM(VendorTabVM parent, Vendor vendor) : this()
+        {
+            ParentContext = parent;
+            _vendor = vendor;
+
+            SaveCommand = new RelayCommand(SaveVendorHelper, x => SaveCanExecute);
+            OriginalOrder = new ObservableCollection<string>(vendor.GetRecListOrder());
         }
 
         #region ICommand Helpers
@@ -145,26 +161,35 @@ namespace BuddhaBowls
             SelectedNew = NewOrder.FirstOrDefault();
         }
 
-        private void SaveHelper(object obj)
+        private void SaveInventoryHelper(object obj)
         {
             if(OriginalOrder.Count > 0)
             {
-                foreach(string name in OriginalOrder)
-                {
-                    NewOrder.Add(name);
-                }
-
-                OriginalOrder.Clear();
+                MoveToNew();
             }
             else
             {
                 Properties.Settings.Default.InventoryOrder = NewOrder.ToList();
                 Properties.Settings.Default.Save();
-                ParentContext.LoadDisplayItems();
+                ((InventoryTabVM)ParentContext).LoadDisplayItems();
 
                 string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
                 Directory.CreateDirectory(dir);
-                File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), NewOrder); 
+                File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), NewOrder);
+
+                ParentContext.ParentContext.DeleteTempTab();
+            }
+        }
+
+        private void SaveVendorHelper(object obj)
+        {
+            if (OriginalOrder.Count > 0)
+            {
+                MoveToNew();
+            }
+            else
+            {
+                _vendor.SaveItemOrder(NewOrder.ToList());
 
                 ParentContext.ParentContext.DeleteTempTab();
             }
@@ -204,6 +229,15 @@ namespace BuddhaBowls
             }
         }
 
+        private void MoveToNew()
+        {
+            foreach (string name in OriginalOrder)
+            {
+                NewOrder.Add(name);
+            }
+
+            OriginalOrder.Clear();
+        }
         #endregion
     }
 }

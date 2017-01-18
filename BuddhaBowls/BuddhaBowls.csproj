@@ -151,6 +151,7 @@
     </Compile>
     <Compile Include="ViewModels\ChangeOrderVM.cs" />
     <Compile Include="ViewModels\InventoryTabVM.cs" />
+    <Compile Include="ViewModels\ITabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NewOrderVM.cs" />
     <Compile Include="ViewModels\OrderBreakdownVM.cs" />
