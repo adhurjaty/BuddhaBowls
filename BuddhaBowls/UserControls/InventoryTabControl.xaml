@@ -18,6 +18,10 @@
         </Grid.RowDefinitions>
         <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="Inventory" VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="30"/>
+        <DatePicker Grid.Row="1" SelectedDate="{Binding InventoryDate}" Height="25" Width="130" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                    Margin="10, 0, 0, 0"/>
+        <Button x:Name="ChangeOrderButton" Content="Change Display Order" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="65,0"
+                Grid.Row="1" Width="137" Command="{Binding ChangeOrderCommand}"/>
         <TextBox x:Name="FilterItemBox" Grid.Row="1" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom"
                  Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
         <Label x:Name="label1" Grid.Row="1" Content="Inventory Item Name:" Margin="-330, 0, 0, 0" HorizontalAlignment="Center"
@@ -44,7 +48,7 @@
         </DataGrid>
         <Button Grid.Row="4" Height ="25" Width="80" Content="Save" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding SaveCountCommand}" />
         <Button Grid.Row="4" Height ="25" Width="80" Content="Reset" HorizontalAlignment="Right" Margin="85, 0" Command="{Binding ResetCountCommand}" />
-        <Button x:Name="ChangeOrderButton" Content="Change Display Order" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0"
-                Grid.Row="1" Width="137" Command="{Binding ChangeOrderCommand}"/>
+        <TextBlock Grid.Row="4" Text="Saved" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Width="50" Height="20"
+                   Background="LightGreen" Visibility="{Binding SavedVisibility}" />
     </Grid>
 </UserControl>

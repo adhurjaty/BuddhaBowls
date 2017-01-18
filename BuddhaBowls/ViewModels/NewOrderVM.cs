@@ -1,5 +1,6 @@
 ﻿using BuddhaBowls.Models;
 using BuddhaBowls.Services;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -75,6 +76,8 @@ namespace BuddhaBowls
 
         // vendors in the Vendor dropdown
         public ObservableCollection<Vendor> VendorList { get; set; }
+
+        public DateTime OrderDate { get; set; } = DateTime.Now;
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -121,7 +124,7 @@ namespace BuddhaBowls
             }
 
             List<InventoryItem> purchasedItems = _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList();
-            PurchaseOrder po = new PurchaseOrder(OrderVendor.Name, purchasedItems);
+            PurchaseOrder po = new PurchaseOrder(OrderVendor.Name, purchasedItems, OrderDate);
 
             ParentContext.ParentContext.GenerateAfterOrderSaved(po, OrderVendor);
 

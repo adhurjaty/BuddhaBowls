@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -106,6 +107,21 @@ namespace BuddhaBowls
         // Collection of fields and values for use in Model edit forms
         public ObservableCollection<FieldSetting> FieldsCollection { get; set; }
 
+        private Visibility _savedVisibility = Visibility.Hidden;
+        public Visibility SavedVisibility
+        {
+            get
+            {
+                return _savedVisibility;
+            }
+            set
+            {
+                _savedVisibility = value;
+                NotifyPropertyChanged("SavedVisibility");
+            }
+        }
+
+        public DateTime InventoryDate { get; set; } = DateTime.Now;
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -287,9 +303,10 @@ namespace BuddhaBowls
             {
                 item.Update();
             }
-            string tableName = @"Inventory History\Inventory_" + DateTime.Now.ToString("MM-dd-yyyy");
+            string tableName = @"Inventory History\Inventory_" + InventoryDate.ToString("MM-dd-yyyy");
             ModelHelper.CreateTable(_models.InventoryItems.OrderBy(x => x.Id).ToList(), tableName);
             ChangeCountCanExecute = false;
+            FlashSavedMessage();
         }
 
         private void StartChangeOrder(object obj)
@@ -341,6 +358,7 @@ namespace BuddhaBowls
         #endregion
 
         #region Update UI Methods
+
         public void ClearErrors()
         {
             AddEditErrorMessage = "";
@@ -359,6 +377,17 @@ namespace BuddhaBowls
         {
             ChangeCountCanExecute = true;
         }
+
+        private void FlashSavedMessage()
+        {
+            new Thread(delegate ()
+            {
+                SavedVisibility = Visibility.Visible;
+                Thread.Sleep(3000);
+                SavedVisibility = Visibility.Hidden;
+            }).Start();
+        }
+
         #endregion
 
         /// <summary>

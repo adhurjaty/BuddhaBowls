@@ -14,6 +14,8 @@
             <RowDefinition Height="60" />
         </Grid.RowDefinitions>
         <Label x:Name="label2" Content="Vendor:" HorizontalAlignment="Center" Margin="-180,25,0,0" VerticalAlignment="Top"/>
+        <DatePicker Grid.Row="0" SelectedDate="{Binding Path=OrderDate, UpdateSourceTrigger=PropertyChanged}" Width="130" Height="25"
+                    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20, 25, 0, 0"/>
         <ComboBox x:Name="comboBox1" HorizontalAlignment="Center" Height="25" Margin="0,25,0,0" SelectedItem="{Binding OrderVendor}"
                   ItemsSource="{Binding VendorList}" DisplayMemberPath="Name" VerticalAlignment="Top" Width="120"/>
         <Border Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="1" />

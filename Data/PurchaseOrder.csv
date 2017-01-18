@@ -8,4 +8,5 @@ Id,VendorName,OrderDate,ReceivedDate,IsPartial
 17,Sysco,12/29/2016 9:53,,FALSE
 18,Sysco,12/29/2016 10:01,,FALSE
 19,Sysco,1/9/2017 4:27:56 PM,1/11/2017 3:32:19 PM,False
-20,Sysco,1/11/2017 3:44:54 PM,1/11/2017 3:45:17 PM,False
+20,Sysco,1/11/2017 3:44:54 PM,1/18/2017 8:51:52 AM,False
+21,Sysco,1/1/2017 12:00:00 AM,,False

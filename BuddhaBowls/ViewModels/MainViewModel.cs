@@ -106,7 +106,6 @@ namespace BuddhaBowls
             }
         }
         
-        private bool _dbConnected;
         #endregion
 
         #region ICommand Bindings and Can Execute

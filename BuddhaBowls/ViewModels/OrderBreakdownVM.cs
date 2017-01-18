@@ -113,8 +113,15 @@ namespace BuddhaBowls
 
         public string Background { get; set; }
         public string Category { get; set; }
-        public float TotalAmount { get; set; }
         public ObservableCollection<InventoryItem> Items { get; set; }
+
+        public float TotalAmount
+        {
+            get
+            {
+                return Items.Sum(x => x.PriceExtension);
+            }
+        }
 
         private InventoryItem _selectedItem;
         public InventoryItem SelectedItem
@@ -139,8 +146,12 @@ namespace BuddhaBowls
         {
             Items = new ObservableCollection<InventoryItem>(items);
             Category = Items.First().Category;
+        }
 
-            TotalAmount = Items.Sum(x => x.PriceExtension);
+        public void Update()
+        {
+            NotifyPropertyChanged("TotalAmount");
+            NotifyPropertyChanged("Items");
         }
     }
 }

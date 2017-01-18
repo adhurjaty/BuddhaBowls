@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,6 +21,24 @@ namespace BuddhaBowls.UserControls
         public BreakdownCategory()
         {
             InitializeComponent();
+        }
+
+        private void DataGrid_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            PriceColumn.Binding = new Binding("LastPurchasedPrice") { StringFormat = "c" };
+        }
+
+        private void BreakdownGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            if (BreakdownGrid.SelectedItem != null)
+            {
+                ((DataGrid)sender).RowEditEnding -= BreakdownGrid_RowEditEnding;
+                ((DataGrid)sender).CommitEdit();
+                ((DataGrid)sender).Items.Refresh();
+                ((DataGrid)sender).RowEditEnding += BreakdownGrid_RowEditEnding;
+                ((BreakdownCategoryItem)DataContext).Update();
+            }
+            PriceColumn.Binding = new Binding("PriceExtension") { StringFormat = "c" };
         }
     }
 }

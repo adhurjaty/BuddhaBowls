@@ -37,12 +37,12 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>-->
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" HeadersVisibility="None" CanUserAddRows="False"
-                  AutoGenerateColumns="False">
+        <DataGrid x:Name="BreakdownGrid" Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" HeadersVisibility="None"
+                  CanUserAddRows="False" AutoGenerateColumns="False" BeginningEdit="DataGrid_BeginningEdit" RowEditEnding="BreakdownGrid_RowEditEnding">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Name, Mode=OneWay}" Width="2*" />
                 <DataGridTextColumn Binding="{Binding Path=LastOrderAmount}" Width="1*" />
-                <DataGridTextColumn Binding="{Binding Path=LastPurchasedPrice, StringFormat=c}" Width="1*" />
+                <DataGridTextColumn x:Name="PriceColumn" Binding="{Binding Path=PriceExtension, StringFormat=c}" Width="1*" />
             </DataGrid.Columns>
         </DataGrid>
         <Border Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding Background}" />

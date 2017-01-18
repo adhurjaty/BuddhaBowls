@@ -18,10 +18,13 @@
         </Grid.RowDefinitions>
         <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="Vendors" VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="30"/>
-        <TextBox x:Name="FilterVendorBox" Grid.Row="1" Text="{Binding FilterText, Mode=OneWayToSource}" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+        <TextBox x:Name="FilterVendorBox" Grid.Row="1" Text="{Binding FilterText, Mode=OneWayToSource}" HorizontalAlignment="Center"
+                 VerticalAlignment="Bottom"
                  Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
         <Label x:Name="label1" Grid.Row="1" Content="Vendor Name:" Margin="-300, 0, 0, 0" HorizontalAlignment="Center"
                VerticalAlignment="Bottom"/>
+        <Button Grid.Row="2" Content="Change Rec List Order" Height="25" Width="150" HorizontalAlignment="Right" VerticalAlignment="Center"
+                Margin="0, 0, 80, 0" Command="{Binding ChangeRecListOrderCommand}" />
         <Button Grid.Row="2" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" Margin="0, 0, 35, 0"
                 Command="{Binding AddVendorCommand}">
             <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />

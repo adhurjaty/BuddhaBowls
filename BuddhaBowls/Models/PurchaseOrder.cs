@@ -29,10 +29,10 @@ namespace BuddhaBowls.Models
             _tableName = "PurchaseOrder";
         }
 
-        public PurchaseOrder(string vendor, List<InventoryItem> inventoryItems) : this()
+        public PurchaseOrder(string vendor, List<InventoryItem> inventoryItems, DateTime orderDate) : this()
         {
             VendorName = vendor;
-            OrderDate = DateTime.Now;
+            OrderDate = orderDate;
 
             Insert();
 
