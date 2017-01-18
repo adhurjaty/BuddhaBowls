@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using BuddhaBowls.Models;
+using System.Windows.Controls;
 
 namespace BuddhaBowls.UserControls
 {
@@ -34,7 +35,7 @@ namespace BuddhaBowls.UserControls
                 ((DataGrid)sender).Items.Refresh();
                 ((DataGrid)sender).RowEditEnding += OrderList_RowEditEnding;
             }
-            ((NewOrderVM)DataContext).InventoryOrderAmountChanged();
+            ((NewOrderVM)DataContext).InventoryOrderAmountChanged((InventoryItem)((DataGrid)sender).CurrentItem);
         }
 
         private void SetBlankToZero(TextBox tb)

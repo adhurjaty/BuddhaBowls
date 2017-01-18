@@ -15,6 +15,7 @@ namespace BuddhaBowls
     public class NewOrderVM : INotifyPropertyChanged
     {
         private ModelContainer _models;
+        private List<int> _editedIds;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -101,6 +102,7 @@ namespace BuddhaBowls
         {
             ParentContext = parent;
             _models = models;
+            _editedIds = new List<int>();
 
             SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
             CancelNewOrderCommand = new RelayCommand(CancelOrder);
@@ -204,9 +206,10 @@ namespace BuddhaBowls
         /// <summary>
         /// Called when New Order is edited
         /// </summary>
-        public void InventoryOrderAmountChanged()
+        public void InventoryOrderAmountChanged(InventoryItem item)
         {
-            //FilteredOrderItems = new ObservableCollection<InventoryItem>(FilteredOrderItems);
+            _editedIds.Add(item.Id);
+
             NotifyPropertyChanged("FilteredOrderItems");
             SetLastOrderBreakdown();
         }
@@ -234,8 +237,11 @@ namespace BuddhaBowls
                     InventoryItem matchingItem = priceListItems.FirstOrDefault(x => x.Id == item.Id);
                     if (matchingItem != null)
                     {
-                        item.LastPurchasedPrice = matchingItem.LastPurchasedPrice;
-                        item.LastOrderAmount = matchingItem.LastOrderAmount;
+                        if (!_editedIds.Contains(matchingItem.Id))
+                        {
+                            item.LastPurchasedPrice = matchingItem.LastPurchasedPrice;
+                            item.LastOrderAmount = matchingItem.LastOrderAmount;
+                        }
                     }
                     else
                     {

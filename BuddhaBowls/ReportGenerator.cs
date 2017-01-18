@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -414,7 +415,16 @@ namespace BuddhaBowls
             range.BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
 
             string filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + po.Id.ToString() + ".xlsx");
-            _workbook.SaveAs(filepath);
+
+            try
+            {
+                _workbook.SaveAs(filepath);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show("Can't save purchase order. Check that purchase orders are closed on your machine and there are no open Excel processes",
+                                "Purchase Order Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             return filepath;
         }
@@ -497,9 +507,18 @@ namespace BuddhaBowls
             }
 
             ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row-1, 7]]).BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
+            ((Excel.Range)sheet.Range[sheet.Cells[startRow+1, 1], sheet.Cells[row-1, 7]]).Borders.Weight = Excel.XlBorderWeight.xlMedium;
 
             string filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Receiving Lists", "ReceivingList_" + po.Id.ToString() + ".xlsx");
-            _workbook.SaveAs(filepath);
+            try
+            {
+                _workbook.SaveAs(filepath);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Can't save receiving list. Check that receiving list are closed on your machine and there are no open Excel processes",
+                                "Receiving List Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             return filepath;
         }
