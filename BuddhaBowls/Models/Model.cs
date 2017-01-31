@@ -202,11 +202,12 @@ namespace BuddhaBowls.Models
         public virtual void SetProperty(string property, object value)
         {
             property = GetPropertyName(property);
-            if ((string)value == "")
-                value = null;
 
             if (property == null)
                 return;
+
+            if (value == null || value.ToString() == "")
+                value = null;
 
             if (value == null)
             {
@@ -216,7 +217,6 @@ namespace BuddhaBowls.Models
                 }
                 return;
             }
-
 
             Type thisType = GetType().GetProperty(property).PropertyType;
 

@@ -18,8 +18,11 @@ namespace BuddhaBowls
 {
     public class InventoryTabVM : INotifyPropertyChanged, ITabVM
     {
+        private enum PageState { Inventory, Batch, Menu }
+
         private ModelContainer _models;
         private bool _databaseFound;
+        private PageState _state;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -32,9 +35,23 @@ namespace BuddhaBowls
         public MainViewModel ParentContext { get; set; }
 
         #region Data Bindings
+        private string _header;
+        public string Header
+        {
+            get
+            {
+                return _header;
+            }
+            set
+            {
+                _header = value;
+                NotifyPropertyChanged("Header");
+            }
+        }
+
         // Inventory item selected in the datagrids for Orders and Master List
-        private InventoryItem _selectedInventoryItem;
-        public InventoryItem SelectedInventoryItem
+        private IItem _selectedInventoryItem;
+        public IItem SelectedInventoryItem
         {
             get
             {
@@ -90,16 +107,16 @@ namespace BuddhaBowls
             }
         }
 
-        // Collection used for both Master List and New Order List
-        public ObservableCollection<InventoryItem> FilteredInventoryItems
+        private ObservableCollection<IItem> _filteredInventoryItems;
+        public ObservableCollection<IItem> FilteredInventoryItems
         {
             get
             {
-                return ParentContext.FilteredInventoryItems;
+                return _filteredInventoryItems;
             }
             set
             {
-                ParentContext.FilteredInventoryItems = value;
+                _filteredInventoryItems = value;
                 NotifyPropertyChanged("FilteredInventoryItems");
             }
         }
@@ -143,6 +160,12 @@ namespace BuddhaBowls
         public ICommand ResetCountCommand { get; set; }
         // Change display order button in Master inventory form
         public ICommand ChangeOrderCommand { get; set; }
+        // Inventory section button
+        public ICommand InventorySectionCommand { get; set; }
+        // Batch Items section button
+        public ICommand BatchSectionCommand { get; set; }
+        // Menu Item section button
+        public ICommand MenuSectionCommand { get; set; }
 
         public bool DeleteEditCanExecute
         {
@@ -169,6 +192,31 @@ namespace BuddhaBowls
         }
 
         public bool ChangeCountCanExecute { get; set; } = true;
+
+        public bool InventoryPageCanExecute
+        {
+            get
+            {
+                return _state != PageState.Inventory;
+            }
+        }
+
+        public bool BatchPageCanExecute
+        {
+            get
+            {
+                return _state != PageState.Batch;
+            }
+        }
+
+        public bool MenuPageCanExecute
+        {
+            get
+            {
+                return _state != PageState.Menu;
+            }
+        }
+
         #endregion
 
         public InventoryTabVM(ModelContainer models, MainViewModel parent)
@@ -184,8 +232,12 @@ namespace BuddhaBowls
             SaveCountCommand = new RelayCommand(SaveCount, x => ChangeCountCanExecute);
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
             ChangeOrderCommand = new RelayCommand(StartChangeOrder);
+            InventorySectionCommand = new RelayCommand(ChangeToInventory, x => InventoryPageCanExecute);
+            BatchSectionCommand = new RelayCommand(ChangeToBatch, x => BatchPageCanExecute);
+            MenuSectionCommand = new RelayCommand(ChangeToMenu, x => MenuPageCanExecute);
 
             TryDBConnect();
+            ChangePageState(PageState.Inventory);
         }
 
         #region ICommand Helpers
@@ -208,7 +260,7 @@ namespace BuddhaBowls
         private void EditInventoryItem(object obj)
         {
             AddEditHeader = "Edit " + SelectedInventoryItem.Name;
-            FieldsCollection = ParentContext.GetFieldsAndValues(SelectedInventoryItem);
+            FieldsCollection = ParentContext.GetFieldsAndValues((InventoryItem)SelectedInventoryItem);
 
             ParentContext.AddTempTab("Edit Inventory Item", new EditItem(this, ClearErrors));
         }
@@ -223,8 +275,8 @@ namespace BuddhaBowls
                                                       "Delete " + SelectedInventoryItem.Name + "?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
+                _models.InventoryItems.Remove((InventoryItem)SelectedInventoryItem);
                 SelectedInventoryItem.Destroy();
-                _models.InventoryItems.Remove(SelectedInventoryItem);
                 SelectedInventoryItem = null;
                 RefreshInventoryList();
             }
@@ -248,7 +300,7 @@ namespace BuddhaBowls
         {
             InventoryItem item = null;
             if (AddEditHeader.StartsWith("Edit"))
-                item = SelectedInventoryItem;
+                item = (InventoryItem)SelectedInventoryItem;
             else if (AddEditHeader.StartsWith("Add"))
                 item = new InventoryItem();
             else
@@ -315,6 +367,51 @@ namespace BuddhaBowls
             ParentContext.AddTempTab("Change Inv Order", new ChangeInventoryOrder(new ChangeOrderVM(this)));
         }
 
+        private void ChangeToMenu(object obj)
+        {
+            ChangePageState(PageState.Menu);
+        }
+
+        private void ChangeToBatch(object obj)
+        {
+            ChangePageState(PageState.Batch);
+        }
+
+        private void ChangeToInventory(object obj)
+        {
+            ChangePageState(PageState.Inventory);
+        }
+
+        private void AddBatchItem(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DeleteBatchItem(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void EditBatchItem(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void AddMenuItem(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DeleteMenuItem(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void EditMenuItem(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Initializers
@@ -322,7 +419,7 @@ namespace BuddhaBowls
         {
             if (_models.InventoryItems != null)
             {
-                FilteredInventoryItems = new ObservableCollection<InventoryItem>(ParentContext.SortItems(_models.InventoryItems));
+                FilteredInventoryItems = new ObservableCollection<IItem>(ParentContext.SortItems(_models.InventoryItems));
 
                 _databaseFound = true;
                 NotifyPropertyChanged("FilteredInventoryItems");
@@ -338,7 +435,7 @@ namespace BuddhaBowls
         /// </summary>
         private void DisplayItemsNotFound()
         {
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Database not found" } };
+            FilteredInventoryItems = new ObservableCollection<IItem>() { new InventoryItem() { Name = "Database not found" } };
             _databaseFound = false;
         }
 
@@ -396,14 +493,55 @@ namespace BuddhaBowls
         /// <param name="filterStr"></param>
         public void FilterInventoryItems(string filterStr)
         {
-            ParentContext.FilterInventoryItems(filterStr);
+            FilteredInventoryItems = ParentContext.FilterInventoryItems(filterStr, GetTotalDisplayList());
             NotifyPropertyChanged("FilteredInventoryItems");
         }
 
         private void RefreshInventoryList()
         {
-            ParentContext.RefreshInventoryList();
-            NotifyPropertyChanged("FilteredInventoryItems");
+            FilteredInventoryItems = new ObservableCollection<IItem>(ParentContext.SortItems(_models.InventoryItems));
+        }
+
+        private void ChangePageState(PageState state)
+        {
+            _state = state;
+            switch (state)
+            {
+                case PageState.Inventory:
+                    Header = "Inventory";
+                    AddInventoryItemCommand = new RelayCommand(AddInventoryItem, x => AddItemCanExecute);
+                    DeleteInventoryItemCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute);
+                    EditInventoryItemCommand = new RelayCommand(EditInventoryItem, x => DeleteEditCanExecute);
+                    RefreshInventoryList();
+                    break;
+                case PageState.Batch:
+                    Header = "Batch Items";
+                    AddInventoryItemCommand = new RelayCommand(AddBatchItem, x => AddItemCanExecute);
+                    DeleteInventoryItemCommand = new RelayCommand(DeleteBatchItem, x => DeleteEditCanExecute);
+                    EditInventoryItemCommand = new RelayCommand(EditBatchItem, x => DeleteEditCanExecute);
+                    break;
+                case PageState.Menu:
+                    Header = "Menu Items";
+                    AddInventoryItemCommand = new RelayCommand(AddMenuItem, x => AddItemCanExecute);
+                    DeleteInventoryItemCommand = new RelayCommand(DeleteMenuItem, x => DeleteEditCanExecute);
+                    EditInventoryItemCommand = new RelayCommand(EditMenuItem, x => DeleteEditCanExecute);
+                    break;
+            }
+        }
+
+        private IEnumerable<IItem> GetTotalDisplayList()
+        {
+            switch(_state)
+            {
+                case PageState.Inventory:
+                    return _models.InventoryItems;
+                case PageState.Batch:
+                    return _models.Recipes.Where(x => x.IsBatch);
+                case PageState.Menu:
+                    return _models.Recipes.Where(x => !x.IsBatch);
+                default:
+                    return null;
+            }
         }
     }
 }

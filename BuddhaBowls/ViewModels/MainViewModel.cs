@@ -31,6 +31,39 @@ namespace BuddhaBowls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        #region Data Bindings
+        // Value in text box for selecting the folder location of DB files
+        private string _dataFileFolder;
+        public string DataFileFolder
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_dataFileFolder))
+                    DataFileFolder = Properties.Settings.Default.DBLocation;
+                return _dataFileFolder;
+            }
+            set
+            {
+                _dataFileFolder = value;
+                NotifyPropertyChanged("DataFileFolder");
+            }
+        }
+
+        // Collection used for both Master List and New Order List
+        private ObservableCollection<IItem> _filteredInventoryItems;
+        public ObservableCollection<IItem> FilteredInventoryItems
+        {
+            get
+            {
+                return _filteredInventoryItems;
+            }
+            set
+            {
+                _filteredInventoryItems = value;
+                NotifyPropertyChanged("FilteredInventoryItems");
+            }
+        }
+
         private OrderTabVM _orderTab;
         public OrderTabVM OrderTab
         {
@@ -73,39 +106,19 @@ namespace BuddhaBowls
             }
         }
 
-        #region Data Bindings
-        // Value in text box for selecting the folder location of DB files
-        private string _dataFileFolder;
-        public string DataFileFolder
+        private RecipeTabVM _recipeTab;
+        public RecipeTabVM RecipeTab
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(_dataFileFolder))
-                    DataFileFolder = Properties.Settings.Default.DBLocation;
-                return _dataFileFolder;
+                return _recipeTab;
             }
             set
             {
-                _dataFileFolder = value;
-                NotifyPropertyChanged("DataFileFolder");
+                _recipeTab = value;
+                NotifyPropertyChanged("RecipeTab");
             }
         }
-
-        // Collection used for both Master List and New Order List
-        private ObservableCollection<InventoryItem> _filteredInventoryItems;
-        public ObservableCollection<InventoryItem> FilteredInventoryItems
-        {
-            get
-            {
-                return _filteredInventoryItems;
-            }
-            set
-            {
-                _filteredInventoryItems = value;
-                NotifyPropertyChanged("FilteredInventoryItems");
-            }
-        }
-        
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -220,6 +233,7 @@ namespace BuddhaBowls
             OrderTab = new OrderTabVM(_models, this);
             InventoryTab = new InventoryTabVM(_models, this);
             VendorTab = new VendorTabVM(_models, this);
+            RecipeTab = new RecipeTabVM(_models, this);
         }
 
         private void SetInvOrderSetting()
@@ -238,23 +252,22 @@ namespace BuddhaBowls
         /// Filter list of inventory items based on the string in the filter box above datagrids
         /// </summary>
         /// <param name="filterStr"></param>
-        public void FilterInventoryItems(string filterStr)
+        public ObservableCollection<T> FilterInventoryItems<T>(string filterStr, IEnumerable<T> items) where T : IItem
         {
             if (string.IsNullOrWhiteSpace(filterStr))
-                FilteredInventoryItems = new ObservableCollection<InventoryItem>(SortItems(_models.InventoryItems));
+                return new ObservableCollection<T>(SortItems(items));
             else
-                FilteredInventoryItems = new ObservableCollection<InventoryItem>(_models.InventoryItems
-                                                        .Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
+                return new ObservableCollection<T>(items.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
                                                         .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
         }
 
         /// <summary>
         /// Update the datagrid displays for inventory items
         /// </summary>
-        public void RefreshInventoryList()
-        {
-            FilteredInventoryItems = new ObservableCollection<InventoryItem>(SortItems(_models.InventoryItems));
-        }
+        //public void RefreshInventoryList(List<IItem> items)
+        //{
+        //    FilteredInventoryItems = new ObservableCollection<IItem>(SortItems(items));
+        //}
 
         /// <summary>
         /// Collects the property names and values for display in the add/edit form
@@ -408,11 +421,13 @@ namespace BuddhaBowls
             _thread.Start();
         }
 
-        public IEnumerable<InventoryItem> SortItems(IEnumerable<InventoryItem> items)
+        public IEnumerable<T> SortItems<T>(IEnumerable<T> items) where T : IItem
         {
             if (Properties.Settings.Default.InventoryOrder == null || Properties.Settings.Default.InventoryOrder.Count < items.Count())
             {
-                Properties.Settings.Default.InventoryOrder = _models.InventoryItems.Select(x => x.Name).OrderBy(x => x).ToList();
+                List<string> invOrder = _models.InventoryItems.Select(x => x.Name).OrderBy(x => x).ToList();
+                invOrder = invOrder.Concat(_models.Recipes.Select(x => x.Name).OrderBy(x => x)).ToList();
+                Properties.Settings.Default.InventoryOrder = invOrder;
                 Properties.Settings.Default.Save();
             }
 

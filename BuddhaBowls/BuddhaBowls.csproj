@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationRevision>8</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -107,8 +107,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\Vendor.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="UserControls\AddEditRecipe.xaml.cs">
+      <DependentUpon>AddEditRecipe.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\BreakdownDisplay.xaml.cs">
       <DependentUpon>BreakdownDisplay.xaml</DependentUpon>
     </Compile>
@@ -119,14 +123,13 @@
       <DependentUpon>EditItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="GlobalVar.cs" />
-    <Compile Include="Helpers\IItem.cs" />
+    <Compile Include="Models\IItem.cs" />
     <Compile Include="Helpers\MainHelper.cs" />
     <Compile Include="Helpers\ModelHelper.cs" />
     <Compile Include="MainClass.cs" />
-    <Compile Include="Models\BatchItem.cs" />
+    <Compile Include="Models\Recipe.cs" />
     <Compile Include="Models\InventoryItem.cs" />
     <Compile Include="Models\PurchaseOrder.cs" />
-    <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\VendorItem.cs" />
     <Compile Include="UserControls\InventoryTabControl.xaml.cs">
       <DependentUpon>InventoryTabControl.xaml</DependentUpon>
@@ -143,6 +146,9 @@
     <Compile Include="UserControls\BreakdownCategory.xaml.cs">
       <DependentUpon>BreakdownCategory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\RecipeTabControl.xaml.cs">
+      <DependentUpon>RecipeTabControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\VendorTabControl.xaml.cs">
       <DependentUpon>VendorTabControl.xaml</DependentUpon>
     </Compile>
@@ -156,9 +162,14 @@
     <Compile Include="ViewModels\NewOrderVM.cs" />
     <Compile Include="ViewModels\OrderBreakdownVM.cs" />
     <Compile Include="ViewModels\OrderTabVM.cs" />
+    <Compile Include="ViewModels\RecipeTabVM.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
     <Compile Include="ViewModels\VendorTabVM.cs" />
     <Compile Include="ViewModels\ViewOrderVM.cs" />
+    <Page Include="UserControls\AddEditRecipe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\BreakdownDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -196,6 +207,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\OrderTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\RecipeTabControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

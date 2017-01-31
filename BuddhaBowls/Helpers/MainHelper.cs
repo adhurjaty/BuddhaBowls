@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Models;
+using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,11 +32,31 @@ namespace BuddhaBowls.Helpers
             return Enumerable.Range(0, str.Length / size).Select(i => str.Substring(i * size, size));
         }
 
-        public static List<RecipeItem> GetRecipe(string recipeName)
+        public static List<IItem> GetRecipe(string recipeName, ModelContainer models)
         {
             string tableName = Path.Combine(Properties.Resources.RecipeFolder, recipeName);
 
-            return ModelHelper.InstantiateList<RecipeItem>(tableName, false);
+            List<RecipeItem> items = ModelHelper.InstantiateList<RecipeItem>(tableName, false);
+
+            List<IItem> recipeList = new List<IItem>();
+            foreach(RecipeItem item in items)
+            {
+                IItem addItem;
+                if (item.InventoryItemId == null)
+                {
+                    addItem = models.Recipes.First(x => x.Name == item.Name);
+                    ((Recipe)addItem).ItemList = GetRecipe(addItem.Name, models);
+                }
+                else
+                {
+                    addItem = models.InventoryItems.First(x => x.Id == item.InventoryItemId);
+                }
+
+                addItem.Count = item.Quantity;
+                recipeList.Add(addItem);
+            }
+
+            return recipeList;
         }
 
         public static List<VendorItem> GetVendorPrices(string vendorName)

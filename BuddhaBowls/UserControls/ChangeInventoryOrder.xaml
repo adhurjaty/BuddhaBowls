@@ -12,7 +12,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
-        <TextBlock Text="Change Inventory Order" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" />
+        <TextBlock Text="{Binding Header}" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" />
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5*" />
@@ -21,7 +21,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="Old Order" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="24"/>
             <ListBox Grid.Column="0" ItemsSource="{Binding OriginalOrder}" SelectedItem="{Binding SelectedOriginal}" HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch" Margin="0, 30, 0, 0"/>
+                     VerticalAlignment="Stretch" Margin="0, 30, 0, 0" BorderThickness="1" BorderBrush="Black"/>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -34,7 +34,7 @@
             </Grid>
             <TextBlock Grid.Column="2" Text="New Order" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="24"/>
             <ListBox Grid.Column="2" ItemsSource="{Binding NewOrder}" SelectedItem="{Binding SelectedNew}" HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch" Margin="0, 30, 0, 0">
+                     VerticalAlignment="Stretch" Margin="0, 30, 0, 0" BorderThickness="1" BorderBrush="Black">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="AllowDrop" Value="True" />

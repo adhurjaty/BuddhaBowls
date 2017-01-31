@@ -14,7 +14,7 @@ namespace BuddhaBowls.Services
         private Dictionary<string, string> _categoryColors;
 
         public List<InventoryItem> InventoryItems { get; set; }
-        public List<BatchItem> BatchItems { get; set; }
+        public List<Recipe> Recipes { get; set; }
         public HashSet<string> ItemCategories { get; set; }
         public List<PurchaseOrder> PurchaseOrders { get; set; }
         public List<Vendor> Vendors { get; set; }
@@ -32,41 +32,39 @@ namespace BuddhaBowls.Services
         public void InitializeModels()
         {
             InventoryItems = ModelHelper.InstantiateList<InventoryItem>("InventoryItem");
-            BatchItems = ModelHelper.InstantiateList<BatchItem>("BatchItem");
+            Recipes = ModelHelper.InstantiateList<Recipe>("Recipe");
             PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder");
             Vendors = ModelHelper.InstantiateList<Vendor>("Vendor");
 
-            if (InventoryItems == null || BatchItems == null)
+            if (InventoryItems == null || Recipes == null)
                 return;
 
-            foreach(BatchItem bi in BatchItems)
+            foreach(Recipe rec in Recipes)
             {
-                bi.recipe = MainHelper.GetRecipe(bi.Name);
+                rec.ItemList = MainHelper.GetRecipe(rec.Name, this);
             }
         }
 
-        public float GetBatchItemCost(BatchItem item)
+        public float GetBatchItemCost(Recipe rec)
         {
             float cost = 0;
-            foreach(RecipeItem ri in item.recipe)
+            foreach(IItem item in rec.ItemList)
             {
-                InventoryItem invItem = InventoryItems[(int)ri.InventoryItemId];
-                cost += invItem.GetCost() * ri.Quantity;
+                cost += item.GetCost() * item.Count;
             }
 
             return cost;
         }
 
-        public Dictionary<string, float> GetCategoryCosts(BatchItem item)
+        public Dictionary<string, float> GetCategoryCosts(Recipe rec)
         {
             Dictionary<string, float> costDict = new Dictionary<string, float>();
 
-            foreach(RecipeItem ri in item.recipe)
+            foreach(IItem item in rec.ItemList)
             {
-                InventoryItem invItem = InventoryItems[(int)ri.InventoryItemId];
-                if(!costDict.Keys.Contains(invItem.Category))
-                    costDict[invItem.Category] = 0;
-                costDict[invItem.Category] += invItem.GetCost() * ri.Quantity;
+                if(!costDict.Keys.Contains(item.Category))
+                    costDict[item.Category] = 0;
+                costDict[item.Category] += item.GetCost() * item.Count;
             }
 
             return costDict;

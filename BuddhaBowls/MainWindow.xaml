@@ -23,10 +23,8 @@
             <TabItem Header="Vendors">
                 <uc:VendorTabControl DataContext="{Binding VendorTab}" />
             </TabItem>
-            <TabItem Header="Reports">
-                <Grid>
-                    <Button x:Name="button3" Content="Generate Reports" HorizontalAlignment="Center" VerticalAlignment="Center" Width="125" Height="30" Command="{Binding ReportCommand}"/>
-                </Grid>
+            <TabItem Header="Recipes">
+                <uc:RecipeTabControl DataContext="{Binding RecipeTab}" />
             </TabItem>
             <TabItem Header="Settings">
                 <Grid>
@@ -39,11 +37,15 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        <Label x:Name="label" Grid.Column="0" Content="Path to data files: " HorizontalAlignment="Right" HorizontalContentAlignment="Right" Margin="10" VerticalAlignment="Center" />
-                        <TextBox x:Name="textBox" Grid.Column="1" HorizontalAlignment="Left" Height="25" Margin="10" TextWrapping="NoWrap" Text="{Binding DataFileFolder}" VerticalAlignment="Center" Width="180" />
-                        <Button x:Name="button" Content="Browse..." Grid.Column="1" HorizontalAlignment="Left" Margin="200, 0, 0, 0" VerticalAlignment="Center" Height="25" Width="75" Command="{Binding BrowseButtonCommand}"/>
+                        <Label x:Name="label" Grid.Column="0" Content="Path to data files: " HorizontalAlignment="Right"
+                               HorizontalContentAlignment="Right" Margin="10" VerticalAlignment="Center" />
+                        <TextBox x:Name="textBox" Grid.Column="1" HorizontalAlignment="Left" Height="25" Margin="10" TextWrapping="NoWrap"
+                                 Text="{Binding DataFileFolder}" VerticalAlignment="Center" Width="180" />
+                        <Button x:Name="button" Content="Browse..." Grid.Column="1" HorizontalAlignment="Left" Margin="200, 0, 0, 0"
+                                VerticalAlignment="Center" Height="25" Width="75" Command="{Binding BrowseButtonCommand}"/>
                     </Grid>
-                    <Button x:Name="button1" Content="Save" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Height="25" Width="125" Command="{Binding SaveSettingsCommand}"/>
+                    <Button x:Name="button1" Content="Save" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Height="25" Width="125"
+                            Command="{Binding SaveSettingsCommand}"/>
                     <!--<Button x:Name="button1" Content="Generate Report" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Height="25" Width="125" Command="{Binding ReportCommand}"/>-->
                 </Grid>
             </TabItem>

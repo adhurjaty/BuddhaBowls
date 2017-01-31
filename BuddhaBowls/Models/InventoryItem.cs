@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class InventoryItem : Model
+    public class InventoryItem : Model, IItem
     {
         public string Name { get; set; }
         public string Category { get; set; }
@@ -27,6 +27,14 @@ namespace BuddhaBowls.Models
             get
             {
                 return LastOrderAmount * LastPurchasedPrice;
+            }
+        }
+
+        public float CostExtension
+        {
+            get
+            {
+                return GetCost() * Count;
             }
         }
 
@@ -64,7 +72,7 @@ namespace BuddhaBowls.Models
 
         public override string[] GetPropertiesDB(string[] omit = null)
         {
-            string[] theseOmissions = new string[] { "PriceExtension" };
+            string[] theseOmissions = new string[] { "PriceExtension", "CostExtension" };
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
     }

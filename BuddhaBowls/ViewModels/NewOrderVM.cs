@@ -15,7 +15,7 @@ namespace BuddhaBowls
     public class NewOrderVM : INotifyPropertyChanged
     {
         private ModelContainer _models;
-        private List<int> _editedIds;
+        //private List<int> _editedIds;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -43,16 +43,16 @@ namespace BuddhaBowls
         }
 
         // Collection used for both Master List and New Order List
+        ObservableCollection<InventoryItem> _filteredOrderItems;
         public ObservableCollection<InventoryItem> FilteredOrderItems
         {
             get
             {
-                // really bad pattern but whatchu gonna do?
-                return ParentContext.ParentContext.FilteredInventoryItems;
+                return _filteredOrderItems;
             }
             set
             {
-                ParentContext.ParentContext.FilteredInventoryItems = value;
+                _filteredOrderItems = value;
                 NotifyPropertyChanged("FilteredOrderItems");
             }
         }
@@ -88,6 +88,8 @@ namespace BuddhaBowls
         public ICommand CancelNewOrderCommand { get; set; }
         // Clear Amts button in New Order form
         public ICommand ClearOrderCommand { get; set; }
+        // Auto-Select Vendor button at top of form
+        public ICommand AutoSelectVendorCommand { get; set; }
 
         public bool SaveOrderCanExecute
         {
@@ -102,12 +104,14 @@ namespace BuddhaBowls
         {
             ParentContext = parent;
             _models = models;
-            _editedIds = new List<int>();
+            //_editedIds = new List<int>();
 
             SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
             CancelNewOrderCommand = new RelayCommand(CancelOrder);
             ClearOrderCommand = new RelayCommand(ClearOrderAmounts);
+            AutoSelectVendorCommand = new RelayCommand(AutoSelectVendor);
 
+            RefreshInventoryList();
             SetLastOrderBreakdown();
             VendorList = new ObservableCollection<Vendor>(_models.Vendors);
             OrderVendor = null;
@@ -166,6 +170,12 @@ namespace BuddhaBowls
             RefreshInventoryList();
             SetLastOrderBreakdown();
         }
+
+        private void AutoSelectVendor(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Initializers
@@ -208,7 +218,7 @@ namespace BuddhaBowls
         /// </summary>
         public void InventoryOrderAmountChanged(InventoryItem item)
         {
-            _editedIds.Add(item.Id);
+            //_editedIds.Add(item.Id);
 
             NotifyPropertyChanged("FilteredOrderItems");
             SetLastOrderBreakdown();
@@ -220,7 +230,7 @@ namespace BuddhaBowls
         /// <param name="filterStr"></param>
         public void FilterInventoryItems(string filterStr)
         {
-            ParentContext.ParentContext.FilterInventoryItems(filterStr);
+            FilteredOrderItems = ParentContext.ParentContext.FilterInventoryItems(filterStr, _models.InventoryItems);
             NotifyPropertyChanged("FilteredOrderItems");
         }
 
@@ -237,11 +247,12 @@ namespace BuddhaBowls
                     InventoryItem matchingItem = priceListItems.FirstOrDefault(x => x.Id == item.Id);
                     if (matchingItem != null)
                     {
-                        if (!_editedIds.Contains(matchingItem.Id))
-                        {
-                            item.LastPurchasedPrice = matchingItem.LastPurchasedPrice;
-                            item.LastOrderAmount = matchingItem.LastOrderAmount;
-                        }
+                        item.LastPurchasedPrice = matchingItem.LastPurchasedPrice;
+                        //if (!_editedIds.Contains(matchingItem.Id))
+                        //{
+                        //    item.LastPurchasedPrice = matchingItem.LastPurchasedPrice;
+                        //    item.LastOrderAmount = matchingItem.LastOrderAmount;
+                        //}
                     }
                     else
                     {
@@ -266,10 +277,17 @@ namespace BuddhaBowls
                                                     Properties.Settings.Default.InventoryOrder.IndexOf(x.Name));
         }
 
+        private IEnumerable<InventoryItem> SortItems(IEnumerable<InventoryItem> items)
+        {
+            return items.OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.Name));
+        }
+
         private void RefreshInventoryList()
         {
-            ParentContext.ParentContext.RefreshInventoryList();
-            NotifyPropertyChanged("FilteredOrderItems");
+            if(OrderVendor == null)
+            {
+                FilteredOrderItems = new ObservableCollection<InventoryItem>(SortItems(_models.InventoryItems));
+            }
         }
     }
 }

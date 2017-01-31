@@ -52,66 +52,67 @@ namespace BuddhaBowls
 
         public void FillInventoryId(string recipeName)
         {
-            List<RecipeItem> recipe = _models.BatchItems.First(x => x.Name.ToUpper() == recipeName.ToUpper()).recipe;
+            //List<BatchItem> recipe = _models.Recipes.First(x => x.Name.ToUpper() == recipeName.ToUpper()).itemList;
 
-            foreach(RecipeItem ri in recipe)
-            {
-                InventoryItem item = _models.InventoryItems.FirstOrDefault(x => x.Name == ri.Name);
-                if (item == null)
-                    ri.InventoryItemId = null;
-                else
-                    ri.InventoryItemId = item.Id;
-                ri.Update(recipeName);
-            }
+            //foreach(BatchItem ri in recipe)
+            //{
+            //    InventoryItem item = _models.InventoryItems.FirstOrDefault(x => x.Name == ri.Name);
+            //    if (item == null)
+            //        ri.InventoryItemId = null;
+            //    else
+            //        ri.InventoryItemId = item.Id;
+            //    ri.Update(recipeName);
+            //}
         }
 
         public List<string[]> MakeBatchRecipeTable(string recipeName)
         {
-            BatchItem batchItem = _models.BatchItems.First(x => x.Name.ToUpper() == recipeName.ToUpper());
-            List<RecipeItem> recipe = batchItem.recipe;
-            List<string[]> outList = new List<string[]>();
-            Dictionary<string, List<string[]>> categoryDict = new Dictionary<string, List<string[]>>();
+            //Recipe batchItem = _models.Recipes.First(x => x.Name.ToUpper() == recipeName.ToUpper());
+            //List<BatchItem> recipe = batchItem.itemList;
+            //List<string[]> outList = new List<string[]>();
+            //Dictionary<string, List<string[]>> categoryDict = new Dictionary<string, List<string[]>>();
 
-            string[] headers = new string[] { "NAME", "MEASURE", "RECIPE UNIT", "# RU", "RU COST", "COST" };
+            //string[] headers = new string[] { "NAME", "MEASURE", "RECIPE UNIT", "# RU", "RU COST", "COST" };
 
-            foreach(RecipeItem item in recipe)
-            {
-                InventoryItem inv = _models.InventoryItems[(int)item.InventoryItemId];
-                if(!categoryDict.Keys.Contains(inv.Category))
-                    categoryDict[inv.Category] = new List<string[]>();
+            //foreach(BatchItem item in recipe)
+            //{
+            //    InventoryItem inv = _models.InventoryItems[(int)item.InventoryItemId];
+            //    if(!categoryDict.Keys.Contains(inv.Category))
+            //        categoryDict[inv.Category] = new List<string[]>();
 
-                float cost = inv.GetCost();
-                float lineCost = cost * item.Quantity;
-                categoryDict[inv.Category].Add(new string[] { inv.Name, item.Measure, inv.RecipeUnit,
-                                                item.Quantity.ToString(), cost.ToString(), lineCost.ToString() });
-            }
+            //    float cost = inv.GetCost();
+            //    float lineCost = cost * item.Quantity;
+            //    categoryDict[inv.Category].Add(new string[] { inv.Name, item.Measure, inv.RecipeUnit,
+            //                                    item.Quantity.ToString(), cost.ToString(), lineCost.ToString() });
+            //}
 
-            Dictionary<string, float> categoryCosts = _models.GetCategoryCosts(batchItem);
-            float batchCost = _models.GetBatchItemCost(batchItem);
+            //Dictionary<string, float> categoryCosts = _models.GetCategoryCosts(batchItem);
+            //float batchCost = _models.GetBatchItemCost(batchItem);
 
-            outList.Add(new string[] { recipeName });
+            //outList.Add(new string[] { recipeName });
 
-            string[] sortedKeys = categoryDict.Keys.ToArray();
-            Array.Sort(sortedKeys);
-            foreach (string key in sortedKeys)
-            {
-                string[] headerCopy = new string[headers.Length];
-                Array.Copy(headers, headerCopy, headers.Length);
-                headerCopy[0] = key;
-                outList.Add(headerCopy);
+            //string[] sortedKeys = categoryDict.Keys.ToArray();
+            //Array.Sort(sortedKeys);
+            //foreach (string key in sortedKeys)
+            //{
+            //    string[] headerCopy = new string[headers.Length];
+            //    Array.Copy(headers, headerCopy, headers.Length);
+            //    headerCopy[0] = key;
+            //    outList.Add(headerCopy);
 
-                foreach(string[] row in categoryDict[key])
-                {
-                    outList.Add(row);
-                }
+            //    foreach(string[] row in categoryDict[key])
+            //    {
+            //        outList.Add(row);
+            //    }
 
-                outList.Add(new string[] { key.ToUpper() + " TOTAL", categoryCosts[key].ToString("c") });
-                outList.Add(new string[] { "%", (categoryCosts[key] / batchCost).ToString("p1") });
-            }
+            //    outList.Add(new string[] { key.ToUpper() + " TOTAL", categoryCosts[key].ToString("c") });
+            //    outList.Add(new string[] { "%", (categoryCosts[key] / batchCost).ToString("p1") });
+            //}
 
-            outList.Add(new string[] { "BATCH TOTAL", batchCost.ToString("c") });
+            //outList.Add(new string[] { "BATCH TOTAL", batchCost.ToString("c") });
 
-            return outList;
+            //return outList;
+            return null;
         }
 
         public string BatchRecipeReport(List<string[]> contents, string filename)

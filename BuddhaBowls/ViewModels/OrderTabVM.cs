@@ -372,7 +372,7 @@ namespace BuddhaBowls
                 return false;
             }
 
-            RefreshInventoryList();
+            //RefreshInventoryList();
             return true;
         }
 
@@ -430,12 +430,6 @@ namespace BuddhaBowls
         {
             po.ReceivedDate = DateTime.Now;
             RefreshOrderList();
-        }
-
-        private void RefreshInventoryList()
-        {
-            ParentContext.RefreshInventoryList();
-            NotifyPropertyChanged("FilteredInvetoryItems");
         }
 
         public void RefreshOrderList()

@@ -71,6 +71,20 @@ namespace BuddhaBowls
             }
         }
 
+        private string _header;
+        public string Header
+        {
+            get
+            {
+                return _header;
+            }
+            set
+            {
+                _header = value;
+                NotifyPropertyChanged("Header");
+            }
+        }
+
         private string _selectedNew;
         public string SelectedNew
         {
@@ -134,6 +148,7 @@ namespace BuddhaBowls
             
             SaveCommand = new RelayCommand(SaveInventoryHelper, x => SaveCanExecute);
             OriginalOrder = new ObservableCollection<string>(((InventoryTabVM)ParentContext).FilteredInventoryItems.Select(x => x.Name));
+            Header = "Change Inventory Order";
         }
 
         public ChangeOrderVM(VendorTabVM parent, Vendor vendor) : this()
@@ -143,6 +158,7 @@ namespace BuddhaBowls
 
             SaveCommand = new RelayCommand(SaveVendorHelper, x => SaveCanExecute);
             OriginalOrder = new ObservableCollection<string>(vendor.GetRecListOrder());
+            Header = "Change Order - " + vendor.Name;
         }
 
         #region ICommand Helpers
