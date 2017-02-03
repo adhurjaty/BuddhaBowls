@@ -107,6 +107,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\Inventory.cs" />
     <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\Vendor.cs" />
     <Compile Include="Settings.cs" />
@@ -134,8 +135,14 @@
     <Compile Include="UserControls\InventoryTabControl.xaml.cs">
       <DependentUpon>InventoryTabControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\NewInventory.xaml.cs">
+      <DependentUpon>NewInventory.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\NewOrder.xaml.cs">
       <DependentUpon>NewOrder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\NewRecipe.xaml.cs">
+      <DependentUpon>NewRecipe.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\OrderTabControl.xaml.cs">
       <DependentUpon>OrderTabControl.xaml</DependentUpon>
@@ -156,6 +163,7 @@
       <DependentUpon>ViewOrderTabControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ChangeOrderVM.cs" />
+    <Compile Include="ViewModels\NewInventoryVM.cs" />
     <Compile Include="ViewModels\InventoryTabVM.cs" />
     <Compile Include="ViewModels\ITabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -198,11 +206,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\NewInventory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\NewOrder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\BreakdownCategory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\NewRecipe.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

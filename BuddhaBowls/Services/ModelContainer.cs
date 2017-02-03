@@ -18,6 +18,7 @@ namespace BuddhaBowls.Services
         public HashSet<string> ItemCategories { get; set; }
         public List<PurchaseOrder> PurchaseOrders { get; set; }
         public List<Vendor> Vendors { get; set; }
+        public List<Inventory> Inventories { get; set; }
 
         public ModelContainer()
         {
@@ -35,6 +36,7 @@ namespace BuddhaBowls.Services
             Recipes = ModelHelper.InstantiateList<Recipe>("Recipe");
             PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder");
             Vendors = ModelHelper.InstantiateList<Vendor>("Vendor");
+            Inventories = ModelHelper.InstantiateList<Inventory>("Inventory");
 
             if (InventoryItems == null || Recipes == null)
                 return;

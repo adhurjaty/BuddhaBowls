@@ -64,6 +64,11 @@ namespace BuddhaBowls
             }
         }
 
+        public void ChangeCallback(Action<object> newCallback)
+        {
+            _execute = newCallback;
+        }
+
         public void Destroy()
         {
             _canExecute = _ => false;

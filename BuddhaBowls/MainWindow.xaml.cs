@@ -23,7 +23,8 @@ namespace BuddhaBowls
     public partial class MainWindow : MetroWindow
     {
         private const string TEMP_TAB_NAME = "tempTab";
-        private int _lastTab = -1;
+        private int _lastTabIdx = -1;
+        private Stack<TabItem> _tabStack;
 
         public MainWindow(MainViewModel mvm)
         {
@@ -50,12 +51,23 @@ namespace BuddhaBowls
         {
             TabControl tabs = Tabs;
 
-            DeleteTempTab();
+            TabItem lastTab = (TabItem)tabs.Items[tabs.Items.Count - 1];
+            if (lastTab.Name == TEMP_TAB_NAME)
+            {
+                if(_tabStack == null)
+                {
+                    _tabStack = new Stack<TabItem>();
+                }
+
+                DeleteTempTab();
+                _tabStack.Push(lastTab);
+            }
+
             TabItem newTab = new TabItem() { Header = headerName, Name = TEMP_TAB_NAME };
 
             newTab.Content = userControl;
 
-            _lastTab = tabs.SelectedIndex;
+            _lastTabIdx = tabs.SelectedIndex;
             tabs.Items.Add(newTab);
             tabs.SelectedIndex = tabs.Items.Count - 1;
         }
@@ -70,8 +82,13 @@ namespace BuddhaBowls
                 tabs.Items.RemoveAt(tabs.Items.Count - 1);
             }
 
-            if(_lastTab != -1)
-                tabs.SelectedIndex = _lastTab;
+            if(_tabStack != null && _tabStack.Count > 0)
+            {
+                tabs.Items.Add(_tabStack.Pop());
+                tabs.SelectedIndex = tabs.Items.Count - 1;
+            }
+            else if(_lastTabIdx != -1)
+                tabs.SelectedIndex = _lastTabIdx;
         }
 
         //private void FilterItems_TextChanged(object sender, TextChangedEventArgs e)

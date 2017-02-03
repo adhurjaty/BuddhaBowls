@@ -142,12 +142,12 @@ namespace BuddhaBowls
             NewOrder = new ObservableCollection<string>();
         }
 
-        public ChangeOrderVM(InventoryTabVM parent) : this()
+        public ChangeOrderVM(NewInventoryVM parent) : this()
         {
             ParentContext = parent;
             
             SaveCommand = new RelayCommand(SaveInventoryHelper, x => SaveCanExecute);
-            OriginalOrder = new ObservableCollection<string>(((InventoryTabVM)ParentContext).FilteredInventoryItems.Select(x => x.Name));
+            OriginalOrder = new ObservableCollection<string>(((NewInventoryVM)ParentContext).FilteredInventoryItems.Select(x => x.Name));
             Header = "Change Inventory Order";
         }
 

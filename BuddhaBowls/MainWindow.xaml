@@ -17,7 +17,7 @@
             <TabItem Header="Orders">
                 <uc:OrderTabControl DataContext="{Binding OrderTab}" />
             </TabItem>
-            <TabItem Header="Invetory">
+            <TabItem Header="Inventory">
                 <uc:InventoryTabControl DataContext="{Binding InventoryTab}" />
             </TabItem>
             <TabItem Header="Vendors">

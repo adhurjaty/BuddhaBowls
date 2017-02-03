@@ -45,7 +45,7 @@ namespace BuddhaBowls.Models
         /// <summary>
         /// Writes model to DB
         /// </summary>
-        public void Update()
+        public virtual void Update()
         {
             Dictionary<string, string> setDict = FieldsToDict();
             //Dictionary<string, string> setDict = new Dictionary<string, string>();
@@ -72,11 +72,11 @@ namespace BuddhaBowls.Models
         /// <summary>
         /// Inserts new model in DB
         /// </summary>
-        public void Insert()
+        public virtual int Insert()
         {
-
             Dictionary<string, string> mapping = FieldsToDict();
             Id = _dbInt.WriteRecord(_tableName, mapping);
+            return Id;
         }
 
         public Dictionary<string, string> FieldsToDict()
