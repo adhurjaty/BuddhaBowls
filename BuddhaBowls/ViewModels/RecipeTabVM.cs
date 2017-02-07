@@ -14,7 +14,11 @@ namespace BuddhaBowls
 {
     public class RecipeTabVM : INotifyPropertyChanged
     {
-        ModelContainer _models;
+        private enum PageState { Batch, Menu }
+        private PageState _state;
+
+        private ModelContainer _models;
+        private List<Recipe> _recipeItems;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -27,63 +31,53 @@ namespace BuddhaBowls
         public MainViewModel ParentContext { get; set; }
 
         #region Content Binders
-        private ObservableCollection<Recipe> _menuItems;
-        public ObservableCollection<Recipe> MenuItems
+        private ObservableCollection<IItem> _filteredItems;
+        public ObservableCollection<IItem> FilteredItems
         {
             get
             {
-                return _menuItems;
+                return _filteredItems;
             }
             set
             {
-                _menuItems = value;
-                NotifyPropertyChanged("MenuItems");
+                _filteredItems = value;
+                NotifyPropertyChanged("FilteredItems");
             }
         }
 
-        public Recipe SelectedMenuItem { get; set; }
+        public Recipe SelectedItem { get; set; }
 
-        private ObservableCollection<Recipe> _batchItems;
-        public ObservableCollection<Recipe> BatchItems
+        private string _filterText;
+        public string FilterText
         {
             get
             {
-                return _batchItems;
+                return _filterText;
             }
             set
             {
-                _batchItems = value;
-                NotifyPropertyChanged("BatchItems");
+                _filterText = value;
+                NotifyPropertyChanged("FilterText");
             }
         }
-
-        public Recipe SelectedBatchItem { get; set; }
 
         #endregion
 
         #region ICommand and CanExecute
-        public ICommand AddNewMenuItemCommand { get; set; }
-        public ICommand DeleteMenuItemCommand { get; set; }
-        public ICommand AddNewBatchItemCommand { get; set; }
-        public ICommand DeleteBatchItemCommand { get; set; }
-        public ICommand MenuEditCommand { get; set; }
-        public ICommand BatchEditCommand { get; set; }
+        public ICommand AddNewItemCommand { get; set; }
+        public ICommand DeleteItemCommand { get; set; }
+        public ICommand EditCommand { get; set; }
+        public ICommand BatchItemSelectCommand { get; set; }
+        public ICommand MenuItemSelectCommand { get; set; }
 
-        public bool SelectedMenuCanExecute
+        public bool SelectedItemCanExecute
         {
             get
             {
-                return SelectedMenuItem != null;
+                return SelectedItem != null;
             }
         }
 
-        public bool SelectedBatchCanExecute
-        {
-            get
-            {
-                return SelectedBatchItem != null;
-            }
-        }
         #endregion
 
         public RecipeTabVM(ModelContainer models, MainViewModel parent)
@@ -91,14 +85,14 @@ namespace BuddhaBowls
             _models = models;
             ParentContext = parent;
 
-            AddNewMenuItemCommand = new RelayCommand(AddMenuItem);
-            DeleteMenuItemCommand = new RelayCommand(DeleteMenuItem, x => SelectedMenuCanExecute);
-            AddNewBatchItemCommand = new RelayCommand(AddBatchItem);
-            DeleteBatchItemCommand = new RelayCommand(DeleteBatchItem, x => SelectedBatchCanExecute);
-            MenuEditCommand = new RelayCommand(EditMenuItem, x => SelectedMenuCanExecute);
-            BatchEditCommand = new RelayCommand(EditBatchItem, x => SelectedBatchCanExecute);
+            AddNewItemCommand = new RelayCommand(AddMenuItem);
+            DeleteItemCommand = new RelayCommand(DeleteMenuItem, x => SelectedItemCanExecute);
+            EditCommand = new RelayCommand(EditMenuItem, x => SelectedItemCanExecute);
+            BatchItemSelectCommand = new RelayCommand(ChangeToBatchState, x => _state == PageState.Menu);
+            MenuItemSelectCommand = new RelayCommand(ChangeToMenuState, x => _state == PageState.Batch);
 
-            LoadRecipes();
+            ChangePageState(PageState.Batch);
+
         }
 
         #region ICommand Helpers
@@ -133,20 +127,57 @@ namespace BuddhaBowls
             throw new NotImplementedException();
         }
 
+        private void ChangeToMenuState(object obj)
+        {
+            ChangePageState(PageState.Menu);
+        }
+
+        private void ChangeToBatchState(object obj)
+        {
+            ChangePageState(PageState.Batch);
+        }
+
         #endregion
 
         #region Initializers
-
-        public void LoadRecipes()
-        {
-            MenuItems = new ObservableCollection<Recipe>(_models.Recipes.Where(x => !x.IsBatch));
-            BatchItems = new ObservableCollection<Recipe>(_models.Recipes.Where(x => x.IsBatch));
-        }
 
         #endregion
 
         #region Update UI Methods
 
+        /// <summary>
+        /// Filter list of inventory items based on the string in the filter box above datagrids
+        /// </summary>
+        /// <param name="filterStr"></param>
+        public void FilterInventoryItems(string filterStr)
+        {
+            FilteredItems = ParentContext.FilterInventoryItems(filterStr, _recipeItems.Select(x => (IItem)x));
+        }
+
         #endregion
+
+        private void ChangePageState(PageState state)
+        {
+            _state = state;
+            switch (state)
+            {
+                case PageState.Batch:
+                    _recipeItems = _models.Recipes.Where(x => x.IsBatch).ToList();
+                    ((RelayCommand)AddNewItemCommand).ChangeCallback(AddBatchItem);
+                    ((RelayCommand)DeleteItemCommand).ChangeCallback(DeleteBatchItem);
+                    ((RelayCommand)EditCommand).ChangeCallback(EditBatchItem);
+                    break;
+                case PageState.Menu:
+                    _recipeItems = _models.Recipes.Where(x => !x.IsBatch).ToList();
+                    ((RelayCommand)AddNewItemCommand).ChangeCallback(AddMenuItem);
+                    ((RelayCommand)DeleteItemCommand).ChangeCallback(DeleteMenuItem);
+                    ((RelayCommand)EditCommand).ChangeCallback(EditMenuItem);
+                    break;
+            }
+
+            FilterText = "";
+            FilteredItems = new ObservableCollection<IItem>(_recipeItems);
+        }
+
     }
 }

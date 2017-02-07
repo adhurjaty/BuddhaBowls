@@ -18,13 +18,10 @@ namespace BuddhaBowls
 {
     public class NewInventoryVM : INotifyPropertyChanged, ITabVM
     {
-        //private enum PageState { Inventory, Batch, Menu }`
-
         private ModelContainer _models;
         private List<InventoryItem> _inventoryItems;
         private Inventory _inventory;
         private bool _databaseFound;
-        //private PageState _state;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -139,6 +136,20 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("InventoryDate");
             }
         }
+
+        private float _inventoryValue;
+        public float InventoryValue
+        {
+            get
+            {
+                return _inventoryValue;
+            }
+            set
+            {
+                _inventoryValue = value;
+                NotifyPropertyChanged("InventoryValue");
+            }
+        }
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -195,30 +206,6 @@ namespace BuddhaBowls
 
         public bool ChangeCountCanExecute { get; set; } = true;
 
-        //public bool InventoryPageCanExecute
-        //{
-        //    get
-        //    {
-        //        return _state != PageState.Inventory;
-        //    }
-        //}
-
-        //public bool BatchPageCanExecute
-        //{
-        //    get
-        //    {
-        //        return _state != PageState.Batch;
-        //    }
-        //}
-
-        //public bool MenuPageCanExecute
-        //{
-        //    get
-        //    {
-        //        return _state != PageState.Menu;
-        //    }
-        //}
-
         #endregion
 
         public NewInventoryVM(ModelContainer models, MainViewModel parent)
@@ -236,12 +223,8 @@ namespace BuddhaBowls
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
             ChangeOrderCommand = new RelayCommand(StartChangeOrder);
             CancelCommand = new RelayCommand(CancelInventory);
-            //InventorySectionCommand = new RelayCommand(ChangeToInventory, x => InventoryPageCanExecute);
-            //BatchSectionCommand = new RelayCommand(ChangeToBatch, x => BatchPageCanExecute);
-            //MenuSectionCommand = new RelayCommand(ChangeToMenu, x => MenuPageCanExecute);
 
             TryDBConnect();
-            //ChangePageState(PageState.Inventory);
         }
 
         public NewInventoryVM(ModelContainer models, MainViewModel parent, Inventory inv) : this(models, parent)
@@ -411,51 +394,6 @@ namespace BuddhaBowls
             ParentContext.DeleteTempTab();
         }
 
-        //private void ChangeToMenu(object obj)
-        //{
-        //    ChangePageState(PageState.Menu);
-        //}
-
-        //private void ChangeToBatch(object obj)
-        //{
-        //    ChangePageState(PageState.Batch);
-        //}
-
-        //private void ChangeToInventory(object obj)
-        //{
-        //    ChangePageState(PageState.Inventory);
-        //}
-
-        //private void AddBatchItem(object obj)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //private void DeleteBatchItem(object obj)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //private void EditBatchItem(object obj)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //private void AddMenuItem(object obj)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //private void DeleteMenuItem(object obj)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //private void EditMenuItem(object obj)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         #endregion
 
         #region Initializers
@@ -494,6 +432,7 @@ namespace BuddhaBowls
                 DisplayItemsNotFound();
                 return false;
             }
+            UpdateInvValue();
             return true;
         }
         #endregion
@@ -517,6 +456,12 @@ namespace BuddhaBowls
         public void InventoryItemCountChanged()
         {
             ChangeCountCanExecute = true;
+            UpdateInvValue();
+        }
+
+        private void UpdateInvValue()
+        {
+            InventoryValue = FilteredInventoryItems.Sum(x => ((InventoryItem)x).LastPurchasedPrice * x.Count);
         }
 
         #endregion
@@ -535,34 +480,6 @@ namespace BuddhaBowls
         {
             FilteredInventoryItems = new ObservableCollection<IItem>(ParentContext.SortItems(_inventoryItems));
         }
-
-        //private void ChangePageState(PageState state)
-        //{
-        //    _state = state;
-        //    switch (state)
-        //    {
-        //        case PageState.Inventory:
-        //            Header = "Inventory";
-        //            ((RelayCommand)AddInventoryItemCommand).ChangeCallback(AddInventoryItem);
-        //            ((RelayCommand)DeleteInventoryItemCommand).ChangeCallback(DeleteInventoryItem);
-        //            ((RelayCommand)EditInventoryItemCommand).ChangeCallback(EditInventoryItem);
-        //            break;
-        //        case PageState.Batch:
-        //            Header = "Batch Items";
-        //            ((RelayCommand)AddInventoryItemCommand).ChangeCallback(AddBatchItem);
-        //            ((RelayCommand)DeleteInventoryItemCommand).ChangeCallback(DeleteBatchItem);
-        //            ((RelayCommand)EditInventoryItemCommand).ChangeCallback(EditBatchItem);
-        //            break;
-        //        case PageState.Menu:
-        //            Header = "Menu Items";
-        //            ((RelayCommand)AddInventoryItemCommand).ChangeCallback(AddMenuItem);
-        //            ((RelayCommand)DeleteInventoryItemCommand).ChangeCallback(DeleteMenuItem);
-        //            ((RelayCommand)EditInventoryItemCommand).ChangeCallback(EditMenuItem);
-        //            break;
-        //    }
-        //    RefreshInventoryList();
-
-        //}
 
         //private IEnumerable<IItem> GetTotalDisplayList()
         //{

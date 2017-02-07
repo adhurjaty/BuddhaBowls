@@ -24,5 +24,12 @@ namespace BuddhaBowls.UserControls
         {
             InitializeComponent();
         }
+
+        private void FilterItems_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox textBox = FilterItemBox;
+
+            ((RecipeTabVM)DataContext).FilterInventoryItems(textBox.Text);
+        }
     }
 }

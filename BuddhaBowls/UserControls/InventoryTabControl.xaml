@@ -23,13 +23,14 @@
         </Button>
         <Button Grid.Row="0" Height="30" Width="70" Content="View" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="70, 0"
                 Command="{Binding ViewInventoryCommand}" />
-        <Button Grid.Row="0" Height="30" Width="70" Content="Add Item" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="140, 0"
-                Command="{Binding AddItemCommand}" />
-        <Button Grid.Row="0" Height="30" Width="70" Content="Compare" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="210, 0"
+        <Button Grid.Row="0" Height="30" Width="70" Content="Compare" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="140, 0"
                 Command="{Binding CompareCommand}" />
+        <!--<Button Grid.Row="0" Height="30" Width="70" Content="Add Item" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="210, 0"
+                Command="{Binding AddItemCommand}" />-->
         <DataGrid x:Name="dataGrid2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding InventoryList}"
-                                SelectedItem="{Binding SelectedInventory}" AutoGenerateColumns="False" CanUserAddRows="False">
+                                SelectedItem="{Binding SelectedInventory}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="-1,0,1,0"
+                                SelectionChanged="dataGrid2_SelectionChanged" >
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Inv #" Binding="{Binding Id}" Width="60" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Date" Binding="{Binding Path=Date, StringFormat={}{0:MM/dd/yy}}"

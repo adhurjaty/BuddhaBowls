@@ -75,6 +75,20 @@ namespace BuddhaBowls
             }
         }
 
+        private List<Inventory> _selectedMultiInventories;
+        public List<Inventory> SelectedMultiInventories
+        {
+            get
+            {
+                return _selectedMultiInventories;
+            }
+            set
+            {
+                _selectedMultiInventories = value;
+                CompareCanExecute = value.Count == 2;
+            }
+        }
+
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -84,6 +98,8 @@ namespace BuddhaBowls
         public ICommand DeleteInventoryCommand { get; set; }
         // View button in Master invententory list form
         public ICommand ViewInventoryCommand { get; set; }
+        // Compare button
+        public ICommand CompareCommand { get; set; }
 
         public bool DeleteEditCanExecute
         {
@@ -93,7 +109,7 @@ namespace BuddhaBowls
             }
         }
 
-        public bool AddItemCanExecute
+        public bool AddInvCanExecute
         {
             get
             {
@@ -103,6 +119,8 @@ namespace BuddhaBowls
 
         public bool ChangeCountCanExecute { get; set; } = true;
 
+        public bool CompareCanExecute { get; set; } = false;
+
         #endregion
 
         public InventoryTabVM(ModelContainer models, MainViewModel parent)
@@ -110,9 +128,10 @@ namespace BuddhaBowls
             ParentContext = parent;
             _models = models;
 
-            AddInventoryCommand = new RelayCommand(StartNewInventory, x => AddItemCanExecute);
+            AddInventoryCommand = new RelayCommand(StartNewInventory, x => AddInvCanExecute);
             DeleteInventoryCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute);
             ViewInventoryCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute);
+            CompareCommand = new RelayCommand(CompareInvetories, x => CompareCanExecute);
 
             TryDBConnect();
         }
@@ -150,6 +169,11 @@ namespace BuddhaBowls
                 SelectedInventory = null;
                 RefreshInventoryList();
             }
+        }
+
+        private void CompareInvetories(object obj)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

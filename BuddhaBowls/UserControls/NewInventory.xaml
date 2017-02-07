@@ -28,10 +28,10 @@
                     Margin="10, 0, 0, 0"/>
         <Button x:Name="ChangeOrderButton" Content="Change Display Order" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="65,0"
                 Grid.Row="1" Width="137" Command="{Binding ChangeOrderCommand}"/>
-        <TextBox x:Name="FilterItemBox" Grid.Row="1" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                 Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
         <Label x:Name="label1" Grid.Row="1" Content="Inventory Item Name:" Margin="-330, 0, 0, 0" HorizontalAlignment="Center"
                VerticalAlignment="Bottom"/>
+        <TextBox x:Name="FilterItemBox" Grid.Row="1" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                 Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
         <Button Grid.Row="2" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" Margin="0, 0, 35, 0"
                 Command="{Binding AddInventoryItemCommand}">
             <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
@@ -55,5 +55,8 @@
         <Button Grid.Row="4" Height ="25" Width="80" Content="Cancel" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding CancelCommand}" />
         <Button Grid.Row="4" Height ="25" Width="80" Content="Save" HorizontalAlignment="Right" Margin="85, 0" Command="{Binding SaveCountCommand}" />
         <Button Grid.Row="4" Height ="25" Width="80" Content="Reset" HorizontalAlignment="Left" Margin="5, 0" Command="{Binding ResetCountCommand}" />
+        <Label x:Name="label" Content="Inventory Value:" HorizontalAlignment="Left" Margin="20,0,0,0" Grid.Row="2" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="2" Text="{Binding Path=InventoryValue, StringFormat=c}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                   Margin="120, 0"/>
     </Grid>
 </UserControl>
