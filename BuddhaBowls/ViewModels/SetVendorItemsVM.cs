@@ -88,20 +88,6 @@ namespace BuddhaBowls
             }
         }
 
-        private Visibility _modalVisibility = Visibility.Hidden;
-        public Visibility ModalVisibility
-        {
-            get
-            {
-                return _modalVisibility;
-            }
-            set
-            {
-                _modalVisibility = value;
-                NotifyPropertyChanged("ModalVisibility");
-            }
-        }
-
         private ObservableCollection<InventoryItem> _remainingItems;
         public ObservableCollection<InventoryItem> RemainingItems
         {
@@ -117,6 +103,22 @@ namespace BuddhaBowls
         }
 
         public InventoryItem ItemToAdd { get; set; }
+
+        private Visibility _modalVisibility = Visibility.Hidden;
+        public Visibility ModalVisibility
+        {
+            get
+            {
+                return _modalVisibility;
+            }
+            set
+            {
+                _modalVisibility = value;
+                NotifyPropertyChanged("ModalVisibility");
+            }
+        }
+
+        public string ModalTitle { get; set; } = "Add Vendor Item";
 
         #endregion
 
@@ -171,6 +173,7 @@ namespace BuddhaBowls
 
         private void AddItem(object obj)
         {
+            ParentContext.ModalContext = this;
             ModalVisibility = Visibility.Visible;
         }
 

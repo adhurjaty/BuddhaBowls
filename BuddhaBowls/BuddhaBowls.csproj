@@ -136,14 +136,17 @@
     <Compile Include="UserControls\NewInventory.xaml.cs">
       <DependentUpon>NewInventory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\NewMenuSection.xaml.cs">
+      <DependentUpon>NewMenuSection.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\NewOrder.xaml.cs">
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\NewMenuRecipe.xaml.cs">
-      <DependentUpon>NewMenuRecipe.xaml</DependentUpon>
+    <Compile Include="UserControls\NewBatchSection.xaml.cs">
+      <DependentUpon>NewBatchSection.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\NewBatchRecipe.xaml.cs">
-      <DependentUpon>NewBatchRecipe.xaml</DependentUpon>
+    <Compile Include="UserControls\NewRecipe.xaml.cs">
+      <DependentUpon>NewRecipe.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\OrderTabControl.xaml.cs">
       <DependentUpon>OrderTabControl.xaml</DependentUpon>
@@ -212,6 +215,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\NewMenuSection.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\NewOrder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -220,11 +227,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\NewMenuRecipe.xaml">
+    <Page Include="UserControls\NewBatchSection.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UserControls\NewBatchRecipe.xaml">
+    <Page Include="UserControls\NewRecipe.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

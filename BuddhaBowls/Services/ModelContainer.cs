@@ -88,6 +88,11 @@ namespace BuddhaBowls.Services
                             _categoryColors[category.ToUpper()] : GlobalVar.BLANK_COLOR);
         }
 
+        public IEnumerable<IItem> GetIngredients()
+        {
+            return InventoryItems.Select(x => (IItem)x).Concat(Recipes.Where(x => x.IsBatch));
+        }
+
         private void SetInventoryCategories()
         {
             ItemCategories = new HashSet<string>();

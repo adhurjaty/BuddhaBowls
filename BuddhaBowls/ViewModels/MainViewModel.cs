@@ -119,6 +119,34 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("RecipeTab");
             }
         }
+
+        private Visibility _modalVisibility = Visibility.Hidden;
+        public Visibility ModalVisibility
+        {
+            get
+            {
+                return _modalVisibility;
+            }
+            set
+            {
+                _modalVisibility = value;
+                NotifyPropertyChanged("ModalVisibility");
+            }
+        }
+
+        private object _modalContext;
+        public object ModalContext
+        {
+            get
+            {
+                return _modalContext;
+            }
+            set
+            {
+                _modalContext = value;
+                NotifyPropertyChanged("ModalContext");
+            }
+        }
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -154,6 +182,8 @@ namespace BuddhaBowls
             BrowseButtonCommand = new RelayCommand(BrowseHelper);
             ReportCommand = new RelayCommand(ReportHelper, x => ReportCanExecute);
             SaveSettingsCommand = new RelayCommand(SaveSettingsHelper, x => SaveSettingsCanExecute);
+
+            ModalContext = this;
 
             InitTabsAndModel();
             //MakeBreakdownDisplay();
@@ -307,6 +337,8 @@ namespace BuddhaBowls
         public void DeleteTempTab()
         {
             _window.DeleteTempTab();
+            ModalContext = this;
+            ModalVisibility = Visibility.Hidden;
         }
 
 
@@ -431,7 +463,11 @@ namespace BuddhaBowls
                 Properties.Settings.Default.Save();
             }
 
-            return items.OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.Name));
+            return items.Where(x => Properties.Settings.Default.InventoryOrder.Contains(x.Name))
+                        .OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.Name))
+                        .Concat(items.Where(x => !Properties.Settings.Default.InventoryOrder.Contains(x.Name))
+                                     .OrderBy(x => x.Name));
+            //return items.OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.Name));
         }
     }
 
