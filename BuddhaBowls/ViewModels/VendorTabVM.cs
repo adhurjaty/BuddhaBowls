@@ -79,6 +79,7 @@ namespace BuddhaBowls
         public ICommand CancelAddEditCommand { get; set; }
         // Change Rec List button in vendor main tab
         public ICommand ChangeRecListOrderCommand { get; set; }
+        public ICommand ChangeVendorItemsCommand { get; set; }
 
         public bool SelectedVendorCanExecute
         {
@@ -111,6 +112,7 @@ namespace BuddhaBowls
             SaveAddEditCommand = new RelayCommand(SaveAddEdit, x => SaveAddEditCanExecute);
             CancelAddEditCommand = new RelayCommand(CancelAddEdit);
             ChangeRecListOrderCommand = new RelayCommand(ChangeRecOrder, x => SelectedVendorCanExecute);
+            ChangeVendorItemsCommand = new RelayCommand(ChangeVendorItems, x => SelectedVendorCanExecute);
 
             TryDBConnect();
         }
@@ -182,6 +184,11 @@ namespace BuddhaBowls
         private void ChangeRecOrder(object obj)
         {
             ParentContext.AddTempTab("Rec List Order", new ChangeInventoryOrder(new ChangeOrderVM(this, SelectedVendor)));
+        }
+
+        private void ChangeVendorItems(object obj)
+        {
+            ParentContext.AddTempTab("Vendor Items", new SetVendorItems(new SetVendorItemsVM(_models, ParentContext, SelectedVendor)));
         }
 
         #endregion

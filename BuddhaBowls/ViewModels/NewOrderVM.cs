@@ -130,7 +130,7 @@ namespace BuddhaBowls
             }
 
             List<InventoryItem> purchasedItems = _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList();
-            PurchaseOrder po = new PurchaseOrder(OrderVendor.Name, purchasedItems, OrderDate);
+            PurchaseOrder po = new PurchaseOrder(OrderVendor, purchasedItems, OrderDate);
 
             ParentContext.ParentContext.GenerateAfterOrderSaved(po, OrderVendor);
 

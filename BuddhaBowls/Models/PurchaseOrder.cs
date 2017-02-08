@@ -29,9 +29,9 @@ namespace BuddhaBowls.Models
             _tableName = "PurchaseOrder";
         }
 
-        public PurchaseOrder(string vendor, List<InventoryItem> inventoryItems, DateTime orderDate) : this()
+        public PurchaseOrder(Vendor vendor, List<InventoryItem> inventoryItems, DateTime orderDate) : this()
         {
-            VendorName = vendor;
+            VendorName = vendor.Name;
             OrderDate = orderDate;
 
             Insert();
@@ -41,31 +41,12 @@ namespace BuddhaBowls.Models
                 item.LastPurchasedDate = DateTime.Now;
             }
             ModelHelper.CreateTable(inventoryItems, GetOrderTableName());
-            UpdatePrices(inventoryItems);
+            UpdatePrices(inventoryItems, vendor);
         }
 
-        private void UpdatePrices(List<InventoryItem> inventoryItems)
+        private void UpdatePrices(List<InventoryItem> inventoryItems, Vendor vendor)
         {
-            string tableName = GetPriceTableName();
-            if (_dbInt.TableExists(tableName))
-            {
-                foreach (InventoryItem item in inventoryItems)
-                {
-                    if (!_dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id))
-                    {
-                        _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict());
-                    }
-                }
-            }
-            else
-            {
-                File.Copy(_dbInt.FilePath("InventoryItem"), _dbInt.FilePath(tableName));
-                List<InventoryItem> allItems = ModelHelper.InstantiateList<InventoryItem>(tableName, false);
-                foreach(InventoryItem item in allItems.Where(x => !inventoryItems.Select(y => y.Id).Contains(x.Id)))
-                {
-                    _dbInt.DeleteRecord(tableName, new Dictionary<string, string>() { { "Id", item.Id.ToString() } });
-                }
-            }
+            vendor.UpdatePrices(inventoryItems);
         }
 
         public void Receive()
@@ -145,11 +126,6 @@ namespace BuddhaBowls.Models
         private string GetOpenPartialOrderTableName()
         {
             return @"Orders\Partial_Open_" + VendorName + "_" + Id.ToString();
-        }
-
-        private string GetPriceTableName()
-        {
-            return @"Vendors\" + VendorName + "_Prices";
         }
 
         private void CombinePartial()

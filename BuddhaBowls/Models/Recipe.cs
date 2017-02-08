@@ -16,6 +16,7 @@ namespace BuddhaBowls.Models
         public string Category { get; set; }
         public string Measure { get; set; }
         public float Count { get; set; }
+        public float? Price { get; set; }
         public bool IsBatch { get; set; }
 
         public float RecipeCost

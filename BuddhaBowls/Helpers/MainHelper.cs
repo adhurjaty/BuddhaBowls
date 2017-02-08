@@ -59,11 +59,11 @@ namespace BuddhaBowls.Helpers
             return recipeList;
         }
 
-        public static List<VendorItem> GetVendorPrices(string vendorName)
-        {
-            string tableName = Path.Combine(Properties.Resources.VendorFolder, vendorName);
+        //public static List<VendorItem> GetVendorPrices(string vendorName)
+        //{
+        //    string tableName = Path.Combine(Properties.Resources.VendorFolder, vendorName);
 
-            return ModelHelper.InstantiateList<VendorItem>(tableName, false);
-        }
+        //    return ModelHelper.InstantiateList<VendorItem>(tableName, false);
+        //}
     }
 }

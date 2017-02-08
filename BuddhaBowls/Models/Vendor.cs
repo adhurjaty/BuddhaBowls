@@ -42,9 +42,8 @@ namespace BuddhaBowls.Models
 
         public List<InventoryItem> GetFromPriceList()
         {
-            string tableName = @"Vendors\" + Name + "_Prices";
-            if(_dbInt.TableExists(tableName))
-                return ModelHelper.InstantiateList<InventoryItem>(tableName, false);
+            if(_dbInt.TableExists(GetPriceTableName()))
+                return ModelHelper.InstantiateList<InventoryItem>(GetPriceTableName(), false);
             return null;
         }
 
@@ -63,9 +62,39 @@ namespace BuddhaBowls.Models
             return Properties.Settings.Default.InventoryOrder;
         }
 
+        public void UpdatePrices(List<InventoryItem> inventoryItems)
+        {
+            string tableName = GetPriceTableName();
+            if (_dbInt.TableExists(tableName))
+            {
+                foreach (InventoryItem item in inventoryItems)
+                {
+                    if (!_dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id))
+                    {
+                        _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict());
+                    }
+                }
+            }
+            else
+            {
+                File.Copy(_dbInt.FilePath("InventoryItem"), _dbInt.FilePath(tableName));
+                List<InventoryItem> allItems = ModelHelper.InstantiateList<InventoryItem>(tableName, false);
+                foreach (InventoryItem item in allItems.Where(x => !inventoryItems.Select(y => y.Id).Contains(x.Id)))
+                {
+                    _dbInt.DeleteRecord(tableName, new Dictionary<string, string>() { { "Id", item.Id.ToString() } });
+                }
+            }
+        }
+
         private string GetOrderFile()
         {
             return Path.Combine(Properties.Settings.Default.DBLocation, "Vendors", Name + "_order.txt");
         }
+
+        private string GetPriceTableName()
+        {
+            return @"Vendors\" + Name + "_Prices";
+        }
+
     }
 }

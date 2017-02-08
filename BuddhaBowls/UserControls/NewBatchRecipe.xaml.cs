@@ -18,9 +18,9 @@ namespace BuddhaBowls.UserControls
     /// <summary>
     /// Interaction logic for NewRecipe.xaml
     /// </summary>
-    public partial class NewRecipe : UserControl
+    public partial class NewBatchRecipe : UserControl
     {
-        public NewRecipe()
+        public NewBatchRecipe()
         {
             InitializeComponent();
         }

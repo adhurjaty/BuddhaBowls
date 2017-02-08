@@ -85,6 +85,7 @@
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.4.0-ALPHA030\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -108,13 +109,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\IItem.cs" />
     <Compile Include="Models\Inventory.cs" />
     <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\Vendor.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="UserControls\AddEditRecipe.xaml.cs">
-      <DependentUpon>AddEditRecipe.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControls\BreakdownDisplay.xaml.cs">
       <DependentUpon>BreakdownDisplay.xaml</DependentUpon>
     </Compile>
@@ -125,14 +124,12 @@
       <DependentUpon>EditItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="GlobalVar.cs" />
-    <Compile Include="Models\IItem.cs" />
     <Compile Include="Helpers\MainHelper.cs" />
     <Compile Include="Helpers\ModelHelper.cs" />
     <Compile Include="MainClass.cs" />
     <Compile Include="Models\Recipe.cs" />
     <Compile Include="Models\InventoryItem.cs" />
     <Compile Include="Models\PurchaseOrder.cs" />
-    <Compile Include="Models\VendorItem.cs" />
     <Compile Include="UserControls\InventoryTabControl.xaml.cs">
       <DependentUpon>InventoryTabControl.xaml</DependentUpon>
     </Compile>
@@ -142,8 +139,11 @@
     <Compile Include="UserControls\NewOrder.xaml.cs">
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\NewRecipe.xaml.cs">
-      <DependentUpon>NewRecipe.xaml</DependentUpon>
+    <Compile Include="UserControls\NewMenuRecipe.xaml.cs">
+      <DependentUpon>NewMenuRecipe.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\NewBatchRecipe.xaml.cs">
+      <DependentUpon>NewBatchRecipe.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\OrderTabControl.xaml.cs">
       <DependentUpon>OrderTabControl.xaml</DependentUpon>
@@ -157,6 +157,9 @@
     <Compile Include="UserControls\RecipeTabControl.xaml.cs">
       <DependentUpon>RecipeTabControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\SetVendorItems.xaml.cs">
+      <DependentUpon>SetVendorItems.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\VendorTabControl.xaml.cs">
       <DependentUpon>VendorTabControl.xaml</DependentUpon>
     </Compile>
@@ -169,16 +172,14 @@
     <Compile Include="ViewModels\ITabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NewOrderVM.cs" />
+    <Compile Include="ViewModels\SetVendorItemsVM.cs" />
+    <Compile Include="ViewModels\NewRecipeVM.cs" />
     <Compile Include="ViewModels\OrderBreakdownVM.cs" />
     <Compile Include="ViewModels\OrderTabVM.cs" />
     <Compile Include="ViewModels\RecipeTabVM.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
     <Compile Include="ViewModels\VendorTabVM.cs" />
     <Compile Include="ViewModels\ViewOrderVM.cs" />
-    <Page Include="UserControls\AddEditRecipe.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UserControls\BreakdownDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -219,7 +220,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\NewRecipe.xaml">
+    <Page Include="UserControls\NewMenuRecipe.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\NewBatchRecipe.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -228,6 +233,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\RecipeTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SetVendorItems.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
