@@ -18,11 +18,17 @@ namespace BuddhaBowls.UserControls
     /// <summary>
     /// Interaction logic for NewRecipe.xaml
     /// </summary>
-    public partial class NewBatchSection : UserControl
+    public partial class NewRecipe : UserControl
     {
-        public NewBatchSection()
+        public NewRecipe(NewRecipeVM context)
         {
             InitializeComponent();
+            DataContext = context;
+        }
+
+        private void FieldValue_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ((NewRecipeVM)DataContext).ClearErrors();
         }
     }
 }

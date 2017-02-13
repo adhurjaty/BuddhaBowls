@@ -23,6 +23,8 @@
                  Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
         <Label x:Name="label1" Grid.Row="1" Content="Vendor Name:" Margin="-300, 0, 0, 0" HorizontalAlignment="Center"
                VerticalAlignment="Bottom"/>
+        <Button Content="Get Order Sheet" HorizontalAlignment="Right" Margin="0,0,360,0" Grid.Row="2" VerticalAlignment="Center" Width="130"
+                Command="{Binding GetOrderSheetCommand}"/>
         <Button Content="Change Vendor Items" HorizontalAlignment="Right" Margin="0,0,230,0" Grid.Row="2" VerticalAlignment="Center" Width="130"
                 Command="{Binding ChangeVendorItemsCommand}"/>
         <Button Grid.Row="2" Content="Change Rec List Order" Height="25" Width="150" HorizontalAlignment="Right" VerticalAlignment="Center"

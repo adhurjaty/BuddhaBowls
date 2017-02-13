@@ -25,12 +25,10 @@
                                 SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Count" Binding="{Binding Count}" Width="1*" />
+                <DataGridTextColumn Header="Count" Binding="{Binding Count}" Width="1*" IsReadOnly="True" />
                 <DataGridTextColumn Header="Cost" Binding="{Binding Path=RecipeCost, StringFormat=c}" Width="1*" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="button" Grid.Row="2" Content="Edit" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="70,0" Width="50" Height="25"
-                Command="{Binding EditCommand}"/>
         <Button Grid.Row="2" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Center" Margin="35, 0" Command="{Binding AddNewMenuItemCommand}">
             <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
@@ -39,6 +37,8 @@
                 VerticalAlignment="Center" Margin="5, 0" Command="{Binding DeleteMenuItemCommand}">
             <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
+        <Button Content="Edit" HorizontalAlignment="Right" Margin="0,0,70,0" Grid.Row="2" VerticalAlignment="Center" Width="60"
+                Command="{Binding EditItemCommand}"/>
         <Button Grid.Row="2" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Center" Margin="35, 0" Command="{Binding AddNewItemCommand}"/>
         <Button Grid.Row="2" Width="25" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" VerticalAlignment="Center"

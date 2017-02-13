@@ -1,5 +1,6 @@
 ﻿using BuddhaBowls.Models;
 using BuddhaBowls.Services;
+using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace BuddhaBowls
@@ -64,11 +66,12 @@ namespace BuddhaBowls
         #endregion
 
         #region ICommand and CanExecute
+
         public ICommand AddNewItemCommand { get; set; }
         public ICommand DeleteItemCommand { get; set; }
-        public ICommand EditCommand { get; set; }
         public ICommand BatchItemSelectCommand { get; set; }
         public ICommand MenuItemSelectCommand { get; set; }
+        public ICommand EditItemCommand { get; set; }
 
         public bool SelectedItemCanExecute
         {
@@ -85,46 +88,33 @@ namespace BuddhaBowls
             _models = models;
             ParentContext = parent;
 
-            AddNewItemCommand = new RelayCommand(AddMenuItem);
-            DeleteItemCommand = new RelayCommand(DeleteMenuItem, x => SelectedItemCanExecute);
-            EditCommand = new RelayCommand(EditMenuItem, x => SelectedItemCanExecute);
+            AddNewItemCommand = new RelayCommand(AddItem);
+            DeleteItemCommand = new RelayCommand(DeleteItem, x => SelectedItemCanExecute);
             BatchItemSelectCommand = new RelayCommand(ChangeToBatchState, x => _state == PageState.Menu);
             MenuItemSelectCommand = new RelayCommand(ChangeToMenuState, x => _state == PageState.Batch);
+            EditItemCommand = new RelayCommand(EditRecipe, x => SelectedItemCanExecute);
 
             ChangePageState(PageState.Batch);
-
         }
 
         #region ICommand Helpers
 
-        private void AddMenuItem(object obj)
+        private void AddItem(object obj)
         {
-            throw new NotImplementedException();
+            ParentContext.AddTempTab("New Recipe", new NewRecipe(new NewRecipeVM(_models, ParentContext, _state == PageState.Batch)));
         }
 
-        private void DeleteMenuItem(object obj)
+        private void DeleteItem(object obj)
         {
-            throw new NotImplementedException();
-        }
-
-        private void AddBatchItem(object obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void DeleteBatchItem(object obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void EditMenuItem(object obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void EditBatchItem(object obj)
-        {
-            throw new NotImplementedException();
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete " + SelectedItem.Name,
+                                                      "Delete " + SelectedItem.Name + "?", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                _models.Recipes.Remove(SelectedItem);
+                SelectedItem.Destroy();
+                SelectedItem = null;
+                RefreshList();
+            }
         }
 
         private void ChangeToMenuState(object obj)
@@ -135,6 +125,11 @@ namespace BuddhaBowls
         private void ChangeToBatchState(object obj)
         {
             ChangePageState(PageState.Batch);
+        }
+
+        private void EditRecipe(object obj)
+        {
+            ParentContext.AddTempTab("Edit Recipe", new NewRecipe(new EditRecipeVM(_models, ParentContext, _state == PageState.Batch, (Recipe)SelectedItem)));
         }
 
         #endregion
@@ -154,6 +149,10 @@ namespace BuddhaBowls
             FilteredItems = ParentContext.FilterInventoryItems(filterStr, _recipeItems.Select(x => (IItem)x));
         }
 
+        public void RefreshList()
+        {
+            ChangePageState(_state);
+        }
         #endregion
 
         private void ChangePageState(PageState state)
@@ -163,21 +162,14 @@ namespace BuddhaBowls
             {
                 case PageState.Batch:
                     _recipeItems = _models.Recipes.Where(x => x.IsBatch).ToList();
-                    ((RelayCommand)AddNewItemCommand).ChangeCallback(AddBatchItem);
-                    ((RelayCommand)DeleteItemCommand).ChangeCallback(DeleteBatchItem);
-                    ((RelayCommand)EditCommand).ChangeCallback(EditBatchItem);
                     break;
                 case PageState.Menu:
                     _recipeItems = _models.Recipes.Where(x => !x.IsBatch).ToList();
-                    ((RelayCommand)AddNewItemCommand).ChangeCallback(AddMenuItem);
-                    ((RelayCommand)DeleteItemCommand).ChangeCallback(DeleteMenuItem);
-                    ((RelayCommand)EditCommand).ChangeCallback(EditMenuItem);
                     break;
             }
 
             FilterText = "";
             FilteredItems = new ObservableCollection<IItem>(_recipeItems);
         }
-
     }
 }

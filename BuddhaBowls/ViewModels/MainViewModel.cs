@@ -347,7 +347,7 @@ namespace BuddhaBowls
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public string SetOrErrorAddEditItem<T>(ref T item, IEnumerable<FieldSetting> fieldsCollection, bool newItem) where T : Model, new()
+        public string ObjectFromFields<T>(ref T item, IEnumerable<FieldSetting> fieldsCollection, bool newItem) where T : Model, new()
         {
             foreach (FieldSetting field in fieldsCollection)
             {
@@ -525,6 +525,15 @@ namespace BuddhaBowls
                 _error = value;
                 NotifyPropertyChanged("Error");
             }
+        }
+
+        public FieldSetting() { }
+
+        public FieldSetting(string name)
+        {
+            Name = name;
+            Error = 0;
+            Value = "";
         }
     }
     #endregion

@@ -303,7 +303,7 @@ namespace BuddhaBowls
             else
                 throw new NotImplementedException();
 
-            AddEditErrorMessage = ParentContext.SetOrErrorAddEditItem(ref item, FieldsCollection, AddEditHeader.StartsWith("Add"));
+            AddEditErrorMessage = ParentContext.ObjectFromFields(ref item, FieldsCollection, AddEditHeader.StartsWith("Add"));
             if (string.IsNullOrEmpty(AddEditErrorMessage))
             {
 

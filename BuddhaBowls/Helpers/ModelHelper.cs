@@ -82,7 +82,12 @@ namespace BuddhaBowls.Helpers
 
         public static string[][] ConvertToRowStrings<T>(List<T> records) where T : Model, new()
         {
-            string[] columns = records[0].GetPropertiesDB();
+            return ConvertToRowStrings(records, records[0].GetPropertiesDB());
+        }
+
+
+        public static string[][] ConvertToRowStrings<T>(List<T> records, string[] columns) where T : Model, new()
+        {
             return records.OrderBy(x => x.Id)
                                     .Select(x =>
                                                 columns.Select(y => x.GetPropertyValue(y) == null ? "" : 
@@ -103,7 +108,14 @@ namespace BuddhaBowls.Helpers
         public static void CreateTable<T>(List<T> records, string tableName) where T : Model, new()
         {
             string[] columns = records[0].GetPropertiesDB();
-            string[][] rows = ConvertToRowStrings(records);
+            if(columns[columns.Length - 1] == "Id")
+            {
+                string[] newCols = new string[columns.Length];
+                newCols[0] = "Id";
+                Array.Copy(columns, 0, newCols, 1, columns.Length - 1);
+                columns = newCols;
+            }
+            string[][] rows = ConvertToRowStrings(records, columns);
 
             DatabaseInterface dbInt = new DatabaseInterface();
             dbInt.CreateTable(columns, rows, tableName);

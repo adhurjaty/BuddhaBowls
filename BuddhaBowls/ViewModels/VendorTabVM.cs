@@ -80,6 +80,7 @@ namespace BuddhaBowls
         // Change Rec List button in vendor main tab
         public ICommand ChangeRecListOrderCommand { get; set; }
         public ICommand ChangeVendorItemsCommand { get; set; }
+        public ICommand GetOrderSheetCommand { get; set; }
 
         public bool SelectedVendorCanExecute
         {
@@ -113,6 +114,7 @@ namespace BuddhaBowls
             CancelAddEditCommand = new RelayCommand(CancelAddEdit);
             ChangeRecListOrderCommand = new RelayCommand(ChangeRecOrder, x => SelectedVendorCanExecute);
             ChangeVendorItemsCommand = new RelayCommand(ChangeVendorItems, x => SelectedVendorCanExecute);
+            GetOrderSheetCommand = new RelayCommand(GenerateOrderSheet, x => SelectedVendorCanExecute);
 
             TryDBConnect();
         }
@@ -171,7 +173,7 @@ namespace BuddhaBowls
         {
             Vendor vendor = new Vendor();
 
-            AddEditErrorMessage = ParentContext.SetOrErrorAddEditItem(ref vendor, FieldsCollection, true);
+            AddEditErrorMessage = ParentContext.ObjectFromFields(ref vendor, FieldsCollection, true);
             if(string.IsNullOrEmpty(AddEditErrorMessage))
             {
                 vendor.Insert();
@@ -189,6 +191,11 @@ namespace BuddhaBowls
         private void ChangeVendorItems(object obj)
         {
             ParentContext.AddTempTab("Vendor Items", new SetVendorItems(new SetVendorItemsVM(_models, ParentContext, SelectedVendor)));
+        }
+
+        private void GenerateOrderSheet(object obj)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

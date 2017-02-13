@@ -163,7 +163,7 @@ namespace BuddhaBowls.Services
                     if (fields[0] == id.ToString())
                     {
                         string[] setFieldKeys = setFields.Keys.ToArray();
-                        int[] columnIdxs = setFieldKeys.Select(x => Array.IndexOf(columnNames, x)).ToArray();
+                        int[] columnIdxs = setFieldKeys.Where(x => columnNames.Contains(x)).Select(x => Array.IndexOf(columnNames, x)).ToArray();
 
                         for(int i = 0; i < columnIdxs.Length; i++)
                         {

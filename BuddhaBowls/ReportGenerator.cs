@@ -298,7 +298,7 @@ namespace BuddhaBowls
             return File.Exists(path);
         }
 
-        public string GenerateOrder(PurchaseOrder po, Vendor vendor)
+        public string GenerateOrder(PurchaseOrder po, Vendor vendor, string filepath = "")
         {
             List<InventoryItem> items = po.GetOpenPOItems();
             if (items == null)
@@ -375,7 +375,7 @@ namespace BuddhaBowls
                     sheet.Cells[row, 1] = item.Conversion.ToString();
                     sheet.Cells[row, 2] = item.PurchasedUnit;
                     sheet.Cells[row, 3] = item.Name;
-                    sheet.Cells[row, 4] = item.LastOrderAmount;
+                    sheet.Cells[row, 4] = item.LastOrderAmount != 0 ? item.LastOrderAmount.ToString() : "";
                     sheet.Cells[row, 5] = item.LastPurchasedPrice.ToString("c");
                     sheet.Cells[row, 6] = item.PriceExtension.ToString("c");
                     categoryCosts[category] += item.PriceExtension;
@@ -415,7 +415,8 @@ namespace BuddhaBowls
             range.Borders.Weight = Excel.XlBorderWeight.xlMedium;
             range.BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
 
-            string filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + po.Id.ToString() + ".xlsx");
+            if(string.IsNullOrEmpty(filepath))
+                filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + po.Id.ToString() + ".xlsx");
 
             try
             {
@@ -522,6 +523,14 @@ namespace BuddhaBowls
             }
 
             return filepath;
+        }
+
+        public string GenerateVendorOrderSheet(Vendor vendor)
+        {
+            PurchaseOrder po = new PurchaseOrder(vendor, vendor.GetFromPriceList(), DateTime.Now);
+            return GenerateOrder(po, vendor,
+                Path.Combine(Properties.Settings.Default.DBLocation, "Receiving Lists", "ReceivingList_" + po.Id.ToString() + ".xlsx"));
+
         }
 
         //public string GenerateReceivingList(PurchaseOrder po, Vendor vendor)

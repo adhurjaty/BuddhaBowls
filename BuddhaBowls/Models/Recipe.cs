@@ -14,7 +14,6 @@ namespace BuddhaBowls.Models
         public string RecipeUnit { get; set; }
         public float? RecipeUnitConversion { get; set; }
         public string Category { get; set; }
-        public string Measure { get; set; }
         public float Count { get; set; }
         public float? Price { get; set; }
         public bool IsBatch { get; set; }
@@ -39,10 +38,20 @@ namespace BuddhaBowls.Models
             return ItemList.Sum(x => x.GetCost() * x.Count);
         }
 
-        public void Update(string recipeName)
+        public override void Update()
         {
-            _tableName = Path.Combine(Properties.Resources.RecipeFolder, recipeName);
-            Update();
+            ModelHelper.CreateTable(GetInRecipeItems(), GetRecipeTableName());
+            base.Update();
+        }
+
+        public override int Insert()
+        {
+            if(ItemList == null)
+            {
+                throw new Exception("Must set ItemsList to insert");
+            }
+            ModelHelper.CreateTable(GetInRecipeItems(), GetRecipeTableName());
+            return base.Insert();
         }
 
         public override string[] GetPropertiesDB(string[] omit = null)
@@ -50,5 +59,24 @@ namespace BuddhaBowls.Models
             string[] theseOmissions = new string[] { "RecipeCost" };
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
+
+        private List<RecipeItem> GetInRecipeItems()
+        {
+            List<RecipeItem> items = new List<RecipeItem>();
+            int i = 0;
+            foreach(IItem ingredient in ItemList)
+            {
+                items.Add(new RecipeItem() { Id = i, InventoryItemId = ingredient.Id, Name = ingredient.Name, Quantity = ingredient.Count });
+                i++;
+            }
+
+            return items;
+        }
+
+        private string GetRecipeTableName()
+        {
+            return @"Recipes\" + Name;
+        }
+
     }
 }
