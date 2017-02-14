@@ -441,6 +441,19 @@ namespace BuddhaBowls
             _thread.Start();
         }
 
+        public void GenerateVendorOrderList(Vendor vendor, bool open = true)
+        {
+            _thread = new Thread(delegate ()
+            {
+                ReportGenerator generator = new ReportGenerator(_models);
+                string xlsPath = generator.GenerateVendorOrderSheet(vendor);
+                generator.Close();
+                if(open)
+                    System.Diagnostics.Process.Start(xlsPath);
+            });
+            _thread.Start();
+        }
+
         public void GenerateReceivingList(PurchaseOrder po, Vendor vendor)
         {
             _thread = new Thread(delegate ()

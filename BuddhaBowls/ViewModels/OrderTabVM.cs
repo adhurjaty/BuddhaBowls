@@ -307,10 +307,9 @@ namespace BuddhaBowls
         {
             try
             {
-                string poPath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + po.Id.ToString());
-                if (File.Exists(poPath))
+                if (File.Exists(po.GetPOPath()))
                 {
-                    System.Diagnostics.Process.Start(poPath);
+                    System.Diagnostics.Process.Start(po.GetPOPath());
                 }
                 else
                 {

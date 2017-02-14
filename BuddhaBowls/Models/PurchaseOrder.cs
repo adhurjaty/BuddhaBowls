@@ -63,6 +63,10 @@ namespace BuddhaBowls.Models
             Update();
         }
 
+        /// <summary>
+        /// Get the ordered inventory items - { open items, received items }
+        /// </summary>
+        /// <returns></returns>
         public List<InventoryItem>[] GetPOItems()
         {
             List<InventoryItem> openItems = null;
@@ -111,6 +115,11 @@ namespace BuddhaBowls.Models
 
             _dbInt.DestroyTable(GetOpenPartialOrderTableName());
             _dbInt.RenameTable(GetReceivedPartialOrderTableName(), GetOrderTableName());
+        }
+
+        public string GetPOPath()
+        {
+            return Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + Id.ToString());
         }
 
         private string GetOrderTableName()

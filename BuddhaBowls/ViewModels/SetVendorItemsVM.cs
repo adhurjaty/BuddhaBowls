@@ -191,6 +191,7 @@ namespace BuddhaBowls
         private void Save(object obj)
         {
             _vendor.UpdatePrices(_availableItems);
+            ParentContext.GenerateVendorOrderList(_vendor, open: false);
             ParentContext.DeleteTempTab();
         }
 

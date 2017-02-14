@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -415,8 +416,14 @@ namespace BuddhaBowls
             range.Borders.Weight = Excel.XlBorderWeight.xlMedium;
             range.BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
 
-            if(string.IsNullOrEmpty(filepath))
+            if (string.IsNullOrEmpty(filepath))
+            {
+                string outDir = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders");
+                if (!Directory.Exists(outDir))
+                    Directory.CreateDirectory(outDir);
+
                 filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + po.Id.ToString() + ".xlsx");
+            }
 
             try
             {
@@ -511,7 +518,11 @@ namespace BuddhaBowls
             ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row-1, 7]]).BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
             ((Excel.Range)sheet.Range[sheet.Cells[startRow+1, 1], sheet.Cells[row-1, 7]]).Borders.Weight = Excel.XlBorderWeight.xlMedium;
 
-            string filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Receiving Lists", "ReceivingList_" + po.Id.ToString() + ".xlsx");
+            string outDir = Path.Combine(Properties.Settings.Default.DBLocation, "Receiving Lists");
+            if (!Directory.Exists(outDir))
+                Directory.CreateDirectory(outDir);
+
+            string filepath = Path.Combine(outDir, "ReceivingList_" + po.Id.ToString() + ".xlsx");
             try
             {
                 _workbook.SaveAs(filepath);
@@ -527,10 +538,17 @@ namespace BuddhaBowls
 
         public string GenerateVendorOrderSheet(Vendor vendor)
         {
-            PurchaseOrder po = new PurchaseOrder(vendor, vendor.GetFromPriceList(), DateTime.Now);
-            return GenerateOrder(po, vendor,
-                Path.Combine(Properties.Settings.Default.DBLocation, "Receiving Lists", "ReceivingList_" + po.Id.ToString() + ".xlsx"));
+            List<InventoryItem> items = vendor.GetFromPriceList();
+            for(int i = 0; i < items.Count; i++)
+            {
+                items[i].LastOrderAmount = 0;
+            }
 
+            PurchaseOrder po = new PurchaseOrder(vendor, items, DateTime.Now);
+            string outDir = Path.GetDirectoryName(vendor.GetItemsListPath());
+            if (!Directory.Exists(outDir))
+                Directory.CreateDirectory(outDir);
+            return GenerateOrder(po, vendor, vendor.GetItemsListPath());
         }
 
         //public string GenerateReceivingList(PurchaseOrder po, Vendor vendor)

@@ -120,6 +120,9 @@
     <Compile Include="UserControls\ChangeInventoryOrder.xaml.cs">
       <DependentUpon>ChangeInventoryOrder.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\CompareInventoriesControl.xaml.cs">
+      <DependentUpon>CompareInventoriesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\EditItem.xaml.cs">
       <DependentUpon>EditItem.xaml</DependentUpon>
     </Compile>
@@ -164,6 +167,7 @@
       <DependentUpon>ViewOrderTabControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ChangeOrderVM.cs" />
+    <Compile Include="ViewModels\CompareInvVM.cs" />
     <Compile Include="ViewModels\EditRecipeVM.cs" />
     <Compile Include="ViewModels\NewInventoryVM.cs" />
     <Compile Include="ViewModels\InventoryTabVM.cs" />
@@ -183,6 +187,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ChangeInventoryOrder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CompareInventoriesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

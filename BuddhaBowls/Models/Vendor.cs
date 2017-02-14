@@ -86,6 +86,11 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public string GetItemsListPath()
+        {
+            return Path.Combine(Properties.Settings.Default.DBLocation, "Order Sheets", Name + ".xlsx");
+        }
+
         private string GetOrderFile()
         {
             return Path.Combine(Properties.Settings.Default.DBLocation, "Vendors", Name + "_order.txt");

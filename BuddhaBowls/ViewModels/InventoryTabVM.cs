@@ -173,7 +173,8 @@ namespace BuddhaBowls
 
         private void CompareInvetories(object obj)
         {
-            throw new NotImplementedException();
+            Inventory[] invs = SelectedMultiInventories.OrderBy(x => x.Date).ToArray();
+            ParentContext.AddTempTab("Compare Invs", new CompareInventoriesControl(new CompareInvVM(_models, ParentContext, invs[0], invs[1])));
         }
 
         #endregion
