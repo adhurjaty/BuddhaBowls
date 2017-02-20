@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BuddhaBowls.UserControls"
+             xmlns:parent="clr-namespace:BuddhaBowls"
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
@@ -18,16 +19,10 @@
         </Grid.RowDefinitions>
         <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="New Inventory" VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="30"/>
-        <!--<Button Content="Inventory" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="-300,0, 0, 0" Grid.Row="1" Width="150"
-                Command="{Binding InventorySectionCommand}"/>
-        <Button Content="Batch Items" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Width="150"
-                Command="{Binding BatchSectionCommand}"/>
-        <Button Content="Menu Items" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="300,0, 0, 0" Grid.Row="1" Width="150"
-                Command="{Binding MenuSectionCommand}"/>-->
         <DatePicker Grid.Row="1" SelectedDate="{Binding InventoryDate}" Height="25" Width="130" HorizontalAlignment="Left" VerticalAlignment="Bottom"
                     Margin="10, 0, 0, 0"/>
-        <Button x:Name="ChangeOrderButton" Content="Change Display Order" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="65,0"
-                Grid.Row="1" Width="137" Command="{Binding ChangeOrderCommand}"/>
+        <!--<Button x:Name="ChangeOrderButton" Content="Change Display Order" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="65,0"
+                Grid.Row="1" Width="137" Command="{Binding ChangeOrderCommand}"/>-->
         <Label x:Name="label1" Grid.Row="1" Content="Inventory Item Name:" Margin="-330, 0, 0, 0" HorizontalAlignment="Center"
                VerticalAlignment="Bottom"/>
         <TextBox x:Name="FilterItemBox" Grid.Row="1" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom"
@@ -42,7 +37,7 @@
         </Button>
         <Button x:Name="button2" Content="Edit" HorizontalAlignment="Right" Margin="0,0,65,0" Grid.Row="2" VerticalAlignment="Center" Width="75"
                 Command="{Binding EditInventoryItemCommand}"/>
-        <DataGrid Grid.Row="3" ItemsSource="{Binding FilteredInventoryItems}" HorizontalAlignment="Stretch"
+        <DataGrid x:Name="dataGrid" Grid.Row="3" ItemsSource="{Binding FilteredInventoryItems}" HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto"
                               SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False"
                               CellEditEnding="MasterList_CellEditEnding" CanUserAddRows="False">
@@ -50,6 +45,22 @@
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
                 <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="1*"/>
                 <DataGridTextColumn Header="Count" Binding="{Binding Path=Count, StringFormat=0.##}" Width="1*" />
+                <DataGridTemplateColumn x:Name="arrowColumn" Width="60">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <Button Content="^" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                        Click="MoveUp_Click" CommandParameter="{Binding}"/>
+                                <Button Content="v" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                        Click="MoveDown_Click" CommandParameter="{Binding}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <Button Grid.Row="4" Height ="25" Width="80" Content="Cancel" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding CancelCommand}" />

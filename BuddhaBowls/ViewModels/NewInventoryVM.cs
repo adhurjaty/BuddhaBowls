@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -22,6 +23,7 @@ namespace BuddhaBowls
         private List<InventoryItem> _inventoryItems;
         private Inventory _inventory;
         private bool _databaseFound;
+        NewInventory _control;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -102,6 +104,7 @@ namespace BuddhaBowls
             set
             {
                 _filterText = value;
+                
                 NotifyPropertyChanged("FilterText");
             }
         }
@@ -150,6 +153,7 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("InventoryValue");
             }
         }
+
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -412,6 +416,11 @@ namespace BuddhaBowls
             return false;
         }
 
+        public void InitializeControl(NewInventory control)
+        {
+            _control = control;
+        }
+
         /// <summary>
         /// Display on the datagrids that the inventory items could not be found
         /// </summary>
@@ -435,6 +444,7 @@ namespace BuddhaBowls
             UpdateInvValue();
             return true;
         }
+
         #endregion
 
         #region Update UI Methods
@@ -464,6 +474,31 @@ namespace BuddhaBowls
             InventoryValue = FilteredInventoryItems.Sum(x => ((InventoryItem)x).LastPurchasedPrice * x.Count);
         }
 
+        public void MoveDown(IItem item)
+        {
+            MoveInList(item, false);
+        }
+
+        public void MoveUp(IItem item)
+        {
+            MoveInList(item, true);
+        }
+
+        private void MoveInList(IItem item, bool up)
+        {
+            List<IItem> orderedList = FilteredInventoryItems.ToList();
+            int idx = orderedList.IndexOf(item);
+            orderedList.RemoveAt(idx);
+
+            if (idx > 0 && up)
+                orderedList.Insert(idx - 1, item);
+            if (idx < orderedList.Count - 1 && !up)
+                orderedList.Insert(idx + 1, item);
+
+            FilteredInventoryItems = new ObservableCollection<IItem>(orderedList);
+            SaveInvOrder();
+        }
+
         #endregion
 
         /// <summary>
@@ -472,6 +507,10 @@ namespace BuddhaBowls
         /// <param name="filterStr"></param>
         public void FilterInventoryItems(string filterStr)
         {
+            if (string.IsNullOrWhiteSpace(filterStr))
+                _control.ShowArrowColumn();
+            else
+                _control.HideArrowColumn();
             FilteredInventoryItems = ParentContext.FilterInventoryItems(filterStr, _inventoryItems.Select(x => (IItem)x));
             NotifyPropertyChanged("FilteredInventoryItems");
         }
@@ -479,6 +518,16 @@ namespace BuddhaBowls
         private void RefreshInventoryList()
         {
             FilteredInventoryItems = new ObservableCollection<IItem>(ParentContext.SortItems(_inventoryItems));
+        }
+
+        private void SaveInvOrder()
+        {
+            Properties.Settings.Default.InventoryOrder = FilteredInventoryItems.Select(x => x.Name).ToList();
+            Properties.Settings.Default.Save();
+
+            string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
+            Directory.CreateDirectory(dir);
+            File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), Properties.Settings.Default.InventoryOrder);
         }
 
         //private IEnumerable<IItem> GetTotalDisplayList()

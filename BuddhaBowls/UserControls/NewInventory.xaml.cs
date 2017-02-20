@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using BuddhaBowls.Models;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace BuddhaBowls.UserControls
 {
@@ -15,6 +17,17 @@ namespace BuddhaBowls.UserControls
         public NewInventory(NewInventoryVM viewModel) : this()
         {
             DataContext = viewModel;
+            viewModel.InitializeControl(this);
+        }
+
+        public void HideArrowColumn()
+        {
+            arrowColumn.Visibility = Visibility.Collapsed;
+        }
+
+        public void ShowArrowColumn()
+        {
+            arrowColumn.Visibility = Visibility.Visible;
         }
 
         private void FilterItems_TextChanged(object sender, TextChangedEventArgs e)
@@ -34,6 +47,17 @@ namespace BuddhaBowls.UserControls
         {
             if (string.IsNullOrWhiteSpace(tb.Text))
                 tb.Text = "0";
+        }
+
+        private void MoveUp_Click(object sender, RoutedEventArgs e)
+        {
+            ((NewInventoryVM)DataContext).MoveUp((InventoryItem)((Button)sender).CommandParameter);
+        }
+
+        private void MoveDown_Click(object sender, RoutedEventArgs e)
+        {
+            ((NewInventoryVM)DataContext).MoveDown((InventoryItem)((Button)sender).CommandParameter);
+
         }
     }
 }
