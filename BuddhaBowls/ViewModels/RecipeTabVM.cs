@@ -16,7 +16,7 @@ namespace BuddhaBowls
 {
     public class RecipeTabVM : INotifyPropertyChanged
     {
-        private enum PageState { Batch, Menu }
+        private enum PageState { Batch, Menu, Error }
         private PageState _state;
 
         private ModelContainer _models;
@@ -89,12 +89,13 @@ namespace BuddhaBowls
             ParentContext = parent;
 
             AddNewItemCommand = new RelayCommand(AddItem);
-            DeleteItemCommand = new RelayCommand(DeleteItem, x => SelectedItemCanExecute);
+            DeleteItemCommand = new RelayCommand(DeleteItem, x => SelectedItemCanExecute && ParentContext.DatabaseFound);
             BatchItemSelectCommand = new RelayCommand(ChangeToBatchState, x => _state == PageState.Menu);
             MenuItemSelectCommand = new RelayCommand(ChangeToMenuState, x => _state == PageState.Batch);
-            EditItemCommand = new RelayCommand(EditRecipe, x => SelectedItemCanExecute);
+            EditItemCommand = new RelayCommand(EditRecipe, x => SelectedItemCanExecute && ParentContext.DatabaseFound);
 
-            ChangePageState(PageState.Batch);
+            PageState state = ParentContext.DatabaseFound ? PageState.Batch : PageState.Error;
+            ChangePageState(state);
         }
 
         #region ICommand Helpers
@@ -165,6 +166,9 @@ namespace BuddhaBowls
                     break;
                 case PageState.Menu:
                     _recipeItems = _models.Recipes.Where(x => !x.IsBatch).ToList();
+                    break;
+                case PageState.Error:
+                    _recipeItems = new List<Recipe>() { new Recipe() { Name = "DB not found" } };
                     break;
             }
 

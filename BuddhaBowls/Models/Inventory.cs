@@ -49,6 +49,12 @@ namespace BuddhaBowls.Models
             base.Update();
         }
 
+        public override void Destroy()
+        {
+            _dbInt.DestroyTable(GetInventoryTable());
+            base.Destroy();
+        }
+
         private string GetInventoryTable()
         {
             return @"Inventory History\Inventory_" + Date.ToString("MM-dd-yyyy");

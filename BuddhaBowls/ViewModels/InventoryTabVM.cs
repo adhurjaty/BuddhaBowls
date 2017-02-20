@@ -19,7 +19,6 @@ namespace BuddhaBowls
     public class InventoryTabVM : INotifyPropertyChanged, ITabVM
     {
         private ModelContainer _models;
-        private bool _databaseFound;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -105,15 +104,7 @@ namespace BuddhaBowls
         {
             get
             {
-                return SelectedInventory != null && _databaseFound;
-            }
-        }
-
-        public bool AddInvCanExecute
-        {
-            get
-            {
-                return true; // _databaseFound;
+                return SelectedInventory != null && ParentContext.DatabaseFound;
             }
         }
 
@@ -128,12 +119,19 @@ namespace BuddhaBowls
             ParentContext = parent;
             _models = models;
 
-            AddInventoryCommand = new RelayCommand(StartNewInventory, x => AddInvCanExecute);
+            AddInventoryCommand = new RelayCommand(StartNewInventory, x => ParentContext.DatabaseFound);
             DeleteInventoryCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute);
             ViewInventoryCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute);
-            CompareCommand = new RelayCommand(CompareInvetories, x => CompareCanExecute);
+            CompareCommand = new RelayCommand(CompareInvetories, x => CompareCanExecute && ParentContext.DatabaseFound);
 
-            TryDBConnect();
+            if(ParentContext.DatabaseFound)
+            {
+                RefreshInventoryList();
+            }
+            else
+            {
+                DisplayItemsNotFound();
+            }
         }
 
         #region ICommand Helpers
@@ -185,7 +183,6 @@ namespace BuddhaBowls
             if (_models.Inventories != null)
             {
                 RefreshInventoryList();
-                _databaseFound = true;
                 return true;
             }
 
@@ -199,22 +196,8 @@ namespace BuddhaBowls
         {
             // figure out way to display missing data
             InventoryList = new ObservableCollection<Inventory>() { new Inventory() };
-            _databaseFound = false;
         }
 
-        /// <summary>
-        /// Attempt to connect to the data - display a warning message in the datagrid if unsuccessful
-        /// </summary>
-        /// <returns></returns>
-        private bool TryDBConnect()
-        {
-            if (!LoadDisplayItems())
-            {
-                DisplayItemsNotFound();
-                return false;
-            }
-            return true;
-        }
         #endregion
 
         #region Update UI Methods

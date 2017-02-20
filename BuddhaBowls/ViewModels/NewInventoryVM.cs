@@ -354,12 +354,12 @@ namespace BuddhaBowls
             }
             
             Inventory inv = new Inventory(InventoryDate);
-            inv.Insert(_inventoryItems);
+            inv.Id = inv.Insert(_inventoryItems);
 
             if(_models.Inventories == null)
                 _models.Inventories = new List<Inventory>();
 
-            if (_models.Inventories.Max(x => x.Date).Date.Date == InventoryDate.Date)
+            if (_models.Inventories.Count > 0 && _models.Inventories.Select(x => x.Date.Date).Contains(InventoryDate.Date))
             {
                 int idx = _models.Inventories.FindIndex(x => x.Date.Date == InventoryDate.Date);
                 Inventory oldInv = _models.Inventories[idx];

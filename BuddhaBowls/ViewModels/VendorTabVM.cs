@@ -101,6 +101,19 @@ namespace BuddhaBowls
                 return string.IsNullOrWhiteSpace(AddEditErrorMessage);
             }
         }
+
+        public bool GenOrderSheetCanExecute
+        {
+            get
+            {
+                if(SelectedVendor != null)
+                {
+                    return File.Exists(SelectedVendor.GetItemsListPath());
+                }
+
+                return false;
+            }
+        }
         #endregion
 
         public VendorTabVM(ModelContainer models, MainViewModel parent)
@@ -116,7 +129,7 @@ namespace BuddhaBowls
             CancelAddEditCommand = new RelayCommand(CancelAddEdit);
             ChangeRecListOrderCommand = new RelayCommand(ChangeRecOrder, x => SelectedVendorCanExecute);
             ChangeVendorItemsCommand = new RelayCommand(ChangeVendorItems, x => SelectedVendorCanExecute);
-            GetOrderSheetCommand = new RelayCommand(GenerateOrderSheet, x => SelectedVendorCanExecute);
+            GetOrderSheetCommand = new RelayCommand(GenerateOrderSheet, x => GenOrderSheetCanExecute);
 
             TryDBConnect();
         }

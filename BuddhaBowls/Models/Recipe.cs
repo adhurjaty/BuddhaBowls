@@ -35,7 +35,14 @@ namespace BuddhaBowls.Models
 
         public float GetCost()
         {
-            return ItemList.Sum(x => x.GetCost() * x.Count);
+            try
+            {
+                return ItemList.Sum(x => x.GetCost() * x.Count);
+            }
+            catch(Exception e)
+            {
+                return 0;
+            }
         }
 
         public override void Update()

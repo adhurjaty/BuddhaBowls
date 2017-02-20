@@ -44,16 +44,20 @@ namespace BuddhaBowls.Helpers
                 IItem addItem;
                 if (item.InventoryItemId == null)
                 {
-                    addItem = models.Recipes.First(x => x.Name == item.Name);
-                    ((Recipe)addItem).ItemList = GetRecipe(addItem.Name, models);
+                    addItem = models.Recipes.FirstOrDefault(x => x.Name == item.Name);
+                    if(addItem != null)
+                        ((Recipe)addItem).ItemList = GetRecipe(addItem.Name, models);
                 }
                 else
                 {
-                    addItem = models.InventoryItems.First(x => x.Id == item.InventoryItemId);
+                    addItem = models.InventoryItems.FirstOrDefault(x => x.Id == item.InventoryItemId);
                 }
 
-                addItem.Count = item.Quantity;
-                recipeList.Add(addItem);
+                if (addItem != null)
+                {
+                    addItem.Count = item.Quantity;
+                    recipeList.Add(addItem);
+                }
             }
 
             return recipeList;

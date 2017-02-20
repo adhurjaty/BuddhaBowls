@@ -21,7 +21,6 @@ namespace BuddhaBowls
         private MainWindow _window;
         private ModelContainer _models;
         private Thread _thread;
-        private bool _databaseFound;
 
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
@@ -30,6 +29,8 @@ namespace BuddhaBowls
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public bool DatabaseFound { get; set; }
 
         #region Data Bindings
         // Value in text box for selecting the folder location of DB files
@@ -161,7 +162,7 @@ namespace BuddhaBowls
         {
             get
             {
-                return Directory.Exists(DataFileFolder) && _databaseFound;
+                return Directory.Exists(DataFileFolder) && DatabaseFound;
             }
         }
 
@@ -259,6 +260,7 @@ namespace BuddhaBowls
         public void InitTabsAndModel()
         {
             _models = new ModelContainer();
+            DatabaseFound = _models.InventoryItems != null;
 
             OrderTab = new OrderTabVM(_models, this);
             InventoryTab = new InventoryTabVM(_models, this);

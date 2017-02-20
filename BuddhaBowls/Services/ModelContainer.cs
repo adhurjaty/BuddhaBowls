@@ -32,11 +32,11 @@ namespace BuddhaBowls.Services
 
         public void InitializeModels()
         {
-            InventoryItems = ModelHelper.InstantiateList<InventoryItem>("InventoryItem");
-            Recipes = ModelHelper.InstantiateList<Recipe>("Recipe");
-            PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder");
-            Vendors = ModelHelper.InstantiateList<Vendor>("Vendor");
-            Inventories = ModelHelper.InstantiateList<Inventory>("Inventory");
+            InventoryItems = ModelHelper.InstantiateList<InventoryItem>("InventoryItem") ?? new List<InventoryItem>();
+            Recipes = ModelHelper.InstantiateList<Recipe>("Recipe") ?? new List<Recipe>();
+            PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder") ?? new List<PurchaseOrder>();
+            Vendors = ModelHelper.InstantiateList<Vendor>("Vendor") ?? new List<Vendor>();
+            Inventories = ModelHelper.InstantiateList<Inventory>("Inventory") ?? new List<Inventory>();
 
             if (InventoryItems == null || Recipes == null)
                 return;
