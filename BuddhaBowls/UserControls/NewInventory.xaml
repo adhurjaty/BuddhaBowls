@@ -37,9 +37,11 @@
         </Button>
         <Button x:Name="button2" Content="Edit" HorizontalAlignment="Right" Margin="0,0,65,0" Grid.Row="2" VerticalAlignment="Center" Width="75"
                 Command="{Binding EditInventoryItemCommand}"/>
+        <Button Content="Reset Order" Grid.Row="2" Width="80" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0, 0, 140, 0"
+                Command="{Binding ResetOrderCommand}" />
         <DataGrid x:Name="dataGrid" Grid.Row="3" ItemsSource="{Binding FilteredInventoryItems}" HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                              SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False"
+                              VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" CanUserReorderColumns="False"
+                              SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False" Sorting="dataGrid_Sorting"
                               CellEditEnding="MasterList_CellEditEnding" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
@@ -66,8 +68,22 @@
         <Button Grid.Row="4" Height ="25" Width="80" Content="Cancel" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding CancelCommand}" />
         <Button Grid.Row="4" Height ="25" Width="80" Content="Save" HorizontalAlignment="Right" Margin="85, 0" Command="{Binding SaveCountCommand}" />
         <Button Grid.Row="4" Height ="25" Width="80" Content="Reset" HorizontalAlignment="Left" Margin="5, 0" Command="{Binding ResetCountCommand}" />
-        <Label x:Name="label" Content="Inventory Value:" HorizontalAlignment="Left" Margin="20,0,0,0" Grid.Row="2" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="2" Text="{Binding Path=InventoryValue, StringFormat=c}" HorizontalAlignment="Left" VerticalAlignment="Center"
-                   Margin="120, 0"/>
+        <Expander Grid.Row="2" Grid.RowSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left" Width="250" Background="AliceBlue"
+                  Header="{Binding TotalValueMessage}">
+            <ItemsControl ItemsSource="{Binding CategoryPrices}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type parent:PriceExpanderItem}">
+                        <Grid Background="AliceBlue">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <Label x:Name="label" Grid.Column="0" Content="{Binding Label}" HorizontalAlignment="Left" Margin="20,0,0,0" Grid.Row="2" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Path=Price, StringFormat=c}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
     </Grid>
 </UserControl>

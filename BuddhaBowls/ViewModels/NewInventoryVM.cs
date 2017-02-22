@@ -154,6 +154,33 @@ namespace BuddhaBowls
             }
         }
 
+        private string _totalValueMessage;
+        public string TotalValueMessage
+        {
+            get
+            {
+                return _totalValueMessage;
+            }
+            set
+            {
+                _totalValueMessage = value;
+                NotifyPropertyChanged("TotalValueMessage");
+            }
+        }
+
+        private ObservableCollection<PriceExpanderItem> _categoryPrices;
+        public ObservableCollection<PriceExpanderItem> CategoryPrices
+        {
+            get
+            {
+                return _categoryPrices;
+            }
+            set
+            {
+                _categoryPrices = value;
+                NotifyPropertyChanged("CategoryPrices");
+            }
+        }
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -183,6 +210,7 @@ namespace BuddhaBowls
         //public ICommand MenuSectionCommand { get; set; }
         // Cancel button to close tab
         public ICommand CancelCommand { get; set; }
+        public ICommand ResetOrderCommand { get; set; }
 
         public bool DeleteEditCanExecute
         {
@@ -227,6 +255,7 @@ namespace BuddhaBowls
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
             ChangeOrderCommand = new RelayCommand(StartChangeOrder);
             CancelCommand = new RelayCommand(CancelInventory);
+            ResetOrderCommand = new RelayCommand(ResetOrder);
 
             TryDBConnect();
         }
@@ -398,6 +427,12 @@ namespace BuddhaBowls
             ParentContext.DeleteTempTab();
         }
 
+        private void ResetOrder(object obj)
+        {
+            FilterText = "";
+            FilterInventoryItems("");
+        }
+
         #endregion
 
         #region Initializers
@@ -444,7 +479,6 @@ namespace BuddhaBowls
             UpdateInvValue();
             return true;
         }
-
         #endregion
 
         #region Update UI Methods
@@ -471,7 +505,16 @@ namespace BuddhaBowls
 
         private void UpdateInvValue()
         {
-            InventoryValue = FilteredInventoryItems.Sum(x => ((InventoryItem)x).LastPurchasedPrice * x.Count);
+            //InventoryValue = FilteredInventoryItems.Sum(x => ((InventoryItem)x).LastPurchasedPrice * x.Count);
+            List<PriceExpanderItem> items = new List<PriceExpanderItem>();
+            TotalValueMessage = "Inventory Value: " + FilteredInventoryItems.Sum(x => ((InventoryItem)x).LastPurchasedPrice * x.Count).ToString("c");
+            foreach(string category in _models.ItemCategories)
+            {
+                float value = _models.InventoryItems.Where(x => x.Category.ToUpper() == category.ToUpper()).Sum(x => x.LastPurchasedPrice * x.Count);
+                items.Add(new PriceExpanderItem() { Label = category + " VALUE:", Price = value });
+            }
+
+            CategoryPrices = new ObservableCollection<PriceExpanderItem>(items);
         }
 
         public void MoveDown(IItem item)
@@ -544,5 +587,11 @@ namespace BuddhaBowls
         //            return null;
         //    }
         //}
+    }
+
+    public class PriceExpanderItem
+    {
+        public string Label { get; set; }
+        public float Price { get; set; }
     }
 }

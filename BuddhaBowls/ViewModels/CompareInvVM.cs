@@ -131,7 +131,7 @@ namespace BuddhaBowls
                         totalItemPrice[item.Id] = 0;
                     }
 
-                    amountOrdered[item.Id] += item.LastOrderAmount;
+                    amountOrdered[item.Id] += item.LastOrderAmount * item.Conversion;
                     totalItemPrice[item.Id] += item.LastOrderAmount * item.LastPurchasedPrice;
                 }
             }

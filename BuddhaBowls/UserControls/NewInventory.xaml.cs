@@ -59,5 +59,10 @@ namespace BuddhaBowls.UserControls
             ((NewInventoryVM)DataContext).MoveDown((InventoryItem)((Button)sender).CommandParameter);
 
         }
+
+        private void dataGrid_Sorting(object sender, DataGridSortingEventArgs e)
+        {
+            HideArrowColumn();
+        }
     }
 }
