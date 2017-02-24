@@ -22,6 +22,8 @@ namespace BuddhaBowls
         private ModelContainer _models;
         private Thread _thread;
 
+        public Thread ExcelThread;
+
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
 

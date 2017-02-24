@@ -176,6 +176,132 @@ namespace BuddhaBowls
             return File.Exists(path);
         }
 
+        public string GenerateMasterInventoryTable(string filename)
+        {
+            Excel.Worksheet sheet = _sheets.Add();
+            sheet.Name = "Master Invetory List";
+            int numRows = 8;
+
+            string filePath = Path.Combine(Properties.Settings.Default.DBLocation, "Reports", filename);
+            if(IsWorkbookOpen(filePath))
+            {
+                MessageBox.Show("Close Master Inventory List", "Excel Error");
+                return "";
+            }
+
+            string[] subHeader = new string[] { "Unit", "Unit Price", "Conversion", "Count Unit", "Count Price", "Count No.", "Extension" };
+
+            // initial column formatting
+            sheet.Columns[1].ColumnWidth = 20.67;
+            sheet.Columns[2].ColumnWidth = 12.67;
+            sheet.Columns[3].ColumnWidth = 8.83;
+            sheet.Columns[4].ColumnWidth = 10.5;
+            sheet.Columns[5].ColumnWidth = 10.5;
+            sheet.Columns[6].ColumnWidth = 10;
+            sheet.Columns[7].ColumnWidth = 10.5;
+            sheet.Columns[8].ColumnWidth = 10.5;
+
+            // top header
+            Excel.Range topHeaderRange = sheet.Range[sheet.Cells[1, 1], sheet.Cells[2, numRows]];
+            topHeaderRange.Merge();
+            topHeaderRange.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            topHeaderRange.Font.Size = 20;
+            sheet.Cells[1, 1] = "Buddha Bowls Master Inventory";
+            sheet.Cells[1, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            sheet.Cells[1, 1].Font.Bold = true;
+
+            // categorized sections
+            int currentRow = 3;
+            int[] borderBounds = new int[2];
+            foreach (IGrouping<string, InventoryItem> invGroup in MainHelper.CategoryGrouping(_models.InventoryItems))
+            {
+                string category = invGroup.Key;
+                long categoryColor = _models.GetColorFromCategory(category.ToUpper());
+
+                Excel.Range purchaseRange = sheet.Range[sheet.Cells[currentRow, 2], sheet.Cells[currentRow, 3]];
+                purchaseRange.Merge();
+                Excel.Range countRange = sheet.Range[sheet.Cells[currentRow, 5], sheet.Cells[currentRow, 7]];
+                countRange.Merge();
+
+                // category top headers
+                sheet.Cells[currentRow, 2] = "AS PURCHASED UNITS";
+                sheet.Cells[currentRow, 5] = "INVENTORY COUNT UNIT";
+                purchaseRange.Interior.Color = categoryColor;
+                purchaseRange.Font.Bold = true;
+                purchaseRange.BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
+                purchaseRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                countRange.Interior.Color = categoryColor;
+                countRange.Font.Bold = true;
+                countRange.BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
+                countRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+
+                currentRow++;
+                borderBounds[0] = currentRow;
+
+                sheet.Cells[currentRow, 1] = category;
+                sheet.Cells[currentRow, 1].Font.Bold = true;
+                sheet.Cells[currentRow, 1].Interior.Color = categoryColor;
+
+                // category sub-headers
+                for(int i = 0; i < subHeader.Length; i++)
+                {
+                    sheet.Cells[currentRow, 2 + i] = subHeader[i];
+                    sheet.Cells[currentRow, 2 + i].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    sheet.Cells[currentRow, 2 + i].Font.Bold = true;
+                }
+
+                currentRow++;
+
+                // items in category
+                float categoryTotal = 0;
+                float extension;
+                foreach (InventoryItem item in invGroup)
+                {
+                    sheet.Cells[currentRow, 1] = item.Name;
+                    sheet.Cells[currentRow, 2] = item.PurchasedUnit;
+                    sheet.Cells[currentRow, 3] = item.LastPurchasedPrice.ToString("c");
+                    sheet.Cells[currentRow, 4] = string.Format("{0:0.##}", item.Conversion);
+                    sheet.Cells[currentRow, 4].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    sheet.Cells[currentRow, 5] = item.CountUnit;
+                    if (item.Conversion > 0)
+                    {
+                        sheet.Cells[currentRow, 6] = (item.LastPurchasedPrice / item.Conversion).ToString("c");
+                        extension = (item.LastPurchasedPrice / item.Conversion) * item.Count;
+                    }
+                    else
+                    {
+                        sheet.Cells[currentRow, 6] = "ERR";
+                        extension = -1;
+                    }
+                    sheet.Cells[currentRow, 7] = string.Format("{0:0.##}", item.Count);
+                    sheet.Cells[currentRow, 8] = extension != -1 ? extension.ToString("c") : "ERR";
+
+                    categoryTotal += extension;
+                    currentRow++;
+                }
+
+                // category total
+                ((Excel.Range)sheet.Range[sheet.Cells[currentRow, 1], sheet.Cells[currentRow, 8]]).Interior.Color = categoryColor;
+                Excel.Range label = sheet.Range[sheet.Cells[currentRow, 6], sheet.Cells[currentRow, 7]];
+                label.Merge();
+                sheet.Cells[currentRow, 6] = category + " Total:";
+                sheet.Cells[currentRow, 6].Font.Bold = true;
+                sheet.Cells[currentRow, 6].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                sheet.Cells[currentRow, 8] = categoryTotal.ToString("c");
+
+                borderBounds[1] = currentRow;
+
+                Excel.Range wholeRange = sheet.Range[sheet.Cells[borderBounds[0], 1], sheet.Cells[borderBounds[1], 8]];
+                wholeRange.Borders.Weight = Excel.XlBorderWeight.xlMedium;
+                wholeRange.BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
+
+                currentRow += 2;
+            }
+
+            _workbook.SaveAs(filePath);
+            return filePath;
+        }
+
         public List<string[]> MakeMasterInventoryTable()
         {
             List<string[]> outList = new List<string[]>();
@@ -226,7 +352,15 @@ namespace BuddhaBowls
             Excel.Worksheet sheet = _sheets.Add();
             sheet.Name = "Master Invetory List";
 
+            for(int i = 1; i <= numCols; i++)
+            {
+                sheet.Columns[i].ColumnWidth = 15;
+            }
+
             filename = Path.GetFileNameWithoutExtension(filename) + ".xlsx";
+
+            int[] sectionRows = new int[3];
+            int sectionIdx = 1;
 
             for (int i = 0; i < contents.Count; i++)
             {
@@ -239,12 +373,17 @@ namespace BuddhaBowls
                     Excel.Range range2 = sheet.Range[sheet.Cells[i + 1, 5], sheet.Cells[i + 1, 7]];
                     range1.Merge();
                     range2.Merge();
+                    range1.Font.Bold = true;
+                    range2.Font.Bold = true;
 
                     sheet.Cells[i + 1, 2] = contents[i][1];
                     sheet.Cells[i + 1, 5] = contents[i][2];
 
                     range1.Interior.Color = _models.GetColorFromCategory(contents[i][0].ToUpper());
                     range2.Interior.Color = _models.GetColorFromCategory(contents[i][0].ToUpper());
+
+                    sectionRows[0] = i;
+                    sectionIdx = 1;
                 }
                 else
                 {
@@ -278,8 +417,23 @@ namespace BuddhaBowls
                     string key = _models.ItemCategories.FirstOrDefault(x => x.StartsWith(category));
                     if (!string.IsNullOrEmpty(key))
                     {
-                        ((Excel.Range)sheet.Range[sheet.Cells[i + 1, 1], sheet.Cells[i + 1, numCols]]).Interior.Color =
-                                        _models.GetColorFromCategory(key);
+                        Excel.Range colorRange = sheet.Range[sheet.Cells[i + 1, 1], sheet.Cells[i + 1, numCols]];
+                        colorRange.Interior.Color = _models.GetColorFromCategory(key);
+                        colorRange.Font.Bold = true;
+
+                        sectionRows[sectionIdx] = i;
+                        sectionIdx++;
+                    }
+
+                    if(sectionRows.Length == sectionIdx)
+                    {
+                        Excel.Range borderRange = sheet.Range[sheet.Cells[sectionRows[0] + 1, 1], sheet.Cells[sectionRows[1] + 1, numCols]];
+                        borderRange.Borders.Weight = Excel.XlBorderWeight.xlThick;
+                        borderRange = sheet.Range[sheet.Cells[sectionRows[1] + 1, 1], sheet.Cells[sectionRows[2] + 1, numCols]];
+                        borderRange.Borders.Weight = Excel.XlBorderWeight.xlMedium;
+                        borderRange.BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
+
+                        sectionIdx = 0;
                     }
                 }
 
@@ -291,12 +445,11 @@ namespace BuddhaBowls
             return filePath;
         }
 
-        public bool CreateMasterInventoryReport()
+        public string CreateMasterInventoryReport()
         {
             List<string[]> rows = MakeMasterInventoryTable();
-            string path = MasterInventoryReport(rows, "Master Inventory Report");
 
-            return File.Exists(path);
+            return MasterInventoryReport(rows, "Master Inventory Report");
         }
 
         public string GenerateOrder(PurchaseOrder po, Vendor vendor, string filepath = "")
@@ -549,6 +702,19 @@ namespace BuddhaBowls
             if (!Directory.Exists(outDir))
                 Directory.CreateDirectory(outDir);
             return GenerateOrder(po, vendor, vendor.GetItemsListPath());
+        }
+
+        private bool IsWorkbookOpen(string filePath)
+        {
+            try
+            {
+                _workbook.SaveAs(filePath);
+                return false;
+            }
+            catch(Exception e)
+            {
+                return true;
+            }
         }
 
         //public string GenerateReceivingList(PurchaseOrder po, Vendor vendor)

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -99,6 +100,7 @@ namespace BuddhaBowls
         public ICommand ViewInventoryCommand { get; set; }
         // Compare button
         public ICommand CompareCommand { get; set; }
+        public ICommand InvListCommand { get; set; }
 
         public bool DeleteEditCanExecute
         {
@@ -123,6 +125,7 @@ namespace BuddhaBowls
             DeleteInventoryCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute);
             ViewInventoryCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute);
             CompareCommand = new RelayCommand(CompareInvetories, x => CompareCanExecute && ParentContext.DatabaseFound);
+            InvListCommand = new RelayCommand(GenerateInvList);
 
             if(ParentContext.DatabaseFound)
             {
@@ -169,10 +172,46 @@ namespace BuddhaBowls
             }
         }
 
+        /// <summary>
+        /// Triggered by the Compare Inv button - opens a new temp tab for comparison
+        /// </summary>
+        /// <param name="obj"></param>
         private void CompareInvetories(object obj)
         {
             Inventory[] invs = SelectedMultiInventories.OrderBy(x => x.Date).ToArray();
             ParentContext.AddTempTab("Compare Invs", new CompareInventoriesControl(new CompareInvVM(_models, ParentContext, invs[0], invs[1])));
+        }
+
+        /// <summary>
+        /// Triggered by pressing the Excel Inventory List button
+        /// </summary>
+        /// <param name="obj"></param>
+        private void GenerateInvList(object obj)
+        {
+            ReportGenerator generator = new ReportGenerator(_models);
+
+            if (ParentContext.ExcelThread == null || !ParentContext.ExcelThread.IsAlive)
+            {
+                try
+                {
+                    ParentContext.ExcelThread = new Thread(delegate ()
+                    {
+                        string xlsPath = generator.GenerateMasterInventoryTable("Master Inventory List.xlsx");
+                        generator.Close();
+                        if (File.Exists(xlsPath))
+                            System.Diagnostics.Process.Start(xlsPath);
+                    });
+                    ParentContext.ExcelThread.Start();
+                }
+                catch(Exception e)
+                {
+                    ErrorHandler.ReportError("InventoryTabVM", "GenerateInvList", e);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Excel process currently running. If you don't know what this means, hit OK and restart the application", "Excel Warning", MessageBoxButton.OK);
+            }
         }
 
         #endregion

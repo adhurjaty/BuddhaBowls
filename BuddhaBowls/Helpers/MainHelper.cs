@@ -63,6 +63,34 @@ namespace BuddhaBowls.Helpers
             return recipeList;
         }
 
+        public static IEnumerable<InventoryItem> SortItems(IEnumerable<InventoryItem> items)
+        {
+            if (Properties.Settings.Default.InventoryOrder == null)
+                return items.OrderBy(x => x.Name);
+
+            return items.Where(x => Properties.Settings.Default.InventoryOrder.Contains(x.Name))
+                        .OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.Name))
+                        .Concat(items.Where(x => !Properties.Settings.Default.InventoryOrder.Contains(x.Name))
+                                     .OrderBy(x => x.Name));
+        }
+
+        public static List<IItem> CategoryOrder(List<IItem> items)
+        {
+            return items.OrderBy(x => OrderValue(x)).ToList();
+        }
+
+        public static IEnumerable<IGrouping<string, InventoryItem>> CategoryGrouping(List<InventoryItem> items)
+        {
+            //Dictionary<string, List<InventoryItem>> categoryDict = new Dictionary<string, List<InventoryItem>>();
+            return SortItems(items).GroupBy(x => x.Category).OrderBy(x => x.Key);
+        }
+
+        private static int OrderValue(IItem item)
+        {
+            return Properties.Settings.Default.CategoryOrder.IndexOf(item.Category) * 1000 +
+                    Properties.Settings.Default.InventoryOrder.IndexOf(item.Name);
+        }
+
         //public static List<VendorItem> GetVendorPrices(string vendorName)
         //{
         //    string tableName = Path.Combine(Properties.Resources.VendorFolder, vendorName);
