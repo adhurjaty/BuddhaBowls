@@ -129,7 +129,7 @@ namespace BuddhaBowls
 
         private void CancelView(object obj)
         {
-            ParentContext.DeleteTempTab();
+            Close();
         }
 
         private void SavePartialOrder(object obj)
@@ -148,7 +148,7 @@ namespace BuddhaBowls
             }
 
             RefreshOrders();
-            ParentContext.DeleteTempTab();
+            Close();
         }
         #endregion
 

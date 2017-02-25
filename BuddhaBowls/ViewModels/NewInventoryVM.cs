@@ -268,10 +268,11 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void AddInventoryItem(object obj)
         {
-            AddEditHeader = "Add New Inventory Item";
-            FieldsCollection = ParentContext.GetFieldsAndValues<InventoryItem>();
+            throw new NotImplementedException();
+            //AddEditHeader = "Add New Inventory Item";
+            //FieldsCollection = ParentContext.GetFieldsAndValues<InventoryItem>();
 
-            ParentContext.AddTempTab("Add Inventory Item", new EditItem(this, ClearErrors));
+            //ParentContext.AddTempTab("Add Inventory Item", new EditItem(this, ClearErrors));
         }
 
         /// <summary>
@@ -280,10 +281,11 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void EditInventoryItem(object obj)
         {
-            AddEditHeader = "Edit " + SelectedInventoryItem.Name;
-            FieldsCollection = ParentContext.GetFieldsAndValues((InventoryItem)SelectedInventoryItem);
+            throw new NotImplementedException();
+            //AddEditHeader = "Edit " + SelectedInventoryItem.Name;
+            //FieldsCollection = ParentContext.GetFieldsAndValues((InventoryItem)SelectedInventoryItem);
 
-            ParentContext.AddTempTab("Edit Inventory Item", new EditItem(this, ClearErrors));
+            //ParentContext.AddTempTab("Edit Inventory Item", new EditItem(this, ClearErrors));
         }
 
         /// <summary>
@@ -309,8 +311,9 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void CancelAddEdit(object obj)
         {
-            AddEditErrorMessage = "";
-            ParentContext.DeleteTempTab();
+            throw new NotImplementedException();
+            //AddEditErrorMessage = "";
+            //ParentContext.DeleteTempTab();
         }
 
         /// <summary>
@@ -319,36 +322,37 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void SaveAddEdit(object obj)
         {
-            InventoryItem item = null;
-            if (AddEditHeader.StartsWith("Edit"))
-                item = (InventoryItem)SelectedInventoryItem;
-            else if (AddEditHeader.StartsWith("Add"))
-                item = new InventoryItem();
-            else
-                throw new NotImplementedException();
+            throw new NotImplementedException();
+            //InventoryItem item = null;
+            //if (AddEditHeader.StartsWith("Edit"))
+            //    item = (InventoryItem)SelectedInventoryItem;
+            //else if (AddEditHeader.StartsWith("Add"))
+            //    item = new InventoryItem();
+            //else
+            //    throw new NotImplementedException();
 
-            AddEditErrorMessage = ParentContext.ObjectFromFields(ref item, FieldsCollection, AddEditHeader.StartsWith("Add"));
-            if (string.IsNullOrEmpty(AddEditErrorMessage))
-            {
+            //AddEditErrorMessage = ParentContext.ObjectFromFields(ref item, FieldsCollection, AddEditHeader.StartsWith("Add"));
+            //if (string.IsNullOrEmpty(AddEditErrorMessage))
+            //{
 
-                if (AddEditHeader.StartsWith("Edit"))
-                {
-                    item.Update();
-                }
-                else if (AddEditHeader.StartsWith("Add"))
-                {
-                    _inventoryItems.Add(item);
-                    item.Insert();
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+            //    if (AddEditHeader.StartsWith("Edit"))
+            //    {
+            //        item.Update();
+            //    }
+            //    else if (AddEditHeader.StartsWith("Add"))
+            //    {
+            //        _inventoryItems.Add(item);
+            //        item.Insert();
+            //    }
+            //    else
+            //    {
+            //        throw new NotImplementedException();
+            //    }
 
-                AddEditErrorMessage = "";
-                ParentContext.DeleteTempTab();
-                RefreshInventoryList();
-            }
+            //    AddEditErrorMessage = "";
+            //    ParentContext.DeleteTempTab();
+            //    RefreshInventoryList();
+            //}
         }
 
         /// <summary>

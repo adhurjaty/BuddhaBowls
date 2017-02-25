@@ -123,10 +123,11 @@ namespace BuddhaBowls
 
         private void AddVendor(object obj)
         {
-            AddEditHeader = "Add New Vendor";
-            FieldsCollection = ParentContext.GetFieldsAndValues<Vendor>();
+            throw new NotImplementedException();
+            //AddEditHeader = "Add New Vendor";
+            //FieldsCollection = ParentContext.GetFieldsAndValues<Vendor>();
 
-            ParentContext.AddTempTab("Add Vendor", new EditItem(this, ClearErrors));
+            //ParentContext.AddTempTab("Add Vendor", new EditItem(this, ClearErrors));
         }
 
         private void ResetVendor(object obj)
@@ -165,22 +166,24 @@ namespace BuddhaBowls
 
         private void CancelAddEdit(object obj)
         {
-            AddEditErrorMessage = "";
-            ParentContext.DeleteTempTab();
+            throw new NotImplementedException();
+            //AddEditErrorMessage = "";
+            //ParentContext.DeleteTempTab();
         }
 
         private void SaveAddEdit(object obj)
         {
-            Vendor vendor = new Vendor();
+            throw new NotImplementedException();
+            //Vendor vendor = new Vendor();
 
-            AddEditErrorMessage = ParentContext.ObjectFromFields(ref vendor, FieldsCollection, true);
-            if(string.IsNullOrEmpty(AddEditErrorMessage))
-            {
-                vendor.Insert();
-                _models.Vendors.Add(vendor);
-                RefreshVendorList();
-                ParentContext.DeleteTempTab();
-            }
+            //AddEditErrorMessage = ParentContext.ObjectFromFields(ref vendor, FieldsCollection, true);
+            //if(string.IsNullOrEmpty(AddEditErrorMessage))
+            //{
+            //    vendor.Insert();
+            //    _models.Vendors.Add(vendor);
+            //    RefreshVendorList();
+            //    ParentContext.DeleteTempTab();
+            //}
         }
 
         //private void ChangeRecOrder(object obj)

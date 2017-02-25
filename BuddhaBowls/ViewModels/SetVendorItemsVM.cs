@@ -184,12 +184,12 @@ namespace BuddhaBowls
         {
             _vendor.UpdatePrices(_availableItems);
             ParentContext.GenerateVendorOrderList(_vendor, open: false);
-            ParentContext.DeleteTempTab();
+            Close();
         }
 
         private void Cancel(object obj)
         {
-            ParentContext.DeleteTempTab();
+            Close();
         }
 
         private void ModalOk(object obj)

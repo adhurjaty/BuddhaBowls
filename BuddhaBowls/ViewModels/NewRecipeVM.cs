@@ -1,5 +1,6 @@
 ﻿using BuddhaBowls.Models;
 using BuddhaBowls.Services;
+using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -243,13 +244,13 @@ namespace BuddhaBowls
                 newRecipe.Insert();
                 _models.Recipes.Add(newRecipe);
                 ParentContext.RecipeTab.RefreshList();
-                ParentContext.DeleteTempTab();
+                Close();
             }
         }
 
         private void Cancel(object obj)
         {
-            ParentContext.DeleteTempTab();
+            Close();
         }
 
         private void ModalOk(object obj)

@@ -129,7 +129,7 @@ namespace BuddhaBowls
             _models.PurchaseOrders.Add(po);
             RefreshOrder();
 
-            ParentContext.DeleteTempTab();
+            Close();
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace BuddhaBowls
 
             RefreshInventoryList();
             OrderVendor = null;
-            ParentContext.DeleteTempTab();
+            Close();
         }
 
         /// <summary>
