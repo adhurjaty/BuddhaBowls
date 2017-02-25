@@ -1,5 +1,6 @@
 ﻿using BuddhaBowls.Models;
 using BuddhaBowls.Services;
+using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,6 +28,7 @@ namespace BuddhaBowls
         {
             _editItem = editItem;
             _availableItems = editItem.ItemList;
+            _tabControl = new NewRecipe(this);
 
             Ingredients = new ObservableCollection<IItem>(editItem.ItemList);
             Header = "Edit " + editItem.Name;
@@ -48,7 +50,7 @@ namespace BuddhaBowls
             {
                 _editItem.Update();
                 ParentContext.RecipeTab.RefreshList();
-                ParentContext.DeleteTempTab();
+                Close();
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using BuddhaBowls.Models;
 using BuddhaBowls.Services;
+using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -95,6 +96,7 @@ namespace BuddhaBowls
         public NewOrderVM(RefreshDel refresh) : base()
         {
             RefreshOrder = refresh;
+            _tabControl = new NewOrder(this);
 
             SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
             CancelNewOrderCommand = new RelayCommand(CancelOrder);

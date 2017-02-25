@@ -217,9 +217,8 @@ namespace BuddhaBowls
 
         private void ViewOrder(PurchaseOrder order)
         {
-            ViewOrderVM context = new ViewOrderVM(order, RefreshOrderList);
-            ViewOrderTabControl userControl = new ViewOrderTabControl(context);
-            ParentContext.AddTempTab("PO#: " + order.Id, userControl);
+            ViewOrderVM tabVM = new ViewOrderVM(order, RefreshOrderList);
+            tabVM.Add("PO#: " + order.Id);
         }
 
         /// <summary>
@@ -271,8 +270,8 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void StartNewOrder(object obj)
         {
-            //SetLastOrderBreakdown();
-            ParentContext.AddTempTab("New Order", new NewOrder(new NewOrderVM(RefreshOrderList)));
+            NewOrderVM tabVM = new NewOrderVM(RefreshOrderList);
+            tabVM.Add("New Order");
         }
 
         private void ShowOpenPO(object obj)
@@ -390,10 +389,5 @@ namespace BuddhaBowls
             LoadPreviousOrders();
         }
         #endregion
-
-        public void DeleteTempTab()
-        {
-            ParentContext.DeleteTempTab();
-        }
     }
 }

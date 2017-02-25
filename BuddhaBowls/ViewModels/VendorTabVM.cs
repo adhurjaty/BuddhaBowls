@@ -16,7 +16,7 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class VendorTabVM : TabVM, INotifyPropertyChanged
+    public class VendorTabVM : TabVM
     {
         #region Data Bindings
         public string FilterText { get; set; }
@@ -190,7 +190,8 @@ namespace BuddhaBowls
 
         private void ChangeVendorItems(object obj)
         {
-            ParentContext.AddTempTab("Vendor Items", new SetVendorItems(new SetVendorItemsVM(SelectedVendor)));
+            SetVendorItemsVM tabVM = new SetVendorItemsVM(SelectedVendor);
+            tabVM.Add("Vendor Items");
         }
 
         private void GenerateOrderSheet(object obj)

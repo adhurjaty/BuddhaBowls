@@ -23,9 +23,9 @@ namespace BuddhaBowls
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private const string TEMP_TAB_NAME = "tempTab";
+        //private const string TEMP_TAB_NAME = "tempTab";
         private int _lastTabIdx = -1;
-        private Stack<TabItem> _tabStack;
+        //private Stack<TabItem> _tabStack;
 
         public MainWindow(MainViewModel mvm)
         {
@@ -48,48 +48,83 @@ namespace BuddhaBowls
             //}
         }
 
-        public void AddTempTab(string headerName, UserControl userControl)
+        //public void AddTempTab(string headerName, UserControl userControl)
+        //{
+        //    TabControl tabs = Tabs;
+        //    TabItem newTab = new TabItem() { Header = headerName, Content = userControl };
+
+        //    _lastTabIdx = tabs.SelectedIndex;
+        //    userControl.Tag = headerName;
+
+        //    if(TempTabVM.TabStack == null)
+        //    {
+        //        TempTabVM.TabStack = new List<UserControl>();
+        //    }
+
+        //    TempTabVM.TabStack.Insert(0, userControl);
+        //    if(TempTabVM.TabStack.Count == 0)
+        //    {
+        //        tabs.Items.Add(newTab);
+        //    }
+        //    else
+        //    {
+        //        tabs.Items[tabs.Items.Count - 1] = newTab;
+        //    }
+
+        //    tabs.SelectedIndex = tabs.Items.Count - 1;
+
+        //    //TabItem lastTab = (TabItem)tabs.Items[tabs.Items.Count - 1];
+        //    //if (lastTab.Name == TEMP_TAB_NAME)
+        //    //{
+        //    //    if(_tabStack == null)
+        //    //    {
+        //    //        _tabStack = new Stack<TabItem>();
+        //    //    }
+
+        //    //    DeleteTempTab();
+        //    //    _tabStack.Push(lastTab);
+        //    //}
+        //}
+
+        //public void DeleteTempTab()
+        //{
+        //    TabControl tabs = Tabs;
+
+        //    TabItem lastTab = (TabItem)tabs.Items[tabs.Items.Count - 1];
+        //    if (lastTab.Name == TEMP_TAB_NAME)
+        //    {
+        //        tabs.Items.RemoveAt(tabs.Items.Count - 1);
+        //    }
+
+        //    if(_tabStack != null && _tabStack.Count > 0)
+        //    {
+        //        tabs.Items.Add(_tabStack.Pop());
+        //        tabs.SelectedIndex = tabs.Items.Count - 1;
+        //    }
+        //    else if(_lastTabIdx != -1)
+        //        tabs.SelectedIndex = _lastTabIdx;
+        //}
+
+        public void AppendTempTab(UserControl tabControl)
         {
-            TabControl tabs = Tabs;
-
-            TabItem lastTab = (TabItem)tabs.Items[tabs.Items.Count - 1];
-            if (lastTab.Name == TEMP_TAB_NAME)
-            {
-                if(_tabStack == null)
-                {
-                    _tabStack = new Stack<TabItem>();
-                }
-
-                DeleteTempTab();
-                _tabStack.Push(lastTab);
-            }
-
-            TabItem newTab = new TabItem() { Header = headerName, Name = TEMP_TAB_NAME };
-
-            newTab.Content = userControl;
-
-            _lastTabIdx = tabs.SelectedIndex;
-            tabs.Items.Add(newTab);
-            tabs.SelectedIndex = tabs.Items.Count - 1;
+            _lastTabIdx = Tabs.SelectedIndex;
+            TabItem newTab = new TabItem() { Header = (string)tabControl.Tag, Content = tabControl };
+            Tabs.Items.Add(newTab);
+            Tabs.SelectedIndex = Tabs.Items.Count - 1;
         }
 
-        internal void DeleteTempTab()
+        public void RemoveTempTab()
         {
-            TabControl tabs = Tabs;
+            Tabs.Items.RemoveAt(Tabs.Items.Count - 1);
+            Tabs.SelectedIndex = _lastTabIdx;
+        }
 
-            TabItem lastTab = (TabItem)tabs.Items[tabs.Items.Count - 1];
-            if (lastTab.Name == TEMP_TAB_NAME)
-            {
-                tabs.Items.RemoveAt(tabs.Items.Count - 1);
-            }
-
-            if(_tabStack != null && _tabStack.Count > 0)
-            {
-                tabs.Items.Add(_tabStack.Pop());
-                tabs.SelectedIndex = tabs.Items.Count - 1;
-            }
-            else if(_lastTabIdx != -1)
-                tabs.SelectedIndex = _lastTabIdx;
+        public void ReplaceTempTab(UserControl tabControl)
+        {
+            _lastTabIdx = Tabs.SelectedIndex;
+            TabItem newTab = new TabItem() { Header = (string)tabControl.Tag, Content = tabControl };
+            Tabs.Items[Tabs.Items.Count - 1] = newTab;
+            Tabs.SelectedIndex = Tabs.Items.Count - 1;
         }
 
         //private void FilterItems_TextChanged(object sender, TextChangedEventArgs e)

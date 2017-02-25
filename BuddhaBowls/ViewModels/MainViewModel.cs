@@ -293,6 +293,27 @@ namespace BuddhaBowls
 
         #endregion
 
+        public void ReplaceTempTab(UserControl tab)
+        {
+            ModalContext = this;
+            ModalVisibility = Visibility.Hidden;
+            _window.ReplaceTempTab(tab);
+        }
+
+        public void RemoveTempTab()
+        {
+            ModalContext = this;
+            ModalVisibility = Visibility.Hidden;
+            _window.RemoveTempTab();
+        }
+
+        public void AppendTempTab(UserControl tab)
+        {
+            ModalContext = this;
+            ModalVisibility = Visibility.Hidden;
+            _window.AppendTempTab(tab);
+        }
+
         /// <summary>
         /// Filter list of inventory items based on the string in the filter box above datagrids
         /// </summary>
@@ -344,17 +365,17 @@ namespace BuddhaBowls
             return fieldsAndVals;
         }
 
-        public void AddTempTab(string header, UserControl dataContext)
-        {
-            _window.AddTempTab(header, dataContext);
-        }
+        //public void AddTempTab(string header, UserControl tab)
+        //{
+        //    //_window.AddTempTab(header, tab);
+        //}
 
-        public void DeleteTempTab()
-        {
-            _window.DeleteTempTab();
-            ModalContext = this;
-            ModalVisibility = Visibility.Hidden;
-        }
+        //public void DeleteTempTab()
+        //{
+        //    //_window.DeleteTempTab();
+        //    ModalContext = this;
+        //    ModalVisibility = Visibility.Hidden;
+        //}
 
 
         /// <summary>

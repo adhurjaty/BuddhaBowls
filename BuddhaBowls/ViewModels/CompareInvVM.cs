@@ -1,5 +1,6 @@
 ﻿using BuddhaBowls.Models;
 using BuddhaBowls.Services;
+using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -78,6 +79,7 @@ namespace BuddhaBowls
         {
             _beginInv = beginInv;
             _endInv = endInv;
+            _tabControl = new CompareInventoriesControl(this);
 
             DateRange = beginInv.Date.ToString("M/dd/yy") + " - " + endInv.Date.ToString("M/dd/yy");
 

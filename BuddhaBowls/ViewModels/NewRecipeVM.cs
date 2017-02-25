@@ -200,6 +200,7 @@ namespace BuddhaBowls
         public NewRecipeVM(bool isBatch)
         {
             IsBatch = isBatch;
+            _tabControl = new NewRecipe(this);
 
             Header = "New " + (isBatch ? "Batch Recipe" : "Menu Item");
             _availableItems = new List<IItem>();

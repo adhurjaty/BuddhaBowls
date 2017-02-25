@@ -132,7 +132,8 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void StartNewInventory(object obj)
         {
-            ParentContext.AddTempTab("New Inventory", new NewInventory(new NewInventoryVM()));
+            NewInventoryVM tabVM = new NewInventoryVM();
+            tabVM.Add("New Inventory");
         }
 
         /// <summary>
@@ -141,7 +142,8 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void ViewInventory(object obj)
         {
-            ParentContext.AddTempTab("View Inventory", new NewInventory(new NewInventoryVM(SelectedInventory)));
+            NewInventoryVM tabVM = new NewInventoryVM(SelectedInventory);
+            tabVM.Add("View Inventory");
         }
 
         /// <summary>
@@ -167,7 +169,8 @@ namespace BuddhaBowls
         private void CompareInvetories(object obj)
         {
             Inventory[] invs = SelectedMultiInventories.OrderBy(x => x.Date).ToArray();
-            ParentContext.AddTempTab("Compare Invs", new CompareInventoriesControl(new CompareInvVM(invs[0], invs[1])));
+            CompareInvVM tabVM = new CompareInvVM(invs[0], invs[1]);
+            tabVM.Add("Compare Invs");
         }
 
         /// <summary>

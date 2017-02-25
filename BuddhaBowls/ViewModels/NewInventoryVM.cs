@@ -235,6 +235,7 @@ namespace BuddhaBowls
         public NewInventoryVM() : base()
         {
             _inventoryItems = _models.InventoryItems;
+            _tabControl = new NewInventory(this);
 
             AddInventoryItemCommand = new RelayCommand(AddInventoryItem, x => AddItemCanExecute);
             DeleteInventoryItemCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute);
@@ -395,14 +396,14 @@ namespace BuddhaBowls
             }
 
             ParentContext.InventoryTab.RefreshInventoryList();
-            ParentContext.DeleteTempTab();
+            Close();
         }
 
         private void SaveOldInventory(object obj)
         {
             _inventory.Update(_inventoryItems);
 
-            ParentContext.DeleteTempTab();
+            Close();
         }
 
         //private void StartChangeOrder(object obj)
@@ -414,7 +415,7 @@ namespace BuddhaBowls
 
         private void CancelInventory(object obj)
         {
-            ParentContext.DeleteTempTab();
+            Close();
         }
 
         private void ResetOrder(object obj)

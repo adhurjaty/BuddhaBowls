@@ -1,5 +1,6 @@
 ﻿using BuddhaBowls.Models;
 using BuddhaBowls.Services;
+using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -88,6 +89,7 @@ namespace BuddhaBowls
         public ViewOrderVM(PurchaseOrder po, RefreshDel refresh)
         {
             _order = po;
+            _tabControl = new ViewOrderTabControl(this);
 
             MoveToReceivedCommand = new RelayCommand(MoveToReceived, x => MoveToReceivedCanExecute);
             MoveToOpenCommand = new RelayCommand(MoveToOpen, x => MoveToOpenCanExecute);

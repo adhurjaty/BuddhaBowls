@@ -91,7 +91,8 @@ namespace BuddhaBowls
 
         private void AddItem(object obj)
         {
-            ParentContext.AddTempTab("New Recipe", new NewRecipe(new NewRecipeVM(_state == PageState.Batch)));
+            NewRecipeVM tabVM = new NewRecipeVM(_state == PageState.Batch);
+            tabVM.Add("New Recipe");
         }
 
         private void DeleteItem(object obj)
@@ -119,7 +120,8 @@ namespace BuddhaBowls
 
         private void EditRecipe(object obj)
         {
-            ParentContext.AddTempTab("Edit Recipe", new NewRecipe(new EditRecipeVM(_state == PageState.Batch, SelectedItem)));
+            EditRecipeVM tabVM = new EditRecipeVM(_state == PageState.Batch, SelectedItem);
+            tabVM.Add("Edit Recipe");
         }
 
         #endregion

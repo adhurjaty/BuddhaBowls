@@ -145,6 +145,8 @@ namespace BuddhaBowls
         public SetVendorItemsVM(Vendor vendor)
         {
             _vendor = vendor;
+            _tabControl = new SetVendorItems(this);
+
             Header = vendor.Name + ": Edit Purchase List";
 
             AddItemCommand = new RelayCommand(AddItem);
