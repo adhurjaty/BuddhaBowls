@@ -118,9 +118,6 @@
     <Compile Include="UserControls\BreakdownDisplay.xaml.cs">
       <DependentUpon>BreakdownDisplay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\ChangeInventoryOrder.xaml.cs">
-      <DependentUpon>ChangeInventoryOrder.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControls\CompareInventoriesControl.xaml.cs">
       <DependentUpon>CompareInventoriesControl.xaml</DependentUpon>
     </Compile>
@@ -167,12 +164,11 @@
     <Compile Include="UserControls\ViewOrderTabControl.xaml.cs">
       <DependentUpon>ViewOrderTabControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\ChangeOrderVM.cs" />
     <Compile Include="ViewModels\CompareInvVM.cs" />
     <Compile Include="ViewModels\EditRecipeVM.cs" />
     <Compile Include="ViewModels\NewInventoryVM.cs" />
     <Compile Include="ViewModels\InventoryTabVM.cs" />
-    <Compile Include="ViewModels\ITabVM.cs" />
+    <Compile Include="ViewModels\TabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NewOrderVM.cs" />
     <Compile Include="ViewModels\SetVendorItemsVM.cs" />
@@ -181,13 +177,10 @@
     <Compile Include="ViewModels\OrderTabVM.cs" />
     <Compile Include="ViewModels\RecipeTabVM.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
+    <Compile Include="ViewModels\TempTabVM.cs" />
     <Compile Include="ViewModels\VendorTabVM.cs" />
     <Compile Include="ViewModels\ViewOrderVM.cs" />
     <Page Include="UserControls\BreakdownDisplay.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\ChangeInventoryOrder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

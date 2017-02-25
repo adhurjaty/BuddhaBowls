@@ -16,20 +16,8 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class VendorTabVM : INotifyPropertyChanged, ITabVM
+    public class VendorTabVM : TabVM, INotifyPropertyChanged
     {
-        private ModelContainer _models;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public MainViewModel ParentContext { get; set; }
-
         #region Data Bindings
         public string FilterText { get; set; }
 
@@ -116,22 +104,19 @@ namespace BuddhaBowls
         }
         #endregion
 
-        public VendorTabVM(ModelContainer models, MainViewModel parent)
+        public VendorTabVM() : base()
         {
-            _models = models;
-            ParentContext = parent;
-
-            AddVendorCommand = new RelayCommand(AddVendor);
-            DeleteVendorCommand = new RelayCommand(DeleteVendor, x => SelectedVendorCanExecute);
-            SaveCommand = new RelayCommand(SaveVendor, x => AlterVendorCanExecute);
-            ResetCommand = new RelayCommand(ResetVendor, x => AlterVendorCanExecute);
+            AddVendorCommand = new RelayCommand(AddVendor, x => DBConnection);
+            DeleteVendorCommand = new RelayCommand(DeleteVendor, x => SelectedVendorCanExecute && DBConnection);
+            SaveCommand = new RelayCommand(SaveVendor, x => AlterVendorCanExecute && DBConnection);
+            ResetCommand = new RelayCommand(ResetVendor, x => AlterVendorCanExecute && DBConnection);
             SaveAddEditCommand = new RelayCommand(SaveAddEdit, x => SaveAddEditCanExecute);
             CancelAddEditCommand = new RelayCommand(CancelAddEdit);
-            ChangeRecListOrderCommand = new RelayCommand(ChangeRecOrder, x => SelectedVendorCanExecute);
-            ChangeVendorItemsCommand = new RelayCommand(ChangeVendorItems, x => SelectedVendorCanExecute);
-            GetOrderSheetCommand = new RelayCommand(GenerateOrderSheet, x => GenOrderSheetCanExecute);
+            //ChangeRecListOrderCommand = new RelayCommand(ChangeRecOrder, x => SelectedVendorCanExecute);
+            ChangeVendorItemsCommand = new RelayCommand(ChangeVendorItems, x => SelectedVendorCanExecute && DBConnection);
+            GetOrderSheetCommand = new RelayCommand(GenerateOrderSheet, x => GenOrderSheetCanExecute && DBConnection);
 
-            TryDBConnect();
+            InitVendors();
         }
 
         #region ICommand Helpers
@@ -198,14 +183,14 @@ namespace BuddhaBowls
             }
         }
 
-        private void ChangeRecOrder(object obj)
-        {
-            ParentContext.AddTempTab("Rec List Order", new ChangeInventoryOrder(new ChangeOrderVM(this, SelectedVendor)));
-        }
+        //private void ChangeRecOrder(object obj)
+        //{
+        //    ParentContext.AddTempTab("Rec List Order", new ChangeInventoryOrder(new ChangeOrderVM(SelectedVendor)));
+        //}
 
         private void ChangeVendorItems(object obj)
         {
-            ParentContext.AddTempTab("Vendor Items", new SetVendorItems(new SetVendorItemsVM(_models, ParentContext, SelectedVendor)));
+            ParentContext.AddTempTab("Vendor Items", new SetVendorItems(new SetVendorItemsVM(SelectedVendor)));
         }
 
         private void GenerateOrderSheet(object obj)
@@ -227,9 +212,9 @@ namespace BuddhaBowls
 
         #region Initializers
 
-        private void TryDBConnect()
+        private void InitVendors()
         {
-            if (_models != null && _models.Vendors != null)
+            if (DBConnection)
                 RefreshVendorList();
             else
                 FilteredVendorList = new ObservableCollection<Vendor>() { new Vendor() { Name = "Could not connect to DB" } };

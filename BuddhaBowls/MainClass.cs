@@ -32,7 +32,7 @@ namespace BuddhaBowls
 
         private void Show()
         {
-            _mv = new MainViewModel();
+            _mv = MainViewModel.Instance();
             _mainWindow = new MainWindow(_mv);
             _mv.InitializeWindow(_mainWindow);
             _mainWindow.Show();

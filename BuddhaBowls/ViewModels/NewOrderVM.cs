@@ -12,20 +12,12 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class NewOrderVM : INotifyPropertyChanged
+    /// <summary>
+    /// Temp tab to create a new order
+    /// </summary>
+    public class NewOrderVM : TempTabVM
     {
-        private ModelContainer _models;
-        //private List<int> _editedIds;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public OrderTabVM ParentContext { get; set; }
+        private RefreshDel RefreshOrder;
 
         #region Content Binders
         private OrderBreakdownVM _breakdownContext;
@@ -100,11 +92,9 @@ namespace BuddhaBowls
         }
         #endregion
 
-        public NewOrderVM(ModelContainer models, OrderTabVM parent)
+        public NewOrderVM(RefreshDel refresh) : base()
         {
-            ParentContext = parent;
-            _models = models;
-            //_editedIds = new List<int>();
+            RefreshOrder = refresh;
 
             SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
             CancelNewOrderCommand = new RelayCommand(CancelOrder);
@@ -132,10 +122,10 @@ namespace BuddhaBowls
             List<InventoryItem> purchasedItems = _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList();
             PurchaseOrder po = new PurchaseOrder(OrderVendor, purchasedItems, OrderDate);
 
-            ParentContext.ParentContext.GenerateAfterOrderSaved(po, OrderVendor);
+            ParentContext.GenerateAfterOrderSaved(po, OrderVendor);
 
             _models.PurchaseOrders.Add(po);
-            ParentContext.RefreshOrderList();
+            RefreshOrder();
 
             ParentContext.DeleteTempTab();
         }
@@ -230,7 +220,7 @@ namespace BuddhaBowls
         /// <param name="filterStr"></param>
         public void FilterInventoryItems(string filterStr)
         {
-            FilteredOrderItems = ParentContext.ParentContext.FilterInventoryItems(filterStr, _models.InventoryItems);
+            FilteredOrderItems = ParentContext.FilterInventoryItems(filterStr, _models.InventoryItems);
             NotifyPropertyChanged("FilteredOrderItems");
         }
 

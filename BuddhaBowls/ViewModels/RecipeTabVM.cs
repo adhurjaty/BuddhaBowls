@@ -14,23 +14,15 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class RecipeTabVM : INotifyPropertyChanged
+    /// <summary>
+    /// Permanent tab showing the recipes. Has multiple states for which types of recipes to show
+    /// </summary>
+    public class RecipeTabVM : TabVM
     {
         private enum PageState { Batch, Menu, Error }
         private PageState _state;
 
-        private ModelContainer _models;
         private List<Recipe> _recipeItems;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public MainViewModel ParentContext { get; set; }
 
         #region Content Binders
         private ObservableCollection<IItem> _filteredItems;
@@ -83,18 +75,15 @@ namespace BuddhaBowls
 
         #endregion
 
-        public RecipeTabVM(ModelContainer models, MainViewModel parent)
+        public RecipeTabVM() : base()
         {
-            _models = models;
-            ParentContext = parent;
+            AddNewItemCommand = new RelayCommand(AddItem, x => DBConnection);
+            DeleteItemCommand = new RelayCommand(DeleteItem, x => SelectedItemCanExecute && DBConnection);
+            BatchItemSelectCommand = new RelayCommand(ChangeToBatchState, x => _state == PageState.Menu && DBConnection);
+            MenuItemSelectCommand = new RelayCommand(ChangeToMenuState, x => _state == PageState.Batch && DBConnection);
+            EditItemCommand = new RelayCommand(EditRecipe, x => SelectedItemCanExecute && DBConnection);
 
-            AddNewItemCommand = new RelayCommand(AddItem);
-            DeleteItemCommand = new RelayCommand(DeleteItem, x => SelectedItemCanExecute && ParentContext.DatabaseFound);
-            BatchItemSelectCommand = new RelayCommand(ChangeToBatchState, x => _state == PageState.Menu);
-            MenuItemSelectCommand = new RelayCommand(ChangeToMenuState, x => _state == PageState.Batch);
-            EditItemCommand = new RelayCommand(EditRecipe, x => SelectedItemCanExecute && ParentContext.DatabaseFound);
-
-            PageState state = ParentContext.DatabaseFound ? PageState.Batch : PageState.Error;
+            PageState state = DBConnection ? PageState.Batch : PageState.Error;
             ChangePageState(state);
         }
 
@@ -102,7 +91,7 @@ namespace BuddhaBowls
 
         private void AddItem(object obj)
         {
-            ParentContext.AddTempTab("New Recipe", new NewRecipe(new NewRecipeVM(_models, ParentContext, _state == PageState.Batch)));
+            ParentContext.AddTempTab("New Recipe", new NewRecipe(new NewRecipeVM(_state == PageState.Batch)));
         }
 
         private void DeleteItem(object obj)
@@ -130,7 +119,7 @@ namespace BuddhaBowls
 
         private void EditRecipe(object obj)
         {
-            ParentContext.AddTempTab("Edit Recipe", new NewRecipe(new EditRecipeVM(_models, ParentContext, _state == PageState.Batch, (Recipe)SelectedItem)));
+            ParentContext.AddTempTab("Edit Recipe", new NewRecipe(new EditRecipeVM(_state == PageState.Batch, SelectedItem)));
         }
 
         #endregion

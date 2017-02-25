@@ -15,20 +15,11 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class OrderTabVM : INotifyPropertyChanged
+    /// <summary>
+    /// Permanent tab showing the open and received orders
+    /// </summary>
+    public class OrderTabVM : TabVM
     {
-        private ModelContainer _models;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public MainViewModel ParentContext { get; set; }
-
         #region Content Binders
         private ObservableCollection<PurchaseOrder> _openOrders;
         public ObservableCollection<PurchaseOrder> OpenOrders
@@ -160,32 +151,23 @@ namespace BuddhaBowls
         }
         #endregion
 
-        public OrderTabVM(ModelContainer models, MainViewModel parent)
+        public OrderTabVM() : base()
         {
-            ParentContext = parent;
-            if (models == null)
-            {
-                TryDBConnect(false);
-            }
-            else
-            {
-                _models = models;
 
-                ReceivedOrdersCommand = new RelayCommand(MoveReceivedOrders);
-                ClearReceivedCheckCommand = new RelayCommand(ClearReceivedChecks);
-                ViewOpenOrderCommand = new RelayCommand(ViewOpenOrder, x => ViewOpenOrderCanExecute);
-                ViewReceivedOrderCommand = new RelayCommand(ViewReceivedOrder, x => ViewReceivedOrderCanExecute);
-                AddNewOrderCommand = new RelayCommand(StartNewOrder);
-                DeleteOpenOrderCommand = new RelayCommand(RemoveOpenOrder, x => RemoveOpenOrderCanExecute);
-                DeleteReceivedOrderCommand = new RelayCommand(RemoveReceivedOrder, x => RemoveReceivedOrderCanExecute);
-                ReOpenOrderCommand = new RelayCommand(ReOpenOrder, x => ViewReceivedOrderCanExecute);
-                OpenOpenPOCommand = new RelayCommand(ShowOpenPO, x => ViewOpenOrderCanExecute);
-                OpenReceivedPOCommand = new RelayCommand(ShowReceivedPO, x => ViewReceivedOrderCanExecute);
-                OpenRecListCommand = new RelayCommand(ShowOpenRecList, x => ViewOpenOrderCanExecute);
-                ReceivedRecListCommand = new RelayCommand(ShowReceivedRecList, x => ViewReceivedOrderCanExecute);
+            ReceivedOrdersCommand = new RelayCommand(MoveReceivedOrders, x => DBConnection);
+            ClearReceivedCheckCommand = new RelayCommand(ClearReceivedChecks, x => DBConnection);
+            ViewOpenOrderCommand = new RelayCommand(ViewOpenOrder, x => ViewOpenOrderCanExecute && DBConnection);
+            ViewReceivedOrderCommand = new RelayCommand(ViewReceivedOrder, x => ViewReceivedOrderCanExecute && DBConnection);
+            AddNewOrderCommand = new RelayCommand(StartNewOrder, x => DBConnection);
+            DeleteOpenOrderCommand = new RelayCommand(RemoveOpenOrder, x => RemoveOpenOrderCanExecute && DBConnection);
+            DeleteReceivedOrderCommand = new RelayCommand(RemoveReceivedOrder, x => RemoveReceivedOrderCanExecute && DBConnection);
+            ReOpenOrderCommand = new RelayCommand(ReOpenOrder, x => ViewReceivedOrderCanExecute && DBConnection);
+            OpenOpenPOCommand = new RelayCommand(ShowOpenPO, x => ViewOpenOrderCanExecute && DBConnection);
+            OpenReceivedPOCommand = new RelayCommand(ShowReceivedPO, x => ViewReceivedOrderCanExecute && DBConnection);
+            OpenRecListCommand = new RelayCommand(ShowOpenRecList, x => ViewOpenOrderCanExecute && DBConnection);
+            ReceivedRecListCommand = new RelayCommand(ShowReceivedRecList, x => ViewReceivedOrderCanExecute && DBConnection);
 
-                TryDBConnect(true);
-            }
+            InitOrders(DBConnection);
         }
 
         #region ICommand Helpers
@@ -235,7 +217,7 @@ namespace BuddhaBowls
 
         private void ViewOrder(PurchaseOrder order)
         {
-            ViewOrderVM context = new ViewOrderVM(this, order);
+            ViewOrderVM context = new ViewOrderVM(order, RefreshOrderList);
             ViewOrderTabControl userControl = new ViewOrderTabControl(context);
             ParentContext.AddTempTab("PO#: " + order.Id, userControl);
         }
@@ -290,7 +272,7 @@ namespace BuddhaBowls
         private void StartNewOrder(object obj)
         {
             //SetLastOrderBreakdown();
-            ParentContext.AddTempTab("New Order", new NewOrder(new NewOrderVM(_models, this)));
+            ParentContext.AddTempTab("New Order", new NewOrder(new NewOrderVM(RefreshOrderList)));
         }
 
         private void ShowOpenPO(object obj)
@@ -363,16 +345,12 @@ namespace BuddhaBowls
         #endregion
 
         #region Initializers
-        private bool TryDBConnect(bool connection)
+        private void InitOrders(bool connection)
         {
-            if (!LoadPreviousOrders() || !connection)
-            {
+            if(connection)
+                LoadPreviousOrders();
+            else
                 OrdersNotFound();
-                return false;
-            }
-
-            //RefreshInventoryList();
-            return true;
         }
 
         /// <summary>
@@ -397,30 +375,6 @@ namespace BuddhaBowls
         {
             OpenOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { VendorName = "Orders not found" } };
             ReceivedOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { VendorName = "Orders not found" } };
-        }
-
-        public ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)
-        {
-            ObservableCollection<BreakdownCategoryItem> breakdown = new ObservableCollection<BreakdownCategoryItem>();
-            total = 0;
-
-            if (orderedItems != null)
-            {
-                foreach (string category in _models.ItemCategories)
-                {
-                    IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
-                    if (items.Count() > 0)
-                    {
-                        BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
-                        bdItem.Background = _models.GetCategoryColorHex(category);
-                        breakdown.Add(bdItem);
-
-                        total += bdItem.TotalAmount;
-                    }
-                }
-            }
-
-            return breakdown;
         }
         #endregion
 

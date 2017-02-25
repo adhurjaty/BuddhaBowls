@@ -17,20 +17,11 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class InventoryTabVM : INotifyPropertyChanged, ITabVM
+    /// <summary>
+    /// Permanent tab showing the current inventory and the inventory history
+    /// </summary>
+    public class InventoryTabVM : TabVM
     {
-        private ModelContainer _models;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public MainViewModel ParentContext { get; set; }
-
         #region Content Binders
         // Inventory item selected in the datagrids for Orders and Master List
         private Inventory _selectedInventory;
@@ -106,7 +97,7 @@ namespace BuddhaBowls
         {
             get
             {
-                return SelectedInventory != null && ParentContext.DatabaseFound;
+                return SelectedInventory != null && DBConnection;
             }
         }
 
@@ -116,18 +107,15 @@ namespace BuddhaBowls
 
         #endregion
 
-        public InventoryTabVM(ModelContainer models, MainViewModel parent)
+        public InventoryTabVM() : base()
         {
-            ParentContext = parent;
-            _models = models;
+            AddInventoryCommand = new RelayCommand(StartNewInventory, x => DBConnection);
+            DeleteInventoryCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute && DBConnection);
+            ViewInventoryCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute && DBConnection);
+            CompareCommand = new RelayCommand(CompareInvetories, x => CompareCanExecute && DBConnection);
+            InvListCommand = new RelayCommand(GenerateInvList, x => DBConnection);
 
-            AddInventoryCommand = new RelayCommand(StartNewInventory, x => ParentContext.DatabaseFound);
-            DeleteInventoryCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute);
-            ViewInventoryCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute);
-            CompareCommand = new RelayCommand(CompareInvetories, x => CompareCanExecute && ParentContext.DatabaseFound);
-            InvListCommand = new RelayCommand(GenerateInvList);
-
-            if(ParentContext.DatabaseFound)
+            if(DBConnection)
             {
                 RefreshInventoryList();
             }
@@ -144,7 +132,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void StartNewInventory(object obj)
         {
-            ParentContext.AddTempTab("New Inventory", new NewInventory(new NewInventoryVM(_models, ParentContext)));
+            ParentContext.AddTempTab("New Inventory", new NewInventory(new NewInventoryVM()));
         }
 
         /// <summary>
@@ -153,7 +141,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void ViewInventory(object obj)
         {
-            ParentContext.AddTempTab("View Inventory", new NewInventory(new NewInventoryVM(_models, ParentContext, SelectedInventory)));
+            ParentContext.AddTempTab("View Inventory", new NewInventory(new NewInventoryVM(SelectedInventory)));
         }
 
         /// <summary>
@@ -179,7 +167,7 @@ namespace BuddhaBowls
         private void CompareInvetories(object obj)
         {
             Inventory[] invs = SelectedMultiInventories.OrderBy(x => x.Date).ToArray();
-            ParentContext.AddTempTab("Compare Invs", new CompareInventoriesControl(new CompareInvVM(_models, ParentContext, invs[0], invs[1])));
+            ParentContext.AddTempTab("Compare Invs", new CompareInventoriesControl(new CompareInvVM(invs[0], invs[1])));
         }
 
         /// <summary>

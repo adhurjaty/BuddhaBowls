@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class ChangeOrderVM : INotifyPropertyChanged
+    public class ChangeOrderVM : TempTabVM, INotifyPropertyChanged
     {
         private Vendor _vendor;
 
@@ -25,7 +25,7 @@ namespace BuddhaBowls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public ITabVM ParentContext { get; set; }
+        public NewInventoryVM ParentContext { get; set; }
 
         #region Data Bindings
 

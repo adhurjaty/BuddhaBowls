@@ -10,6 +10,9 @@ namespace BuddhaBowls
 {
     public delegate void BreakdownSelectionChanged();
 
+    /// <summary>
+    /// VM for a part of the View Order tab. Handles all of the things that an individual order breakdown needs
+    /// </summary>
     public class OrderBreakdownVM : INotifyPropertyChanged
     {
         // INotifyPropertyChanged event and method

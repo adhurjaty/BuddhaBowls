@@ -23,7 +23,7 @@ namespace BuddhaBowls
 
         #endregion
 
-        public EditRecipeVM(ModelContainer models, MainViewModel mvm, bool isBatch, Recipe editItem) : base(models, mvm, isBatch)
+        public EditRecipeVM(bool isBatch, Recipe editItem) : base(isBatch)
         {
             _editItem = editItem;
             _availableItems = editItem.ItemList;

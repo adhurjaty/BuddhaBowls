@@ -11,6 +11,7 @@ namespace BuddhaBowls.Services
 {
     public class ModelContainer
     {
+        private static ModelContainer _container;
         private Dictionary<string, string> _categoryColors;
 
         public List<InventoryItem> InventoryItems { get; set; }
@@ -20,7 +21,7 @@ namespace BuddhaBowls.Services
         public List<Vendor> Vendors { get; set; }
         public List<Inventory> Inventories { get; set; }
 
-        public ModelContainer()
+        private ModelContainer()
         {
             InitializeModels();
             if (InventoryItems != null)
@@ -28,6 +29,18 @@ namespace BuddhaBowls.Services
                 SetInventoryCategories();
                 SetCategoryColors();
             }
+        }
+
+        public static ModelContainer Instance()
+        {
+            if (_container == null)
+                _container = new ModelContainer();
+            return _container;
+        }
+
+        public static void ChangeContainer(ModelContainer container)
+        {
+            _container = container;
         }
 
         public void InitializeModels()

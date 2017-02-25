@@ -13,19 +13,12 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class NewRecipeVM : INotifyPropertyChanged
+    /// <summary>
+    /// Temp tab to create a new recipe
+    /// </summary>
+    public class NewRecipeVM : TempTabVM
     {
-        protected ModelContainer _models;
         protected List<IItem> _availableItems;
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public MainViewModel ParentContext { get; set; }
 
         #region Content Binders
 
@@ -204,10 +197,8 @@ namespace BuddhaBowls
 
         #endregion
 
-        public NewRecipeVM(ModelContainer models, MainViewModel mvm, bool isBatch)
+        public NewRecipeVM(bool isBatch)
         {
-            _models = models;
-            ParentContext = mvm;
             IsBatch = isBatch;
 
             Header = "New " + (isBatch ? "Batch Recipe" : "Menu Item");

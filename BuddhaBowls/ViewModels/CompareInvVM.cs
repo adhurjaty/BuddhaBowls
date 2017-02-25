@@ -12,22 +12,14 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class CompareInvVM : INotifyPropertyChanged
+    /// <summary>
+    /// Temp tab to compare inventories from different dates - opened from the Inventory tab
+    /// </summary>
+    public class CompareInvVM : TempTabVM
     {
-        private ModelContainer _models;
         private Inventory _beginInv;
         private Inventory _endInv;
         private List<CompareItem> _compareItems;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public MainViewModel ParentContext { get; set; }
 
         #region Data Bindings
         public string FilterText { get; set; }
@@ -82,11 +74,8 @@ namespace BuddhaBowls
 
         #endregion
 
-        public CompareInvVM(ModelContainer models, MainViewModel parent, Inventory beginInv, Inventory endInv)
+        public CompareInvVM(Inventory beginInv, Inventory endInv) : base()
         {
-            _models = models;
-            ParentContext = parent;
-
             _beginInv = beginInv;
             _endInv = endInv;
 
@@ -102,7 +91,7 @@ namespace BuddhaBowls
 
         private void CloseTab(object obj)
         {
-            ParentContext.DeleteTempTab();
+            Close();
         }
 
         #endregion

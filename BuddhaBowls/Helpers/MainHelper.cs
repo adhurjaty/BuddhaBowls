@@ -63,7 +63,7 @@ namespace BuddhaBowls.Helpers
             return recipeList;
         }
 
-        public static IEnumerable<InventoryItem> SortItems(IEnumerable<InventoryItem> items)
+        public static IEnumerable<T> SortItems<T>(IEnumerable<T> items) where T : IItem
         {
             if (Properties.Settings.Default.InventoryOrder == null)
                 return items.OrderBy(x => x.Name);
@@ -79,9 +79,8 @@ namespace BuddhaBowls.Helpers
             return items.OrderBy(x => OrderValue(x)).ToList();
         }
 
-        public static IEnumerable<IGrouping<string, InventoryItem>> CategoryGrouping(List<InventoryItem> items)
+        public static IEnumerable<IGrouping<string, T>> CategoryGrouping<T>(List<T> items) where T : IItem
         {
-            //Dictionary<string, List<InventoryItem>> categoryDict = new Dictionary<string, List<InventoryItem>>();
             return SortItems(items).GroupBy(x => x.Category).OrderBy(x => x.Key);
         }
 

@@ -12,21 +12,13 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class ViewOrderVM : INotifyPropertyChanged
+    /// <summary>
+    /// Temp tab to view or edit an open or received order - opened from the Orders tab
+    /// </summary>
+    public class ViewOrderVM : TempTabVM
     {
-        //private MainWindow _window;
-        //private ModelContainer _models;
         private PurchaseOrder _order;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public OrderTabVM ParentContext { get; set; }
+        private RefreshDel RefreshOrders;
 
         #region Content Binders
         private OrderBreakdownVM _openBreakdownContext;
@@ -93,9 +85,8 @@ namespace BuddhaBowls
         }
         #endregion
 
-        public ViewOrderVM(OrderTabVM parent, PurchaseOrder po)
+        public ViewOrderVM(PurchaseOrder po, RefreshDel refresh)
         {
-            ParentContext = parent;
             _order = po;
 
             MoveToReceivedCommand = new RelayCommand(MoveToReceived, x => MoveToReceivedCanExecute);
@@ -127,10 +118,10 @@ namespace BuddhaBowls
             toList.Add(selected);
 
             float oTotal = 0;
-            fromContext.BreakdownList = ParentContext.GetOrderBreakdown(fromList, out oTotal);
+            fromContext.BreakdownList = GetOrderBreakdown(fromList, out oTotal);
             fromContext.OrderTotal = oTotal;
 
-            toContext.BreakdownList = ParentContext.GetOrderBreakdown(toList, out oTotal);
+            toContext.BreakdownList = GetOrderBreakdown(toList, out oTotal);
             toContext.OrderTotal = oTotal;
         }
 
@@ -154,7 +145,7 @@ namespace BuddhaBowls
                 _order.SplitToPartials(openItems, receivedItems);
             }
 
-            ParentContext.LoadPreviousOrders();
+            RefreshOrders();
             ParentContext.DeleteTempTab();
         }
         #endregion
@@ -169,18 +160,42 @@ namespace BuddhaBowls
             float oTotal = 0;
             OpenBreakdownContext = new OrderBreakdownVM()
             {
-                BreakdownList = ParentContext.GetOrderBreakdown(openItems, out oTotal),
+                BreakdownList = GetOrderBreakdown(openItems, out oTotal),
                 OrderTotal = oTotal,
                 Header = "Open Ordered Items"
             };
 
             ReceivedBreakdownContext = new OrderBreakdownVM()
             {
-                BreakdownList = ParentContext.GetOrderBreakdown(receivedItems, out oTotal),
+                BreakdownList = GetOrderBreakdown(receivedItems, out oTotal),
                 OrderTotal = oTotal,
                 Header = "Received Ordered Items"
             };
         }
         #endregion
+
+        public ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)
+        {
+            ObservableCollection<BreakdownCategoryItem> breakdown = new ObservableCollection<BreakdownCategoryItem>();
+            total = 0;
+
+            if (orderedItems != null)
+            {
+                foreach (string category in _models.ItemCategories)
+                {
+                    IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
+                    if (items.Count() > 0)
+                    {
+                        BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
+                        bdItem.Background = _models.GetCategoryColorHex(category);
+                        breakdown.Add(bdItem);
+
+                        total += bdItem.TotalAmount;
+                    }
+                }
+            }
+
+            return breakdown;
+        }
     }
 }

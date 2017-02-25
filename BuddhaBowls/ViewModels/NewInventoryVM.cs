@@ -17,23 +17,15 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class NewInventoryVM : INotifyPropertyChanged, ITabVM
+    /// <summary>
+    /// Temporary tab for creating a new inventory
+    /// </summary>
+    public class NewInventoryVM : TempTabVM, INotifyPropertyChanged
     {
-        private ModelContainer _models;
         private List<InventoryItem> _inventoryItems;
         private Inventory _inventory;
         private bool _databaseFound;
         NewInventory _control;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public MainViewModel ParentContext { get; set; }
 
         #region Data Bindings
         private string _header;
@@ -240,11 +232,9 @@ namespace BuddhaBowls
 
         #endregion
 
-        public NewInventoryVM(ModelContainer models, MainViewModel parent)
+        public NewInventoryVM() : base()
         {
-            ParentContext = parent;
-            _models = models;
-            _inventoryItems = models.InventoryItems;
+            _inventoryItems = _models.InventoryItems;
 
             AddInventoryItemCommand = new RelayCommand(AddInventoryItem, x => AddItemCanExecute);
             DeleteInventoryItemCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute);
@@ -253,14 +243,14 @@ namespace BuddhaBowls
             CancelAddEditCommand = new RelayCommand(CancelAddEdit);
             SaveCountCommand = new RelayCommand(SaveNewInventory, x => ChangeCountCanExecute);
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
-            ChangeOrderCommand = new RelayCommand(StartChangeOrder);
+            //ChangeOrderCommand = new RelayCommand(StartChangeOrder);
             CancelCommand = new RelayCommand(CancelInventory);
             ResetOrderCommand = new RelayCommand(ResetOrder);
 
             TryDBConnect();
         }
 
-        public NewInventoryVM(ModelContainer models, MainViewModel parent, Inventory inv) : this(models, parent)
+        public NewInventoryVM(Inventory inv) : this()
         {
             _inventory = inv;
             _inventoryItems = inv.GetInventoryHistory();
@@ -415,12 +405,12 @@ namespace BuddhaBowls
             ParentContext.DeleteTempTab();
         }
 
-        private void StartChangeOrder(object obj)
-        {
-            RefreshInventoryList();
-            // figure out if I want to add multiple temp tabs or replace the temp tab
-            ParentContext.AddTempTab("Change Inv Order", new ChangeInventoryOrder(new ChangeOrderVM(this)));
-        }
+        //private void StartChangeOrder(object obj)
+        //{
+        //    RefreshInventoryList();
+        //    // figure out if I want to add multiple temp tabs or replace the temp tab
+        //    ParentContext.AddTempTab("Change Inv Order", new ChangeInventoryOrder(new ChangeOrderVM()));
+        //}
 
         private void CancelInventory(object obj)
         {

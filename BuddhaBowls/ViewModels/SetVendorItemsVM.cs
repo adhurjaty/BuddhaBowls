@@ -14,21 +14,13 @@ using System.Windows;
 
 namespace BuddhaBowls
 {
-    public class SetVendorItemsVM : INotifyPropertyChanged
+    /// <summary>
+    /// Temp tab where user can populate which items the selected vendor sells and at what price and qty
+    /// </summary>
+    public class SetVendorItemsVM : TempTabVM
     {
-        private ModelContainer _models;
         private Vendor _vendor;
         private List<InventoryItem> _availableItems;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public MainViewModel ParentContext { get; set; }
 
         #region Content Binders
 
@@ -150,11 +142,9 @@ namespace BuddhaBowls
 
         #endregion
 
-        public SetVendorItemsVM(ModelContainer models, MainViewModel mvm, Vendor vendor)
+        public SetVendorItemsVM(Vendor vendor)
         {
-            _models = models;
             _vendor = vendor;
-            ParentContext = mvm;
             Header = vendor.Name + ": Edit Purchase List";
 
             AddItemCommand = new RelayCommand(AddItem);
