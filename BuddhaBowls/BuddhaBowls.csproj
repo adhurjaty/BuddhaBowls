@@ -103,6 +103,10 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFTextBoxAutoComplete, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WPFTextBoxAutoComplete.1.0.2\lib\net40\WPFTextBoxAutoComplete.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -115,6 +119,12 @@
     <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\Vendor.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="UserControls\AddInvStep1.xaml.cs">
+      <DependentUpon>AddInvStep1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AddInvStep2.xaml.cs">
+      <DependentUpon>AddInvStep2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\BreakdownDisplay.xaml.cs">
       <DependentUpon>BreakdownDisplay.xaml</DependentUpon>
     </Compile>
@@ -164,10 +174,15 @@
     <Compile Include="UserControls\ViewOrderTabControl.xaml.cs">
       <DependentUpon>ViewOrderTabControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\WizardControl.xaml.cs">
+      <DependentUpon>WizardControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\CompareInvVM.cs" />
     <Compile Include="ViewModels\EditRecipeVM.cs" />
+    <Compile Include="ViewModels\ModalVM.cs" />
     <Compile Include="ViewModels\NewInventoryVM.cs" />
     <Compile Include="ViewModels\InventoryTabVM.cs" />
+    <Compile Include="ViewModels\NewInventoryItemWizard.cs" />
     <Compile Include="ViewModels\TabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NewOrderVM.cs" />
@@ -180,6 +195,15 @@
     <Compile Include="ViewModels\TempTabVM.cs" />
     <Compile Include="ViewModels\VendorTabVM.cs" />
     <Compile Include="ViewModels\ViewOrderVM.cs" />
+    <Compile Include="ViewModels\WizardVM.cs" />
+    <Page Include="UserControls\AddInvStep1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AddInvStep2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\BreakdownDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -241,6 +265,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ViewOrderTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\WizardControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

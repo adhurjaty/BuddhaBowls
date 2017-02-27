@@ -69,10 +69,7 @@ namespace BuddhaBowls.Models
             {
                 foreach (InventoryItem item in inventoryItems)
                 {
-                    if (!_dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id))
-                    {
-                        _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict());
-                    }
+                    AddInvItem(item);
                 }
             }
             else
@@ -89,6 +86,14 @@ namespace BuddhaBowls.Models
         public string GetItemsListPath()
         {
             return Path.Combine(Properties.Settings.Default.DBLocation, "Order Sheets", Name + ".xlsx");
+        }
+
+        public void AddInvItem(InventoryItem item)
+        {
+            if (!_dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id))
+            {
+                _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict());
+            }
         }
 
         private string GetOrderFile()

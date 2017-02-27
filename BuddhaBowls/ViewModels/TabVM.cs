@@ -34,7 +34,6 @@ namespace BuddhaBowls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
         public TabVM()
         {
             _models = ModelContainer.Instance();

@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace BuddhaBowls
@@ -92,6 +93,7 @@ namespace BuddhaBowls
         // Compare button
         public ICommand CompareCommand { get; set; }
         public ICommand InvListCommand { get; set; }
+        public ICommand AddInvCommand { get; set; }
 
         public bool DeleteEditCanExecute
         {
@@ -114,6 +116,7 @@ namespace BuddhaBowls
             ViewInventoryCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute && DBConnection);
             CompareCommand = new RelayCommand(CompareInvetories, x => CompareCanExecute && DBConnection);
             InvListCommand = new RelayCommand(GenerateInvList, x => DBConnection);
+            AddInvCommand = new RelayCommand(NewInvItem);
 
             if(DBConnection)
             {
@@ -203,6 +206,12 @@ namespace BuddhaBowls
             {
                 MessageBox.Show("Excel process currently running. If you don't know what this means, hit OK and restart the application", "Excel Warning", MessageBoxButton.OK);
             }
+        }
+
+        private void NewInvItem(object obj)
+        {
+            NewInventoryItemWizard wizard = new NewInventoryItemWizard();
+            wizard.Add("New Item");
         }
 
         #endregion

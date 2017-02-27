@@ -106,13 +106,37 @@ namespace BuddhaBowls.Services
             return InventoryItems.Select(x => (IItem)x).Concat(Recipes.Where(x => x.IsBatch));
         }
 
+        public List<string> GetCountUnits()
+        {
+            return (new HashSet<string>(InventoryItems.Select(x => x.CountUnit))).ToList();
+        }
+
+        public List<string> GetRecipeUnits()
+        {
+            return (new HashSet<string>(InventoryItems.Select(x => x.RecipeUnit))).ToList();
+        }
+
+        public List<string> GetPurchasedUnits()
+        {
+            return (new HashSet<string>(InventoryItems.Select(x => x.PurchasedUnit))).ToList();
+        }
+        public void AddInventoryItem(InventoryItem item)
+        {
+            Properties.Settings.Default.InventoryOrder.Add(item.Name);
+            Properties.Settings.Default.Save();
+
+            item.Id = item.Insert();
+            InventoryItems.Add(item);
+        }
+
         private void SetInventoryCategories()
         {
             ItemCategories = new HashSet<string>();
 
             foreach (InventoryItem item in InventoryItems)
             {
-                ItemCategories.Add(item.Category.ToUpper());
+                // may need to add back in the .ToUpper()
+                ItemCategories.Add(item.Category);
             }
         }
 
