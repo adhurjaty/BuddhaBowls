@@ -21,6 +21,7 @@ namespace BuddhaBowls
     {
         private Vendor _vendor;
         private List<InventoryItem> _availableItems;
+        private List<InventoryItem> _removedItems;
 
         #region Content Binders
 
@@ -146,6 +147,7 @@ namespace BuddhaBowls
         {
             _vendor = vendor;
             _tabControl = new SetVendorItems(this);
+            _removedItems = new List<InventoryItem>();
 
             Header = vendor.Name + ": Edit Purchase List";
 
@@ -171,6 +173,7 @@ namespace BuddhaBowls
 
         private void RemoveItem(object obj)
         {
+            _removedItems.Add(SelectedItem);
             _availableItems.Remove(SelectedItem);
             Refresh();
         }
@@ -182,6 +185,10 @@ namespace BuddhaBowls
 
         private void Save(object obj)
         {
+            foreach(InventoryItem item in _removedItems)
+            {
+                _vendor.RemoveInvItem(item);
+            }
             _vendor.UpdatePrices(_availableItems);
             ParentContext.GenerateVendorOrderList(_vendor, open: false);
             Close();

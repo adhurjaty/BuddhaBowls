@@ -38,5 +38,10 @@ namespace BuddhaBowls
         {
             _models = ModelContainer.Instance();
         }
+
+        public virtual void FilterItems(string text)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="BuddhaBowls.UserControls.InventoryListControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BuddhaBowls.UserControls"
+             xmlns:parent="clr-namespace:BuddhaBowls"
+             xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Label x:Name="label1" Grid.Row="0" Content="Inventory Item Name:" Margin="-330, 0, 0, 0" HorizontalAlignment="Center"
+               VerticalAlignment="Bottom"/>
+        <TextBox x:Name="FilterItemBox" Grid.Row="0" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                 Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
+        <Button Grid.Row="1" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" Margin="0, 0, 35, 0"
+                Command="{Binding AddInventoryItemCommand}">
+            <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </Button>
+        <Button Grid.Row="1" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" Margin="0, 0, 5, 0"
+                Command="{Binding DeleteInventoryItemCommand}">
+            <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </Button>
+        <Button x:Name="button2" Content="Edit" HorizontalAlignment="Right" Margin="0,0,65,0" Grid.Row="1" VerticalAlignment="Center" Width="75"
+                Command="{Binding EditInventoryItemCommand}"/>
+        <Button Content="Reset Order" Grid.Row="1" Width="80" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0, 0, 140, 0"
+                Command="{Binding ResetOrderCommand}" />
+        <Expander Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left" Width="250" Background="AliceBlue"
+                  Header="{Binding TotalValueMessage}" IsExpanded="False">
+            <ItemsControl ItemsSource="{Binding CategoryPrices}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type parent:PriceExpanderItem}">
+                        <Grid Background="AliceBlue">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <Label x:Name="label" Grid.Column="0" Content="{Binding Label}" HorizontalAlignment="Left" Margin="20,0,0,0" Grid.Row="2" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Path=Price, StringFormat=c}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
+        <DataGrid x:Name="dataGrid" Grid.Row="2" ItemsSource="{Binding FilteredInventoryItems}" HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" CanUserReorderColumns="False"
+                              SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False" Sorting="dataGrid_Sorting"
+                              CellEditEnding="MasterList_CellEditEnding" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
+                <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="1*"/>
+                <DataGridTextColumn Header="Count" Binding="{Binding Path=Count, StringFormat=0.##}" Width="1*" />
+                <DataGridTemplateColumn x:Name="arrowColumn" Width="60">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <Button Content="^" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                        Click="MoveUp_Click" CommandParameter="{Binding}"/>
+                                <Button Content="v" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                        Click="MoveDown_Click" CommandParameter="{Binding}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

@@ -21,7 +21,7 @@ namespace BuddhaBowls
     /// <summary>
     /// Permanent tab showing the current inventory and the inventory history
     /// </summary>
-    public class InventoryTabVM : TabVM
+    public class InventoryTabVM : ChangeableTabVM
     {
         #region Content Binders
         // Inventory item selected in the datagrids for Orders and Master List
@@ -81,6 +81,19 @@ namespace BuddhaBowls
             }
         }
 
+        private ObservableCollection<IItem> _filteredInventoryItems;
+        public ObservableCollection<IItem> FilteredInventoryItems
+        {
+            get
+            {
+                return _filteredInventoryItems;
+            }
+            set
+            {
+                _filteredInventoryItems = value;
+                NotifyPropertyChanged("FilteredInventoryItems");
+            }
+        }
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -111,6 +124,10 @@ namespace BuddhaBowls
 
         public InventoryTabVM() : base()
         {
+            Header = "Inventory";
+            PrimaryPageName = "Items";
+            SecondaryPageName = "History";
+
             AddInventoryCommand = new RelayCommand(StartNewInventory, x => DBConnection);
             DeleteInventoryCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute && DBConnection);
             ViewInventoryCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute && DBConnection);
@@ -254,6 +271,77 @@ namespace BuddhaBowls
             InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
         }
 
+        /// <summary>
+        /// Filter list of inventory items based on the string in the filter box above datagrids
+        /// </summary>
+        /// <param name="filterStr"></param>
+        public override void FilterItems(string filterStr)
+        {
+            if(_pageState != PageState.Primary)
+            {
+                throw new Exception("How did you get here?");
+            }
+
+            if (string.IsNullOrWhiteSpace(filterStr))
+                ((InventoryListControl)TabControl).ShowArrowColumn();
+            else
+                ((InventoryListControl)TabControl).HideArrowColumn();
+            FilteredInventoryItems = ParentContext.FilterInventoryItems(filterStr, _models.InventoryItems.Select(x => (IItem)x));
+        }
+
+        public void MoveDown(IItem item)
+        {
+            MoveInList(item, false);
+        }
+
+        public void MoveUp(IItem item)
+        {
+            MoveInList(item, true);
+        }
+
+        private void MoveInList(IItem item, bool up)
+        {
+            List<IItem> orderedList = FilteredInventoryItems.ToList();
+            int idx = orderedList.IndexOf(item);
+            orderedList.RemoveAt(idx);
+
+            if (idx > 0 && up)
+                orderedList.Insert(idx - 1, item);
+            if (idx < orderedList.Count - 1 && !up)
+                orderedList.Insert(idx + 1, item);
+
+            FilteredInventoryItems = new ObservableCollection<IItem>(orderedList);
+            SaveInvOrder();
+        }
+
         #endregion
+
+        protected override void ChangePageState(PageState state)
+        {
+            base.ChangePageState(state);
+
+            switch(state)
+            {
+                case PageState.Primary:
+                    TabControl = new InventoryListControl(this);
+                    break;
+                case PageState.Secondary:
+                    TabControl = new InventoryHistoryControl(this);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void SaveInvOrder()
+        {
+            Properties.Settings.Default.InventoryOrder = FilteredInventoryItems.Select(x => x.Name).ToList();
+            Properties.Settings.Default.Save();
+
+            string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
+            Directory.CreateDirectory(dir);
+            File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), Properties.Settings.Default.InventoryOrder);
+        }
+
     }
 }

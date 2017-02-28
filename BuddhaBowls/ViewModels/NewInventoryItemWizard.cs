@@ -116,6 +116,7 @@ namespace BuddhaBowls
                     vendor.AddInvItem(Item);
                 }
 
+                ParentContext.Refresh();
                 Close();
             }
         }

@@ -17,11 +17,8 @@ namespace BuddhaBowls
     /// <summary>
     /// Permanent tab showing the recipes. Has multiple states for which types of recipes to show
     /// </summary>
-    public class RecipeTabVM : TabVM
+    public class RecipeTabVM : ChangeableTabVM
     {
-        private enum PageState { Batch, Menu, Error }
-        private PageState _state;
-
         private List<Recipe> _recipeItems;
 
         #region Content Binders
@@ -77,21 +74,21 @@ namespace BuddhaBowls
 
         public RecipeTabVM() : base()
         {
+            TabControl = new RecipeTabControl(this);
+            Header = "Recipe";
+            PrimaryPageName = "Batch Items";
+            SecondaryPageName = "Menu Items";
+
             AddNewItemCommand = new RelayCommand(AddItem, x => DBConnection);
             DeleteItemCommand = new RelayCommand(DeleteItem, x => SelectedItemCanExecute && DBConnection);
-            BatchItemSelectCommand = new RelayCommand(ChangeToBatchState, x => _state == PageState.Menu && DBConnection);
-            MenuItemSelectCommand = new RelayCommand(ChangeToMenuState, x => _state == PageState.Batch && DBConnection);
             EditItemCommand = new RelayCommand(EditRecipe, x => SelectedItemCanExecute && DBConnection);
-
-            PageState state = DBConnection ? PageState.Batch : PageState.Error;
-            ChangePageState(state);
         }
 
         #region ICommand Helpers
 
         private void AddItem(object obj)
         {
-            NewRecipeVM tabVM = new NewRecipeVM(_state == PageState.Batch);
+            NewRecipeVM tabVM = new NewRecipeVM(_pageState == PageState.Primary);
             tabVM.Add("New Recipe");
         }
 
@@ -110,17 +107,17 @@ namespace BuddhaBowls
 
         private void ChangeToMenuState(object obj)
         {
-            ChangePageState(PageState.Menu);
+            ChangePageState(PageState.Secondary);
         }
 
         private void ChangeToBatchState(object obj)
         {
-            ChangePageState(PageState.Batch);
+            ChangePageState(PageState.Primary);
         }
 
         private void EditRecipe(object obj)
         {
-            EditRecipeVM tabVM = new EditRecipeVM(_state == PageState.Batch, SelectedItem);
+            EditRecipeVM tabVM = new EditRecipeVM(_pageState == PageState.Primary, SelectedItem);
             tabVM.Add("Edit Recipe");
         }
 
@@ -143,19 +140,20 @@ namespace BuddhaBowls
 
         public void RefreshList()
         {
-            ChangePageState(_state);
+            ChangePageState(_pageState);
         }
         #endregion
 
-        private void ChangePageState(PageState state)
+        protected override void ChangePageState(PageState state)
         {
-            _state = state;
+            base.ChangePageState(state);
+
             switch (state)
             {
-                case PageState.Batch:
+                case PageState.Primary:
                     _recipeItems = _models.Recipes.Where(x => x.IsBatch).ToList();
                     break;
-                case PageState.Menu:
+                case PageState.Secondary:
                     _recipeItems = _models.Recipes.Where(x => !x.IsBatch).ToList();
                     break;
                 case PageState.Error:

@@ -365,18 +365,16 @@ namespace BuddhaBowls
             return fieldsAndVals;
         }
 
-        //public void AddTempTab(string header, UserControl tab)
-        //{
-        //    //_window.AddTempTab(header, tab);
-        //}
-
-        //public void DeleteTempTab()
-        //{
-        //    //_window.DeleteTempTab();
-        //    ModalContext = this;
-        //    ModalVisibility = Visibility.Hidden;
-        //}
-
+        /// <summary>
+        /// Run all refresh methods for all permanent tabs
+        /// </summary>
+        public void Refresh()
+        {
+            OrderTab.RefreshOrderList();
+            InventoryTab.RefreshInventoryList();
+            VendorTab.RefreshVendorList();
+            RecipeTab.RefreshList();
+        }
 
         /// <summary>
         /// Looks through fields in add/edit form to ensure that user-supplied values are valid and changes types when necessary

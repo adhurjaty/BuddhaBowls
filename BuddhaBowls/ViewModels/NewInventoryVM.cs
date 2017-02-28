@@ -173,6 +173,20 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("CategoryPrices");
             }
         }
+
+        private InventoryListControl _inventoryControl;
+        public InventoryListControl InventoryControl
+        {
+            get
+            {
+                return _inventoryControl;
+            }
+            set
+            {
+                _inventoryControl = value;
+                NotifyPropertyChanged("InventoryControl");
+            }
+        }
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -236,6 +250,8 @@ namespace BuddhaBowls
         {
             _inventoryItems = _models.InventoryItems;
             _tabControl = new NewInventory(this);
+            InventoryControl = new InventoryListControl(this);
+            InventoryControl.HideArrowColumn();
 
             AddInventoryItemCommand = new RelayCommand(AddInventoryItem, x => AddItemCanExecute);
             DeleteInventoryItemCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute);
@@ -425,7 +441,7 @@ namespace BuddhaBowls
         private void ResetOrder(object obj)
         {
             FilterText = "";
-            FilterInventoryItems("");
+            FilterItems("");
         }
 
         #endregion
@@ -512,60 +528,20 @@ namespace BuddhaBowls
             CategoryPrices = new ObservableCollection<PriceExpanderItem>(items);
         }
 
-        public void MoveDown(IItem item)
-        {
-            MoveInList(item, false);
-        }
-
-        public void MoveUp(IItem item)
-        {
-            MoveInList(item, true);
-        }
-
-        private void MoveInList(IItem item, bool up)
-        {
-            List<IItem> orderedList = FilteredInventoryItems.ToList();
-            int idx = orderedList.IndexOf(item);
-            orderedList.RemoveAt(idx);
-
-            if (idx > 0 && up)
-                orderedList.Insert(idx - 1, item);
-            if (idx < orderedList.Count - 1 && !up)
-                orderedList.Insert(idx + 1, item);
-
-            FilteredInventoryItems = new ObservableCollection<IItem>(orderedList);
-            SaveInvOrder();
-        }
-
         #endregion
 
         /// <summary>
         /// Filter list of inventory items based on the string in the filter box above datagrids
         /// </summary>
         /// <param name="filterStr"></param>
-        public void FilterInventoryItems(string filterStr)
+        public override void FilterItems(string filterStr)
         {
-            if (string.IsNullOrWhiteSpace(filterStr))
-                _control.ShowArrowColumn();
-            else
-                _control.HideArrowColumn();
             FilteredInventoryItems = ParentContext.FilterInventoryItems(filterStr, _inventoryItems.Select(x => (IItem)x));
-            NotifyPropertyChanged("FilteredInventoryItems");
         }
 
         private void RefreshInventoryList()
         {
             FilteredInventoryItems = new ObservableCollection<IItem>(ParentContext.SortItems(_inventoryItems));
-        }
-
-        private void SaveInvOrder()
-        {
-            Properties.Settings.Default.InventoryOrder = FilteredInventoryItems.Select(x => x.Name).ToList();
-            Properties.Settings.Default.Save();
-
-            string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
-            Directory.CreateDirectory(dir);
-            File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), Properties.Settings.Default.InventoryOrder);
         }
 
         //private IEnumerable<IItem> GetTotalDisplayList()

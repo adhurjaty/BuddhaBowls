@@ -120,6 +120,7 @@ namespace BuddhaBowls.Services
         {
             return (new HashSet<string>(InventoryItems.Select(x => x.PurchasedUnit))).ToList();
         }
+
         public void AddInventoryItem(InventoryItem item)
         {
             Properties.Settings.Default.InventoryOrder.Add(item.Name);

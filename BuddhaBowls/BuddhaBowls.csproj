@@ -128,6 +128,9 @@
     <Compile Include="UserControls\BreakdownDisplay.xaml.cs">
       <DependentUpon>BreakdownDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ChangeableTabControl.xaml.cs">
+      <DependentUpon>ChangeableTabControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\CompareInventoriesControl.xaml.cs">
       <DependentUpon>CompareInventoriesControl.xaml</DependentUpon>
     </Compile>
@@ -141,8 +144,11 @@
     <Compile Include="Models\Recipe.cs" />
     <Compile Include="Models\InventoryItem.cs" />
     <Compile Include="Models\PurchaseOrder.cs" />
-    <Compile Include="UserControls\InventoryTabControl.xaml.cs">
-      <DependentUpon>InventoryTabControl.xaml</DependentUpon>
+    <Compile Include="UserControls\InventoryListControl.xaml.cs">
+      <DependentUpon>InventoryListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\InventoryHistoryControl.xaml.cs">
+      <DependentUpon>InventoryHistoryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\NewInventory.xaml.cs">
       <DependentUpon>NewInventory.xaml</DependentUpon>
@@ -177,6 +183,7 @@
     <Compile Include="UserControls\WizardControl.xaml.cs">
       <DependentUpon>WizardControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ChangeableTabVM.cs" />
     <Compile Include="ViewModels\CompareInvVM.cs" />
     <Compile Include="ViewModels\EditRecipeVM.cs" />
     <Compile Include="ViewModels\ModalVM.cs" />
@@ -208,6 +215,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\ChangeableTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\CompareInventoriesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -228,9 +239,13 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UserControls\InventoryTabControl.xaml">
+    <Page Include="UserControls\InventoryListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\InventoryHistoryControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\NewInventory.xaml">
       <SubType>Designer</SubType>

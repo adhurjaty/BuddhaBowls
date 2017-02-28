@@ -19,13 +19,13 @@
                 <uc:OrderTabControl DataContext="{Binding OrderTab}" />
             </TabItem>
             <TabItem Header="Inventory">
-                <uc:InventoryTabControl DataContext="{Binding InventoryTab}" />
+                <uc:ChangeableTabControl DataContext="{Binding InventoryTab}" />
             </TabItem>
             <TabItem Header="Vendors">
                 <uc:VendorTabControl DataContext="{Binding VendorTab}" />
             </TabItem>
             <TabItem Header="Recipes">
-                <uc:RecipeTabControl DataContext="{Binding RecipeTab}" />
+                <uc:ChangeableTabControl DataContext="{Binding RecipeTab}" />
             </TabItem>
             <TabItem Header="Settings">
                 <Grid>

@@ -11,16 +11,14 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
-            <RowDefinition Height="80" />
             <RowDefinition Height="30" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Label Content="Recipes" Grid.Row="0" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        <Label x:Name="label1" Grid.Row="1" Content="Recipe Name:" Margin="-330, 0, 0, 0" HorizontalAlignment="Center"
+        <Label x:Name="label1" Grid.Row="0" Content="Recipe Name:" Margin="-330, 0, 0, 0" HorizontalAlignment="Center"
                VerticalAlignment="Bottom"/>
-        <TextBox x:Name="FilterItemBox" Grid.Row="1" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom"
+        <TextBox x:Name="FilterItemBox" Grid.Row="0" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom"
                  Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
-        <DataGrid x:Name="dataGrid1" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        <DataGrid x:Name="dataGrid1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding FilteredItems}"
                                 SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
@@ -29,23 +27,19 @@
                 <DataGridTextColumn Header="Cost" Binding="{Binding Path=RecipeCost, StringFormat=c}" Width="1*" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Grid.Row="2" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
+        <Button Grid.Row="1" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Center" Margin="35, 0" Command="{Binding AddNewMenuItemCommand}">
             <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
-        <Button Grid.Row="2" Height="30" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
+        <Button Grid.Row="1" Height="30" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Center" Margin="5, 0" Command="{Binding DeleteMenuItemCommand}">
             <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
-        <Button Content="Edit" HorizontalAlignment="Right" Margin="0,0,70,0" Grid.Row="2" VerticalAlignment="Center" Width="60"
+        <Button Content="Edit" HorizontalAlignment="Right" Margin="0,0,70,0" Grid.Row="1" VerticalAlignment="Center" Width="60"
                 Command="{Binding EditItemCommand}"/>
-        <Button Grid.Row="2" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
+        <Button Grid.Row="1" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Center" Margin="35, 0" Command="{Binding AddNewItemCommand}"/>
         <Button Grid.Row="2" Width="25" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Margin="5, 0" Command="{Binding DeleteItemCommand}"/>
-        <Button x:Name="button1" Content="Batch Items" HorizontalAlignment="Center" Margin="-100,10,0,0" Grid.Row="1" VerticalAlignment="Top"
-                Width="100" Command="{Binding BatchItemSelectCommand}"/>
-        <Button x:Name="button2" Content="Menu Items" HorizontalAlignment="Center" Margin="100,10,0,0" Grid.Row="1" VerticalAlignment="Top"
-                Width="100" Command="{Binding MenuItemSelectCommand}"/>
     </Grid>
 </UserControl>

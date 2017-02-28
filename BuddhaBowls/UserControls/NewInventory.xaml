@@ -12,78 +12,16 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60" />
-            <RowDefinition Height="60" />
-            <RowDefinition Height="30" />
             <RowDefinition Height="*" />
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="New Inventory" VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="30"/>
-        <DatePicker Grid.Row="1" SelectedDate="{Binding InventoryDate}" Height="25" Width="130" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                    Margin="10, 0, 0, 0"/>
-        <!--<Button x:Name="ChangeOrderButton" Content="Change Display Order" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="65,0"
-                Grid.Row="1" Width="137" Command="{Binding ChangeOrderCommand}"/>-->
-        <Label x:Name="label1" Grid.Row="1" Content="Inventory Item Name:" Margin="-330, 0, 0, 0" HorizontalAlignment="Center"
-               VerticalAlignment="Bottom"/>
-        <TextBox x:Name="FilterItemBox" Grid.Row="1" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                 Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
-        <Button Grid.Row="2" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" Margin="0, 0, 35, 0"
-                Command="{Binding AddInventoryItemCommand}">
-            <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        </Button>
-        <Button Grid.Row="2" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" Margin="0, 0, 5, 0"
-                Command="{Binding DeleteInventoryItemCommand}">
-            <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        </Button>
-        <Button x:Name="button2" Content="Edit" HorizontalAlignment="Right" Margin="0,0,65,0" Grid.Row="2" VerticalAlignment="Center" Width="75"
-                Command="{Binding EditInventoryItemCommand}"/>
-        <Button Content="Reset Order" Grid.Row="2" Width="80" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0, 0, 140, 0"
-                Command="{Binding ResetOrderCommand}" />
-        <DataGrid x:Name="dataGrid" Grid.Row="3" ItemsSource="{Binding FilteredInventoryItems}" HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" CanUserReorderColumns="False"
-                              SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False" Sorting="dataGrid_Sorting"
-                              CellEditEnding="MasterList_CellEditEnding" CanUserAddRows="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
-                <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="1*"/>
-                <DataGridTextColumn Header="Count" Binding="{Binding Path=Count, StringFormat=0.##}" Width="1*" />
-                <DataGridTemplateColumn x:Name="arrowColumn" Width="60">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*" />
-                                    <ColumnDefinition Width="1*" />
-                                </Grid.ColumnDefinitions>
-                                <Button Content="^" Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                                        Click="MoveUp_Click" CommandParameter="{Binding}"/>
-                                <Button Content="v" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                                        Click="MoveDown_Click" CommandParameter="{Binding}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-        <Button Grid.Row="4" Height ="25" Width="80" Content="Cancel" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding CancelCommand}" />
-        <Button Grid.Row="4" Height ="25" Width="80" Content="Save" HorizontalAlignment="Right" Margin="85, 0" Command="{Binding SaveCountCommand}" />
-        <Button Grid.Row="4" Height ="25" Width="80" Content="Reset" HorizontalAlignment="Left" Margin="5, 0" Command="{Binding ResetCountCommand}" />
-        <Expander Grid.Row="2" Grid.RowSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left" Width="250" Background="AliceBlue"
-                  Header="{Binding TotalValueMessage}">
-            <ItemsControl ItemsSource="{Binding CategoryPrices}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type parent:PriceExpanderItem}">
-                        <Grid Background="AliceBlue">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="1*" />
-                            </Grid.ColumnDefinitions>
-                            <Label x:Name="label" Grid.Column="0" Content="{Binding Label}" HorizontalAlignment="Left" Margin="20,0,0,0" Grid.Row="2" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Path=Price, StringFormat=c}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Expander>
+        <DatePicker Grid.Row="1" SelectedDate="{Binding InventoryDate}" Height="25" Width="130" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Margin="10, 35, 0, 0"/>
+        <ContentControl Content="{Binding InventoryControl}" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <Button Grid.Row="2" Height ="25" Width="80" Content="Cancel" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding CancelCommand}" />
+        <Button Grid.Row="2" Height ="25" Width="80" Content="Save" HorizontalAlignment="Right" Margin="85, 0" Command="{Binding SaveCountCommand}" />
+        <Button Grid.Row="2" Height ="25" Width="80" Content="Reset" HorizontalAlignment="Left" Margin="5, 0" Command="{Binding ResetCountCommand}" />
     </Grid>
 </UserControl>

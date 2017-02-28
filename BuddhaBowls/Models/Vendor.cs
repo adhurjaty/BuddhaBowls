@@ -78,7 +78,7 @@ namespace BuddhaBowls.Models
                 List<InventoryItem> allItems = ModelHelper.InstantiateList<InventoryItem>(tableName, false);
                 foreach (InventoryItem item in allItems.Where(x => !inventoryItems.Select(y => y.Id).Contains(x.Id)))
                 {
-                    _dbInt.DeleteRecord(tableName, new Dictionary<string, string>() { { "Id", item.Id.ToString() } });
+                    RemoveInvItem(item);
                 }
             }
         }
@@ -94,6 +94,11 @@ namespace BuddhaBowls.Models
             {
                 _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict());
             }
+        }
+
+        public void RemoveInvItem(InventoryItem item)
+        {
+            _dbInt.DeleteRecord(GetPriceTableName(), new Dictionary<string, string>() { { "Id", item.Id.ToString() } });
         }
 
         private string GetOrderFile()
