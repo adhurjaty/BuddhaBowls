@@ -17,7 +17,6 @@ namespace BuddhaBowls.UserControls
         public NewInventory(NewInventoryVM viewModel) : this()
         {
             DataContext = viewModel;
-            viewModel.InitializeControl(this);
         }
 
         private void MasterList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)

@@ -13,9 +13,9 @@
         </Grid.RowDefinitions>
         <Label Content="{Binding Header}" Grid.Row="0" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"
                Margin="0, 5" />
-        <Button x:Name="button1" Content="{Binding SecondaryPageName}" HorizontalAlignment="Center" Margin="-100,10,0,0" Grid.Row="0"
+        <Button x:Name="button1" Content="{Binding PrimaryPageName}" HorizontalAlignment="Center" Margin="-100,10,0,0" Grid.Row="0"
                 VerticalAlignment="Bottom" Width="100" Command="{Binding PrimaryCommand}"/>
-        <Button x:Name="button2" Content="{Binding PrimaryPageName}" HorizontalAlignment="Center" Margin="100,10,0,0" Grid.Row="0"
+        <Button x:Name="button2" Content="{Binding SecondaryPageName}" HorizontalAlignment="Center" Margin="100,10,0,0" Grid.Row="0"
                 VerticalAlignment="Bottom" Width="100" Command="{Binding SecondaryCommand}"/>
         <ContentControl Content="{Binding TabControl}" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
     </Grid>

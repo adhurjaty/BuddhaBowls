@@ -86,8 +86,15 @@ namespace BuddhaBowls
             SetDefaultValues();
             VendorList = new ObservableCollection<VendorInfo>();
 
-            AddVendorCommand = new RelayCommand(AddVendor);
-            DeleteVendorCommand = new RelayCommand(DeleteVendor, x => SelectedItem != null);
+            InitICommand();
+        }
+
+        public NewInventoryItemWizard(InventoryItem item) : base()
+        {
+            Item = item;
+
+            InitVendors();
+            InitICommand();
         }
 
         #region ICommand Helpers
@@ -125,12 +132,32 @@ namespace BuddhaBowls
 
         #region Initializers
 
+        private void InitICommand()
+        {
+            AddVendorCommand = new RelayCommand(AddVendor);
+            DeleteVendorCommand = new RelayCommand(DeleteVendor, x => SelectedItem != null);
+        }
+
         private void SetDefaultValues()
         {
             Item.RecipeUnitConversion = 1;
         }
 
         #endregion
+
+        private void InitVendors()
+        {
+            Dictionary<Vendor, InventoryItem> vendorDict = _models.GetVendorsFromItem(Item);
+            VendorList = new ObservableCollection<VendorInfo>();
+
+            foreach(KeyValuePair<Vendor, InventoryItem> kvp in vendorDict)
+            {
+                Vendor v = kvp.Key;
+                InventoryItem invItem = kvp.Value;
+
+                VendorList.Add(new VendorInfo(v, invItem));
+            }
+        }
 
         protected override void SetWizardStep()
         {
@@ -189,6 +216,14 @@ namespace BuddhaBowls
         public VendorInfo(Vendor vendor) : this()
         {
             Vendor = vendor.Name;
+        }
+
+        public VendorInfo(Vendor vendor, InventoryItem item) : this()
+        {
+            Vendor = vendor.Name;
+            Price = item.LastPurchasedPrice;
+            PurchasedUnit = item.PurchasedUnit;
+            Conversion = item.Conversion;
         }
     }
 }

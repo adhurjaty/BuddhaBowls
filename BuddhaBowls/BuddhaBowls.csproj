@@ -186,6 +186,7 @@
     <Compile Include="ViewModels\ChangeableTabVM.cs" />
     <Compile Include="ViewModels\CompareInvVM.cs" />
     <Compile Include="ViewModels\EditRecipeVM.cs" />
+    <Compile Include="ViewModels\InventoryListVM.cs" />
     <Compile Include="ViewModels\ModalVM.cs" />
     <Compile Include="ViewModels\NewInventoryVM.cs" />
     <Compile Include="ViewModels\InventoryTabVM.cs" />

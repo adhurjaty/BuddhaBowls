@@ -21,7 +21,7 @@ namespace BuddhaBowls.UserControls
     /// </summary>
     public partial class InventoryListControl : UserControl
     {
-        public InventoryListControl(TabVM context)
+        public InventoryListControl(InventoryListVM context)
         {
             InitializeComponent();
             DataContext = context;
@@ -41,13 +41,13 @@ namespace BuddhaBowls.UserControls
         {
             TextBox textBox = FilterItemBox;
 
-            ((TabVM)DataContext).FilterItems(textBox.Text);
+            ((InventoryListVM)DataContext).FilterItems(textBox.Text);
         }
 
         private void MasterList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             SetBlankToZero((TextBox)e.EditingElement);
-            ((NewInventoryVM)DataContext).InventoryItemCountChanged();
+            ((InventoryListVM)DataContext).InventoryItemCountChanged();
         }
 
         private void SetBlankToZero(TextBox tb)
@@ -58,12 +58,12 @@ namespace BuddhaBowls.UserControls
 
         private void MoveUp_Click(object sender, RoutedEventArgs e)
         {
-            ((InventoryTabVM)DataContext).MoveUp((InventoryItem)((Button)sender).CommandParameter);
+            ((InventoryListVM)DataContext).MoveUp((InventoryItem)((Button)sender).CommandParameter);
         }
 
         private void MoveDown_Click(object sender, RoutedEventArgs e)
         {
-            ((InventoryTabVM)DataContext).MoveDown((InventoryItem)((Button)sender).CommandParameter);
+            ((InventoryListVM)DataContext).MoveDown((InventoryItem)((Button)sender).CommandParameter);
 
         }
 

@@ -130,6 +130,21 @@ namespace BuddhaBowls.Services
             InventoryItems.Add(item);
         }
 
+        public Dictionary<Vendor, InventoryItem> GetVendorsFromItem(InventoryItem item)
+        {
+            Dictionary<Vendor, InventoryItem> vendorDict = new Dictionary<Vendor, InventoryItem>();
+            foreach(Vendor v in Vendors)
+            {
+                InventoryItem vendorItem = v.GetFromPriceList().FirstOrDefault(x => x.Id == item.Id);
+                if(vendorItem != null)
+                {
+                    vendorDict[v] = vendorItem;
+                }
+            }
+
+            return vendorDict;
+        }
+
         private void SetInventoryCategories()
         {
             ItemCategories = new HashSet<string>();

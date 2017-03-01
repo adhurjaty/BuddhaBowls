@@ -98,15 +98,14 @@ namespace BuddhaBowls
 
         #region ICommand Bindings and Can Execute
         // Plus button in Master invententory list form
-        public ICommand AddInventoryCommand { get; set; }
+        public ICommand AddCommand { get; set; }
         // Minus button in Master invententory list form
-        public ICommand DeleteInventoryCommand { get; set; }
+        public ICommand DeleteCommand { get; set; }
         // View button in Master invententory list form
-        public ICommand ViewInventoryCommand { get; set; }
+        public ICommand ViewCommand { get; set; }
         // Compare button
         public ICommand CompareCommand { get; set; }
         public ICommand InvListCommand { get; set; }
-        public ICommand AddInvCommand { get; set; }
 
         public bool DeleteEditCanExecute
         {
@@ -128,12 +127,11 @@ namespace BuddhaBowls
             PrimaryPageName = "Items";
             SecondaryPageName = "History";
 
-            AddInventoryCommand = new RelayCommand(StartNewInventory, x => DBConnection);
-            DeleteInventoryCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute && DBConnection);
-            ViewInventoryCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute && DBConnection);
-            CompareCommand = new RelayCommand(CompareInvetories, x => CompareCanExecute && DBConnection);
+            AddCommand = new RelayCommand(StartNewInventory, x => DBConnection);
+            DeleteCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute && DBConnection);
+            ViewCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute && DBConnection);
+            CompareCommand = new RelayCommand(CompareInventories, x => CompareCanExecute && DBConnection);
             InvListCommand = new RelayCommand(GenerateInvList, x => DBConnection);
-            AddInvCommand = new RelayCommand(NewInvItem);
 
             if(DBConnection)
             {
@@ -186,7 +184,7 @@ namespace BuddhaBowls
         /// Triggered by the Compare Inv button - opens a new temp tab for comparison
         /// </summary>
         /// <param name="obj"></param>
-        private void CompareInvetories(object obj)
+        private void CompareInventories(object obj)
         {
             Inventory[] invs = SelectedMultiInventories.OrderBy(x => x.Date).ToArray();
             CompareInvVM tabVM = new CompareInvVM(invs[0], invs[1]);
@@ -224,13 +222,6 @@ namespace BuddhaBowls
                 MessageBox.Show("Excel process currently running. If you don't know what this means, hit OK and restart the application", "Excel Warning", MessageBoxButton.OK);
             }
         }
-
-        private void NewInvItem(object obj)
-        {
-            NewInventoryItemWizard wizard = new NewInventoryItemWizard();
-            wizard.Add("New Item");
-        }
-
         #endregion
 
         #region Initializers
@@ -271,49 +262,6 @@ namespace BuddhaBowls
             InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
         }
 
-        /// <summary>
-        /// Filter list of inventory items based on the string in the filter box above datagrids
-        /// </summary>
-        /// <param name="filterStr"></param>
-        public override void FilterItems(string filterStr)
-        {
-            if(_pageState != PageState.Primary)
-            {
-                throw new Exception("How did you get here?");
-            }
-
-            if (string.IsNullOrWhiteSpace(filterStr))
-                ((InventoryListControl)TabControl).ShowArrowColumn();
-            else
-                ((InventoryListControl)TabControl).HideArrowColumn();
-            FilteredInventoryItems = ParentContext.FilterInventoryItems(filterStr, _models.InventoryItems.Select(x => (IItem)x));
-        }
-
-        public void MoveDown(IItem item)
-        {
-            MoveInList(item, false);
-        }
-
-        public void MoveUp(IItem item)
-        {
-            MoveInList(item, true);
-        }
-
-        private void MoveInList(IItem item, bool up)
-        {
-            List<IItem> orderedList = FilteredInventoryItems.ToList();
-            int idx = orderedList.IndexOf(item);
-            orderedList.RemoveAt(idx);
-
-            if (idx > 0 && up)
-                orderedList.Insert(idx - 1, item);
-            if (idx < orderedList.Count - 1 && !up)
-                orderedList.Insert(idx + 1, item);
-
-            FilteredInventoryItems = new ObservableCollection<IItem>(orderedList);
-            SaveInvOrder();
-        }
-
         #endregion
 
         protected override void ChangePageState(PageState state)
@@ -323,7 +271,8 @@ namespace BuddhaBowls
             switch(state)
             {
                 case PageState.Primary:
-                    TabControl = new InventoryListControl(this);
+                    InventoryListVM invVM = new InventoryListVM();
+                    TabControl = invVM.TabControl;
                     break;
                 case PageState.Secondary:
                     TabControl = new InventoryHistoryControl(this);
@@ -331,16 +280,6 @@ namespace BuddhaBowls
                 default:
                     break;
             }
-        }
-
-        private void SaveInvOrder()
-        {
-            Properties.Settings.Default.InventoryOrder = FilteredInventoryItems.Select(x => x.Name).ToList();
-            Properties.Settings.Default.Save();
-
-            string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
-            Directory.CreateDirectory(dir);
-            File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), Properties.Settings.Default.InventoryOrder);
         }
 
     }

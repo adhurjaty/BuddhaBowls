@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BuddhaBowls.UserControls"
+             xmlns:helper="clr-namespace:BuddhaBowls.Helpers"
              xmlns:parent="clr-namespace:BuddhaBowls"
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -21,19 +22,19 @@
         <TextBox x:Name="FilterItemBox" Grid.Row="0" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom"
                  Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
         <Button Grid.Row="1" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" Margin="0, 0, 35, 0"
-                Command="{Binding AddInventoryItemCommand}">
+                Command="{Binding AddCommand}">
             <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
         <Button Grid.Row="1" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" Margin="0, 0, 5, 0"
-                Command="{Binding DeleteInventoryItemCommand}">
+                Command="{Binding DeleteCommand}">
             <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
         <Button x:Name="button2" Content="Edit" HorizontalAlignment="Right" Margin="0,0,65,0" Grid.Row="1" VerticalAlignment="Center" Width="75"
-                Command="{Binding EditInventoryItemCommand}"/>
+                Command="{Binding EditCommand}"/>
         <Button Content="Reset Order" Grid.Row="1" Width="80" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0, 0, 140, 0"
-                Command="{Binding ResetOrderCommand}" />
-        <Expander Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Top" HorizontalAlignment="Left" Width="250" Background="AliceBlue"
-                  Header="{Binding TotalValueMessage}" IsExpanded="False">
+                Command="{Binding ResetCommand}" />
+        <Expander Grid.Row="1" Grid.RowSpan="3" VerticalAlignment="Top" HorizontalAlignment="Left" Width="250" Background="AliceBlue"
+                  Header="{Binding TotalValueMessage}" IsExpanded="False" Panel.ZIndex="1">
             <ItemsControl ItemsSource="{Binding CategoryPrices}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type parent:PriceExpanderItem}">
@@ -49,14 +50,19 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Expander>
-        <DataGrid x:Name="dataGrid" Grid.Row="2" ItemsSource="{Binding FilteredInventoryItems}" HorizontalAlignment="Stretch"
+        <FrameworkElement Visibility="Collapsed"/>
+        <DataGrid x:Name="dataGrid" Grid.Row="2" ItemsSource="{Binding FilteredItems}" HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" CanUserReorderColumns="False"
                               SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False" Sorting="dataGrid_Sorting"
-                              CellEditEnding="MasterList_CellEditEnding" CanUserAddRows="False">
+                              CellEditEnding="MasterList_CellEditEnding" CanUserAddRows="False" Panel.ZIndex="0">
+            <DataGrid.Resources>
+                <helper:BindingProxy x:Key="proxy" Data="{Binding}" />
+            </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
                 <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="1*"/>
-                <DataGridTextColumn Header="Count" Binding="{Binding Path=Count, StringFormat=0.##}" Width="1*" />
+                <DataGridTextColumn Header="Count" Binding="{Binding Path=Count, StringFormat=0.##}" Width="1*"
+                                    IsReadOnly="{Binding Path=Data.CountReadOnly, Source={StaticResource proxy}}"/>
                 <DataGridTemplateColumn x:Name="arrowColumn" Width="60">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

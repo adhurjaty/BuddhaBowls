@@ -25,7 +25,7 @@ namespace BuddhaBowls
         private List<InventoryItem> _inventoryItems;
         private Inventory _inventory;
         private bool _databaseFound;
-        NewInventory _control;
+        private InventoryListVM _invListVM;
 
         #region Data Bindings
         private string _header;
@@ -208,12 +208,6 @@ namespace BuddhaBowls
         public ICommand ResetCountCommand { get; set; }
         // Change display order button in Master inventory form
         public ICommand ChangeOrderCommand { get; set; }
-        // Inventory section button
-        //public ICommand InventorySectionCommand { get; set; }
-        //// Batch Items section button
-        //public ICommand BatchSectionCommand { get; set; }
-        //// Menu Item section button
-        //public ICommand MenuSectionCommand { get; set; }
         // Cancel button to close tab
         public ICommand CancelCommand { get; set; }
         public ICommand ResetOrderCommand { get; set; }
@@ -250,17 +244,11 @@ namespace BuddhaBowls
         {
             _inventoryItems = _models.InventoryItems;
             _tabControl = new NewInventory(this);
-            InventoryControl = new InventoryListControl(this);
-            InventoryControl.HideArrowColumn();
+            _invListVM = new InventoryListVM(InventoryItemCountChanged);
+            InventoryControl = _invListVM.TabControl;
 
-            AddInventoryItemCommand = new RelayCommand(AddInventoryItem, x => AddItemCanExecute);
-            DeleteInventoryItemCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute);
-            EditInventoryItemCommand = new RelayCommand(EditInventoryItem, x => DeleteEditCanExecute);
-            SaveAddEditCommand = new RelayCommand(SaveAddEdit, x => SaveAddEditCanExecute);
-            CancelAddEditCommand = new RelayCommand(CancelAddEdit);
             SaveCountCommand = new RelayCommand(SaveNewInventory, x => ChangeCountCanExecute);
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
-            //ChangeOrderCommand = new RelayCommand(StartChangeOrder);
             CancelCommand = new RelayCommand(CancelInventory);
             ResetOrderCommand = new RelayCommand(ResetOrder);
 
@@ -462,11 +450,6 @@ namespace BuddhaBowls
             return false;
         }
 
-        public void InitializeControl(NewInventory control)
-        {
-            _control = control;
-        }
-
         /// <summary>
         /// Display on the datagrids that the inventory items could not be found
         /// </summary>
@@ -558,11 +541,5 @@ namespace BuddhaBowls
         //            return null;
         //    }
         //}
-    }
-
-    public class PriceExpanderItem
-    {
-        public string Label { get; set; }
-        public float Price { get; set; }
     }
 }
