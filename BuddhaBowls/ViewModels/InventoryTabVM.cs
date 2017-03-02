@@ -23,6 +23,8 @@ namespace BuddhaBowls
     /// </summary>
     public class InventoryTabVM : ChangeableTabVM
     {
+        private InventoryListVM _invVM;
+
         #region Content Binders
         // Inventory item selected in the datagrids for Orders and Master List
         private Inventory _selectedInventory;
@@ -124,7 +126,7 @@ namespace BuddhaBowls
         public InventoryTabVM() : base()
         {
             Header = "Inventory";
-            PrimaryPageName = "Items";
+            PrimaryPageName = "Current";
             SecondaryPageName = "History";
 
             AddCommand = new RelayCommand(StartNewInventory, x => DBConnection);
@@ -135,7 +137,7 @@ namespace BuddhaBowls
 
             if(DBConnection)
             {
-                RefreshInventoryList();
+                Refresh();
             }
             else
             {
@@ -176,7 +178,7 @@ namespace BuddhaBowls
                 _models.Inventories.Remove(SelectedInventory);
                 SelectedInventory.Destroy();
                 SelectedInventory = null;
-                RefreshInventoryList();
+                Refresh();
             }
         }
 
@@ -229,7 +231,7 @@ namespace BuddhaBowls
         {
             if (_models.Inventories != null)
             {
-                RefreshInventoryList();
+                Refresh();
                 return true;
             }
 
@@ -257,9 +259,11 @@ namespace BuddhaBowls
             ChangeCountCanExecute = true;
         }
 
-        public void RefreshInventoryList()
+        public void Refresh()
         {
             InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
+            if(_invVM != null)
+                _invVM.Refresh();
         }
 
         #endregion
@@ -271,8 +275,8 @@ namespace BuddhaBowls
             switch(state)
             {
                 case PageState.Primary:
-                    InventoryListVM invVM = new InventoryListVM();
-                    TabControl = invVM.TabControl;
+                    _invVM = new InventoryListVM();
+                    TabControl = _invVM.TabControl;
                     break;
                 case PageState.Secondary:
                     TabControl = new InventoryHistoryControl(this);

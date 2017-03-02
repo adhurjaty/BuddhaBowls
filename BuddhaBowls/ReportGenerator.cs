@@ -216,7 +216,7 @@ namespace BuddhaBowls
             foreach (IGrouping<string, InventoryItem> invGroup in MainHelper.CategoryGrouping(_models.InventoryItems))
             {
                 string category = invGroup.Key;
-                long categoryColor = _models.GetColorFromCategory(category.ToUpper());
+                long categoryColor = _models.GetColorFromCategory(category);
 
                 Excel.Range purchaseRange = sheet.Range[sheet.Cells[currentRow, 2], sheet.Cells[currentRow, 3]];
                 purchaseRange.Merge();
@@ -243,7 +243,7 @@ namespace BuddhaBowls
                 sheet.Cells[currentRow, 1].Interior.Color = categoryColor;
 
                 // category sub-headers
-                for(int i = 0; i < subHeader.Length; i++)
+                for (int i = 0; i < subHeader.Length; i++)
                 {
                     sheet.Cells[currentRow, 2 + i] = subHeader[i];
                     sheet.Cells[currentRow, 2 + i].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
@@ -379,8 +379,8 @@ namespace BuddhaBowls
                     sheet.Cells[i + 1, 2] = contents[i][1];
                     sheet.Cells[i + 1, 5] = contents[i][2];
 
-                    range1.Interior.Color = _models.GetColorFromCategory(contents[i][0].ToUpper());
-                    range2.Interior.Color = _models.GetColorFromCategory(contents[i][0].ToUpper());
+                    range1.Interior.Color = _models.GetColorFromCategory(contents[i][0]);
+                    range2.Interior.Color = _models.GetColorFromCategory(contents[i][0]);
 
                     sectionRows[0] = i;
                     sectionIdx = 1;

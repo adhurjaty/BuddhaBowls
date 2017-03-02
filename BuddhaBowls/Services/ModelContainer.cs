@@ -87,9 +87,10 @@ namespace BuddhaBowls.Services
 
         public long GetColorFromCategory(string category)
         {
-            if(_categoryColors.Keys.Contains(category.ToUpper()))
+            string key = _categoryColors.Keys.FirstOrDefault(x => x.ToUpper() == category.ToUpper());
+            if (!string.IsNullOrEmpty(key))
             {
-                return MainHelper.ColorFromString(_categoryColors[category.ToUpper()]);
+                return MainHelper.ColorFromString(_categoryColors[key]);
             }
 
             return MainHelper.ColorFromString(GlobalVar.BLANK_COLOR);
@@ -121,13 +122,20 @@ namespace BuddhaBowls.Services
             return (new HashSet<string>(InventoryItems.Select(x => x.PurchasedUnit))).ToList();
         }
 
-        public void AddInventoryItem(InventoryItem item)
+        public void AddUpdateInventoryItem(InventoryItem item)
         {
-            Properties.Settings.Default.InventoryOrder.Add(item.Name);
-            Properties.Settings.Default.Save();
+            if(InventoryItems.Select(x => x.Id).Contains(item.Id))
+            {
+                item.Update();
+            }
+            else
+            {
+                Properties.Settings.Default.InventoryOrder.Add(item.Name);
+                Properties.Settings.Default.Save();
 
-            item.Id = item.Insert();
-            InventoryItems.Add(item);
+                item.Id = item.Insert();
+                InventoryItems.Add(item);
+            }
         }
 
         public Dictionary<Vendor, InventoryItem> GetVendorsFromItem(InventoryItem item)
@@ -135,10 +143,14 @@ namespace BuddhaBowls.Services
             Dictionary<Vendor, InventoryItem> vendorDict = new Dictionary<Vendor, InventoryItem>();
             foreach(Vendor v in Vendors)
             {
-                InventoryItem vendorItem = v.GetFromPriceList().FirstOrDefault(x => x.Id == item.Id);
-                if(vendorItem != null)
+                List<InventoryItem> items = v.GetFromPriceList();
+                if (items != null)
                 {
-                    vendorDict[v] = vendorItem;
+                    InventoryItem vendorItem = items.FirstOrDefault(x => x.Id == item.Id);
+                    if (vendorItem != null)
+                    {
+                        vendorDict[v] = vendorItem;
+                    }
                 }
             }
 
@@ -166,7 +178,7 @@ namespace BuddhaBowls.Services
             string[] fieldNames = fields.Select(x => x.Name).ToArray();
             foreach (string category in ItemCategories)
             {
-                int idx = Array.IndexOf(fieldNames, category.Replace(' ', '_') + COLOR);
+                int idx = Array.IndexOf(fieldNames, category.ToUpper().Replace(' ', '_') + COLOR);
                 if (idx > -1)
                 {
                     _categoryColors[category.ToUpper()] = (string)fields[idx].GetValue(null);

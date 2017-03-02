@@ -31,8 +31,12 @@
         </Button>
         <Button x:Name="button2" Content="Edit" HorizontalAlignment="Right" Margin="0,0,65,0" Grid.Row="1" VerticalAlignment="Center" Width="75"
                 Command="{Binding EditCommand}"/>
-        <Button Content="Reset Order" Grid.Row="1" Width="80" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0, 0, 140, 0"
+        <Button Content="Reset Order" Grid.Row="0" Width="80" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0, 0, -280, 0"
                 Command="{Binding ResetCommand}" />
+        <Button Content="Edit Order" Grid.Row="1" Width="80" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0, 0, 140, 0"
+                Command="{Binding EditOrderCommand}" Visibility="{Binding EditOrderVisibility}" />
+        <Button Content="Save Order" Grid.Row="1" Width="80" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0, 0, 140, 0"
+                Command="{Binding SaveOrderCommand}" Visibility="{Binding SaveOrderVisibility}" />
         <Expander Grid.Row="1" Grid.RowSpan="3" VerticalAlignment="Top" HorizontalAlignment="Left" Width="250" Background="AliceBlue"
                   Header="{Binding TotalValueMessage}" IsExpanded="False" Panel.ZIndex="1">
             <ItemsControl ItemsSource="{Binding CategoryPrices}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -53,16 +57,27 @@
         <FrameworkElement Visibility="Collapsed"/>
         <DataGrid x:Name="dataGrid" Grid.Row="2" ItemsSource="{Binding FilteredItems}" HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" CanUserReorderColumns="False"
-                              SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False" Sorting="dataGrid_Sorting"
-                              CellEditEnding="MasterList_CellEditEnding" CanUserAddRows="False" Panel.ZIndex="0">
+                              SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False" CanUserSortColumns="False"
+                              CellEditEnding="MasterList_CellEditEnding" CanUserAddRows="False" Panel.ZIndex="0" >
             <DataGrid.Resources>
                 <helper:BindingProxy x:Key="proxy" Data="{Binding}" />
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
-                <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="1*"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
+                <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="2*"/>
+                <DataGridTemplateColumn Header="Vendor" Width="3*" Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Vendors}" SelectedItem="{Binding SelectedVendor}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Pack Size" Binding="{Binding Path=PurchasedUnit, Mode=OneWay}" Width="2*"
+                                    Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}" />
+                <DataGridTextColumn Header="Last Price" Binding="{Binding Path=LastPurchasedPrice, StringFormat=c, Mode=OneWay}" Width="2*"
+                                    Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}" />
                 <DataGridTextColumn Header="Count" Binding="{Binding Path=Count, StringFormat=0.##}" Width="1*"
-                                    IsReadOnly="{Binding Path=Data.CountReadOnly, Source={StaticResource proxy}}"/>
+                                    Visibility="{Binding Path=Data.NewInvVisibility, Source={StaticResource proxy}}" />
                 <DataGridTemplateColumn x:Name="arrowColumn" Width="60">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

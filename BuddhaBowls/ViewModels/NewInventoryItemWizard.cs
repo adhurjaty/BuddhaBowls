@@ -13,6 +13,8 @@ namespace BuddhaBowls
 {
     public class NewInventoryItemWizard : WizardVM
     {
+        private bool _newItem;
+
         #region Content Binders
 
         private InventoryItem _item;
@@ -82,6 +84,7 @@ namespace BuddhaBowls
 
         public NewInventoryItemWizard() : base()
         {
+            _newItem = true;
             Item = new InventoryItem();
             SetDefaultValues();
             VendorList = new ObservableCollection<VendorInfo>();
@@ -91,8 +94,10 @@ namespace BuddhaBowls
 
         public NewInventoryItemWizard(InventoryItem item) : base()
         {
+            _newItem = false;
             Item = item;
 
+            Yield = (float)item.Yield * 100;
             InitVendors();
             InitICommand();
         }
@@ -115,11 +120,14 @@ namespace BuddhaBowls
         {
             if (ValidateInputs())
             {
-                _models.AddInventoryItem(Item);
+                _models.AddUpdateInventoryItem(Item);
 
                 foreach(VendorInfo v in VendorList)
                 {
                     Vendor vendor = _models.Vendors.First(x => x.Name == v.Vendor);
+                    Item.LastPurchasedPrice = v.Price;
+                    Item.Conversion = v.Conversion;
+                    Item.PurchasedUnit = v.PurchasedUnit;
                     vendor.AddInvItem(Item);
                 }
 
@@ -181,7 +189,7 @@ namespace BuddhaBowls
         {
             if(_currentStep == 0)
             {
-                if (_models.InventoryItems.Select(x => x.Name.ToUpper()).Contains(Item.Name.ToUpper()))
+                if (_models.InventoryItems.Select(x => x.Name.ToUpper()).Contains(Item.Name.ToUpper()) && _newItem)
                     return false;
                 return !string.IsNullOrEmpty(Item.Name) &&
                        !string.IsNullOrEmpty(Item.Category) &&

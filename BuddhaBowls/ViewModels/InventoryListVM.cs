@@ -17,6 +17,8 @@ namespace BuddhaBowls
     public class InventoryListVM : TabVM
     {
         private CountChangedDel CountChanged;
+        private List<InventoryItem> _inventoryItems;
+        private Inventory _inventory;
 
         public InventoryListControl TabControl { get; set; }
 
@@ -106,6 +108,46 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("CountReadOnly");
             }
         }
+
+        private Visibility _editOrderVisibility = Visibility.Visible;
+        public Visibility EditOrderVisibility
+        {
+            get
+            {
+                return _editOrderVisibility;
+            }
+            set
+            {
+                _editOrderVisibility = value;
+                if (value == Visibility.Visible)
+                    _saveOrderVisibility = Visibility.Hidden;
+                else
+                    _saveOrderVisibility = Visibility.Visible;
+                    
+                NotifyPropertyChanged("EditOrderVisibility");
+                NotifyPropertyChanged("SaveOrderVisibility");
+            }
+        }
+
+        private Visibility _saveOrderVisibility = Visibility.Hidden;
+        public Visibility SaveOrderVisibility
+        {
+            get
+            {
+                return _saveOrderVisibility;
+            }
+            set
+            {
+                _saveOrderVisibility = value;
+                if (value == Visibility.Visible)
+                    _editOrderVisibility = Visibility.Hidden;
+                else
+                    _editOrderVisibility = Visibility.Visible;
+
+                NotifyPropertyChanged("EditOrderVisibility");
+                NotifyPropertyChanged("SaveOrderVisibility");
+            }
+        }
         #endregion
 
         #region ICommand and CanExecute
@@ -114,27 +156,40 @@ namespace BuddhaBowls
         public ICommand DeleteCommand { get; set; }
         public ICommand EditCommand { get; set; }
         public ICommand ResetCommand { get; set; }
+        public ICommand EditOrderCommand { get; set; }
+        public ICommand SaveOrderCommand { get; set; }
 
         #endregion
 
         public InventoryListVM() : base()
         {
-            FilteredItems = new ObservableCollection<InventoryItem>(_models.InventoryItems);
+            _inventoryItems = _models.InventoryItems;
+            FilteredItems = new ObservableCollection<InventoryItem>(_inventoryItems);
             TabControl = new InventoryListControl(this);
             UpdateInvValue();
             CountReadOnly = true;
+            TabControl.HideArrowColumn();
 
             AddCommand = new RelayCommand(AddInventoryItem);
             DeleteCommand = new RelayCommand(DeleteInventoryItem, x => SelectedInventoryItem != null);
             EditCommand = new RelayCommand(EditInventoryItem, x => SelectedInventoryItem != null);
             ResetCommand = new RelayCommand(ResetList);
+            EditOrderCommand = new RelayCommand(StartEditOrder);
+            SaveOrderCommand = new RelayCommand(SaveOrder);
         }
 
         public InventoryListVM(CountChangedDel countDel) : this()
         {
             CountChanged = countDel;
             CountReadOnly = false;
-            TabControl.HideArrowColumn();
+        }
+
+        public InventoryListVM(CountChangedDel countDel, Inventory inv) : this(countDel)
+        {
+            _inventory = inv;
+            _inventoryItems = inv.GetInventoryHistory();
+            FilteredItems = new ObservableCollection<InventoryItem>(_inventoryItems);
+            UpdateInvValue();
         }
 
         #region ICommand Helpers
@@ -170,6 +225,18 @@ namespace BuddhaBowls
             FilterItems("");
         }
 
+        private void StartEditOrder(object obj)
+        {
+            TabControl.ShowArrowColumn();
+            SaveOrderVisibility = Visibility.Visible;
+        }
+
+        private void SaveOrder(object obj)
+        {
+            TabControl.HideArrowColumn();
+            EditOrderVisibility = Visibility.Visible;
+        }
+
         #endregion
 
         #region Initializers
@@ -184,11 +251,16 @@ namespace BuddhaBowls
         /// <param name="filterStr"></param>
         public override void FilterItems(string filterStr)
         {
-            if (string.IsNullOrWhiteSpace(filterStr) && CountReadOnly)
-                TabControl.ShowArrowColumn();
-            else
-                TabControl.HideArrowColumn();
-            FilteredItems = ParentContext.FilterInventoryItems(filterStr, _models.InventoryItems);
+            //if (string.IsNullOrWhiteSpace(filterStr) && CountReadOnly)
+            //    TabControl.ShowArrowColumn();
+            //else
+            //    TabControl.HideArrowColumn();
+            FilteredItems = ParentContext.FilterInventoryItems(filterStr, _inventoryItems);
+        }
+
+        public void Refresh()
+        {
+            FilteredItems = new ObservableCollection<InventoryItem>(ParentContext.SortItems(_inventoryItems));
         }
 
         public void MoveDown(InventoryItem item)
@@ -235,20 +307,69 @@ namespace BuddhaBowls
             UpdateInvValue();
         }
 
+        /// <summary>
+        /// Resets the inventory count to the saved value before changing the datagrid
+        /// </summary>
+        /// <param name="obj"></param>
+        public void ResetCount()
+        {
+            FilterText = "";
+            foreach (InventoryItem item in FilteredItems)
+            {
+                item.Count = item.GetLastCount();
+            }
+            Refresh();
+        }
+
         private void UpdateInvValue()
         {
-            //InventoryValue = FilteredInventoryItems.Sum(x => ((InventoryItem)x).LastPurchasedPrice * x.Count);
             List<PriceExpanderItem> items = new List<PriceExpanderItem>();
             TotalValueMessage = "Inventory Value: " + FilteredItems.Sum(x => x.LastPurchasedPrice * x.Count).ToString("c");
             foreach (string category in _models.ItemCategories)
             {
-                float value = _models.InventoryItems.Where(x => x.Category.ToUpper() == category.ToUpper()).Sum(x => x.LastPurchasedPrice * x.Count);
+                float value = _inventoryItems.Where(x => x.Category.ToUpper() == category.ToUpper()).Sum(x => x.LastPurchasedPrice * x.Count);
                 items.Add(new PriceExpanderItem() { Label = category + " Value:", Price = value });
             }
 
             CategoryPrices = new ObservableCollection<PriceExpanderItem>(items);
         }
         #endregion
+
+        /// <summary>
+        /// Called from New Inventory: saves the filtered items
+        /// </summary>
+        public void SaveNew(DateTime invDate)
+        {
+            ResetList(null);
+            foreach(InventoryItem item in FilteredItems)
+            {
+                item.Update();
+            }
+
+            Inventory inv = new Inventory(invDate);
+            inv.Id = inv.Insert(_inventoryItems);
+
+            if (_models.Inventories == null)
+                _models.Inventories = new List<Inventory>();
+
+            if (_models.Inventories.Count > 0 && _models.Inventories.Select(x => x.Date.Date).Contains(invDate.Date))
+            {
+                int idx = _models.Inventories.FindIndex(x => x.Date.Date == invDate.Date);
+                Inventory oldInv = _models.Inventories[idx];
+                inv.Id = oldInv.Id;
+                _models.Inventories[idx] = inv;
+            }
+            else
+            {
+                _models.Inventories.Add(inv);
+            }
+        }
+
+        public void SaveOld()
+        {
+            _inventory.Update(_inventoryItems);
+        }
+
     }
 
     public class PriceExpanderItem

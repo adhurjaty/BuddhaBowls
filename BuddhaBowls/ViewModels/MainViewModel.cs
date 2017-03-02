@@ -371,7 +371,7 @@ namespace BuddhaBowls
         public void Refresh()
         {
             OrderTab.RefreshOrderList();
-            InventoryTab.RefreshInventoryList();
+            InventoryTab.Refresh();
             VendorTab.RefreshVendorList();
             RecipeTab.RefreshList();
         }
