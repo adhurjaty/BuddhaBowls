@@ -3,8 +3,10 @@ using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,20 +14,20 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public delegate void CountChangedDel();
+    public delegate void StatusUpdatedDel();
 
     public class InventoryListVM : TabVM
     {
-        private CountChangedDel CountChanged;
-        private List<InventoryItem> _inventoryItems;
+        private StatusUpdatedDel CountChanged;
+        private List<VendorInventoryItem> _inventoryItems;
         private Inventory _inventory;
 
         public InventoryListControl TabControl { get; set; }
 
         #region Content Binders
 
-        private ObservableCollection<InventoryItem> _filteredItems;
-        public ObservableCollection<InventoryItem> FilteredItems
+        private ObservableCollection<VendorInventoryItem> _filteredItems;
+        public ObservableCollection<VendorInventoryItem> FilteredItems
         {
             get
             {
@@ -95,19 +97,19 @@ namespace BuddhaBowls
             }
         }
 
-        private bool _countReadOnly;
-        public bool CountReadOnly
-        {
-            get
-            {
-                return _countReadOnly;
-            }
-            set
-            {
-                _countReadOnly = value;
-                NotifyPropertyChanged("CountReadOnly");
-            }
-        }
+        //private bool _countReadOnly;
+        //public bool CountReadOnly
+        //{
+        //    get
+        //    {
+        //        return _countReadOnly;
+        //    }
+        //    set
+        //    {
+        //        _countReadOnly = value;
+        //        NotifyPropertyChanged("CountReadOnly");
+        //    }
+        //}
 
         private Visibility _editOrderVisibility = Visibility.Visible;
         public Visibility EditOrderVisibility
@@ -120,10 +122,16 @@ namespace BuddhaBowls
             {
                 _editOrderVisibility = value;
                 if (value == Visibility.Visible)
+                {
                     _saveOrderVisibility = Visibility.Hidden;
+                    ArrowVisibility = Visibility.Hidden;
+                }
                 else
+                {
                     _saveOrderVisibility = Visibility.Visible;
-                    
+                    ArrowVisibility = Visibility.Visible;
+                }
+
                 NotifyPropertyChanged("EditOrderVisibility");
                 NotifyPropertyChanged("SaveOrderVisibility");
             }
@@ -140,12 +148,89 @@ namespace BuddhaBowls
             {
                 _saveOrderVisibility = value;
                 if (value == Visibility.Visible)
+                {
                     _editOrderVisibility = Visibility.Hidden;
+                    ArrowVisibility = Visibility.Visible;
+                }
                 else
+                {
                     _editOrderVisibility = Visibility.Visible;
+                    ArrowVisibility = Visibility.Hidden;
+                }
 
                 NotifyPropertyChanged("EditOrderVisibility");
                 NotifyPropertyChanged("SaveOrderVisibility");
+            }
+        }
+
+        private Visibility _masterVisibility = Visibility.Hidden;
+        public Visibility MasterVisibility
+        {
+            get
+            {
+                return _masterVisibility;
+            }
+            set
+            {
+                _masterVisibility = value;
+                if (value == Visibility.Visible)
+                {
+                    _newInvVisibility = Visibility.Hidden;
+                }
+                else
+                {
+                    _newInvVisibility = Visibility.Visible;
+                    ArrowVisibility = Visibility.Hidden;
+                }
+
+                NotifyPropertyChanged("NewInvVisibility");
+                NotifyPropertyChanged("MasterVisibility");
+                NotifyPropertyChanged("EditOrderVisibility");
+                NotifyPropertyChanged("SaveOrderVisibility");
+            }
+        }
+
+        private Visibility _newInvVisibility = Visibility.Hidden;
+        public Visibility NewInvVisibility
+        {
+            get
+            {
+                return _newInvVisibility;
+            }
+            set
+            {
+                _newInvVisibility = value;
+                if (value == Visibility.Visible)
+                {
+                    _masterVisibility = Visibility.Hidden;
+                    _saveOrderVisibility = Visibility.Hidden;
+                    _editOrderVisibility = Visibility.Hidden;
+                    ArrowVisibility = Visibility.Hidden;
+                }
+                else
+                    _masterVisibility = Visibility.Visible;
+
+                NotifyPropertyChanged("MasterVisibility");
+                NotifyPropertyChanged("NewInvVisibility");
+                NotifyPropertyChanged("EditOrderVisibility");
+                NotifyPropertyChanged("SaveOrderVisibility");
+            }
+        }
+
+        private Visibility _arrowVisibility = Visibility.Hidden;
+        public Visibility ArrowVisibility
+        {
+            get
+            {
+                return _arrowVisibility;
+            }
+            set
+            {
+                if (_masterVisibility == Visibility.Visible)
+                {
+                    _arrowVisibility = value;
+                    NotifyPropertyChanged("ArrowVisibility");
+                }
             }
         }
         #endregion
@@ -163,12 +248,12 @@ namespace BuddhaBowls
 
         public InventoryListVM() : base()
         {
-            _inventoryItems = _models.InventoryItems;
-            FilteredItems = new ObservableCollection<InventoryItem>(_inventoryItems);
+            _inventoryItems = _models.InventoryItems.Select(x => new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList();
+            FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
             TabControl = new InventoryListControl(this);
             UpdateInvValue();
-            CountReadOnly = true;
-            TabControl.HideArrowColumn();
+            //CountReadOnly = true;
+            MasterVisibility = Visibility.Visible;
 
             AddCommand = new RelayCommand(AddInventoryItem);
             DeleteCommand = new RelayCommand(DeleteInventoryItem, x => SelectedInventoryItem != null);
@@ -178,17 +263,18 @@ namespace BuddhaBowls
             SaveOrderCommand = new RelayCommand(SaveOrder);
         }
 
-        public InventoryListVM(CountChangedDel countDel) : this()
+        public InventoryListVM(StatusUpdatedDel countDel) : this()
         {
             CountChanged = countDel;
-            CountReadOnly = false;
+            NewInvVisibility = Visibility.Visible;
+            //CountReadOnly = false;
         }
 
-        public InventoryListVM(CountChangedDel countDel, Inventory inv) : this(countDel)
+        public InventoryListVM(StatusUpdatedDel countDel, Inventory inv) : this(countDel)
         {
             _inventory = inv;
-            _inventoryItems = inv.GetInventoryHistory();
-            FilteredItems = new ObservableCollection<InventoryItem>(_inventoryItems);
+            _inventoryItems = inv.GetInventoryHistory().Select(x => new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList();
+            FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
             UpdateInvValue();
         }
 
@@ -227,13 +313,11 @@ namespace BuddhaBowls
 
         private void StartEditOrder(object obj)
         {
-            TabControl.ShowArrowColumn();
             SaveOrderVisibility = Visibility.Visible;
         }
 
         private void SaveOrder(object obj)
         {
-            TabControl.HideArrowColumn();
             EditOrderVisibility = Visibility.Visible;
         }
 
@@ -251,16 +335,14 @@ namespace BuddhaBowls
         /// <param name="filterStr"></param>
         public override void FilterItems(string filterStr)
         {
-            //if (string.IsNullOrWhiteSpace(filterStr) && CountReadOnly)
-            //    TabControl.ShowArrowColumn();
-            //else
-            //    TabControl.HideArrowColumn();
+            if (SaveOrderVisibility == Visibility.Visible)
+                SaveOrderVisibility = Visibility.Hidden;
             FilteredItems = ParentContext.FilterInventoryItems(filterStr, _inventoryItems);
         }
 
         public void Refresh()
         {
-            FilteredItems = new ObservableCollection<InventoryItem>(ParentContext.SortItems(_inventoryItems));
+            FilteredItems = new ObservableCollection<VendorInventoryItem>(ParentContext.SortItems(_inventoryItems));
         }
 
         public void MoveDown(InventoryItem item)
@@ -275,7 +357,7 @@ namespace BuddhaBowls
 
         private void MoveInList(InventoryItem item, bool up)
         {
-            List<InventoryItem> orderedList = FilteredItems.ToList();
+            List<InventoryItem> orderedList = FilteredItems.Select(x => (InventoryItem)x).ToList();
             int idx = orderedList.IndexOf(item);
             orderedList.RemoveAt(idx);
 
@@ -284,7 +366,7 @@ namespace BuddhaBowls
             if (idx < orderedList.Count - 1 && !up)
                 orderedList.Insert(idx + 1, item);
 
-            FilteredItems = new ObservableCollection<InventoryItem>(orderedList);
+            FilteredItems = new ObservableCollection<VendorInventoryItem>(orderedList.Select(x => (VendorInventoryItem)x));
             SaveInvOrder();
         }
 
@@ -347,7 +429,7 @@ namespace BuddhaBowls
             }
 
             Inventory inv = new Inventory(invDate);
-            inv.Id = inv.Insert(_inventoryItems);
+            inv.Id = inv.Insert(_inventoryItems.Select(x => (InventoryItem)x).ToList());
 
             if (_models.Inventories == null)
                 _models.Inventories = new List<Inventory>();
@@ -367,7 +449,7 @@ namespace BuddhaBowls
 
         public void SaveOld()
         {
-            _inventory.Update(_inventoryItems);
+            _inventory.Update(_inventoryItems.Select(x => (InventoryItem)x).ToList());
         }
 
     }
@@ -376,5 +458,71 @@ namespace BuddhaBowls
     {
         public string Label { get; set; }
         public float Price { get; set; }
+    }
+
+    public class VendorInventoryItem : InventoryItem, INotifyPropertyChanged
+    {
+        private Dictionary<Vendor, InventoryItem> _vendorDict;
+
+        // INotifyPropertyChanged event and method
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public List<Vendor> Vendors
+        {
+            get
+            {
+                return _vendorDict.Keys.ToList();
+            }
+        }
+
+        private Vendor _selectedVendor;
+        public Vendor SelectedVendor
+        {
+            get
+            {
+                return _selectedVendor;
+            }
+            set
+            {
+                if(value != null)
+                {
+                    _selectedVendor = value;
+                    NotifyPropertyChanged("SelectedVendor");
+                    UpdateVendorParams();
+                }
+            }
+        }
+
+        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict) : base()
+        {
+            _vendorDict = vendorDict;
+            SelectedVendor = vendorDict.Keys.FirstOrDefault();
+        }
+
+        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict, InventoryItem item) : this(vendorDict)
+        {
+            foreach(string property in item.GetPropertiesDB())
+            {
+                SetProperty(property, item.GetPropertyValue(property));
+            }
+            Id = item.Id;
+        }
+
+        private void UpdateVendorParams()
+        {
+            if (SelectedVendor != null)
+            {
+                InventoryItem item = _vendorDict[SelectedVendor];
+                LastPurchasedPrice = item.LastPurchasedPrice;
+                PurchasedUnit = item.PurchasedUnit;
+                NotifyPropertyChanged("LastPurchasedPrice");
+                NotifyPropertyChanged("PurchasedUnit");
+            }
+        }
     }
 }

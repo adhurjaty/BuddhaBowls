@@ -68,7 +68,8 @@
                 <DataGridTemplateColumn Header="Vendor" Width="3*" Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Vendors}" SelectedItem="{Binding SelectedVendor}"/>
+                            <ComboBox ItemsSource="{Binding Vendors}" SelectedItem="{Binding SelectedVendor}" SelectionChanged="ComboBox_Selected"
+                                      DisplayMemberPath="Name" Margin="0, 0, 10, 0"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -78,7 +79,7 @@
                                     Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}" />
                 <DataGridTextColumn Header="Count" Binding="{Binding Path=Count, StringFormat=0.##}" Width="1*"
                                     Visibility="{Binding Path=Data.NewInvVisibility, Source={StaticResource proxy}}" />
-                <DataGridTemplateColumn x:Name="arrowColumn" Width="60">
+                <DataGridTemplateColumn x:Name="arrowColumn" Width="60" Visibility="{Binding Path=Data.ArrowVisibility, Source={StaticResource proxy}}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>

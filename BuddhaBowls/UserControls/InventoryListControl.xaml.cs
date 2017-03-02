@@ -27,15 +27,15 @@ namespace BuddhaBowls.UserControls
             DataContext = context;
         }
 
-        public void HideArrowColumn()
-        {
-            arrowColumn.Visibility = Visibility.Collapsed;
-        }
+        //public void HideArrowColumn()
+        //{
+        //    arrowColumn.Visibility = Visibility.Collapsed;
+        //}
 
-        public void ShowArrowColumn()
-        {
-            arrowColumn.Visibility = Visibility.Visible;
-        }
+        //public void ShowArrowColumn()
+        //{
+        //    arrowColumn.Visibility = Visibility.Visible;
+        //}
 
         private void FilterItems_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -67,9 +67,9 @@ namespace BuddhaBowls.UserControls
 
         }
 
-        private void dataGrid_Sorting(object sender, DataGridSortingEventArgs e)
+        private void ComboBox_Selected(object sender, RoutedEventArgs e)
         {
-            HideArrowColumn();
+            ((VendorInventoryItem)((ComboBox)sender).DataContext).SelectedVendor = (Vendor)((ComboBox)sender).SelectedItem;
         }
     }
 }
