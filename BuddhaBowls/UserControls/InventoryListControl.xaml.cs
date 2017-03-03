@@ -44,10 +44,16 @@ namespace BuddhaBowls.UserControls
             ((InventoryListVM)DataContext).FilterItems(textBox.Text);
         }
 
-        private void MasterList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        private void MasterList_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-            SetBlankToZero((TextBox)e.EditingElement);
-            ((InventoryListVM)DataContext).InventoryItemCountChanged();
+            if (((DataGrid)sender).SelectedItem != null)
+            {
+                ((DataGrid)sender).RowEditEnding -= MasterList_RowEditEnding;
+                ((DataGrid)sender).CommitEdit();
+                //((DataGrid)sender).Items.Refresh();
+                ((DataGrid)sender).RowEditEnding += MasterList_RowEditEnding;
+                ((InventoryListVM)DataContext).RowEdited(((VendorInventoryItem)e.Row.Item));
+            }
         }
 
         private void SetBlankToZero(TextBox tb)

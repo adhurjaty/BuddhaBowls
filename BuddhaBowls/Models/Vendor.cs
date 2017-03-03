@@ -96,6 +96,11 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public void UpdateInvItem(InventoryItem item)
+        {
+            _dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id);
+        }
+
         public void RemoveInvItem(InventoryItem item)
         {
             _dbInt.DeleteRecord(GetPriceTableName(), new Dictionary<string, string>() { { "Id", item.Id.ToString() } });

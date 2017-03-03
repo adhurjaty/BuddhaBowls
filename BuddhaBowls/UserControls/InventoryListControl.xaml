@@ -58,7 +58,7 @@
         <DataGrid x:Name="dataGrid" Grid.Row="2" ItemsSource="{Binding FilteredItems}" HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" CanUserReorderColumns="False"
                               SelectedItem="{Binding SelectedInventoryItem}" AutoGenerateColumns="False" CanUserSortColumns="False"
-                              CellEditEnding="MasterList_CellEditEnding" CanUserAddRows="False" Panel.ZIndex="0" >
+                              RowEditEnding="MasterList_RowEditEnding" CanUserAddRows="False" Panel.ZIndex="0" >
             <DataGrid.Resources>
                 <helper:BindingProxy x:Key="proxy" Data="{Binding}" />
             </DataGrid.Resources>
@@ -75,7 +75,7 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Pack Size" Binding="{Binding Path=PurchasedUnit, Mode=OneWay}" Width="2*"
                                     Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}" />
-                <DataGridTextColumn Header="Last Price" Binding="{Binding Path=LastPurchasedPrice, StringFormat=c, Mode=OneWay}" Width="2*"
+                <DataGridTextColumn Header="Last Price" Binding="{Binding Path=LastPurchasedPrice, StringFormat=c}" Width="2*"
                                     Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}" />
                 <DataGridTextColumn Header="Count" Binding="{Binding Path=Count, StringFormat=0.##}" Width="1*"
                                     Visibility="{Binding Path=Data.NewInvVisibility, Source={StaticResource proxy}}" />

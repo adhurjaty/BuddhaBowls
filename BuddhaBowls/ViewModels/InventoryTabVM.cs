@@ -263,7 +263,7 @@ namespace BuddhaBowls
         {
             InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
             if(_invVM != null)
-                _invVM.Refresh();
+                _invVM = new InventoryListVM();
         }
 
         #endregion
@@ -275,7 +275,8 @@ namespace BuddhaBowls
             switch(state)
             {
                 case PageState.Primary:
-                    _invVM = new InventoryListVM();
+                    if(_invVM == null)
+                        _invVM = new InventoryListVM();
                     TabControl = _invVM.TabControl;
                     break;
                 case PageState.Secondary:

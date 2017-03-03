@@ -24,6 +24,23 @@ namespace BuddhaBowls
 
         public InventoryListControl TabControl { get; set; }
 
+        private bool _isMasterList;
+        public bool IsMasterList
+        {
+            get
+            {
+                return _isMasterList;
+            }
+            set
+            {
+                _isMasterList = value;
+                if (value)
+                    MasterVisibility = Visibility.Visible;
+                else
+                    NewInvVisibility = Visibility.Visible;
+            }
+        }
+
         #region Content Binders
 
         private ObservableCollection<VendorInventoryItem> _filteredItems;
@@ -96,20 +113,6 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("CategoryPrices");
             }
         }
-
-        //private bool _countReadOnly;
-        //public bool CountReadOnly
-        //{
-        //    get
-        //    {
-        //        return _countReadOnly;
-        //    }
-        //    set
-        //    {
-        //        _countReadOnly = value;
-        //        NotifyPropertyChanged("CountReadOnly");
-        //    }
-        //}
 
         private Visibility _editOrderVisibility = Visibility.Visible;
         public Visibility EditOrderVisibility
@@ -252,8 +255,7 @@ namespace BuddhaBowls
             FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
             TabControl = new InventoryListControl(this);
             UpdateInvValue();
-            //CountReadOnly = true;
-            MasterVisibility = Visibility.Visible;
+            IsMasterList = true;
 
             AddCommand = new RelayCommand(AddInventoryItem);
             DeleteCommand = new RelayCommand(DeleteInventoryItem, x => SelectedInventoryItem != null);
@@ -266,8 +268,7 @@ namespace BuddhaBowls
         public InventoryListVM(StatusUpdatedDel countDel) : this()
         {
             CountChanged = countDel;
-            NewInvVisibility = Visibility.Visible;
-            //CountReadOnly = false;
+            IsMasterList = false;
         }
 
         public InventoryListVM(StatusUpdatedDel countDel, Inventory inv) : this(countDel)
@@ -380,6 +381,16 @@ namespace BuddhaBowls
             File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), Properties.Settings.Default.InventoryOrder);
         }
 
+        public void RowEdited(VendorInventoryItem item)
+        {
+            if (IsMasterList)
+            {
+                item.UpdateVendorPrice();
+            }
+            else
+                InventoryItemCountChanged();
+        }
+
         /// <summary>
         /// Called when Master List is edited
         /// </summary>
@@ -423,13 +434,13 @@ namespace BuddhaBowls
         public void SaveNew(DateTime invDate)
         {
             ResetList(null);
-            foreach(InventoryItem item in FilteredItems)
+            foreach (VendorInventoryItem item in FilteredItems)
             {
-                item.Update();
+                item.ToInventoryItem().Update();
             }
 
             Inventory inv = new Inventory(invDate);
-            inv.Id = inv.Insert(_inventoryItems.Select(x => (InventoryItem)x).ToList());
+            inv.Id = inv.Insert(_inventoryItems.Select(x => x.ToInventoryItem()).ToList());
 
             if (_models.Inventories == null)
                 _models.Inventories = new List<Inventory>();
@@ -449,7 +460,7 @@ namespace BuddhaBowls
 
         public void SaveOld()
         {
-            _inventory.Update(_inventoryItems.Select(x => (InventoryItem)x).ToList());
+            _inventory.Update(_inventoryItems.Select(x => x.ToInventoryItem()).ToList());
         }
 
     }
@@ -458,71 +469,5 @@ namespace BuddhaBowls
     {
         public string Label { get; set; }
         public float Price { get; set; }
-    }
-
-    public class VendorInventoryItem : InventoryItem, INotifyPropertyChanged
-    {
-        private Dictionary<Vendor, InventoryItem> _vendorDict;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public List<Vendor> Vendors
-        {
-            get
-            {
-                return _vendorDict.Keys.ToList();
-            }
-        }
-
-        private Vendor _selectedVendor;
-        public Vendor SelectedVendor
-        {
-            get
-            {
-                return _selectedVendor;
-            }
-            set
-            {
-                if(value != null)
-                {
-                    _selectedVendor = value;
-                    NotifyPropertyChanged("SelectedVendor");
-                    UpdateVendorParams();
-                }
-            }
-        }
-
-        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict) : base()
-        {
-            _vendorDict = vendorDict;
-            SelectedVendor = vendorDict.Keys.FirstOrDefault();
-        }
-
-        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict, InventoryItem item) : this(vendorDict)
-        {
-            foreach(string property in item.GetPropertiesDB())
-            {
-                SetProperty(property, item.GetPropertyValue(property));
-            }
-            Id = item.Id;
-        }
-
-        private void UpdateVendorParams()
-        {
-            if (SelectedVendor != null)
-            {
-                InventoryItem item = _vendorDict[SelectedVendor];
-                LastPurchasedPrice = item.LastPurchasedPrice;
-                PurchasedUnit = item.PurchasedUnit;
-                NotifyPropertyChanged("LastPurchasedPrice");
-                NotifyPropertyChanged("PurchasedUnit");
-            }
-        }
     }
 }
