@@ -22,7 +22,7 @@
                 Command="{Binding DeleteVendorCommand}">
             <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding VendorList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1, 1, 1, 1"
+        <DataGrid Grid.Row="1" ItemsSource="{Binding InventorList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1, 1, 1, 1"
                   ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False"
                   CanUserAddRows="False">
             <DataGrid.Columns>

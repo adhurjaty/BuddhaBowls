@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>13</ApplicationRevision>
+    <ApplicationRevision>14</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -126,6 +126,12 @@
     <Compile Include="UserControls\AddInvStep2.xaml.cs">
       <DependentUpon>AddInvStep2.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\AddVendorStep1.xaml.cs">
+      <DependentUpon>AddVendorStep1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AddVendorStep2.xaml.cs">
+      <DependentUpon>AddVendorStep2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\BreakdownDisplay.xaml.cs">
       <DependentUpon>BreakdownDisplay.xaml</DependentUpon>
     </Compile>
@@ -192,6 +198,7 @@
     <Compile Include="ViewModels\NewInventoryVM.cs" />
     <Compile Include="ViewModels\InventoryTabVM.cs" />
     <Compile Include="ViewModels\NewInventoryItemWizard.cs" />
+    <Compile Include="ViewModels\NewVendorWizardVM.cs" />
     <Compile Include="ViewModels\TabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NewOrderVM.cs" />
@@ -210,6 +217,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\AddInvStep2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AddVendorStep1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AddVendorStep2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -123,11 +123,8 @@ namespace BuddhaBowls
 
         private void AddVendor(object obj)
         {
-            throw new NotImplementedException();
-            //AddEditHeader = "Add New Vendor";
-            //FieldsCollection = ParentContext.GetFieldsAndValues<Vendor>();
-
-            //ParentContext.AddTempTab("Add Vendor", new EditItem(this, ClearErrors));
+            NewVendorWizardVM newVendor = new NewVendorWizardVM();
+            newVendor.Add("New Vendor");
         }
 
         private void ResetVendor(object obj)

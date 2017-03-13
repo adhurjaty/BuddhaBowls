@@ -138,6 +138,19 @@ namespace BuddhaBowls.Services
             }
         }
 
+        public void AddUpdateVendor(Vendor vendor)
+        {
+            if(Vendors.FirstOrDefault(x => x.Id == vendor.Id) != null)
+            {
+                vendor.Update();
+            }
+            else
+            {
+                vendor.Id = vendor.Insert();
+                Vendors.Add(vendor);
+            }
+        }
+
         public Dictionary<Vendor, InventoryItem> GetVendorsFromItem(InventoryItem item)
         {
             Dictionary<Vendor, InventoryItem> vendorDict = new Dictionary<Vendor, InventoryItem>();

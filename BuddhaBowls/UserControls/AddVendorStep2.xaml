@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="BuddhaBowls.UserControls.AddVendorStep2"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BuddhaBowls.UserControls"
+             xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="label1" Grid.Row="0" Content="Inventory Item Name:" Margin="-330, 0, 0, 0" HorizontalAlignment="Center"
+               VerticalAlignment="Center"/>
+        <TextBox x:Name="FilterItemBox" Grid.Row="0" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                 Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
+        <Button Grid.Row="0" Content="Show Only Sold" Width="100" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Command="{Binding OnlySoldCommand}" Visibility="{Binding ShowSoldVisibility}"/>
+        <Button Grid.Row="0" Content="Show All" Width="100" Height="25" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Command="{Binding ShowAllCommand}" Visibility="{Binding ShowAllVisibility}"/>
+        <DataGrid ItemsSource="{Binding InventoryList}" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1, 1, 1, 1"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False" CanUserSortColumns="False"
+                  CanUserReorderColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Inventory Item Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
+                <DataGridTextColumn Header="Purchased Price" Binding="{Binding Price, StringFormat=c}" Width="2*" />
+                <DataGridTemplateColumn Header="Purchased Unit" Width="2*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox Text="{Binding PurchasedUnit}" IsEditable="True" ItemsSource="{Binding Path=DataContext.PurchasedUnitsList,
+                                                    RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridCheckBoxColumn Header="Sells?" Width="70" Binding="{Binding IsSold}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

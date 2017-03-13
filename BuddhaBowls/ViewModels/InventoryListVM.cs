@@ -261,7 +261,7 @@ namespace BuddhaBowls
             DeleteCommand = new RelayCommand(DeleteInventoryItem, x => SelectedInventoryItem != null);
             EditCommand = new RelayCommand(EditInventoryItem, x => SelectedInventoryItem != null);
             ResetCommand = new RelayCommand(ResetList);
-            EditOrderCommand = new RelayCommand(StartEditOrder);
+            EditOrderCommand = new RelayCommand(StartEditOrder, x => FilterText == "");
             SaveOrderCommand = new RelayCommand(SaveOrder);
         }
 
@@ -343,6 +343,7 @@ namespace BuddhaBowls
 
         public void Refresh()
         {
+            _inventoryItems = _models.InventoryItems.Select(x => new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList();
             FilteredItems = new ObservableCollection<VendorInventoryItem>(ParentContext.SortItems(_inventoryItems));
         }
 

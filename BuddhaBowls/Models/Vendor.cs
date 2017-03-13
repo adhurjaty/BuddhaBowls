@@ -76,9 +76,12 @@ namespace BuddhaBowls.Models
             {
                 File.Copy(_dbInt.FilePath("InventoryItem"), _dbInt.FilePath(tableName));
                 List<InventoryItem> allItems = ModelHelper.InstantiateList<InventoryItem>(tableName, false);
-                foreach (InventoryItem item in allItems.Where(x => !inventoryItems.Select(y => y.Id).Contains(x.Id)))
+                foreach (InventoryItem item in allItems)
                 {
-                    RemoveInvItem(item);
+                    if (inventoryItems.FirstOrDefault(x => x.Id == item.Id) == null)
+                        RemoveInvItem(item);
+                    else
+                        AddInvItem(item);
                 }
             }
         }

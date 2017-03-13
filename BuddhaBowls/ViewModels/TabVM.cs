@@ -25,7 +25,7 @@ namespace BuddhaBowls
                 return IsDBConnected;
             }
         }
-
+        
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
 

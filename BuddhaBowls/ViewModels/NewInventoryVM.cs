@@ -40,7 +40,7 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("InventoryDate");
             }
         }
-
+        
         private InventoryListControl _inventoryControl;
         public InventoryListControl InventoryControl
         {
@@ -88,7 +88,7 @@ namespace BuddhaBowls
             InitICommand();
             ((RelayCommand)SaveCountCommand).ChangeCallback(SaveOldInventory);
         }
-
+        
         #region ICommand Helpers
 
         /// <summary>

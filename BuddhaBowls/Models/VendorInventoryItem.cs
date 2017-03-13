@@ -11,7 +11,7 @@ namespace BuddhaBowls.Models
     public class VendorInventoryItem : InventoryItem, INotifyPropertyChanged
     {
         private Dictionary<Vendor, InventoryItem> _vendorDict;
-
+        
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
 

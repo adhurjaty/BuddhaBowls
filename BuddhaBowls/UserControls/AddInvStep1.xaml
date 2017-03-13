@@ -27,16 +27,9 @@
         <Label Grid.Column="0" Grid.Row="1" Content="Category:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
         <ComboBox Grid.Column="1" Grid.Row="1" Text="{Binding Item.Category}" HorizontalAlignment="Left" VerticalAlignment="Center"
                     Width="150" Height="25" Margin="10, 0" ItemsSource="{Binding CategoryList}" IsEditable="True"/>
-        <!--<Label Grid.Column="0" Grid.Row="2" Content="Purchased Unit:" HorizontalAlignment="Right" VerticalAlignment="Center" />
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Item.PurchasedUnit}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="150"
-                    Height="25" Margin="10, 0" behaviors:AutoCompleteBehavior.AutoCompleteItemsSource="{Binding PurchasedUnitsList}"
-                    behaviors:AutoCompleteBehavior.AutoCompleteStringComparison="InvariantCultureIgnoreCase"/>-->
         <Label Grid.Column="0" Grid.Row="2" Content="Count Unit:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
         <ComboBox Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" Height="25" Margin="10, 0"
                   ItemsSource="{Binding CountUnitsList}" IsEditable="True" Text="{Binding Item.CountUnit}"/>
-        <!--<Label Grid.Column="0" Grid.Row="4" Content="Conversion:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-        <Controls:NumericUpDown Grid.Column="1" Grid.Row="4" Minimum="0" StringFormat="0.##" Value="{Binding Item.Conversion}"
-                                HorizontalAlignment="Left" VerticalAlignment="Center" Width="200" Height="25" Margin="10, 0"/>-->
         <Label Grid.Column="0" Grid.Row="3" Content="Recipe Unit:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
         <ComboBox Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" Height="25" Margin="10, 0"
                   ItemsSource="{Binding RecipeUnitsList}" IsEditable="True" Text="{Binding Item.RecipeUnit}"/>

@@ -88,6 +88,7 @@ namespace BuddhaBowls
             Item = new InventoryItem();
             SetDefaultValues();
             VendorList = new ObservableCollection<VendorInfo>();
+            Header = "New Inventory Item";
 
             InitICommand();
         }
@@ -96,8 +97,9 @@ namespace BuddhaBowls
         {
             _newItem = false;
             Item = item;
+            Header = "Edit Inventory Item";
 
-            Yield = (float)item.Yield * 100;
+            Yield = (item.Yield ?? 1) * 100;
             InitVendors();
             InitICommand();
         }
@@ -120,15 +122,19 @@ namespace BuddhaBowls
         {
             if (ValidateInputs())
             {
-                _models.AddUpdateInventoryItem(Item);
+                InventoryItem invItem = Item;
+                if (!_newItem)
+                    invItem = ((VendorInventoryItem)invItem).ToInventoryItem();
+                _models.AddUpdateInventoryItem(invItem);
 
                 foreach(VendorInfo v in VendorList)
                 {
                     Vendor vendor = _models.Vendors.First(x => x.Name == v.Vendor);
-                    Item.LastPurchasedPrice = v.Price;
-                    Item.Conversion = v.Conversion;
-                    Item.PurchasedUnit = v.PurchasedUnit;
-                    vendor.AddInvItem(Item);
+                    invItem.LastPurchasedPrice = v.Price;
+                    invItem.Conversion = v.Conversion;
+                    invItem.PurchasedUnit = v.PurchasedUnit;
+                    invItem.Yield = Yield;
+                    vendor.AddInvItem(invItem);
                 }
 
                 ParentContext.Refresh();
