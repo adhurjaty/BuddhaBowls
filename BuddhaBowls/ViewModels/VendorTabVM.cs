@@ -63,10 +63,6 @@ namespace BuddhaBowls
         public ICommand SaveCommand { get; set; }
         // reset button
         public ICommand ResetCommand { get; set; }
-        // save button in new vendor tab
-        public ICommand SaveAddEditCommand { get; set; }
-        // cancel button in new vendor tab
-        public ICommand CancelAddEditCommand { get; set; }
         // Change Rec List button in vendor main tab
         public ICommand ChangeRecListOrderCommand { get; set; }
         public ICommand ChangeVendorItemsCommand { get; set; }
@@ -81,14 +77,6 @@ namespace BuddhaBowls
         }
 
         public bool AlterVendorCanExecute { get; set; }
-
-        public bool SaveAddEditCanExecute
-        {
-            get
-            {
-                return string.IsNullOrWhiteSpace(AddEditErrorMessage);
-            }
-        }
 
         public bool GenOrderSheetCanExecute
         {
@@ -110,8 +98,6 @@ namespace BuddhaBowls
             DeleteVendorCommand = new RelayCommand(DeleteVendor, x => SelectedVendorCanExecute && DBConnection);
             SaveCommand = new RelayCommand(SaveVendor, x => AlterVendorCanExecute && DBConnection);
             ResetCommand = new RelayCommand(ResetVendor, x => AlterVendorCanExecute && DBConnection);
-            SaveAddEditCommand = new RelayCommand(SaveAddEdit, x => SaveAddEditCanExecute);
-            CancelAddEditCommand = new RelayCommand(CancelAddEdit);
             //ChangeRecListOrderCommand = new RelayCommand(ChangeRecOrder, x => SelectedVendorCanExecute);
             ChangeVendorItemsCommand = new RelayCommand(ChangeVendorItems, x => SelectedVendorCanExecute && DBConnection);
             GetOrderSheetCommand = new RelayCommand(GenerateOrderSheet, x => GenOrderSheetCanExecute && DBConnection);
@@ -160,33 +146,6 @@ namespace BuddhaBowls
                 RefreshVendorList();
             }
         }
-
-        private void CancelAddEdit(object obj)
-        {
-            throw new NotImplementedException();
-            //AddEditErrorMessage = "";
-            //ParentContext.DeleteTempTab();
-        }
-
-        private void SaveAddEdit(object obj)
-        {
-            throw new NotImplementedException();
-            //Vendor vendor = new Vendor();
-
-            //AddEditErrorMessage = ParentContext.ObjectFromFields(ref vendor, FieldsCollection, true);
-            //if(string.IsNullOrEmpty(AddEditErrorMessage))
-            //{
-            //    vendor.Insert();
-            //    _models.Vendors.Add(vendor);
-            //    RefreshVendorList();
-            //    ParentContext.DeleteTempTab();
-            //}
-        }
-
-        //private void ChangeRecOrder(object obj)
-        //{
-        //    ParentContext.AddTempTab("Rec List Order", new ChangeInventoryOrder(new ChangeOrderVM(SelectedVendor)));
-        //}
 
         private void ChangeVendorItems(object obj)
         {

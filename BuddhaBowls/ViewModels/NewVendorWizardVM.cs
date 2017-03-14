@@ -104,6 +104,24 @@ namespace BuddhaBowls
             ShowAllCommand = new RelayCommand(ShowAll);
         }
 
+        public NewVendorWizardVM(Vendor v) : base()
+        {
+            _newVendor = false;
+            _inventoryItems = _models.InventoryItems.Select(x => new InventoryVendorItem(x)).ToList();
+            Vend = v;
+            List<int> vendItemIds = v.GetFromPriceList().Select(x => x.Id).ToList();
+            foreach (InventoryVendorItem item in _inventoryItems)
+            {
+                if (vendItemIds.Contains(item.Id))
+                    item.IsSold = true;
+            }
+            Header = "Edit Vendor";
+            InventoryList = new ObservableCollection<InventoryVendorItem>(_inventoryItems);
+
+            OnlySoldCommand = new RelayCommand(ShowSold);
+            ShowAllCommand = new RelayCommand(ShowAll);
+        }
+
         #region ICommand Helpers
 
         private void ShowSold(object obj)
@@ -160,7 +178,8 @@ namespace BuddhaBowls
             {
                 Vendor vendor = Vend;
                 _models.AddUpdateVendor(vendor);
-                vendor.UpdatePrices(InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList());
+                List<InventoryItem> items = InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList();
+                vendor.UpdatePrices(items);
 
                 ParentContext.Refresh();
                 Close();

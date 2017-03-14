@@ -270,6 +270,7 @@ namespace BuddhaBowls
 
         public void InitTabsAndModel()
         {
+            ModelContainer.ChangeContainer(null);
             _models = ModelContainer.Instance();
             DatabaseFound = _models.InventoryItems != null && _models.InventoryItems.Count > 0;
             TabVM.ParentContext = this;
@@ -284,7 +285,7 @@ namespace BuddhaBowls
         private void SetInvOrderSetting()
         {
             string orderPath = Path.Combine(Properties.Settings.Default.DBLocation, "Settings", GlobalVar.INV_ORDER_FILE);
-            if (File.Exists(orderPath) && Properties.Settings.Default.InventoryOrder == null)
+            if (File.Exists(orderPath))
             {
                 Properties.Settings.Default.InventoryOrder = new List<string>(File.ReadAllLines(orderPath));
                 Properties.Settings.Default.Save();
@@ -502,7 +503,7 @@ namespace BuddhaBowls
 
         public IEnumerable<T> SortItems<T>(IEnumerable<T> items) where T : IItem
         {
-            if (Properties.Settings.Default.InventoryOrder == null || Properties.Settings.Default.InventoryOrder.Count < items.Count())
+            if (Properties.Settings.Default.InventoryOrder == null)
             {
                 List<string> invOrder = _models.InventoryItems.Select(x => x.Name).OrderBy(x => x).ToList();
                 invOrder = invOrder.Concat(_models.Recipes.Select(x => x.Name).OrderBy(x => x)).ToList();

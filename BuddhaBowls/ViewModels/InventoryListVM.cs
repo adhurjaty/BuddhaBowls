@@ -251,8 +251,7 @@ namespace BuddhaBowls
 
         public InventoryListVM() : base()
         {
-            _inventoryItems = _models.InventoryItems.Select(x => new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList();
-            FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
+            Refresh();
             TabControl = new InventoryListControl(this);
             UpdateInvValue();
             IsMasterList = true;
@@ -261,7 +260,7 @@ namespace BuddhaBowls
             DeleteCommand = new RelayCommand(DeleteInventoryItem, x => SelectedInventoryItem != null);
             EditCommand = new RelayCommand(EditInventoryItem, x => SelectedInventoryItem != null);
             ResetCommand = new RelayCommand(ResetList);
-            EditOrderCommand = new RelayCommand(StartEditOrder, x => FilterText == "");
+            EditOrderCommand = new RelayCommand(StartEditOrder, x => string.IsNullOrEmpty(FilterText));
             SaveOrderCommand = new RelayCommand(SaveOrder);
         }
 
@@ -274,8 +273,7 @@ namespace BuddhaBowls
         public InventoryListVM(StatusUpdatedDel countDel, Inventory inv) : this(countDel)
         {
             _inventory = inv;
-            _inventoryItems = inv.GetInventoryHistory().Select(x => new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList();
-            FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
+            Refresh();
             UpdateInvValue();
         }
 
@@ -343,8 +341,9 @@ namespace BuddhaBowls
 
         public void Refresh()
         {
-            _inventoryItems = _models.InventoryItems.Select(x => new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList();
-            FilteredItems = new ObservableCollection<VendorInventoryItem>(ParentContext.SortItems(_inventoryItems));
+            _inventoryItems = ParentContext.SortItems(_models.InventoryItems.Select(x =>
+                                new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList()).ToList();
+            FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
         }
 
         public void MoveDown(InventoryItem item)

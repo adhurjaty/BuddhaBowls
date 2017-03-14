@@ -25,7 +25,7 @@
                   CanUserReorderColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Inventory Item Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
-                <DataGridTextColumn Header="Purchased Price" Binding="{Binding Price, StringFormat=c}" Width="2*" />
+                <DataGridTextColumn Header="Purchased Price" Binding="{Binding LastPurchasedPrice, StringFormat=c}" Width="2*" />
                 <DataGridTemplateColumn Header="Purchased Unit" Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -34,7 +34,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridCheckBoxColumn Header="Sells?" Width="70" Binding="{Binding IsSold}" />
+                <DataGridCheckBoxColumn Header="Sells?" Width="70" Binding="{Binding Path=IsSold, UpdateSourceTrigger=PropertyChanged}" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -78,10 +78,11 @@ namespace BuddhaBowls.Models
                 List<InventoryItem> allItems = ModelHelper.InstantiateList<InventoryItem>(tableName, false);
                 foreach (InventoryItem item in allItems)
                 {
-                    if (inventoryItems.FirstOrDefault(x => x.Id == item.Id) == null)
+                    InventoryItem newItem = inventoryItems.FirstOrDefault(x => x.Id == item.Id);
+                    if (newItem == null)
                         RemoveInvItem(item);
                     else
-                        AddInvItem(item);
+                        AddInvItem(newItem);
                 }
             }
         }
