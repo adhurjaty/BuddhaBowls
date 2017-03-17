@@ -1,0 +1,6 @@
+Name,Category,PurchasedUnit,Count,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate,Id
+Cheddar,Dairy,CASE 20lb,0,5lb BAG,4,OZ-wt,320,1,43.65,3,1/9/2017 4:27:56 PM,1
+Feta,Dairy,CASE 10lb,2,5lb BAG,2,OZ-wt,160,1,28.98,5,1/9/2017 4:27:56 PM,3
+Sour Cream,Dairy,CASE 10lb,1,5lb BUCKET,2,OZ-wt,160,0.95,12.4,3,1/9/2017 4:27:56 PM,5
+Balsamic Vinegar,Dry Goods,5 LITER,0.6,JUG,1,OZ-wt,169.07,1,17.89,20,1/9/2017 4:27:56 PM,30
+Blueberries (Costco),Produce,BASKET,8,BASKET,1,OZ-wt,32,0.85,5.29,100,1/9/2017 4:27:56 PM,70

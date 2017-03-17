@@ -1,0 +1,11 @@
+Name,Category,PurchasedUnit,Count,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate,Id
+Mozzarella,Dairy,CASE 30lb,6,5lb BAG,6,OZ-wt,480,1,66.76,2,1/18/2017 10:36:47 AM,0
+Cheddar,Dairy,CASE 20lb,7,5lb BAG,4,OZ-wt,320,1,43.65,3,1/18/2017 10:36:47 AM,1
+Pepper Jack,Dairy,CASE 20lb,5,5lb BAG,4,OZ-wt,320,1,43.78,2,1/18/2017 10:36:47 AM,2
+Feta,Dairy,CASE 10lb,7,5lb BAG,2,OZ-wt,160,1,28.98,5,1/18/2017 10:36:47 AM,3
+Butter,Dairy,CASE 30lb,40,1lb,30,OZ-wt,480,1,76.99,2,1/18/2017 10:36:47 AM,4
+Sour Cream,Dairy,CASE 10lb,1,5lb BUCKET,2,OZ-wt,160,0.95,12.4,3,1/18/2017 10:36:47 AM,5
+Heavy Cream,Dairy,6 1/2 Gallon,1,1/2 GALLON,6,CUP,48,1,41.5,4,1/18/2017 10:36:47 AM,6
+Artichoke Hearts,Dry Goods,6# CANS,6,CAN,6,OZ-wt,324,1,53.22,20,1/18/2017 10:36:47 AM,18
+Balsamic Vinegar,Dry Goods,5 LITER,0.6,JUG,1,OZ-wt,169.07,1,17.89,20,1/18/2017 10:36:47 AM,30
+Blueberries (Costco),Produce,BASKET,8,BASKET,1,OZ-wt,32,0.85,5.29,100,1/18/2017 10:36:47 AM,70
