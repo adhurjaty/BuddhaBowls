@@ -140,10 +140,9 @@ namespace BuddhaBowls
                                                       "Delete " + SelectedVendor.Name + "?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                SelectedVendor.Destroy();
-                _models.Vendors.Remove(SelectedVendor);
+                _models.RemoveVendor(SelectedVendor);
                 SelectedVendor = null;
-                RefreshVendorList();
+                ParentContext.Refresh();
             }
         }
 

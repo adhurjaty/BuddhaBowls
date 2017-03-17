@@ -125,7 +125,7 @@ namespace BuddhaBowls
                 InventoryItem invItem = Item;
                 if (!_newItem)
                     invItem = ((VendorInventoryItem)invItem).ToInventoryItem();
-                _models.AddUpdateInventoryItem(invItem);
+                _models.AddUpdateInventoryItem(ref invItem);
 
                 foreach(VendorInfo v in VendorList)
                 {

@@ -98,12 +98,12 @@ namespace BuddhaBowls.Models
         /// Creates copy of object
         /// </summary>
         /// <typeparam name="T">Class calling this method</typeparam>
-        protected T Copy<T>() where T : Model, new()
+        public virtual T Copy<T>() where T : Model, new()
         {
             T copy = new T();
-            foreach (PropertyInfo prop in copy.GetType().GetProperties())
+            foreach (string prop in GetPropertiesDB())
             {
-                copy.SetProperty(prop.Name, prop.GetValue(this));
+                copy.SetProperty(prop, GetPropertyValue(prop));
             }
 
             return copy;
@@ -284,6 +284,16 @@ namespace BuddhaBowls.Models
         {
             return GetProperties(omit);
         }
+
+        //public virtual T Copy<T>() where T : Model, new()
+        //{
+        //    T m = new T();
+        //    foreach (string prop in GetProperties())
+        //    {
+        //        m.SetProperty(prop, GetPropertyValue(prop));
+        //    }
+        //    return m;
+        //}
         #endregion
 
 

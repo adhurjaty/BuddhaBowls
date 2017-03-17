@@ -56,6 +56,7 @@ namespace BuddhaBowls.Helpers
 
                 if (addItem != null)
                 {
+                    addItem = addItem.Copy();
                     addItem.Count = item.Quantity;
                     recipeList.Add(addItem);
                 }

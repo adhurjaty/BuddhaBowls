@@ -64,7 +64,9 @@ namespace BuddhaBowls.Models
         public void UpdateVendorPrice()
         {
             NotifyPropertyChanged("LastPurchasedPrice");
-            SelectedVendor.UpdateInvItem(ToInventoryItem());
+            InventoryItem item = ToInventoryItem();
+            SelectedVendor.UpdateInvItem(item);
+            _vendorDict[SelectedVendor] = item;
         }
 
         public InventoryItem ToInventoryItem()

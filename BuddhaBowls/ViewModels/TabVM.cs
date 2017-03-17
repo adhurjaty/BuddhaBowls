@@ -13,7 +13,7 @@ namespace BuddhaBowls
 
     public class TabVM : INotifyPropertyChanged
     {
-        protected ModelContainer _models;
+        protected static ModelContainer _models;
 
         public static MainViewModel ParentContext { get; set; }
         public static bool IsDBConnected = false;
@@ -36,7 +36,14 @@ namespace BuddhaBowls
 
         public TabVM()
         {
-            _models = ModelContainer.Instance();
+            //_models = ModelContainer.Instance();
+            if (_models == null)
+                _models = new ModelContainer();
+        }
+
+        public static void SetModelContainer(ModelContainer models)
+        {
+            _models = models;
         }
 
         public virtual void FilterItems(string text)

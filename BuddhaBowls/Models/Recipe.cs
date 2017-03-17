@@ -67,6 +67,11 @@ namespace BuddhaBowls.Models
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
 
+        public IItem Copy()
+        {
+            return Copy<Recipe>();
+        }
+
         private List<RecipeItem> GetInRecipeItems()
         {
             List<RecipeItem> items = new List<RecipeItem>();

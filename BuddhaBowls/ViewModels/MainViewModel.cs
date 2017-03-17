@@ -21,7 +21,6 @@ namespace BuddhaBowls
         private MainWindow _window;
         private ModelContainer _models;
         private Thread _thread;
-        private static MainViewModel _mvm;
 
         public Thread ExcelThread;
 
@@ -179,7 +178,7 @@ namespace BuddhaBowls
 
         #endregion
 
-        private MainViewModel()
+        public MainViewModel()
         {
             SetInvOrderSetting();
 
@@ -191,14 +190,6 @@ namespace BuddhaBowls
 
             InitTabsAndModel();
             //MakeBreakdownDisplay();
-        }
-
-        public static MainViewModel Instance()
-        {
-            if (_mvm == null)
-                _mvm = new MainViewModel();
-
-            return _mvm;
         }
 
         #region ICommand Helpers
@@ -256,7 +247,8 @@ namespace BuddhaBowls
         public void SaveSettingsHelper(object obj)
         {
             SaveSettings();
-            ModelContainer.ChangeContainer(null);
+            //ModelContainer.ChangeContainer(null);
+            _models = new ModelContainer();
             InitTabsAndModel();
         }
         #endregion
@@ -270,11 +262,13 @@ namespace BuddhaBowls
 
         public void InitTabsAndModel()
         {
-            ModelContainer.ChangeContainer(null);
-            _models = ModelContainer.Instance();
+            //ModelContainer.ChangeContainer(null);
+            //_models = ModelContainer.Instance();
+            _models = new ModelContainer();
             DatabaseFound = _models.InventoryItems != null && _models.InventoryItems.Count > 0;
             TabVM.ParentContext = this;
             TabVM.IsDBConnected = DatabaseFound;
+            TabVM.SetModelContainer(_models);
 
             OrderTab = new OrderTabVM();
             InventoryTab = new InventoryTabVM();

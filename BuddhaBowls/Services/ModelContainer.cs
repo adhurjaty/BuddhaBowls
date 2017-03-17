@@ -11,17 +11,39 @@ namespace BuddhaBowls.Services
 {
     public class ModelContainer
     {
-        private static ModelContainer _container;
+        //private static ModelContainer cont;
+        //public static ModelContainer _container
+        //{
+        //    get
+        //    {
+        //        return cont;
+        //    }
+        //    set
+        //    {
+        //        cont = value;
+        //    }
+        //}
         private Dictionary<string, string> _categoryColors;
 
-        public List<InventoryItem> InventoryItems { get; set; }
+        private List<InventoryItem> _inventoryItems;
+        public List<InventoryItem> InventoryItems
+        {
+            get
+            {
+                return _inventoryItems;
+            }
+            set
+            {
+                _inventoryItems = value;
+            }
+        }
         public List<Recipe> Recipes { get; set; }
         public HashSet<string> ItemCategories { get; set; }
         public List<PurchaseOrder> PurchaseOrders { get; set; }
         public List<Vendor> Vendors { get; set; }
         public List<Inventory> Inventories { get; set; }
 
-        private ModelContainer()
+        public ModelContainer()
         {
             InitializeModels();
             if (InventoryItems != null)
@@ -31,17 +53,17 @@ namespace BuddhaBowls.Services
             }
         }
 
-        public static ModelContainer Instance()
-        {
-            if (_container == null)
-                _container = new ModelContainer();
-            return _container;
-        }
+        //public static ModelContainer Instance()
+        //{
+        //    if (_container == null)
+        //        _container = new ModelContainer();
+        //    return _container;
+        //}
 
-        public static void ChangeContainer(ModelContainer container)
-        {
-            _container = container;
-        }
+        //public static void ChangeContainer(ModelContainer container)
+        //{
+        //    _container = container;
+        //}
 
         public void InitializeModels()
         {
@@ -122,7 +144,7 @@ namespace BuddhaBowls.Services
             return (new HashSet<string>(InventoryItems.Select(x => x.PurchasedUnit))).ToList();
         }
 
-        public void AddUpdateInventoryItem(InventoryItem item)
+        public void AddUpdateInventoryItem(ref InventoryItem item)
         {
             if(InventoryItems.Select(x => x.Id).Contains(item.Id))
             {
@@ -138,6 +160,16 @@ namespace BuddhaBowls.Services
             }
         }
 
+        public bool DeleteInventoryItem(InventoryItem item)
+        {
+            if(InventoryItems.First(x => x.Id == item.Id) == null)
+                return false;
+            InventoryItems.RemoveAll(x => x.Id == item.Id);
+            Properties.Settings.Default.InventoryOrder.Remove(item.Name);
+            item.Destroy();
+            return true;
+        }
+
         public void AddUpdateVendor(Vendor vendor)
         {
             if(Vendors.FirstOrDefault(x => x.Id == vendor.Id) != null)
@@ -149,6 +181,12 @@ namespace BuddhaBowls.Services
                 vendor.Id = vendor.Insert();
                 Vendors.Add(vendor);
             }
+        }
+
+        public void RemoveVendor(Vendor vendor)
+        {
+            Vendors.Remove(vendor);
+            vendor.Destroy();
         }
 
         public Dictionary<Vendor, InventoryItem> GetVendorsFromItem(InventoryItem item)

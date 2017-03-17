@@ -30,6 +30,16 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public override void Destroy()
+        {
+            string priceListPath = _dbInt.FilePath(GetPriceTableName());
+            if (File.Exists(priceListPath))
+            {
+                File.Delete(priceListPath);
+            }
+            base.Destroy();
+        }
+
         public void Reset()
         {
             string[] record = _dbInt.GetRecord(_tableName, new Dictionary<string, string>() { { "Id", Id.ToString() } });
@@ -96,7 +106,7 @@ namespace BuddhaBowls.Models
         {
             if (!_dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id))
             {
-                _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict());
+                _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict(), item.Id);
             }
         }
 

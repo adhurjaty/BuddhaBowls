@@ -189,17 +189,18 @@ namespace BuddhaBowls
         #endregion
     }
 
-    public class CompareItem : IItem
+    public class CompareItem : Model, IItem
     {
         public string Category { get; set; }
         public float Count { get; set; }
         public float EndCount { get; set; }
-        public int Id { get; set; }
         public string Name { get; set; }
         public string RecipeUnit { get; set; }
         public float? RecipeUnitConversion { get; set; }
         public float Usage { get; set; }
         public float Cost { get; set; }
+
+        public CompareItem() { }
 
         public CompareItem(InventoryItem beforeItem, InventoryItem afterItem)
         {
@@ -212,14 +213,14 @@ namespace BuddhaBowls
             EndCount = afterItem.Count;
         }
 
-        public void Destroy()
+        public float GetCost()
         {
             throw new NotImplementedException();
         }
 
-        public float GetCost()
+        public IItem Copy()
         {
-            throw new NotImplementedException();
+            return Copy<CompareItem>();
         }
 
     }

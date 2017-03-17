@@ -12,5 +12,6 @@ namespace BuddhaBowls.Models
 
         float GetCost();
         void Destroy();
+        IItem Copy();
     }
 }

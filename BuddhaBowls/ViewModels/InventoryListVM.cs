@@ -58,8 +58,8 @@ namespace BuddhaBowls
         }
 
         // Inventory item selected in the datagrids for Orders and Master List
-        private InventoryItem _selectedInventoryItem;
-        public InventoryItem SelectedInventoryItem
+        private VendorInventoryItem _selectedInventoryItem;
+        public VendorInventoryItem SelectedInventoryItem
         {
             get
             {
@@ -252,6 +252,7 @@ namespace BuddhaBowls
         public InventoryListVM() : base()
         {
             Refresh();
+            
             TabControl = new InventoryListControl(this);
             UpdateInvValue();
             IsMasterList = true;
@@ -273,6 +274,8 @@ namespace BuddhaBowls
         public InventoryListVM(StatusUpdatedDel countDel, Inventory inv) : this(countDel)
         {
             _inventory = inv;
+            _inventoryItems = ParentContext.SortItems(_inventory.GetInventoryHistory().Select(x =>
+                                new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList()).ToList();
             Refresh();
             UpdateInvValue();
         }
@@ -291,8 +294,12 @@ namespace BuddhaBowls
                                                       "Delete " + SelectedInventoryItem.Name + "?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                _models.InventoryItems.Remove(SelectedInventoryItem);
-                SelectedInventoryItem.Destroy();
+                InventoryItem item = SelectedInventoryItem.ToInventoryItem();
+                foreach (Vendor v in SelectedInventoryItem.Vendors)
+                {
+                    v.RemoveInvItem(item);
+                }
+                _models.DeleteInventoryItem(item);
                 SelectedInventoryItem = null;
                 ParentContext.Refresh();
             }
@@ -300,7 +307,7 @@ namespace BuddhaBowls
 
         private void EditInventoryItem(object obj)
         {
-            NewInventoryItemWizard wizard = new NewInventoryItemWizard(SelectedInventoryItem);
+            NewInventoryItemWizard wizard = new NewInventoryItemWizard(SelectedInventoryItem.ToInventoryItem());
             wizard.Add("New Item");
         }
 
@@ -341,9 +348,13 @@ namespace BuddhaBowls
 
         public void Refresh()
         {
-            _inventoryItems = ParentContext.SortItems(_models.InventoryItems.Select(x =>
+            if (_inventory == null)
+            {
+                _inventoryItems = ParentContext.SortItems(_models.InventoryItems.Select(x =>
                                 new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList()).ToList();
+            }
             FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
+            FilterText = "";
         }
 
         public void MoveDown(InventoryItem item)

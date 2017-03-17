@@ -65,18 +65,22 @@ namespace BuddhaBowls.Services
             return null;
         }
 
-        public int WriteRecord(string tableName, Dictionary<string, string> mapping)
+        public int WriteRecord(string tableName, Dictionary<string, string> mapping, int id = -1)
         {
             // Id column always first, don't get it here - auto-populated field
             List<string> columns = GetColumnNames(tableName).Skip(1).ToList();
             List<string> newRecord = columns.Select(x => mapping.Keys.Contains(x) ? mapping[x] : "").ToList();
 
-            int lastId = 0;
-            if (!int.TryParse(File.ReadLines(FilePath(tableName)).Last().Split(',')[0], out lastId))
-                lastId = -1;
-            int newId = lastId + 1;
+            int newId = id;
+            if (newId == -1)
+            {
+                int lastId = 0;
+                if (!int.TryParse(File.ReadLines(FilePath(tableName)).Last().Split(',')[0], out lastId))
+                    lastId = -1;
+                newId = lastId + 1;
+            }
 
-            newRecord.Insert(0, (lastId + 1).ToString());
+            newRecord.Insert(0, newId.ToString());
 
             // sometimes files end with \n sometimes not. Deal with this by checking and adding a newline if necessary
             string newline = "";

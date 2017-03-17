@@ -75,5 +75,10 @@ namespace BuddhaBowls.Models
             string[] theseOmissions = new string[] { "PriceExtension", "CostExtension" };
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
+
+        public IItem Copy()
+        {
+            return Copy<InventoryItem>();
+        }
     }
 }
