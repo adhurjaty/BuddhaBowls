@@ -25,18 +25,7 @@ namespace BuddhaBowls.Services
         //}
         private Dictionary<string, string> _categoryColors;
 
-        private List<InventoryItem> _inventoryItems;
-        public List<InventoryItem> InventoryItems
-        {
-            get
-            {
-                return _inventoryItems;
-            }
-            set
-            {
-                _inventoryItems = value;
-            }
-        }
+        public List<InventoryItem> InventoryItems { get; set; }
         public List<Recipe> Recipes { get; set; }
         public HashSet<string> ItemCategories { get; set; }
         public List<PurchaseOrder> PurchaseOrders { get; set; }
@@ -149,6 +138,8 @@ namespace BuddhaBowls.Services
             if(InventoryItems.Select(x => x.Id).Contains(item.Id))
             {
                 item.Update();
+                int itemId = item.Id;
+                InventoryItems[InventoryItems.FindIndex(x => x.Id == itemId)] = item;
             }
             else
             {

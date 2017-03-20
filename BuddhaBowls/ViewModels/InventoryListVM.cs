@@ -447,7 +447,8 @@ namespace BuddhaBowls
             ResetList(null);
             foreach (VendorInventoryItem item in FilteredItems)
             {
-                item.ToInventoryItem().Update();
+                InventoryItem invItem = item.ToInventoryItem();
+                _models.AddUpdateInventoryItem(ref invItem);
             }
 
             Inventory inv = new Inventory(invDate);

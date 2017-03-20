@@ -123,8 +123,8 @@ namespace BuddhaBowls
             if (ValidateInputs())
             {
                 InventoryItem invItem = Item;
-                if (!_newItem)
-                    invItem = ((VendorInventoryItem)invItem).ToInventoryItem();
+                //if (!_newItem)
+                //    invItem = ((VendorInventoryItem)invItem).ToInventoryItem();
                 _models.AddUpdateInventoryItem(ref invItem);
 
                 foreach(VendorInfo v in VendorList)
@@ -136,6 +136,8 @@ namespace BuddhaBowls
                     invItem.Yield = Yield;
                     vendor.AddInvItem(invItem);
                 }
+
+                invItem.Update();
 
                 ParentContext.Refresh();
                 Close();

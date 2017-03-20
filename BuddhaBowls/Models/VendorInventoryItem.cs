@@ -46,6 +46,10 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public VendorInventoryItem()
+        {
+        }
+
         public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict) : base()
         {
             _vendorDict = vendorDict;
@@ -65,8 +69,11 @@ namespace BuddhaBowls.Models
         {
             NotifyPropertyChanged("LastPurchasedPrice");
             InventoryItem item = ToInventoryItem();
-            SelectedVendor.UpdateInvItem(item);
-            _vendorDict[SelectedVendor] = item;
+            if (SelectedVendor != null)
+            {
+                SelectedVendor.UpdateInvItem(item);
+                _vendorDict[SelectedVendor] = item;
+            }
         }
 
         public InventoryItem ToInventoryItem()

@@ -189,6 +189,7 @@ namespace BuddhaBowls
         #endregion
     }
 
+    // TODO: figure out IItem
     public class CompareItem : Model, IItem
     {
         public string Category { get; set; }
