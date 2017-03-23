@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuddahBowls.Test
+namespace BuddhaBowls.Test
 {
     public static class Util
     {

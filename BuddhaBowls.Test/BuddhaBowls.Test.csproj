@@ -6,9 +6,9 @@
     <ProjectGuid>{853D2D3B-9918-4283-99C0-15ADF596CD47}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BuddahBowls.Test</RootNamespace>
-    <AssemblyName>BuddahBowls.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>BuddhaBowls.Test</RootNamespace>
+    <AssemblyName>BuddhaBowls.Test</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -36,7 +36,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -55,9 +58,20 @@
   <ItemGroup>
     <Compile Include="DatabaseInterfaceTest.cs" />
     <Compile Include="Data\TestModel.cs" />
+    <Compile Include="HelperTests.cs" />
+    <Compile Include="MockObjects.cs" />
+    <Compile Include="ModelContainerTests.cs" />
     <Compile Include="ModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlTests.cs" />
     <Compile Include="Util.cs" />
+    <Compile Include="ViewModelsTest.cs" />
+    <Compile Include="XmlSerialize.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BuddhaBowls\BuddhaBowls.csproj">
@@ -65,7 +79,16 @@
       <Name>BuddhaBowls</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Objects\" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

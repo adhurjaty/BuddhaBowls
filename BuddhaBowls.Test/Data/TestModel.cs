@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuddahBowls.Test.Data
+namespace BuddhaBowls.Test.Data
 {
     public class TestModel : Model
     {

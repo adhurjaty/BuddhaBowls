@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BuddahBowls.Test.Data;
+using BuddhaBowls.Test.Data;
 using System.Collections.Generic;
 using System.IO;
 
-namespace BuddahBowls.Test
+namespace BuddhaBowls.Test
 {
     [TestClass]
     public class ModelTests

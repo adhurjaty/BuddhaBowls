@@ -12,12 +12,30 @@ namespace BuddhaBowls.Helpers
 {
     public static class MainHelper
     {
-
+        /// <summary>
+        /// Converts a list of string arrays into a csv string
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <returns></returns>
         public static string ListToCsv(List<string[]> rows)
         {
-            return string.Join("\n", rows.Select(x => string.Join(",", x)));
+            string contents = "";
+            foreach (string[] row in rows)
+            {
+                string cell = row.FirstOrDefault(x => x.Contains(","));
+                if (!string.IsNullOrEmpty(cell))
+                    throw new ArgumentException("Contents cannot have a , in them");
+                contents += string.Join(",", row) + "\n";
+            }
+
+            return contents.TrimEnd('\n');
         }
 
+        /// <summary>
+        /// Convert a hex string for a color into the excel format color long format
+        /// </summary>
+        /// <remarks>I don't think I need to test this one - it works and there is no need to change it</remarks>
+        /// <param name="color">Hex code for color</param>
         public static long ColorFromString(string color)
         {
             int[] rgb = ChunkString(color, 2).Select(x => int.Parse(x, System.Globalization.NumberStyles.HexNumber)).ToArray();
@@ -28,11 +46,20 @@ namespace BuddhaBowls.Helpers
             return (long)(Math.Pow(2, 16) * b + Math.Pow(2, 8) * g + r);
         }
 
-        public static IEnumerable<string> ChunkString(string str, int size)
+        /// <summary>
+        /// Breaks a string up into |size| sized chunks, the last element cannot have a smaller size - so it is omitted
+        /// </summary>
+        /// <remarks>Only used for ColorFromString</remarks>
+        /// <returns></returns>
+        private static IEnumerable<string> ChunkString(string str, int size)
         {
             return Enumerable.Range(0, str.Length / size).Select(i => str.Substring(i * size, size));
         }
 
+        /// <summary>
+        /// Loads a recipe and returns a list of the items
+        /// </summary>
+        /// <param name="recipeName">Name of the recipe file (no extension)</param>
         public static List<IItem> GetRecipe(string recipeName, ModelContainer models)
         {
             string tableName = Path.Combine(Properties.Resources.RecipeFolder, recipeName);
@@ -43,6 +70,7 @@ namespace BuddhaBowls.Helpers
             foreach(RecipeItem item in items)
             {
                 IItem addItem;
+                // if this is a recipe and not an inventory item (something that is purchased directly)
                 if (item.InventoryItemId == null)
                 {
                     addItem = models.Recipes.FirstOrDefault(x => x.Name == item.Name);
@@ -56,6 +84,7 @@ namespace BuddhaBowls.Helpers
 
                 if (addItem != null)
                 {
+                    // copy to prevent overwriting values from the database
                     addItem = addItem.Copy();
                     addItem.Count = item.Quantity;
                     recipeList.Add(addItem);

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BuddhaBowls.Properties {
+namespace BuddhaBowls.Test.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -25,35 +25,14 @@ namespace BuddhaBowls.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Developer\\Documents\\Visual Studio 2015\\Projects\\BuddhaB\\Dataadf")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Developer\\Documents\\Visual Studio 2015\\Projects\\BuddhaBowls\\BuddhaBowls." +
+            "Test\\Data")]
         public string DBLocation {
             get {
                 return ((string)(this["DBLocation"]));
             }
             set {
                 this["DBLocation"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Generic.List<System.String> InventoryOrder {
-            get {
-                return ((global::System.Collections.Generic.List<System.String>)(this["InventoryOrder"]));
-            }
-            set {
-                this["InventoryOrder"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Generic.List<System.String> CategoryOrder {
-            get {
-                return ((global::System.Collections.Generic.List<System.String>)(this["CategoryOrder"]));
-            }
-            set {
-                this["CategoryOrder"] = value;
             }
         }
     }

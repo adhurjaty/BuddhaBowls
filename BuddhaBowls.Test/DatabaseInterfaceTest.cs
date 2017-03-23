@@ -4,7 +4,7 @@ using BuddhaBowls.Services;
 using System.Collections.Generic;
 using System.IO;
 
-namespace BuddahBowls.Test
+namespace BuddhaBowls.Test
 {
     [TestClass]
     public class DatabaseInterfaceTest
@@ -27,6 +27,14 @@ namespace BuddahBowls.Test
             {
                 Assert.AreEqual(refRecord[i-1], record[i]);
             }
+        }
+
+        [TestMethod]
+        public void GetNoRecordTest()
+        {
+            string[] record = _dbInt.GetRecord("Test", new Dictionary<string, string>() { { "Col2", "999" } });
+
+            Assert.IsNull(record);
         }
 
         [TestMethod]
@@ -107,7 +115,7 @@ namespace BuddahBowls.Test
 
                 _dbInt.WriteRecord("TestCopy", mapping);
 
-                string[] record = _dbInt.GetRecord("TestCopy", mapping);
+                string[] record = _dbInt.GetRecord("TestCopy", new Dictionary<string, string>() { { "AnotherCol", "3912" } });
                 Assert.AreEqual("Another test value", record[2]);
                 Assert.AreEqual("4", record[0]);
             }
@@ -145,6 +153,12 @@ namespace BuddahBowls.Test
             
         }
 
-        
+        [TestMethod]
+        public void GetColumnNamesTest()
+        {
+            string[] headers = _dbInt.GetColumnNames("Test");
+
+            CollectionAssert.AreEqual(new string[] { "Id", "Col1", "Col2", "Col3", "AnotherCol" }, headers);
+        }
     }
 }
