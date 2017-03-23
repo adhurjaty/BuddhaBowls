@@ -42,6 +42,7 @@ namespace BuddhaBowls.Models
                     _selectedVendor = value;
                     NotifyPropertyChanged("SelectedVendor");
                     UpdateVendorParams();
+                    UpdateProperties();
                 }
             }
         }
@@ -50,19 +51,20 @@ namespace BuddhaBowls.Models
         {
         }
 
-        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict) : base()
+        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict, InventoryItem item)
         {
             _vendorDict = vendorDict;
-            SelectedVendor = vendorDict.Keys.FirstOrDefault();
-        }
 
-        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict, InventoryItem item) : this(vendorDict)
-        {
             foreach (string property in item.GetPropertiesDB())
             {
                 SetProperty(property, item.GetPropertyValue(property));
             }
             Id = item.Id;
+
+            if (LastVendorId != null)
+                SelectedVendor = vendorDict.Keys.FirstOrDefault(x => x.Id == LastVendorId);
+            else
+                SelectedVendor = vendorDict.Keys.FirstOrDefault();
         }
 
         public void UpdateVendorPrice()
@@ -87,6 +89,12 @@ namespace BuddhaBowls.Models
             return item;
         }
 
+        public void UpdateProperties()
+        {
+            NotifyPropertyChanged("PriceExtension");
+            NotifyPropertyChanged("CountPrice");
+        }
+
         private void UpdateVendorParams()
         {
             if (SelectedVendor != null)
@@ -96,6 +104,8 @@ namespace BuddhaBowls.Models
                 PurchasedUnit = item.PurchasedUnit;
                 NotifyPropertyChanged("LastPurchasedPrice");
                 NotifyPropertyChanged("PurchasedUnit");
+                LastVendorId = SelectedVendor.Id;
+                NotifyPropertyChanged("LastVendorId");
             }
         }
     }

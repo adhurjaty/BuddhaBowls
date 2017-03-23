@@ -394,12 +394,12 @@ namespace BuddhaBowls
 
         public void RowEdited(VendorInventoryItem item)
         {
-            if (IsMasterList)
+            item.UpdateVendorPrice();
+            if (!IsMasterList)
             {
-                item.UpdateVendorPrice();
-            }
-            else
                 InventoryItemCountChanged();
+                item.UpdateProperties();
+            }
         }
 
         /// <summary>

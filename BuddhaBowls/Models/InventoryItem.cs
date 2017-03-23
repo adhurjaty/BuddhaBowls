@@ -21,12 +21,23 @@ namespace BuddhaBowls.Models
         public float LastPurchasedPrice { get; set; }
         public float LastOrderAmount { get; set; }
         public DateTime? LastPurchasedDate { get; set; }
+        public int? LastVendorId { get; set; }
 
         public float PriceExtension
         {
             get
             {
-                return LastOrderAmount * LastPurchasedPrice;
+                return Count * CountPrice;
+            }
+        }
+
+        public float CountPrice
+        {
+            get
+            {
+                if (Conversion == 0)
+                    return 0;
+                return LastPurchasedPrice / Conversion;
             }
         }
 
@@ -72,7 +83,7 @@ namespace BuddhaBowls.Models
 
         public override string[] GetPropertiesDB(string[] omit = null)
         {
-            string[] theseOmissions = new string[] { "PriceExtension", "CostExtension" };
+            string[] theseOmissions = new string[] { "PriceExtension", "CostExtension", "CountPrice" };
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
 
