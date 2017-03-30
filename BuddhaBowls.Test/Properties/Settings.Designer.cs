@@ -26,7 +26,7 @@ namespace BuddhaBowls.Test.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Developer\\Documents\\Visual Studio 2015\\Projects\\BuddhaBowls\\BuddhaBowls." +
-            "Test\\Data")]
+            "Test\\TestData")]
         public string DBLocation {
             get {
                 return ((string)(this["DBLocation"]));

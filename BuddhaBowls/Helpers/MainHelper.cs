@@ -57,43 +57,11 @@ namespace BuddhaBowls.Helpers
         }
 
         /// <summary>
-        /// Loads a recipe and returns a list of the items
+        /// Sorts inventory items based on the stored order if it exists, otherwise sort alphabetically by name
         /// </summary>
-        /// <param name="recipeName">Name of the recipe file (no extension)</param>
-        public static List<IItem> GetRecipe(string recipeName, ModelContainer models)
-        {
-            string tableName = Path.Combine(Properties.Resources.RecipeFolder, recipeName);
-
-            List<RecipeItem> items = ModelHelper.InstantiateList<RecipeItem>(tableName, false);
-
-            List<IItem> recipeList = new List<IItem>();
-            foreach(RecipeItem item in items)
-            {
-                IItem addItem;
-                // if this is a recipe and not an inventory item (something that is purchased directly)
-                if (item.InventoryItemId == null)
-                {
-                    addItem = models.Recipes.FirstOrDefault(x => x.Name == item.Name);
-                    if(addItem != null)
-                        ((Recipe)addItem).ItemList = GetRecipe(addItem.Name, models);
-                }
-                else
-                {
-                    addItem = models.InventoryItems.FirstOrDefault(x => x.Id == item.InventoryItemId);
-                }
-
-                if (addItem != null)
-                {
-                    // copy to prevent overwriting values from the database
-                    addItem = addItem.Copy();
-                    addItem.Count = item.Quantity;
-                    recipeList.Add(addItem);
-                }
-            }
-
-            return recipeList;
-        }
-
+        /// <typeparam name="T">Return type in IEnumerable - must be an IItem</typeparam>
+        /// <param name="items">Items to sort</param>
+        /// <returns>Sorted IEnumerable</returns>
         public static IEnumerable<T> SortItems<T>(IEnumerable<T> items) where T : IItem
         {
             if (Properties.Settings.Default.InventoryOrder == null)
@@ -105,16 +73,29 @@ namespace BuddhaBowls.Helpers
                                      .OrderBy(x => x.Name));
         }
 
+        /// <summary>
+        /// Unused for now - not sure if it is needed in the future
+        /// </summary>
+        /// <param name="items"></param>
+        /// <returns></returns>
         public static List<IItem> CategoryOrder(List<IItem> items)
         {
             return items.OrderBy(x => OrderValue(x)).ToList();
         }
 
+        /// <summary>
+        /// Create a grouping by category of items that are in the order of InventoryOrder within their category group
+        /// </summary>
+        /// <typeparam name="T">IItem type</typeparam>
         public static IEnumerable<IGrouping<string, T>> CategoryGrouping<T>(List<T> items) where T : IItem
         {
             return SortItems(items).GroupBy(x => x.Category).OrderBy(x => x.Key);
         }
 
+        /// <summary>
+        /// Helper for CategoryGrouping - orders first by category then by InventoryOrder
+        /// </summary>
+        /// <returns>Int representation corresponding with the order</returns>
         private static int OrderValue(IItem item)
         {
             return Properties.Settings.Default.CategoryOrder.IndexOf(item.Category) * 1000 +

@@ -57,7 +57,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="DatabaseInterfaceTest.cs" />
-    <Compile Include="Data\TestModel.cs" />
     <Compile Include="HelperTests.cs" />
     <Compile Include="MockObjects.cs" />
     <Compile Include="ModelContainerTests.cs" />
@@ -68,6 +67,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="TestData\TestModel.cs" />
     <Compile Include="UserControlTests.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="ViewModelsTest.cs" />
@@ -85,6 +85,26 @@
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="TestData\InventoryItem.csv" />
+    <None Include="TestData\Recipe.csv" />
+    <None Include="TestData\Recipes\Another new.csv" />
+    <None Include="TestData\Recipes\Balsamic Vinegar.csv" />
+    <None Include="TestData\Recipes\Chicken Marinade.csv" />
+    <None Include="TestData\Recipes\Chili.csv" />
+    <None Include="TestData\Recipes\Cooked Spinach.csv" />
+    <None Include="TestData\Recipes\Garlic Oil Spread.csv" />
+    <None Include="TestData\Recipes\Grilled Chicken.csv" />
+    <None Include="TestData\Recipes\Grilled Onions.csv" />
+    <None Include="TestData\Recipes\Hummus.csv" />
+    <None Include="TestData\Recipes\Mac &amp; Cheese.csv" />
+    <None Include="TestData\Recipes\Marinara.csv" />
+    <None Include="TestData\Recipes\New Batch.csv" />
+    <None Include="TestData\Recipes\New England Clam Chowder.csv" />
+    <None Include="TestData\Recipes\Pesto Aioli.csv" />
+    <None Include="TestData\Recipes\Roasted Bell Peppers.csv" />
+    <None Include="TestData\Recipes\Sauteed Mushrooms.csv" />
+    <None Include="TestData\Recipes\Tomato Basil.csv" />
+    <None Include="TestData\Test.csv" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Objects\" />

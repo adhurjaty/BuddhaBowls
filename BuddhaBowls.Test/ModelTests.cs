@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BuddhaBowls.Test.Data;
+using BuddhaBowls.Test.TestData;
 using System.Collections.Generic;
 using System.IO;
 

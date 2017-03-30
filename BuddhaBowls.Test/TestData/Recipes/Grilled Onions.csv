@@ -1,0 +1,5 @@
+Id,Name,InventoryItemId,Measure,Quantity,IsBatch
+0,Canola Oil,34,GRILL,1.7,False
+1,Pepper,48,1/4 TBL,0.25,False
+2,Salt,49,3/4 TBL,0.75,False
+3,Yellow Onions,54,1/2 PAN,90,False

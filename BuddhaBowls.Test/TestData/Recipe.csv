@@ -1,0 +1,16 @@
+Id,Name,RecipeUnit,RecipeUnitConversion,Category,Price,Count,IsBatch
+0,Mac & Cheese,OZ-wt,120.8,MAC + SOUPS,,0,TRUE
+1,Balsamic Vinegar,OZ-wt,66.4,MAC + SOUPS,,0,TRUE
+2,Chicken Marinade,OZ-wt,208,MAC + SOUPS,,0,TRUE
+3,Chili,OZ-wt,524,MAC + SOUPS,,0,TRUE
+4,Cooked Spinach,OZ-wt,19.2,MAC + SOUPS,,0,TRUE
+5,Garlic Oil Spread,OZ-wt,100,MAC + SOUPS,,0,TRUE
+6,Grilled Chicken,OZ-wt,184.96,MAC + SOUPS,,0,TRUE
+7,Grilled Onions,OZ-wt,50.35,MAC + SOUPS,,0,TRUE
+8,Hummus,OZ-wt,424,SAUCES+DRESSINGS,,0,TRUE
+9,Marinara,OZ-wt,505,SAUCES+DRESSINGS,,0,TRUE
+10,New England Clam Chowder,OZ-wt,484.8,MAC + SOUPS,,0,TRUE
+11,Pesto Aioli,OZ-wt,265,SAUCES+DRESSINGS,,0,TRUE
+12,Roasted Bell Peppers,OZ-wt,36.23,MAC + SOUPS,,0,TRUE
+13,Sauteed Mushrooms,OZ-wt,22.1,MAC + SOUPS,,0,TRUE
+14,Tomato Basil,OZ-wt,518.4,MAC + SOUPS,,0,TRUE

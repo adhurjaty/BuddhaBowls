@@ -1,0 +1,16 @@
+Id,Name,InventoryItemId,Measure,Quantity,IsBatch
+0,Stewed Tomatoes,14,1 CAN,1,False
+1,Black Beans,15,1 CAN,1,False
+2,Pinto Beans,17,2 CANS,2,False
+3,Roasted Bell Peppers,23,.5 CAN,30,False
+4,Canola Oil,34,2 TBL,2,False
+5,Sugar (BROWN),38,.5 CUP,0.5,False
+6,Cayenne Pepper,47,1 TBL,1,False
+7,Pepper,48,1 TBL,1,False
+8,Salt,49,5 TBL,5,False
+9,Chili Powder,50,5 TBL,5,False
+10,Paprika,51,2 TBL,2,False
+11,Yellow Onions,54,1/2 Pan,90,False
+12,Jalapenos,65,4 EA,8,False
+13,Garlic Peeled,71,1/4 CUP,4,False
+14,Ground Beef,73,.5 LOG,0.5,False

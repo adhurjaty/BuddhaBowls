@@ -36,7 +36,7 @@ namespace BuddhaBowls.Helpers
         /// Create a list of Model type T that has all records in table
         /// </summary>
         /// <returns></returns>
-        public static List<T> InstantiateList<T>(string table, bool fileExists = true) where T : Model, new()
+        public static List<T> InstantiateList<T>(string table, bool isModel = true) where T : Model, new()
         {
             T listObj = new T();
             DatabaseInterface dbInt = new DatabaseInterface();
@@ -44,7 +44,7 @@ namespace BuddhaBowls.Helpers
 
             if (records != null)
             {
-                if (fileExists)
+                if (isModel)
                     return InstantiateListHelper<T>(records);
                 else
                     return InstantiateListHelper<T>(records, dbInt.GetColumnNames(table));

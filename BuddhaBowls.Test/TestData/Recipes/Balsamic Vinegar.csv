@@ -1,0 +1,10 @@
+Id,Name,InventoryItemId,Measure,Quantity,IsBatch
+0,Balsamic Vinegar,30,2 CUPS,16,False
+1,Olive Oil,36,6 CUPS,48,False
+2,Sugar (BROWN),38,1/2 CUP,8,False
+3,Dried Basil,43,1 TBL,1,False
+4,Thyme,44,1 TBL,1,False
+5,Oregano,45,1 TBL,1,False
+6,Pepper,48,1 TBL,1,False
+7,Salt,49,1/4 CUP,4,False
+8,Garlic Peeled,71,1/4 CUP,4,False

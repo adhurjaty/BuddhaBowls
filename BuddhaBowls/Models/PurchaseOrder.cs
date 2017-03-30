@@ -74,15 +74,15 @@ namespace BuddhaBowls.Models
 
             if(IsPartial)
             {
-                openItems = ModelHelper.InstantiateList<InventoryItem>(GetOpenPartialOrderTableName(), fileExists: false);
-                receivedItems = ModelHelper.InstantiateList<InventoryItem>(GetReceivedPartialOrderTableName(), fileExists: false);
+                openItems = ModelHelper.InstantiateList<InventoryItem>(GetOpenPartialOrderTableName(), isModel: false);
+                receivedItems = ModelHelper.InstantiateList<InventoryItem>(GetReceivedPartialOrderTableName(), isModel: false);
             }
             else
             {
                 if(Received)
-                    receivedItems = ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), fileExists: false);
+                    receivedItems = ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), isModel: false);
                 else
-                    openItems = ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), fileExists: false);
+                    openItems = ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), isModel: false);
             }
             return new List<InventoryItem>[] { openItems, receivedItems };
         }

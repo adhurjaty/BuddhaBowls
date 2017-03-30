@@ -76,7 +76,7 @@ namespace BuddhaBowls.Test
             XmlElement contents = doc.CreateElement(typeof(T).Name);
             doc.AppendChild(contents);
 
-            PropertyInfo[] props = obj.GetType().GetProperties();
+            PropertyInfo[] props = obj.GetType().GetProperties().Where(x => x.CanWrite).ToArray();
             foreach (PropertyInfo prop in props)
             {
                 XmlElement element = doc.CreateElement(prop.Name);

@@ -66,7 +66,7 @@ namespace BuddhaBowls.Models
 
         public float GetCost()
         {
-            if (RecipeUnitConversion == null)
+            if (RecipeUnitConversion == null || RecipeUnitConversion == 0 || Yield == null || Yield == 0)
                 return 0;
             return LastPurchasedPrice / ((float)RecipeUnitConversion * (float)Yield);
         }

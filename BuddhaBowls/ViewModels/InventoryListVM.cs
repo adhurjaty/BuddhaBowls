@@ -428,10 +428,10 @@ namespace BuddhaBowls
         private void UpdateInvValue()
         {
             List<PriceExpanderItem> items = new List<PriceExpanderItem>();
-            TotalValueMessage = "Inventory Value: " + FilteredItems.Sum(x => x.LastPurchasedPrice * x.Count).ToString("c");
+            TotalValueMessage = "Inventory Value: " + FilteredItems.Sum(x => x.PriceExtension).ToString("c");
             foreach (string category in _models.ItemCategories)
             {
-                float value = _inventoryItems.Where(x => x.Category.ToUpper() == category.ToUpper()).Sum(x => x.LastPurchasedPrice * x.Count);
+                float value = _inventoryItems.Where(x => x.Category.ToUpper() == category.ToUpper()).Sum(x => x.PriceExtension);
                 items.Add(new PriceExpanderItem() { Label = category + " Value:", Price = value });
             }
 

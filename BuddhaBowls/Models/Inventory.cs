@@ -24,7 +24,7 @@ namespace BuddhaBowls.Models
 
         public List<InventoryItem> GetInventoryHistory()
         {
-            return ModelHelper.InstantiateList<InventoryItem>(GetInventoryTable(), fileExists: false);
+            return ModelHelper.InstantiateList<InventoryItem>(GetInventoryTable(), isModel: false);
         }
 
         public int Insert(List<InventoryItem> items)

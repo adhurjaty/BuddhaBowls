@@ -49,6 +49,11 @@ namespace BuddhaBowls.Test
             return XmlSerialize.DeserializeModel<InventoryItem>(Path.Combine(OBJECT_PATH, name + ".xml"));
         }
 
+        public static Recipe GetRecipe(string name)
+        {
+            return XmlSerialize.DeserializeModel<Recipe>(Path.Combine(OBJECT_PATH, name + ".xml"));
+        }
+
         public static T GetFromPath<T>(string path) where T : Model, new()
         {
             return XmlSerialize.DeserializeModel<T>(path);
@@ -67,6 +72,11 @@ namespace BuddhaBowls.Test
         public static void SaveInventoryItem(InventoryItem invItem, string subfolder)
         {
             XmlSerialize.SerializeModel(Path.Combine(OBJECT_PATH, subfolder, invItem.Name + ".xml"), invItem);
+        }
+
+        public static void SaveRecipe(Recipe recipe)
+        {
+            XmlSerialize.SerializeModel(Path.Combine(OBJECT_PATH, recipe.Name + ".xml"), recipe);
         }
 
         //public static void SaveSpecsList<T>(List<T> specs, string bolo)

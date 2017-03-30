@@ -2,6 +2,7 @@
 using BuddhaBowls.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -11,18 +12,6 @@ namespace BuddhaBowls.Services
 {
     public class ModelContainer
     {
-        //private static ModelContainer cont;
-        //public static ModelContainer _container
-        //{
-        //    get
-        //    {
-        //        return cont;
-        //    }
-        //    set
-        //    {
-        //        cont = value;
-        //    }
-        //}
         private Dictionary<string, string> _categoryColors;
 
         public List<InventoryItem> InventoryItems { get; set; }
@@ -42,19 +31,7 @@ namespace BuddhaBowls.Services
             }
         }
 
-        //public static ModelContainer Instance()
-        //{
-        //    if (_container == null)
-        //        _container = new ModelContainer();
-        //    return _container;
-        //}
-
-        //public static void ChangeContainer(ModelContainer container)
-        //{
-        //    _container = container;
-        //}
-
-        public void InitializeModels()
+        private void InitializeModels()
         {
             InventoryItems = ModelHelper.InstantiateList<InventoryItem>("InventoryItem") ?? new List<InventoryItem>();
             Recipes = ModelHelper.InstantiateList<Recipe>("Recipe") ?? new List<Recipe>();
@@ -67,10 +44,15 @@ namespace BuddhaBowls.Services
 
             foreach(Recipe rec in Recipes)
             {
-                rec.ItemList = MainHelper.GetRecipe(rec.Name, this);
+                rec.ItemList = GetRecipe(rec.Name);
             }
         }
 
+        /// <summary>
+        /// Get the total cost of the recipe's ingredients
+        /// </summary>
+        /// <param name="rec"></param>
+        /// <returns>Cost</returns>
         public float GetBatchItemCost(Recipe rec)
         {
             float cost = 0;
@@ -81,6 +63,7 @@ namespace BuddhaBowls.Services
 
             return cost;
         }
+
 
         public Dictionary<string, float> GetCategoryCosts(Recipe rec)
         {
@@ -96,6 +79,10 @@ namespace BuddhaBowls.Services
             return costDict;
         }
 
+        /// <summary>
+        /// Gets the color (excel format) from the passed-in category (case insensitive)
+        /// </summary>
+        /// <remarks>Probably no need to test</remarks>
         public long GetColorFromCategory(string category)
         {
             string key = _categoryColors.Keys.FirstOrDefault(x => x.ToUpper() == category.ToUpper());
@@ -107,32 +94,97 @@ namespace BuddhaBowls.Services
             return MainHelper.ColorFromString(GlobalVar.BLANK_COLOR);
         }
 
+        /// <summary>
+        /// Gets the hex representation of the color given the passed-in category (case insensitive)
+        /// </summary>
+        /// <remarks>Probably no need to test</remarks>
         public string GetCategoryColorHex(string category)
         {
             return "#" + (_categoryColors.Keys.Contains(category.ToUpper()) ?
                             _categoryColors[category.ToUpper()] : GlobalVar.BLANK_COLOR);
         }
 
+        /// <summary>
+        /// Loads a recipe and returns a list of the items
+        /// </summary>
+        /// <param name="recipeName">Name of the recipe file (no extension)</param>
+        public List<IItem> GetRecipe(string recipeName)
+        {
+            string tableName = Path.Combine(Properties.Resources.RecipeFolder, recipeName);
+
+            List<RecipeItem> items = ModelHelper.InstantiateList<RecipeItem>(tableName, false);
+
+            List<IItem> recipeList = new List<IItem>();
+            foreach (RecipeItem item in items)
+            {
+                IItem addItem;
+                // if this is a recipe and not an inventory item (something that is purchased directly)
+                if (item.InventoryItemId == null)
+                {
+                    addItem = Recipes.FirstOrDefault(x => x.Name == item.Name);
+                    if (addItem != null)
+                        ((Recipe)addItem).ItemList = GetRecipe(addItem.Name);
+                }
+                else
+                {
+                    addItem = InventoryItems.FirstOrDefault(x => x.Id == item.InventoryItemId);
+                }
+
+                if (addItem != null)
+                {
+                    // copy to prevent overwriting values from the database
+                    addItem = addItem.Copy();
+                    addItem.Count = item.Quantity;
+                    recipeList.Add(addItem);
+                }
+            }
+
+            return recipeList;
+        }
+
+        /// <summary>
+        /// Get all inventory items and batch recipe items
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<IItem> GetIngredients()
         {
             return InventoryItems.Select(x => (IItem)x).Concat(Recipes.Where(x => x.IsBatch));
         }
 
+        /// <summary>
+        /// Get all of the count units that currently exist in inventory items
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetCountUnits()
         {
-            return (new HashSet<string>(InventoryItems.Select(x => x.CountUnit))).ToList();
+            return EnsureCaseInsensitive(new HashSet<string>(InventoryItems.Select(x => x.CountUnit)
+                                                                           .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
+        /// <summary>
+        /// Get all of the recipe units that currently exist in inventory items
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetRecipeUnits()
         {
-            return (new HashSet<string>(InventoryItems.Select(x => x.RecipeUnit))).ToList();
+            return EnsureCaseInsensitive(new HashSet<string>(InventoryItems.Select(x => x.RecipeUnit)
+                                                                            .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
+        /// <summary>
+        /// Get all of the purchased units that currently exist in inventory items
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetPurchasedUnits()
         {
-            return (new HashSet<string>(InventoryItems.Select(x => x.PurchasedUnit))).ToList();
+            return EnsureCaseInsensitive(new HashSet<string>(InventoryItems.Select(x => x.PurchasedUnit)
+                                                                           .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
+        /// <summary>
+        /// Add or update an inventory item - adds or updates db and the item within the model container
+        /// </summary>
+        /// <param name="item"></param>
         public void AddUpdateInventoryItem(ref InventoryItem item)
         {
             if(InventoryItems.Select(x => x.Id).Contains(item.Id))
@@ -148,9 +200,16 @@ namespace BuddhaBowls.Services
 
                 item.Id = item.Insert();
                 InventoryItems.Add(item);
+                if (!ItemCategories.Contains(item.Category))
+                    SetInventoryCategories();
             }
         }
 
+        /// <summary>
+        /// Removes inventory item from db and from model container
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns>Whether or not the item existed and was deleted</returns>
         public bool DeleteInventoryItem(InventoryItem item)
         {
             if(InventoryItems.First(x => x.Id == item.Id) == null)
@@ -161,6 +220,10 @@ namespace BuddhaBowls.Services
             return true;
         }
 
+        /// <summary>
+        /// Adds or updates vendor in DB and model container
+        /// </summary>
+        /// <param name="vendor"></param>
         public void AddUpdateVendor(Vendor vendor)
         {
             if(Vendors.FirstOrDefault(x => x.Id == vendor.Id) != null)
@@ -174,12 +237,20 @@ namespace BuddhaBowls.Services
             }
         }
 
+        /// <summary>
+        /// Deletes vendor from DB and model container
+        /// </summary>
+        /// <param name="vendor"></param>
         public void RemoveVendor(Vendor vendor)
         {
             Vendors.Remove(vendor);
             vendor.Destroy();
         }
 
+        /// <summary>
+        /// Gets a dictionary of vendors that offer the passed-in inventory item. The inventory item value is the vendor-specific inventory
+        /// item associated with that vendor (not the one from the model container, which is passed in)
+        /// </summary>
         public Dictionary<Vendor, InventoryItem> GetVendorsFromItem(InventoryItem item)
         {
             Dictionary<Vendor, InventoryItem> vendorDict = new Dictionary<Vendor, InventoryItem>();
@@ -205,11 +276,13 @@ namespace BuddhaBowls.Services
 
             foreach (InventoryItem item in InventoryItems)
             {
-                // may need to add back in the .ToUpper()
                 ItemCategories.Add(item.Category);
             }
         }
 
+        /// <summary>
+        /// Constructs dictionary mapping categories to colors { CATEGORY : Hex Color }
+        /// </summary>
         private void SetCategoryColors()
         {
             const string COLOR = "_COLOR";
@@ -227,5 +300,18 @@ namespace BuddhaBowls.Services
                 }
             }
         }
+
+        /// <summary>
+        /// Converts case-sensitive hashset into case insensitive (will not store OZ-wt AND OZ-WT)
+        /// </summary>
+        /// <param name="set"></param>
+        /// <returns></returns>
+        private HashSet<string> EnsureCaseInsensitive(HashSet<string> set)
+        {
+            return set.Comparer == StringComparer.OrdinalIgnoreCase
+                   ? set
+                   : new HashSet<string>(set, StringComparer.OrdinalIgnoreCase);
+        }
+
     }
 }

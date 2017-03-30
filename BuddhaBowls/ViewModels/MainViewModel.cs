@@ -249,6 +249,7 @@ namespace BuddhaBowls
             SaveSettings();
             //ModelContainer.ChangeContainer(null);
             _models = new ModelContainer();
+            SetInvOrderSetting();
             InitTabsAndModel();
         }
         #endregion
@@ -443,17 +444,6 @@ namespace BuddhaBowls
             // TODO: add settings to save
             Properties.Settings.Default.DBLocation = DataFileFolder;
             Properties.Settings.Default.Save();
-
-            // TODO: temporary code to adjust InventoryItem schema
-            //DatabaseInterface dbInt = new DatabaseInterface();
-            //if (File.Exists(dbInt.FilePath("InventoryItem")))
-            //{
-            //    string[] cols = dbInt.GetColumnNames("InventoryItem");
-            //    if(!cols.Contains("LastVendorId"))
-            //    {
-
-            //    }
-            //}
         }
 
         public void GenerateAfterOrderSaved(PurchaseOrder po, Vendor vendor)
