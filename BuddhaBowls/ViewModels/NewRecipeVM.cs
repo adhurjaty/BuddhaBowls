@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
 using System;
@@ -311,7 +312,7 @@ namespace BuddhaBowls
             }
             else
             {
-                Ingredients = new ObservableCollection<IItem>(ParentContext.SortItems(_availableItems));
+                Ingredients = new ObservableCollection<IItem>(MainHelper.SortItems(_availableItems));
                 RemainingItems = new ObservableCollection<IItem>(_models.InventoryItems
                                                                                 .Where(x => !_availableItems.Select(y => y.Id).Contains(x.Id))
                                                                                 .OrderBy(x => x.Name));

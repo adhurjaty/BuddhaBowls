@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using BuddhaBowls.UserControls;
 using System.Windows;
+using BuddhaBowls.Helpers;
 
 namespace BuddhaBowls
 {
@@ -24,20 +25,6 @@ namespace BuddhaBowls
         private List<InventoryItem> _removedItems;
 
         #region Content Binders
-
-        private string _header;
-        public string Header
-        {
-            get
-            {
-                return _header;
-            }
-            set
-            {
-                _header = value;
-                NotifyPropertyChanged("Header");
-            }
-        }
 
         private ObservableCollection<InventoryItem> _vendorItems;
         public ObservableCollection<InventoryItem> VendorItems
@@ -234,7 +221,7 @@ namespace BuddhaBowls
             }
             else
             {
-                VendorItems = new ObservableCollection<InventoryItem>(ParentContext.SortItems(_availableItems));
+                VendorItems = new ObservableCollection<InventoryItem>(MainHelper.SortItems(_availableItems));
                 RemainingItems = new ObservableCollection<InventoryItem>(_models.InventoryItems
                                                                                 .Where(x => !_availableItems.Select(y => y.Id).Contains(x.Id))
                                                                                 .OrderBy(x => x.Name));

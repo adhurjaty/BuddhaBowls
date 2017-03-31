@@ -18,7 +18,7 @@ namespace BuddhaBowls.Test.TestData
         public TestModel()
         {
             _tableName = "TestCopy";
-            _dbInt = new DatabaseInterface(@"C:\Users\Developer\Documents\Visual Studio 2015\Projects\BuddhaBowls\BuddahBowls.Test\Data");
+            _dbInt = new DatabaseInterface();
         }
 
         public TestModel(Dictionary<string, string> fieldParams) : this()

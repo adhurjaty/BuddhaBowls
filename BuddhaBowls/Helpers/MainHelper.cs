@@ -64,9 +64,6 @@ namespace BuddhaBowls.Helpers
         /// <returns>Sorted IEnumerable</returns>
         public static IEnumerable<T> SortItems<T>(IEnumerable<T> items) where T : IItem
         {
-            if (Properties.Settings.Default.InventoryOrder == null)
-                return items.OrderBy(x => x.Name);
-
             return items.Where(x => Properties.Settings.Default.InventoryOrder.Contains(x.Name))
                         .OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.Name))
                         .Concat(items.Where(x => !Properties.Settings.Default.InventoryOrder.Contains(x.Name))

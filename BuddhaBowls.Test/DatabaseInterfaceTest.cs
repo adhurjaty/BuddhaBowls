@@ -13,7 +13,7 @@ namespace BuddhaBowls.Test
 
         public DatabaseInterfaceTest()
         {
-            _dbInt = new DatabaseInterface(@"C:\Users\Developer\Documents\Visual Studio 2015\Projects\BuddhaBowls\BuddahBowls.Test\Data");
+            _dbInt = new DatabaseInterface();
         }
 
         [TestMethod]

@@ -23,6 +23,9 @@ namespace BuddhaBowls.Models
         public DateTime? LastPurchasedDate { get; set; }
         public int? LastVendorId { get; set; }
 
+        /// <summary>
+        /// Total price of inventory on-hand
+        /// </summary>
         public float PriceExtension
         {
             get
@@ -31,6 +34,9 @@ namespace BuddhaBowls.Models
             }
         }
 
+        /// <summary>
+        /// Price per Count Unit
+        /// </summary>
         public float CountPrice
         {
             get
@@ -38,14 +44,6 @@ namespace BuddhaBowls.Models
                 if (Conversion == 0)
                     return 0;
                 return LastPurchasedPrice / Conversion;
-            }
-        }
-
-        public float CostExtension
-        {
-            get
-            {
-                return GetCost() * Count;
             }
         }
 
@@ -64,23 +62,40 @@ namespace BuddhaBowls.Models
             }
         }
 
+        /// <summary>
+        /// Get the cost per Recipe Unit
+        /// </summary>
+        /// <returns></returns>
         public float GetCost()
         {
             if (RecipeUnitConversion == null || RecipeUnitConversion == 0 || Yield == null || Yield == 0)
                 return 0;
-            return LastPurchasedPrice / ((float)RecipeUnitConversion * (float)Yield);
+            return CountPrice / ((float)RecipeUnitConversion * (float)Yield);
         }
 
+        /// <summary>
+        /// Get count stored in the DB
+        /// </summary>
+        /// <returns></returns>
         public float GetLastCount()
         {
             return new InventoryItem(new Dictionary<string, string>() { { "Id", Id.ToString() } }).Count;
         }
 
+        /// <summary>
+        /// Get order amount stored in DB
+        /// </summary>
+        /// <returns></returns>
         public float GetPrevOrderAmount()
         {
             return new InventoryItem(new Dictionary<string, string>() { { "Id", Id.ToString() } }).LastOrderAmount;
         }
 
+        /// <summary>
+        /// Returns properties that are stored in the DB
+        /// </summary>
+        /// <param name="omit"></param>
+        /// <returns></returns>
         public override string[] GetPropertiesDB(string[] omit = null)
         {
             string[] theseOmissions = new string[] { "PriceExtension", "CostExtension", "CountPrice" };

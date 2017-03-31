@@ -95,6 +95,21 @@ namespace BuddhaBowls.Models
             NotifyPropertyChanged("CountPrice");
         }
 
+        public override int Insert()
+        {
+            return ToInventoryItem().Insert();
+        }
+
+        public override void Update()
+        {
+            ToInventoryItem().Update();
+        }
+
+        public override void Destroy()
+        {
+            ToInventoryItem().Destroy();
+        }
+
         private void UpdateVendorParams()
         {
             if (SelectedVendor != null)

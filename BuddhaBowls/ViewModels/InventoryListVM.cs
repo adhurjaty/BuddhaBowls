@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Models;
 using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
@@ -274,7 +275,7 @@ namespace BuddhaBowls
         public InventoryListVM(StatusUpdatedDel countDel, Inventory inv) : this(countDel)
         {
             _inventory = inv;
-            _inventoryItems = ParentContext.SortItems(_inventory.GetInventoryHistory().Select(x =>
+            _inventoryItems = MainHelper.SortItems(_inventory.GetInventoryHistory().Select(x =>
                                 new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList()).ToList();
             Refresh();
             UpdateInvValue();
@@ -350,7 +351,7 @@ namespace BuddhaBowls
         {
             if (_inventory == null)
             {
-                _inventoryItems = ParentContext.SortItems(_models.InventoryItems.Select(x =>
+                _inventoryItems = MainHelper.SortItems(_models.InventoryItems.Select(x =>
                                 new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList()).ToList();
             }
             FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);

@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
 using System;
@@ -170,7 +171,7 @@ namespace BuddhaBowls
         #region Update UI Methods
         public void Refresh()
         {
-            FilteredCompItems = new ObservableCollection<CompareItem>(ParentContext.SortItems(_compareItems));
+            FilteredCompItems = new ObservableCollection<CompareItem>(MainHelper.SortItems(_compareItems));
         }
 
         public void FilterItems(string filterStr)
@@ -181,7 +182,7 @@ namespace BuddhaBowls
             {
                 FilteredCompItems = new ObservableCollection<CompareItem>
                     (
-                        ParentContext.SortItems(_compareItems.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper())))
+                        MainHelper.SortItems(_compareItems.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper())))
                     );
             }
         }

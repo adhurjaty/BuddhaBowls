@@ -11,11 +11,9 @@ namespace BuddhaBowls.Models
         public string VendorName { get; set; }
         public DateTime OrderDate { get; set; }
         public bool IsPartial { get; set; }
-
         public DateTime? ReceivedDate { get; set; }
 
         public bool ReceivedCheck { get; set; }
-
         public bool Received
         {
             get
@@ -29,6 +27,12 @@ namespace BuddhaBowls.Models
             _tableName = "PurchaseOrder";
         }
 
+        /// <summary>
+        /// Contruct Purchase Order - add to DB and create a table of inventory items
+        /// </summary>
+        /// <param name="vendor">Vendor for which the purhchase order is being made</param>
+        /// <param name="inventoryItems">Items that are being purchased</param>
+        /// <param name="orderDate">Date at which the order is being created</param>
         public PurchaseOrder(Vendor vendor, List<InventoryItem> inventoryItems, DateTime orderDate) : this()
         {
             VendorName = vendor.Name;
@@ -44,6 +48,11 @@ namespace BuddhaBowls.Models
             UpdatePrices(inventoryItems, vendor);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inventoryItems"></param>
+        /// <param name="vendor"></param>
         private void UpdatePrices(List<InventoryItem> inventoryItems, Vendor vendor)
         {
             vendor.UpdatePrices(inventoryItems);

@@ -180,8 +180,6 @@ namespace BuddhaBowls
 
         public MainViewModel()
         {
-            SetInvOrderSetting();
-
             BrowseButtonCommand = new RelayCommand(BrowseHelper);
             ReportCommand = new RelayCommand(ReportHelper, x => ReportCanExecute);
             SaveSettingsCommand = new RelayCommand(SaveSettingsHelper, x => SaveSettingsCanExecute);
@@ -249,7 +247,6 @@ namespace BuddhaBowls
             SaveSettings();
             //ModelContainer.ChangeContainer(null);
             _models = new ModelContainer();
-            SetInvOrderSetting();
             InitTabsAndModel();
         }
         #endregion
@@ -275,16 +272,6 @@ namespace BuddhaBowls
             InventoryTab = new InventoryTabVM();
             VendorTab = new VendorTabVM();
             RecipeTab = new RecipeTabVM();
-        }
-
-        private void SetInvOrderSetting()
-        {
-            string orderPath = Path.Combine(Properties.Settings.Default.DBLocation, "Settings", GlobalVar.INV_ORDER_FILE);
-            if (File.Exists(orderPath))
-            {
-                Properties.Settings.Default.InventoryOrder = new List<string>(File.ReadAllLines(orderPath));
-                Properties.Settings.Default.Save();
-            }
         }
 
         #endregion
@@ -317,7 +304,7 @@ namespace BuddhaBowls
         public ObservableCollection<T> FilterInventoryItems<T>(string filterStr, IEnumerable<T> items) where T : IItem
         {
             if (string.IsNullOrWhiteSpace(filterStr))
-                return new ObservableCollection<T>(SortItems(items));
+                return new ObservableCollection<T>(MainHelper.SortItems(items));
             else
                 return new ObservableCollection<T>(items.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
                                                         .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
@@ -496,22 +483,6 @@ namespace BuddhaBowls
             _thread.Start();
         }
 
-        public IEnumerable<T> SortItems<T>(IEnumerable<T> items) where T : IItem
-        {
-            if (Properties.Settings.Default.InventoryOrder == null)
-            {
-                List<string> invOrder = _models.InventoryItems.Select(x => x.Name).OrderBy(x => x).ToList();
-                invOrder = invOrder.Concat(_models.Recipes.Select(x => x.Name).OrderBy(x => x)).ToList();
-                Properties.Settings.Default.InventoryOrder = invOrder;
-                Properties.Settings.Default.Save();
-            }
-
-            return items.Where(x => Properties.Settings.Default.InventoryOrder.Contains(x.Name))
-                        .OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.Name))
-                        .Concat(items.Where(x => !Properties.Settings.Default.InventoryOrder.Contains(x.Name))
-                                     .OrderBy(x => x.Name));
-            //return items.OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.Name));
-        }
     }
 
     #region Classes for display

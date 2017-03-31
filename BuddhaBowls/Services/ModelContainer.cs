@@ -24,6 +24,7 @@ namespace BuddhaBowls.Services
         public ModelContainer()
         {
             InitializeModels();
+            InitializeInventoryOrder();
             if (InventoryItems != null)
             {
                 SetInventoryCategories();
@@ -46,6 +47,16 @@ namespace BuddhaBowls.Services
             {
                 rec.ItemList = GetRecipe(rec.Name);
             }
+        }
+
+        private void InitializeInventoryOrder()
+        {
+            string orderPath = Path.Combine(Properties.Settings.Default.DBLocation, "Settings", GlobalVar.INV_ORDER_FILE);
+            if (File.Exists(orderPath))
+                Properties.Settings.Default.InventoryOrder = new List<string>(File.ReadAllLines(orderPath));
+            else
+                Properties.Settings.Default.InventoryOrder = new List<string>(InventoryItems.Select(x => x.Name).OrderBy(x => x));
+            Properties.Settings.Default.Save();
         }
 
         /// <summary>
@@ -224,9 +235,10 @@ namespace BuddhaBowls.Services
         /// Adds or updates vendor in DB and model container
         /// </summary>
         /// <param name="vendor"></param>
-        public void AddUpdateVendor(Vendor vendor)
+        public void AddUpdateVendor(ref Vendor vendor)
         {
-            if(Vendors.FirstOrDefault(x => x.Id == vendor.Id) != null)
+            int vendorId = vendor.Id;
+            if(Vendors.FirstOrDefault(x => x.Id == vendorId) != null)
             {
                 vendor.Update();
             }
@@ -241,7 +253,7 @@ namespace BuddhaBowls.Services
         /// Deletes vendor from DB and model container
         /// </summary>
         /// <param name="vendor"></param>
-        public void RemoveVendor(Vendor vendor)
+        public void DeleteVendor(Vendor vendor)
         {
             Vendors.Remove(vendor);
             vendor.Destroy();
