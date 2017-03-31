@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using BuddhaBowls.Models;
 using System.Linq;
+using BuddhaBowls.Services;
 
 namespace BuddhaBowls.Test
 {
@@ -208,5 +209,214 @@ namespace BuddhaBowls.Test
 
         #endregion
 
+        #region Vendor Tests
+
+        [TestMethod]
+        public void InsertVendorTest()
+        {
+            Vendor vend = new Vendor()
+            {
+                Name = "TestVendor",
+                Email = "testvendor@test.com"
+            };
+
+            List<InventoryItem> itemList = new List<InventoryItem>()
+            {
+                MockObjects.GetInventoryItem("Butter"),
+                MockObjects.GetInventoryItem("Cumin"),
+                MockObjects.GetInventoryItem("Eggs"),
+                MockObjects.GetInventoryItem("Flour"),
+                MockObjects.GetInventoryItem("Feta"),
+            };
+
+            try
+            {
+                vend.Insert(itemList);
+
+                Vendor dbVendor = new Vendor(new Dictionary<string, string>() { { "Name", "TestVendor" } });
+                Assert.AreEqual("testvendor@test.com", dbVendor.Email);
+
+                List<InventoryItem> newItemList = vend.GetInventoryItems();
+
+                foreach (InventoryItem newItem in newItemList)
+                {
+                    InventoryItem refItem = itemList.First(x => x.Id == newItem.Id);
+                    Assert.AreEqual(refItem.LastPurchasedPrice, newItem.LastPurchasedPrice);
+                    Assert.AreEqual(refItem.Count, newItem.Count);
+                }
+            }
+            finally
+            {
+                vend.Destroy();
+            }
+            Vendor newDbVendor = new Vendor(new Dictionary<string, string>() { { "Name", "TestVendor" } });
+            Assert.IsNull(newDbVendor.Name);
+            Assert.IsNull(vend.GetInventoryItems());
+        }
+
+        [TestMethod]
+        public void UpdateVendorTest()
+        {
+            Vendor vend = new Vendor()
+            {
+                Name = "TestVendor",
+                Email = "testvendor@test.com"
+            };
+
+            List<InventoryItem> itemList = new List<InventoryItem>()
+            {
+                MockObjects.GetInventoryItem("Butter"),
+                MockObjects.GetInventoryItem("Cumin"),
+                MockObjects.GetInventoryItem("Eggs"),
+                MockObjects.GetInventoryItem("Flour"),
+                MockObjects.GetInventoryItem("Feta"),
+            };
+
+            try
+            {
+                vend.Insert(itemList);
+
+                itemList[0].Count = 999;
+                itemList[1].LastPurchasedPrice = 22.22f;
+
+                vend.PhoneNumber = "5559999";
+                vend.Update(itemList);
+                List<InventoryItem> newList = vend.GetInventoryItems();
+
+                Vendor newVend = new Vendor(new Dictionary<string, string>() { { "Name", vend.Name } });
+
+                Assert.AreEqual(999, newList.First(x => x.Name == "Butter").Count);
+                Assert.AreEqual(22.22f, newList.First(x => x.Name == "Cumin").LastPurchasedPrice);
+                Assert.AreEqual("5559999", newVend.PhoneNumber);
+            }
+            finally
+            {
+                vend.Destroy();
+            }
+        }
+
+        [TestMethod]
+        public void ResetVendorTest()
+        {
+            Vendor vend = new Vendor()
+            {
+                Name = "TestVendor",
+                Email = "testvendor@test.com"
+            };
+
+            List<InventoryItem> itemList = new List<InventoryItem>()
+            {
+                MockObjects.GetInventoryItem("Butter"),
+                MockObjects.GetInventoryItem("Cumin"),
+                MockObjects.GetInventoryItem("Eggs"),
+                MockObjects.GetInventoryItem("Flour"),
+                MockObjects.GetInventoryItem("Feta"),
+            };
+
+            try
+            {
+                vend.Insert(itemList);
+
+                vend.Email = "fakeEmail@example.com";
+                vend.PhoneNumber = "6789";
+
+                vend.Reset();
+
+                Assert.AreEqual("testvendor@test.com", vend.Email);
+                Assert.IsNull(vend.PhoneNumber);
+            }
+            finally
+            {
+                vend.Destroy();
+            }
+        }
+
+        [TestMethod]
+        public void DeleteVendorInvItemTest()
+        {
+            Vendor vend = new Vendor()
+            {
+                Name = "TestVendor",
+                Email = "testvendor@test.com"
+            };
+
+            List<InventoryItem> itemList = new List<InventoryItem>()
+            {
+                MockObjects.GetInventoryItem("Butter"),
+                MockObjects.GetInventoryItem("Cumin"),
+                MockObjects.GetInventoryItem("Eggs"),
+                MockObjects.GetInventoryItem("Flour"),
+                MockObjects.GetInventoryItem("Feta")
+            };
+
+            InventoryItem newItem = MockObjects.GetInventoryItem("Chopped Clams");
+
+            try
+            {
+                vend.Insert(itemList);
+                vend.Update(newItem);
+                List<InventoryItem> newList = vend.GetInventoryItems();
+
+                Assert.IsNotNull(newList.First(x => x.Name == "Chopped Clams"));
+
+                vend.RemoveInvItem(newItem);
+                newList = vend.GetInventoryItems();
+                Assert.IsNull(newList.FirstOrDefault(x => x.Name == "Chopped Clams"));
+            }
+            finally
+            {
+                vend.Destroy();
+            }
+        }
+
+        #endregion
+
+        #region VendorInventoryItem Tests
+
+        [TestMethod]
+        public void UpdateVendorPriceTest()
+        {
+            ModelContainer models = new ModelContainer();
+            InventoryItem item = models.InventoryItems.First(x => x.Name == "Feta");
+            Dictionary<Vendor, InventoryItem> vendDict = models.GetVendorsFromItem(item);
+            VendorInventoryItem vi = new VendorInventoryItem(vendDict, item);
+            List<Vendor> vendors = new List<Vendor>(vendDict.Keys);
+
+            vi.SelectedVendor = vendors[0];
+            float tempPrice0 = vi.LastPurchasedPrice;
+            vi.LastPurchasedPrice = 69.69f;
+
+            try
+            {
+                vi.UpdateVendorPrice();
+
+                InventoryItem testItem = vendors[0].GetInventoryItems().First(x => x.Name == "Feta");
+                Assert.AreEqual(69.69f, testItem.LastPurchasedPrice);
+
+                vi.SelectedVendor = vendors[1];
+                Assert.AreNotEqual(69.69f, vi.LastPurchasedPrice);
+            }
+            finally
+            {
+                vi.SelectedVendor = vendors[0];
+                vi.LastPurchasedPrice = tempPrice0;
+                vi.UpdateVendorPrice();
+            }
+        }
+
+        [TestMethod]
+        public void ToInventoryItemTest()
+        {
+            ModelContainer models = new ModelContainer();
+            InventoryItem item = models.InventoryItems.First(x => x.Name == "Feta");
+            Dictionary<Vendor, InventoryItem> vendDict = models.GetVendorsFromItem(item);
+            VendorInventoryItem vi = new VendorInventoryItem(vendDict, item);
+
+            string[] refProperties = (new InventoryItem()).GetPropertiesDB();
+            CollectionAssert.AreEqual(refProperties, vi.ToInventoryItem().GetPropertiesDB());
+            CollectionAssert.AreEqual(refProperties, vi.GetPropertiesDB());
+        }
+
+        #endregion
     }
 }

@@ -109,7 +109,7 @@ namespace BuddhaBowls
             _newVendor = false;
             _inventoryItems = _models.InventoryItems.Select(x => new InventoryVendorItem(x)).ToList();
             Vend = v;
-            List<int> vendItemIds = v.GetFromPriceList().Select(x => x.Id).ToList();
+            List<int> vendItemIds = v.GetInventoryItems().Select(x => x.Id).ToList();
             foreach (InventoryVendorItem item in _inventoryItems)
             {
                 if (vendItemIds.Contains(item.Id))
@@ -177,9 +177,7 @@ namespace BuddhaBowls
             if (ValidateInputs())
             {
                 Vendor vendor = Vend;
-                _models.AddUpdateVendor(ref vendor);
-                List<InventoryItem> items = InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList();
-                vendor.UpdatePrices(items);
+                _models.AddUpdateVendor(ref vendor, InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList());
 
                 ParentContext.Refresh();
                 Close();

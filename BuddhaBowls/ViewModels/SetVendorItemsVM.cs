@@ -146,7 +146,7 @@ namespace BuddhaBowls
             ModalOkCommand = new RelayCommand(ModalOk, x => ModalOkCanExecute);
             ModalCancelCommand = new RelayCommand(ModalCancel);
 
-            _availableItems = vendor.GetFromPriceList() ?? new List<InventoryItem>();
+            _availableItems = vendor.GetInventoryItems() ?? new List<InventoryItem>();
             Refresh();
         }
 
@@ -167,7 +167,7 @@ namespace BuddhaBowls
 
         private void ResetList(object obj)
         {
-            VendorItems = new ObservableCollection<InventoryItem>(_vendor.GetFromPriceList());
+            VendorItems = new ObservableCollection<InventoryItem>(_vendor.GetInventoryItems());
         }
 
         private void Save(object obj)
@@ -176,7 +176,7 @@ namespace BuddhaBowls
             {
                 _vendor.RemoveInvItem(item);
             }
-            _vendor.UpdatePrices(_availableItems);
+            _vendor.Update(_availableItems);
             ParentContext.GenerateVendorOrderList(_vendor, open: false);
             Close();
         }

@@ -34,7 +34,7 @@ namespace BuddhaBowls.Models
                 if (property != null && columns.Contains(property))
                 {
                     int idx = Array.IndexOf(columns, property);
-                    if (idx > -1 && row[idx] != null)
+                    if (idx > -1) // && row[idx] != null)
                     {
                         SetProperty(property, row[idx]);
                     }
@@ -211,7 +211,7 @@ namespace BuddhaBowls.Models
 
             if (value == null)
             {
-                if (GetType().GetProperty(property).PropertyType.ToString().Contains("Nullable"))
+                if (GetType().GetProperty(property).PropertyType.ToString().Contains("Nullable") || GetPropertyType(property) == typeof(string))
                 {
                     GetType().GetProperty(property).SetValue(this, null);
                 }

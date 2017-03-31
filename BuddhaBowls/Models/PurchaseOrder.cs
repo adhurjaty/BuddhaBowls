@@ -55,7 +55,7 @@ namespace BuddhaBowls.Models
         /// <param name="vendor"></param>
         private void UpdatePrices(List<InventoryItem> inventoryItems, Vendor vendor)
         {
-            vendor.UpdatePrices(inventoryItems);
+            vendor.Update(inventoryItems);
         }
 
         public void Receive()

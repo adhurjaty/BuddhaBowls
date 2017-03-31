@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuddhaBowls.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace BuddhaBowls.Models
 {
     public class VendorInventoryItem : InventoryItem, INotifyPropertyChanged
     {
+        // dictionary relating the vendor to the inventory item (differ in conversion, price, and purchased unit)
         private Dictionary<Vendor, InventoryItem> _vendorDict;
         
         // INotifyPropertyChanged event and method
@@ -67,17 +69,24 @@ namespace BuddhaBowls.Models
                 SelectedVendor = vendorDict.Keys.FirstOrDefault();
         }
 
+        /// <summary>
+        /// Writes new price to DB when user has changed the price in the datagrid
+        /// </summary>
         public void UpdateVendorPrice()
         {
             NotifyPropertyChanged("LastPurchasedPrice");
             InventoryItem item = ToInventoryItem();
             if (SelectedVendor != null)
             {
-                SelectedVendor.UpdateInvItem(item);
+                SelectedVendor.Update(item);
                 _vendorDict[SelectedVendor] = item;
             }
         }
 
+        /// <summary>
+        /// Convert to a plain inventory item
+        /// </summary>
+        /// <returns></returns>
         public InventoryItem ToInventoryItem()
         {
             InventoryItem item = new InventoryItem();
@@ -110,6 +119,14 @@ namespace BuddhaBowls.Models
             ToInventoryItem().Destroy();
         }
 
+        public override string[] GetPropertiesDB(string[] omit = null)
+        {
+            return ToInventoryItem().GetPropertiesDB();
+        }
+
+        /// <summary>
+        /// Displays different property values to datagrid when the user changes the vendor on the datagrid
+        /// </summary>
         private void UpdateVendorParams()
         {
             if (SelectedVendor != null)
@@ -120,7 +137,6 @@ namespace BuddhaBowls.Models
                 NotifyPropertyChanged("LastPurchasedPrice");
                 NotifyPropertyChanged("PurchasedUnit");
                 LastVendorId = SelectedVendor.Id;
-                NotifyPropertyChanged("LastVendorId");
             }
         }
     }

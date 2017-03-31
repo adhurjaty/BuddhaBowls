@@ -134,7 +134,7 @@ namespace BuddhaBowls
                     invItem.Conversion = v.Conversion;
                     invItem.PurchasedUnit = v.PurchasedUnit;
                     invItem.Yield = Yield;
-                    vendor.AddInvItem(invItem);
+                    vendor.Update(invItem);
                 }
 
                 invItem.Update();

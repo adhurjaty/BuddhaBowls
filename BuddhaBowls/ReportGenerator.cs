@@ -691,17 +691,17 @@ namespace BuddhaBowls
 
         public string GenerateVendorOrderSheet(Vendor vendor)
         {
-            List<InventoryItem> items = vendor.GetFromPriceList();
+            List<InventoryItem> items = vendor.GetInventoryItems();
             for(int i = 0; i < items.Count; i++)
             {
                 items[i].LastOrderAmount = 0;
             }
 
             PurchaseOrder po = new PurchaseOrder(vendor, items, DateTime.Now);
-            string outDir = Path.GetDirectoryName(vendor.GetItemsListPath());
+            string outDir = Path.GetDirectoryName(vendor.GetOrderSheetPath());
             if (!Directory.Exists(outDir))
                 Directory.CreateDirectory(outDir);
-            return GenerateOrder(po, vendor, vendor.GetItemsListPath());
+            return GenerateOrder(po, vendor, vendor.GetOrderSheetPath());
         }
 
         private bool IsWorkbookOpen(string filePath)

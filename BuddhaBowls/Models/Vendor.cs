@@ -30,6 +30,57 @@ namespace BuddhaBowls.Models
             }
         }
 
+        /// <summary>
+        /// Create new Vendor record and list of items that vendor sells
+        /// </summary>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        public int Insert(List<InventoryItem> items)
+        {
+            if(items != null && items.Count > 0)
+                ModelHelper.CreateTable(items, GetPriceTableName());
+
+            return base.Insert();
+        }
+
+        /// <summary>
+        /// Update the vendor record and update the price table to match the supplied inventory items.
+        /// </summary>
+        /// <remarks>Creates a new price table if one does not already exist</remarks>
+        /// <param name="items"></param>
+        public void Update(List<InventoryItem> items)
+        {
+            if (items != null && items.Count > 0)
+            {
+                if (!File.Exists(_dbInt.FilePath(GetPriceTableName())))
+                {
+                    ModelHelper.CreateTable(items, GetPriceTableName());
+                }
+                else
+                {
+                    foreach (InventoryItem item in items)
+                    {
+                        AddInvItem(item);
+                    }
+                }
+            }
+
+            base.Update();
+        }
+
+        public void Update(InventoryItem item)
+        {
+            if (!File.Exists(_dbInt.FilePath(GetPriceTableName())))
+                ModelHelper.CreateTable(new List<InventoryItem>() { item }, GetPriceTableName());
+            else
+                AddInvItem(item);
+
+            base.Update();
+        }
+
+        /// <summary>
+        /// Remove the vendor record and price table
+        /// </summary>
         public override void Destroy()
         {
             string priceListPath = _dbInt.FilePath(GetPriceTableName());
@@ -40,6 +91,9 @@ namespace BuddhaBowls.Models
             base.Destroy();
         }
 
+        /// <summary>
+        /// Reset vendor back to when it was last saved in the DB
+        /// </summary>
         public void Reset()
         {
             string[] record = _dbInt.GetRecord(_tableName, new Dictionary<string, string>() { { "Id", Id.ToString() } });
@@ -50,18 +104,30 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public List<InventoryItem> GetFromPriceList()
+        /// <summary>
+        /// Gets the inventory items that the vendor offers for sale
+        /// </summary>
+        public List<InventoryItem> GetInventoryItems()
         {
             if(_dbInt.TableExists(GetPriceTableName()))
                 return ModelHelper.InstantiateList<InventoryItem>(GetPriceTableName(), false);
             return null;
         }
 
+        /// <summary>
+        /// Saves a text document for displaying the vendor-sold items for a receiving list
+        /// </summary>
+        /// <remarks>should match the order that the vendor displays their items on an invoice</remarks>
+        /// <param name="listOrder"></param>
         public void SaveItemOrder(IEnumerable<string> listOrder)
         {
             File.WriteAllLines(GetOrderFile(), listOrder);
         }
 
+        /// <summary>
+        /// Gets the order of inventory items if one exists, otherwise returns the default order 
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetRecListOrder()
         {
             if(File.Exists(GetOrderFile()))
@@ -72,37 +138,29 @@ namespace BuddhaBowls.Models
             return Properties.Settings.Default.InventoryOrder;
         }
 
-        public void UpdatePrices(List<InventoryItem> inventoryItems)
-        {
-            string tableName = GetPriceTableName();
-            if (_dbInt.TableExists(tableName))
-            {
-                foreach (InventoryItem item in inventoryItems)
-                {
-                    AddInvItem(item);
-                }
-            }
-            else
-            {
-                File.Copy(_dbInt.FilePath("InventoryItem"), _dbInt.FilePath(tableName));
-                List<InventoryItem> allItems = ModelHelper.InstantiateList<InventoryItem>(tableName, false);
-                foreach (InventoryItem item in allItems)
-                {
-                    InventoryItem newItem = inventoryItems.FirstOrDefault(x => x.Id == item.Id);
-                    if (newItem == null)
-                        RemoveInvItem(item);
-                    else
-                        AddInvItem(newItem);
-                }
-            }
-        }
-
-        public string GetItemsListPath()
+        /// <summary>
+        /// Gets the path to the order sheet for printing and filling out orders manually
+        /// </summary>
+        /// <returns></returns>
+        public string GetOrderSheetPath()
         {
             return Path.Combine(Properties.Settings.Default.DBLocation, "Order Sheets", Name + ".xlsx");
         }
 
-        public void AddInvItem(InventoryItem item)
+        /// <summary>
+        /// Removes inventory item from the vendor-sold inventory item table
+        /// </summary>
+        /// <param name="item"></param>
+        public void RemoveInvItem(InventoryItem item)
+        {
+            _dbInt.DeleteRecord(GetPriceTableName(), new Dictionary<string, string>() { { "Id", item.Id.ToString() } });
+        }
+
+        /// <summary>
+        /// Adds or updates inventory item on vendor items sold list
+        /// </summary>
+        /// <param name="item"></param>
+        private void AddInvItem(InventoryItem item)
         {
             if (!_dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id))
             {
@@ -110,16 +168,10 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public void UpdateInvItem(InventoryItem item)
-        {
-            _dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id);
-        }
-
-        public void RemoveInvItem(InventoryItem item)
-        {
-            _dbInt.DeleteRecord(GetPriceTableName(), new Dictionary<string, string>() { { "Id", item.Id.ToString() } });
-        }
-
+        /// <summary>
+        /// Gets the path to the file that specifies the vendor-specific order of inventory items
+        /// </summary>
+        /// <returns></returns>
         private string GetOrderFile()
         {
             return Path.Combine(Properties.Settings.Default.DBLocation, "Vendors", Name + "_order.txt");

@@ -231,7 +231,7 @@ namespace BuddhaBowls
         /// </summary>
         private void LoadVendorItems()
         {
-            List<InventoryItem> priceListItems = OrderVendor.GetFromPriceList();
+            List<InventoryItem> priceListItems = OrderVendor.GetInventoryItems();
             if (priceListItems != null)
             {
                 foreach (InventoryItem item in FilteredOrderItems)

@@ -235,16 +235,16 @@ namespace BuddhaBowls.Services
         /// Adds or updates vendor in DB and model container
         /// </summary>
         /// <param name="vendor"></param>
-        public void AddUpdateVendor(ref Vendor vendor)
+        public void AddUpdateVendor(ref Vendor vendor, List<InventoryItem> vendorItems = null)
         {
             int vendorId = vendor.Id;
             if(Vendors.FirstOrDefault(x => x.Id == vendorId) != null)
             {
-                vendor.Update();
+                vendor.Update(vendorItems);
             }
             else
             {
-                vendor.Id = vendor.Insert();
+                vendor.Id = vendor.Insert(vendorItems);
                 Vendors.Add(vendor);
             }
         }
@@ -268,7 +268,7 @@ namespace BuddhaBowls.Services
             Dictionary<Vendor, InventoryItem> vendorDict = new Dictionary<Vendor, InventoryItem>();
             foreach(Vendor v in Vendors)
             {
-                List<InventoryItem> items = v.GetFromPriceList();
+                List<InventoryItem> items = v.GetInventoryItems();
                 if (items != null)
                 {
                     InventoryItem vendorItem = items.FirstOrDefault(x => x.Id == item.Id);

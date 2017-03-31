@@ -84,7 +84,7 @@ namespace BuddhaBowls
             {
                 if(SelectedVendor != null)
                 {
-                    return File.Exists(SelectedVendor.GetItemsListPath());
+                    return File.Exists(SelectedVendor.GetOrderSheetPath());
                 }
 
                 return false;
@@ -154,11 +154,11 @@ namespace BuddhaBowls
 
         private void GenerateOrderSheet(object obj)
         {
-            if(File.Exists(SelectedVendor.GetItemsListPath()))
+            if(File.Exists(SelectedVendor.GetOrderSheetPath()))
             {
                 new Thread(delegate ()
                 {
-                    System.Diagnostics.Process.Start(SelectedVendor.GetItemsListPath());
+                    System.Diagnostics.Process.Start(SelectedVendor.GetOrderSheetPath());
                 }).Start();
             }
             else
