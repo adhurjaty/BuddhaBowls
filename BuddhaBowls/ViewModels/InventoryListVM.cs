@@ -250,35 +250,43 @@ namespace BuddhaBowls
 
         #endregion
 
+        /// <summary>
+        /// Normal constructor
+        /// </summary>
         public InventoryListVM() : base()
         {
-            Refresh();
-            
-            TabControl = new InventoryListControl(this);
-            UpdateInvValue();
             IsMasterList = true;
 
-            AddCommand = new RelayCommand(AddInventoryItem);
-            DeleteCommand = new RelayCommand(DeleteInventoryItem, x => SelectedInventoryItem != null);
-            EditCommand = new RelayCommand(EditInventoryItem, x => SelectedInventoryItem != null);
-            ResetCommand = new RelayCommand(ResetList);
-            EditOrderCommand = new RelayCommand(StartEditOrder, x => string.IsNullOrEmpty(FilterText));
-            SaveOrderCommand = new RelayCommand(SaveOrder);
+            Refresh();
+            UpdateInvValue();
+
+            SetCommandsAndControl();
         }
 
-        public InventoryListVM(StatusUpdatedDel countDel) : this()
+        public InventoryListVM(StatusUpdatedDel countDel) : base()
         {
             CountChanged = countDel;
             IsMasterList = false;
-        }
 
-        public InventoryListVM(StatusUpdatedDel countDel, Inventory inv) : this(countDel)
-        {
-            _inventory = inv;
-            _inventoryItems = MainHelper.SortItems(_inventory.GetInventoryHistory().Select(x =>
-                                new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList()).ToList();
             Refresh();
             UpdateInvValue();
+            SetCommandsAndControl();
+        }
+
+        /// <summary>
+        /// Constructor for edit inventory list
+        /// </summary>
+        /// <param name="countDel"></param>
+        /// <param name="inv"></param>
+        public InventoryListVM(Inventory inv, StatusUpdatedDel countDel) : base()
+        {
+            _inventory = inv;
+            CountChanged = countDel;
+            IsMasterList = false;
+
+            Refresh();
+            UpdateInvValue();
+            SetCommandsAndControl();
         }
 
         #region ICommand Helpers
@@ -332,6 +340,18 @@ namespace BuddhaBowls
 
         #region Initializers
 
+        private void SetCommandsAndControl()
+        {
+            TabControl = new InventoryListControl(this);
+
+            AddCommand = new RelayCommand(AddInventoryItem);
+            DeleteCommand = new RelayCommand(DeleteInventoryItem, x => SelectedInventoryItem != null);
+            EditCommand = new RelayCommand(EditInventoryItem, x => SelectedInventoryItem != null);
+            ResetCommand = new RelayCommand(ResetList);
+            EditOrderCommand = new RelayCommand(StartEditOrder, x => string.IsNullOrEmpty(FilterText));
+            SaveOrderCommand = new RelayCommand(SaveOrder);
+        }
+
         #endregion
 
         #region Update UI Methods
@@ -344,15 +364,20 @@ namespace BuddhaBowls
         {
             if (SaveOrderVisibility == Visibility.Visible)
                 SaveOrderVisibility = Visibility.Hidden;
-            FilteredItems = ParentContext.FilterInventoryItems(filterStr, _inventoryItems);
+            FilteredItems = MainHelper.FilterInventoryItems(filterStr, _inventoryItems);
         }
 
-        public void Refresh()
+        public override void Refresh()
         {
             if (_inventory == null)
             {
                 _inventoryItems = MainHelper.SortItems(_models.InventoryItems.Select(x =>
-                                new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList()).ToList();
+                                    new VendorInventoryItem(_models.GetVendorsFromItem(x), x))).ToList();
+            }
+            else
+            {
+                _inventoryItems = MainHelper.SortItems(_inventory.GetInventoryHistory().Select(x =>
+                                    new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList()).ToList();
             }
             FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
             FilterText = "";

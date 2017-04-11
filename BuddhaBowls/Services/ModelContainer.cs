@@ -288,7 +288,8 @@ namespace BuddhaBowls.Services
 
             foreach (InventoryItem item in InventoryItems)
             {
-                ItemCategories.Add(item.Category);
+                if(!string.IsNullOrWhiteSpace(item.Category))
+                    ItemCategories.Add(item.Category);
             }
         }
 

@@ -50,5 +50,10 @@ namespace BuddhaBowls
         {
             throw new NotImplementedException();
         }
+
+        public virtual void Refresh()
+        {
+
+        }
     }
 }

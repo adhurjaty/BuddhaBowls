@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
 using System;
@@ -135,7 +136,7 @@ namespace BuddhaBowls
         /// <param name="filterStr"></param>
         public void FilterInventoryItems(string filterStr)
         {
-            FilteredItems = ParentContext.FilterInventoryItems(filterStr, _recipeItems.Select(x => (IItem)x));
+            FilteredItems = MainHelper.FilterInventoryItems(filterStr, _recipeItems.Select(x => (IItem)x));
         }
 
         public void RefreshList()

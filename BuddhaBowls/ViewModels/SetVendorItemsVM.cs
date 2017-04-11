@@ -209,10 +209,10 @@ namespace BuddhaBowls
 
         public void FilterVendorItems(string text)
         {
-            VendorItems = ParentContext.FilterInventoryItems(text, _availableItems);
+            VendorItems = MainHelper.FilterInventoryItems(text, _availableItems);
         }
 
-        private void Refresh()
+        public override void Refresh()
         {
             if (_availableItems == null)
             {

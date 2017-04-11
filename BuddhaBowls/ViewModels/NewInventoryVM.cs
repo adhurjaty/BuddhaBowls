@@ -22,9 +22,6 @@ namespace BuddhaBowls
     /// </summary>
     public class NewInventoryVM : TempTabVM, INotifyPropertyChanged
     {
-        private Inventory _inventory;
-        private InventoryListVM _invListVM;
-
         #region Data Bindings
 
         private DateTime? _inventoryDate;
@@ -54,6 +51,9 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("InventoryControl");
             }
         }
+
+        public InventoryListVM InvListVM { get; set; }
+
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -71,8 +71,8 @@ namespace BuddhaBowls
         public NewInventoryVM() : base()
         {
             _tabControl = new NewInventory(this);
-            _invListVM = new InventoryListVM(InventoryItemCountChanged);
-            InventoryControl = _invListVM.TabControl;
+            InvListVM = new InventoryListVM(InventoryItemCountChanged);
+            InventoryControl = InvListVM.TabControl;
             
             InitICommand();
         }
@@ -80,9 +80,8 @@ namespace BuddhaBowls
         public NewInventoryVM(Inventory inv) : base()
         {
             _tabControl = new NewInventory(this);
-            _inventory = inv;
-            _invListVM = new InventoryListVM(InventoryItemCountChanged, inv);
-            InventoryControl = _invListVM.TabControl;
+            InvListVM = new InventoryListVM(inv, InventoryItemCountChanged);
+            InventoryControl = InvListVM.TabControl;
             InventoryDate = inv.Date;
 
             InitICommand();
@@ -97,7 +96,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void ResetCount(object obj)
         {
-            _invListVM.ResetCount();
+            InvListVM.ResetCount();
             ChangeCountCanExecute = false;
         }
 
@@ -107,7 +106,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void SaveNewInventory(object obj)
         {
-            _invListVM.SaveNew(InventoryDate);
+            InvListVM.SaveNew(InventoryDate);
 
             ParentContext.Refresh();
             Close();
@@ -115,7 +114,7 @@ namespace BuddhaBowls
 
         private void SaveOldInventory(object obj)
         {
-            _invListVM.SaveOld();
+            InvListVM.SaveOld();
             Close();
         }
 
@@ -145,6 +144,11 @@ namespace BuddhaBowls
         public void InventoryItemCountChanged()
         {
             ChangeCountCanExecute = true;
+        }
+
+        public override void Refresh()
+        {
+            ((InventoryListVM)InventoryControl.DataContext).Refresh();
         }
 
         #endregion

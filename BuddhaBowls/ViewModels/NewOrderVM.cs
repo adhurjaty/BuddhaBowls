@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
 using System;
@@ -222,7 +223,7 @@ namespace BuddhaBowls
         /// <param name="filterStr"></param>
         public void FilterInventoryItems(string filterStr)
         {
-            FilteredOrderItems = ParentContext.FilterInventoryItems(filterStr, _models.InventoryItems);
+            FilteredOrderItems = MainHelper.FilterInventoryItems(filterStr, _models.InventoryItems);
             NotifyPropertyChanged("FilteredOrderItems");
         }
 

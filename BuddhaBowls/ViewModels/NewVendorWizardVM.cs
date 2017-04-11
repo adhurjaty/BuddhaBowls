@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Models;
 using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
@@ -186,7 +187,7 @@ namespace BuddhaBowls
 
         public override void FilterItems(string filterStr)
         {
-            InventoryList = ParentContext.FilterInventoryItems(filterStr, _inventoryItems);
+            InventoryList = MainHelper.FilterInventoryItems(filterStr, _inventoryItems);
         }
         #endregion
     }

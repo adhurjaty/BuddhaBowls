@@ -13,6 +13,7 @@ namespace BuddhaBowls
         protected UserControl _tabControl;
         public string Header;
 
+        // Stack of temporary tabs adds and removes from the front
         public static List<UserControl> TabStack;
 
         public TempTabVM() : base()
@@ -37,6 +38,7 @@ namespace BuddhaBowls
             }
             else
             {
+                // if there's already a desired new tab in the tabstack, then remove it
                 TabStack.Remove(TabStack.FirstOrDefault(x => (string)x.Tag == header));
                 TabStack.Insert(0, _tabControl);
                 ParentContext.ReplaceTempTab(_tabControl);

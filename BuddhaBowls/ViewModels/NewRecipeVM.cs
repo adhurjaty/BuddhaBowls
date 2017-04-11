@@ -107,20 +107,6 @@ namespace BuddhaBowls
             }
         }
 
-        private string _header;
-        public string Header
-        {
-            get
-            {
-                return _header;
-            }
-            set
-            {
-                _header = value;
-                NotifyPropertyChanged("Header");
-            }
-        }
-
         private string _errorMessage;
         public string ErrorMessage
         {
@@ -303,7 +289,7 @@ namespace BuddhaBowls
 
         #region Update UI
 
-        protected void Refresh()
+        public override void Refresh()
         {
             if (_availableItems == null)
             {

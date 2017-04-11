@@ -242,7 +242,7 @@ namespace BuddhaBowls
         /// Saves the application settings when Save Settings button is pressed or the application is closed
         /// </summary>
         /// <param name="obj"></param>
-        public void SaveSettingsHelper(object obj)
+        private void SaveSettingsHelper(object obj)
         {
             SaveSettings();
             //ModelContainer.ChangeContainer(null);
@@ -258,10 +258,8 @@ namespace BuddhaBowls
             _window = window;
         }
 
-        public void InitTabsAndModel()
+        private void InitTabsAndModel()
         {
-            //ModelContainer.ChangeContainer(null);
-            //_models = ModelContainer.Instance();
             _models = new ModelContainer();
             DatabaseFound = _models.InventoryItems != null && _models.InventoryItems.Count > 0;
             TabVM.ParentContext = this;
@@ -276,6 +274,10 @@ namespace BuddhaBowls
 
         #endregion
 
+        /// <summary>
+        /// Replaces the temporary tab (for adding and editing stuff) with some new tab
+        /// </summary>
+        /// <param name="tab">New tab</param>
         public void ReplaceTempTab(UserControl tab)
         {
             ModalContext = this;
@@ -283,6 +285,9 @@ namespace BuddhaBowls
             _window.ReplaceTempTab(tab);
         }
 
+        /// <summary>
+        /// Remove the temporary tab
+        /// </summary>
         public void RemoveTempTab()
         {
             ModalContext = this;
@@ -290,6 +295,10 @@ namespace BuddhaBowls
             _window.RemoveTempTab();
         }
 
+        /// <summary>
+        /// Add a new temporary tab (only used if one does not already exist)
+        /// </summary>
+        /// <param name="tab"></param>
         public void AppendTempTab(UserControl tab)
         {
             ModalContext = this;
@@ -298,55 +307,34 @@ namespace BuddhaBowls
         }
 
         /// <summary>
-        /// Filter list of inventory items based on the string in the filter box above datagrids
-        /// </summary>
-        /// <param name="filterStr"></param>
-        public ObservableCollection<T> FilterInventoryItems<T>(string filterStr, IEnumerable<T> items) where T : IItem
-        {
-            if (string.IsNullOrWhiteSpace(filterStr))
-                return new ObservableCollection<T>(MainHelper.SortItems(items));
-            else
-                return new ObservableCollection<T>(items.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
-                                                        .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
-        }
-
-        /// <summary>
-        /// Update the datagrid displays for inventory items
-        /// </summary>
-        //public void RefreshInventoryList(List<IItem> items)
-        //{
-        //    FilteredInventoryItems = new ObservableCollection<IItem>(SortItems(items));
-        //}
-
-        /// <summary>
         /// Collects the property names and values for display in the add/edit form
         /// </summary>
         /// <param name="type"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public ObservableCollection<FieldSetting> GetFieldsAndValues<T>(T obj = null) where T : Model, new()
-        {
-            ObservableCollection<FieldSetting> fieldsAndVals = new ObservableCollection<FieldSetting>();
-            string[] properties = new T().GetPropertiesDB(new string[] { "Id" });
+        //public ObservableCollection<FieldSetting> GetFieldsAndValues<T>(T obj = null) where T : Model, new()
+        //{
+        //    ObservableCollection<FieldSetting> fieldsAndVals = new ObservableCollection<FieldSetting>();
+        //    string[] properties = new T().GetPropertiesDB(new string[] { "Id" });
 
-            foreach (string prop in properties)
-            {
-                FieldSetting fs = new FieldSetting();
-                fs.Name = prop;
+        //    foreach (string prop in properties)
+        //    {
+        //        FieldSetting fs = new FieldSetting();
+        //        fs.Name = prop;
 
-                if (obj != null)
-                    if (obj.GetPropertyValue(prop) != null)
-                        fs.Value = obj.GetPropertyValue(prop).ToString();
-                    else
-                        fs.Value = "";
-                else
-                    fs.Value = "";
+        //        if (obj != null)
+        //            if (obj.GetPropertyValue(prop) != null)
+        //                fs.Value = obj.GetPropertyValue(prop).ToString();
+        //            else
+        //                fs.Value = "";
+        //        else
+        //            fs.Value = "";
 
-                fieldsAndVals.Add(fs);
-            }
+        //        fieldsAndVals.Add(fs);
+        //    }
 
-            return fieldsAndVals;
-        }
+        //    return fieldsAndVals;
+        //}
 
         /// <summary>
         /// Run all refresh methods for all permanent tabs
@@ -357,11 +345,17 @@ namespace BuddhaBowls
             InventoryTab.Refresh();
             VendorTab.RefreshVendorList();
             RecipeTab.RefreshList();
+
+            foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
+            {
+                tempVM.Refresh();
+            }
         }
 
         /// <summary>
         /// Looks through fields in add/edit form to ensure that user-supplied values are valid and changes types when necessary
         /// </summary>
+        /// <remarks>Probably will deprecate as I refactor new/edit recipe</remarks>
         /// <param name="item"></param>
         /// <returns></returns>
         public string ObjectFromFields<T>(ref T item, IEnumerable<FieldSetting> fieldsCollection, bool newItem) where T : Model, new()
@@ -481,6 +475,15 @@ namespace BuddhaBowls
                 System.Diagnostics.Process.Start(xlsPath);
             });
             _thread.Start();
+        }
+
+        /// <summary>
+        /// Only use for testing
+        /// </summary>
+        /// <returns></returns>
+        public ModelContainer GetModelContainer()
+        {
+            return _models;
         }
 
     }

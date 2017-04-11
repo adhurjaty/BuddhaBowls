@@ -23,7 +23,6 @@ namespace BuddhaBowls
     /// </summary>
     public class InventoryTabVM : ChangeableTabVM
     {
-        private InventoryListVM _invVM;
 
         #region Content Binders
         // Inventory item selected in the datagrids for Orders and Master List
@@ -38,20 +37,6 @@ namespace BuddhaBowls
             {
                 _selectedInventory = value;
                 NotifyPropertyChanged("SelectedInventory");
-            }
-        }
-
-        private string _filterText;
-        public string FilterText
-        {
-            get
-            {
-                return _filterText;
-            }
-            set
-            {
-                _filterText = value;
-                NotifyPropertyChanged("FilterText");
             }
         }
 
@@ -83,19 +68,8 @@ namespace BuddhaBowls
             }
         }
 
-        private ObservableCollection<IItem> _filteredInventoryItems;
-        public ObservableCollection<IItem> FilteredInventoryItems
-        {
-            get
-            {
-                return _filteredInventoryItems;
-            }
-            set
-            {
-                _filteredInventoryItems = value;
-                NotifyPropertyChanged("FilteredInventoryItems");
-            }
-        }
+        public InventoryListVM InvListVM { get; set; }
+        
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -135,9 +109,9 @@ namespace BuddhaBowls
             CompareCommand = new RelayCommand(CompareInventories, x => CompareCanExecute && DBConnection);
             InvListCommand = new RelayCommand(GenerateInvList, x => DBConnection);
 
-            if(DBConnection)
+            if (DBConnection)
             {
-                Refresh();
+                InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
             }
             else
             {
@@ -196,6 +170,7 @@ namespace BuddhaBowls
         /// <summary>
         /// Triggered by pressing the Excel Inventory List button
         /// </summary>
+        /// <remarks>Can't figure out how to unit test this</remarks>
         /// <param name="obj"></param>
         private void GenerateInvList(object obj)
         {
@@ -227,16 +202,6 @@ namespace BuddhaBowls
         #endregion
 
         #region Initializers
-        public bool LoadDisplayItems()
-        {
-            if (_models.Inventories != null)
-            {
-                Refresh();
-                return true;
-            }
-
-            return false;
-        }
 
         /// <summary>
         /// Display on the datagrids that the inventory items could not be found
@@ -259,11 +224,11 @@ namespace BuddhaBowls
             ChangeCountCanExecute = true;
         }
 
-        public void Refresh()
+        public override void Refresh()
         {
             InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
-            if(_invVM != null)
-                _invVM.Refresh();
+            if(InvListVM != null)
+                InvListVM.Refresh();
         }
 
         #endregion
@@ -275,9 +240,9 @@ namespace BuddhaBowls
             switch(state)
             {
                 case PageState.Primary:
-                    if(_invVM == null)
-                        _invVM = new InventoryListVM();
-                    TabControl = _invVM.TabControl;
+                    if(InvListVM == null)
+                        InvListVM = new InventoryListVM();
+                    TabControl = InvListVM.TabControl;
                     break;
                 case PageState.Secondary:
                     TabControl = new InventoryHistoryControl(this);

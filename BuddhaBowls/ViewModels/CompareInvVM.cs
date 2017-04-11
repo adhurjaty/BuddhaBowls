@@ -169,12 +169,12 @@ namespace BuddhaBowls
         #endregion
 
         #region Update UI Methods
-        public void Refresh()
+        public override void Refresh()
         {
             FilteredCompItems = new ObservableCollection<CompareItem>(MainHelper.SortItems(_compareItems));
         }
 
-        public void FilterItems(string filterStr)
+        public override void FilterItems(string filterStr)
         {
             if (string.IsNullOrWhiteSpace(filterStr))
                 Refresh();

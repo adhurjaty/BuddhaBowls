@@ -2,6 +2,7 @@
 using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -97,6 +98,19 @@ namespace BuddhaBowls.Helpers
         {
             return Properties.Settings.Default.CategoryOrder.IndexOf(item.Category) * 1000 +
                     Properties.Settings.Default.InventoryOrder.IndexOf(item.Name);
+        }
+
+        /// <summary>
+        /// Filter list of inventory items based on the string in the filter box above datagrids
+        /// </summary>
+        /// <param name="filterStr"></param>
+        public static ObservableCollection<T> FilterInventoryItems<T>(string filterStr, IEnumerable<T> items) where T : IItem
+        {
+            if (string.IsNullOrWhiteSpace(filterStr))
+                return new ObservableCollection<T>(MainHelper.SortItems(items));
+            else
+                return new ObservableCollection<T>(items.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
+                                                        .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
         }
 
         //public static List<VendorItem> GetVendorPrices(string vendorName)
