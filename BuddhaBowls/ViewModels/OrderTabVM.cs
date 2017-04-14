@@ -201,6 +201,7 @@ namespace BuddhaBowls
 
         private void ReOpenOrder(object obj)
         {
+            SelectedReceivedOrder.ReceivedCheck = false;
             SelectedReceivedOrder.ReOpen();
             RefreshOrderList();
         }

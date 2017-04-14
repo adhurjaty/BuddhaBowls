@@ -427,19 +427,6 @@ namespace BuddhaBowls
             Properties.Settings.Default.Save();
         }
 
-        public void GenerateAfterOrderSaved(PurchaseOrder po, Vendor vendor)
-        {
-            _thread = new Thread(delegate ()
-            {
-                ReportGenerator generator = new ReportGenerator(_models);
-                string xlsPath = generator.GenerateOrder(po, vendor);
-                generator.GenerateReceivingList(po, vendor);
-                generator.Close();
-                System.Diagnostics.Process.Start(xlsPath);
-            });
-            _thread.Start();
-        }
-
         public void GeneratePO(PurchaseOrder po, Vendor vendor)
         {
             _thread = new Thread(delegate ()

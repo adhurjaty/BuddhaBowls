@@ -126,7 +126,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void StartNewInventory(object obj)
         {
-            NewInventoryVM tabVM = new NewInventoryVM();
+            NewInventoryVM tabVM = new NewInventoryVM(Refresh);
             tabVM.Add("New Inventory");
         }
 
@@ -136,7 +136,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void ViewInventory(object obj)
         {
-            NewInventoryVM tabVM = new NewInventoryVM(SelectedInventory);
+            NewInventoryVM tabVM = new NewInventoryVM(Refresh, SelectedInventory);
             tabVM.Add("View Inventory");
         }
 

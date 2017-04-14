@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows.Input;
 
 // TODO: Deal with all of the ParentContext weirdness
@@ -20,6 +21,9 @@ namespace BuddhaBowls
     public class NewOrderVM : TempTabVM
     {
         private RefreshDel RefreshOrder;
+        // stores vendor inventory offering
+        private List<InventoryItem> _sortedInvtems;
+        private Dictionary<int, List<InventoryItem>> _vendorCache;
 
         #region Content Binders
         private OrderBreakdownVM _breakdownContext;
@@ -69,10 +73,25 @@ namespace BuddhaBowls
             }
         }
 
+        private string _filterText;
+        public string FilterText
+        {
+            get
+            {
+                return _filterText;
+            }
+            set
+            {
+                _filterText = value;
+                FilterInventoryItems();
+                NotifyPropertyChanged("FilterText");
+            }
+        }
+
         // vendors in the Vendor dropdown
         public ObservableCollection<Vendor> VendorList { get; set; }
 
-        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public DateTime OrderDate { get; set; } = DateTime.Today;
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -89,7 +108,7 @@ namespace BuddhaBowls
         {
             get
             {
-                return OrderVendor != null && _models.InventoryItems.FirstOrDefault(x => x.LastOrderAmount > 0) != null;
+                return OrderVendor != null && FilteredOrderItems.FirstOrDefault(x => x.LastOrderAmount > 0) != null;
             }
         }
         #endregion
@@ -98,14 +117,17 @@ namespace BuddhaBowls
         {
             RefreshOrder = refresh;
             _tabControl = new NewOrder(this);
+            _sortedInvtems = new List<InventoryItem>();
+            _vendorCache = new Dictionary<int, List<InventoryItem>>();
 
             SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
             CancelNewOrderCommand = new RelayCommand(CancelOrder);
             ClearOrderCommand = new RelayCommand(ClearOrderAmounts);
             AutoSelectVendorCommand = new RelayCommand(AutoSelectVendor);
 
-            RefreshInventoryList();
-            SetLastOrderBreakdown();
+            //RefreshInventoryList();
+            //SetLastOrderBreakdown();
+            ShowSelectVendor();
             VendorList = new ObservableCollection<Vendor>(_models.Vendors);
             OrderVendor = null;
         }
@@ -122,12 +144,12 @@ namespace BuddhaBowls
                 item.Update();
             }
 
-            List<InventoryItem> purchasedItems = _models.InventoryItems.Where(x => x.LastOrderAmount > 0).ToList();
+            List<InventoryItem> purchasedItems = _sortedInvtems.Where(x => x.LastOrderAmount > 0).ToList();
             PurchaseOrder po = new PurchaseOrder(OrderVendor, purchasedItems, OrderDate);
 
-            ParentContext.GenerateAfterOrderSaved(po, OrderVendor);
+            GenerateAfterOrderSaved(po, OrderVendor);
 
-            _models.PurchaseOrders.Add(po);
+            _models.AddPurchaseOrder(po);
             RefreshOrder();
 
             Close();
@@ -139,7 +161,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void CancelOrder(object obj)
         {
-            foreach (InventoryItem item in FilteredOrderItems)
+            foreach (InventoryItem item in _sortedInvtems)
             {
                 item.LastOrderAmount = item.GetPrevOrderAmount();
             }
@@ -155,13 +177,12 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void ClearOrderAmounts(object obj)
         {
-            foreach (InventoryItem item in FilteredOrderItems)
+            foreach (InventoryItem item in _sortedInvtems)
             {
                 item.LastOrderAmount = 0;
             }
 
             RefreshInventoryList();
-            SetLastOrderBreakdown();
         }
 
         private void AutoSelectVendor(object obj)
@@ -172,7 +193,13 @@ namespace BuddhaBowls
         #endregion
 
         #region Initializers
-        public ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)
+        /// <summary>
+        /// Creates observable collection that is used to display the price breakdown by category of the current order
+        /// </summary>
+        /// <param name="orderedItems"></param>
+        /// <param name="total"></param>
+        /// <returns></returns>
+        private ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)
         {
             ObservableCollection<BreakdownCategoryItem> breakdown = new ObservableCollection<BreakdownCategoryItem>();
             total = 0;
@@ -198,7 +225,7 @@ namespace BuddhaBowls
             float oTotal = 0;
             BreakdownContext = new OrderBreakdownVM()
             {
-                BreakdownList = GetOrderBreakdown(_models.InventoryItems.Where(x => x.LastOrderAmount > 0), out oTotal),
+                BreakdownList = GetOrderBreakdown(_sortedInvtems.Where(x => x.LastOrderAmount > 0), out oTotal),
                 OrderTotal = oTotal,
                 Header = "Price Breakdown"
             };
@@ -220,10 +247,9 @@ namespace BuddhaBowls
         /// <summary>
         /// Filter list of inventory items based on the string in the filter box above datagrids
         /// </summary>
-        /// <param name="filterStr"></param>
-        public void FilterInventoryItems(string filterStr)
+        public void FilterInventoryItems()
         {
-            FilteredOrderItems = MainHelper.FilterInventoryItems(filterStr, _models.InventoryItems);
+            FilteredOrderItems = MainHelper.FilterInventoryItems(FilterText, _sortedInvtems);
             NotifyPropertyChanged("FilteredOrderItems");
         }
 
@@ -232,55 +258,65 @@ namespace BuddhaBowls
         /// </summary>
         private void LoadVendorItems()
         {
-            List<InventoryItem> priceListItems = OrderVendor.GetInventoryItems();
+            List<InventoryItem> priceListItems = GetInventoryItems();
             if (priceListItems != null)
             {
-                foreach (InventoryItem item in FilteredOrderItems)
-                {
-                    InventoryItem matchingItem = priceListItems.FirstOrDefault(x => x.Id == item.Id);
-                    if (matchingItem != null)
-                    {
-                        item.LastPurchasedPrice = matchingItem.LastPurchasedPrice;
-                        //if (!_editedIds.Contains(matchingItem.Id))
-                        //{
-                        //    item.LastPurchasedPrice = matchingItem.LastPurchasedPrice;
-                        //    item.LastOrderAmount = matchingItem.LastOrderAmount;
-                        //}
-                    }
-                    else
-                    {
-                        item.LastOrderAmount = 0;
-                    }
-                }
+                _sortedInvtems = priceListItems;
 
-                FilteredOrderItems = new ObservableCollection<InventoryItem>(SortVendorItems(priceListItems));
+                RefreshInventoryList();
             }
             else
             {
-                RefreshInventoryList();
+                _sortedInvtems = new List<InventoryItem>();
+                ShowMissingVendorItems();
             }
-            SetLastOrderBreakdown();
+        }
+
+        private List<InventoryItem> GetInventoryItems()
+        {
+            List<InventoryItem> items;
+            if (_vendorCache.Keys.Contains(OrderVendor.Id))
+                items = _vendorCache[OrderVendor.Id];
+            else
+            {
+                items = OrderVendor.GetInventoryItems();
+                _vendorCache[OrderVendor.Id] = items;
+            }
+
+            if(items != null)
+                return MainHelper.SortItems(items).ToList();
+            return null;
+        }
+
+        private void ShowSelectVendor()
+        {
+            FilteredOrderItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Please Select Vendor" } };
+        }
+
+        private void ShowMissingVendorItems()
+        {
+            FilteredOrderItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Vendor has no items" } };
         }
 
         #endregion
 
-        private IEnumerable<InventoryItem> SortVendorItems(IEnumerable<InventoryItem> items)
-        {
-            return FilteredOrderItems.OrderBy(x => (items.Select(a => a.Id).Contains(x.Id) ? 0 : 1000) +
-                                                    Properties.Settings.Default.InventoryOrder.IndexOf(x.Name));
-        }
-
-        private IEnumerable<InventoryItem> SortItems(IEnumerable<InventoryItem> items)
-        {
-            return items.OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.Name));
-        }
-
         private void RefreshInventoryList()
         {
-            if(OrderVendor == null)
+            FilterText = "";
+            FilteredOrderItems = new ObservableCollection<InventoryItem>(_sortedInvtems);
+            SetLastOrderBreakdown();
+        }
+
+        private void GenerateAfterOrderSaved(PurchaseOrder po, Vendor vendor)
+        {
+            new Thread(delegate ()
             {
-                FilteredOrderItems = new ObservableCollection<InventoryItem>(SortItems(_models.InventoryItems));
-            }
+                ReportGenerator generator = new ReportGenerator(_models);
+                string xlsPath = generator.GenerateOrder(po, vendor);
+                generator.GenerateReceivingList(po, vendor);
+                generator.Close();
+                System.Diagnostics.Process.Start(xlsPath);
+            }).Start();
         }
     }
 }

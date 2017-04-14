@@ -17,7 +17,7 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 15,Black Beans,Dry Goods,6# CANS,CAN,6,EA,6,4,1,19.29,0,
 16,Garbanzo Beans,Dry Goods,6# CANS,CAN,6,EA,6,4,1,21.63,0,
 17,Pinto Beans,Dry Goods,6# CANS,CAN,6,EA,6,2,1,22.33,0,
-18,Artichoke Hearts,Dry Goods,6# CANS,CAN,6,OZ-wt,324,1122,1,44.95,20,12/28/2016 11:52:00 AM
+18,Artichoke Hearts,Dry Goods,6# CANS,CAN,6,OZ-wt,324,1122,1,44.95,44,4/13/2017 12:00:00 AM
 19,Mayonnaise,Dry Goods,4 GAL,JUG,4,EA,4,1,1,23.01,0,
 20,BBQ Sauce,Dry Goods,CS 39.5lbs,JUG,4,OZ-wt,632,2,0.98,33.88,0,
 21,Macaroni,Dry Goods,2lb,BAG,2,EA,320,44.2,2.41,14.29,0,
@@ -28,7 +28,7 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 26,Clam Juice,Dry Goods,12x48oz CANS,CAN,12,EA,12,2,1,28.86,0,
 27,Nutella,Dry Goods,53oz,JAR,2,OZ-wt,53,11,0.9,11.99,0,
 28,Honey,Dry Goods,5lbs,JUG,1,OZ-wt,80,1,0.95,13.93,0,
-29,Vanilla,Dry Goods,EA,5lb BUCKET,700,Oz-fl,16,0,100,80,0,
+29,Vanilla,Dry Goods,EA,5lb BUCKET,700,Oz-fl,16,0,100,80,11,4/13/2017 12:00:00 AM
 30,Balsamic Vinegar,Dry Goods,5 LITER,JUG,1,OZ-wt,169.07,16,1,17.89,20,12/28/2016 11:52:00 AM
 31,Tapatio,Dry Goods,12 EACH,BOTTLE,12,EA,12,8,1,17.74,0,
 32,Sriracha,Dry Goods,12 EACH,BOTTLE,12,EA,12,12,1,21.38,0,
@@ -61,7 +61,7 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 59,Mushrooms,Produce,10lb,FLAT,1,OZ-wt,160,1,0.95,17.5,0,
 60,Cucumbers,Produce,36 COUNT,CASE,1,OZ-wt,420,0.75,0.95,22.5,0,
 61,Tomatoes,Produce,25lb,CASE,1,OZ-wt,400,1,0.97,13.95,0,
-62,Avocado,Produce,1/2 CASE,EACH,24,EA,24,9,1,38,0,12/28/2016 11:52:00 AM
+62,Avocado,Produce,1/2 CASE,EACH,24,EA,24,9,1,38,22,4/13/2017 12:00:00 AM
 63,Celery,Produce,1/2 CASE,1/2 CASE,1,BUNCH,12,2,1,2.05,0,
 64,Fresh Basil,Produce,1lb,BAG,1,OZ-wt,16,4,0.65,4.95,0,
 65,Jalapenos,Produce,2lb BAG,BAG,1,OZ-wt,32,8,0.95,3.55,0,

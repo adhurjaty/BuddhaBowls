@@ -18,13 +18,6 @@ namespace BuddhaBowls.UserControls
             DataContext = context;
         }
 
-        private void FilterItems_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox textBox = FilterOrderItemBox;
-
-            ((NewOrderVM)DataContext).FilterInventoryItems(textBox.Text);
-        }
-
         private void OrderList_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
             //SetBlankToZero((TextBox)e.EditingElement);

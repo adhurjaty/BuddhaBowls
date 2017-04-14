@@ -27,19 +27,20 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <Label x:Name="label3" Content="Item Name:" HorizontalAlignment="Center" Margin="-260,20,0,0" Grid.Column="0" VerticalAlignment="Top"/>
-            <TextBox x:Name="FilterOrderItemBox" HorizontalAlignment="Center" Height="22" Margin="0,20,0,0" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top"
-                                         Width="180" Controls:TextBoxHelper.Watermark="Filter by item name..."
-                                         TextChanged="FilterItems_TextChanged" />
+            <TextBox x:Name="FilterOrderItemBox" HorizontalAlignment="Center" Height="22" Margin="0,20,0,0" Grid.Column="0" TextWrapping="Wrap"
+                     VerticalAlignment="Top" Width="180" Controls:TextBoxHelper.Watermark="Filter by item name..." 
+                     Text="{Binding Path=FilterText, UpdateSourceTrigger=PropertyChanged}"/>
             <DataGrid x:Name="dataGrid" HorizontalAlignment="Stretch" Margin="1,60,1,1" Grid.Column="0"
                                           ItemsSource="{Binding FilteredOrderItems}" VerticalAlignment="Stretch"
                                           ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedOrderItem, UpdateSourceTrigger=PropertyChanged}"
                                           AutoGenerateColumns="False" RowEditEnding="OrderList_RowEditEnding" CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
-                    <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="3*"/>
-                    <DataGridTextColumn Header="Order Amt" Binding="{Binding Path=LastOrderAmount, StringFormat=0.##}" Width="2*" />
-                    <DataGridTextColumn Header="Price" Binding="{Binding Path=LastPurchasedPrice, StringFormat=c}" Width="2*" />
-                    <DataGridTextColumn Header="Extension" Binding="{Binding Path=PriceExtension, Mode=OneWay, StringFormat=c}" Width="2*" />
+                    <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="2*"/>
+                    <DataGridTextColumn Header="Unit" Binding="{Binding Path=PurchasedUnit, StringFormat=0.##}" Width="1*" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Amt" Binding="{Binding Path=LastOrderAmount, StringFormat=0.##}" Width="1*" />
+                    <DataGridTextColumn Header="Price" Binding="{Binding Path=LastPurchasedPrice, StringFormat=c}" Width="2*" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Extension" Binding="{Binding Path=PurchaseExtension, Mode=OneWay, StringFormat=c}" Width="2*" />
                 </DataGrid.Columns>
             </DataGrid>
             <Button x:Name="button6" Content="Clear Amts" HorizontalAlignment="Right" Margin="10,20" VerticalAlignment="Top" Width="75"

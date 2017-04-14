@@ -47,6 +47,17 @@ namespace BuddhaBowls.Models
             }
         }
 
+        /// <summary>
+        /// Total cost of a purchase of this item
+        /// </summary>
+        public float PurchaseExtension
+        {
+            get
+            {
+                return LastPurchasedPrice * LastOrderAmount;
+            }
+        }
+
         public InventoryItem() : base()
         {
             _tableName = "InventoryItem";
@@ -98,7 +109,7 @@ namespace BuddhaBowls.Models
         /// <returns></returns>
         public override string[] GetPropertiesDB(string[] omit = null)
         {
-            string[] theseOmissions = new string[] { "PriceExtension", "CostExtension", "CountPrice" };
+            string[] theseOmissions = new string[] { "PriceExtension", "CountPrice", "PurchaseExtension" };
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
 

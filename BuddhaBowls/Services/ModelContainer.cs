@@ -282,6 +282,11 @@ namespace BuddhaBowls.Services
             return vendorDict;
         }
 
+        public void AddPurchaseOrder(PurchaseOrder order)
+        {
+            PurchaseOrders.Add(order);
+        }
+
         private void SetInventoryCategories()
         {
             ItemCategories = new HashSet<string>();

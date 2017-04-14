@@ -6,6 +6,8 @@ using BuddhaBowls.Models;
 using System.Linq;
 using System.Windows;
 using BuddhaBowls.Services;
+using BuddhaBowls.Helpers;
+using System.IO;
 
 namespace BuddhaBowls.Test
 {
@@ -291,10 +293,265 @@ namespace BuddhaBowls.Test
             {
                 listVM.SelectedInventoryItem = item;
                 listVM.DeleteCommand.Execute(null);
-                
             }
 
+            Assert.IsNull(listVM.FilteredItems.FirstOrDefault(x => x.Name == name));
         }
+
+        #endregion
+
+        #region OrderTabVM Tests
+
+        [TestMethod]
+        public void EmptyOrderVendorTest()
+        {
+            OrderTabVM orderTab = _vm.OrderTab;
+            
+            orderTab.AddNewOrderCommand.Execute(null);
+            NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
+
+            Assert.IsNull(newOrderTab.OrderVendor);
+            Assert.AreEqual("Please Select Vendor", newOrderTab.FilteredOrderItems.First().Name);
+            Assert.IsFalse(newOrderTab.SaveOrderCanExecute);
+        }
+
+        [TestMethod]
+        public void SelectOrderVendorTest()
+        {
+            OrderTabVM orderTab = _vm.OrderTab;
+
+            orderTab.AddNewOrderCommand.Execute(null);
+            NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
+            Vendor selectVendor = _vm.GetModelContainer().Vendors.First(x => x.Name == "Sysco");
+            newOrderTab.OrderVendor = selectVendor;
+
+            List<InventoryItem> refItems = MainHelper.SortItems(selectVendor.GetInventoryItems()).ToList();
+            CollectionAssert.AreEqual(refItems.Select(x => x.Name).ToList(), newOrderTab.FilteredOrderItems.Select(x => x.Name).ToList());
+            CollectionAssert.AreEqual(refItems.Select(x => x.LastOrderAmount).ToList(),
+                                      newOrderTab.FilteredOrderItems.Select(x => x.LastOrderAmount).ToList());
+        }
+
+        [TestMethod]
+        public void SelectEmptyOrderVendorTest()
+        {
+            OrderTabVM orderTab = _vm.OrderTab;
+            ModelContainer models = _vm.GetModelContainer();
+            Vendor newVend = new Vendor() { Name = "TempVend" };
+
+            try
+            {
+                models.AddUpdateVendor(ref newVend);
+
+                orderTab.AddNewOrderCommand.Execute(null);
+                NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
+                newOrderTab.OrderVendor = newVend;
+
+                Assert.AreEqual("Vendor has no items", newOrderTab.FilteredOrderItems.First().Name);
+                Assert.IsFalse(newOrderTab.SaveOrderCanExecute);
+            }
+            finally
+            {
+                models.DeleteVendor(newVend);
+            }
+        }
+
+        [TestMethod]
+        public void ClearNewOrderAmountsTest()
+        {
+            OrderTabVM orderTab = _vm.OrderTab;
+            Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
+            float[] initAmounts = new float[] { 1, 3, 5, 1 };
+            float[] clearedAmounts = new float[] { 0, 0, 0, 0 };
+
+            orderTab.AddNewOrderCommand.Execute(null);
+            NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
+            newOrderTab.OrderVendor = berryMan;
+
+            CollectionAssert.AreEqual(initAmounts, newOrderTab.FilteredOrderItems.Select(x => x.LastOrderAmount).ToArray());
+            newOrderTab.ClearOrderCommand.Execute(null);
+            CollectionAssert.AreEqual(clearedAmounts, newOrderTab.FilteredOrderItems.Select(x => x.LastOrderAmount).ToArray());
+        }
+
+        [TestMethod]
+        public void NewOpenOrderTest()
+        {
+            OrderTabVM orderTab = _vm.OrderTab;
+            ModelContainer models = _vm.GetModelContainer();
+            Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
+
+            orderTab.AddNewOrderCommand.Execute(null);
+            NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
+            newOrderTab.OrderVendor = berryMan;
+            newOrderTab.ClearOrderCommand.Execute(null);
+
+            Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
+            {
+                { "Artichoke Hearts", 44f },
+                { "Avocado", 22f },
+                { "Vanilla", 11f }
+            };
+
+            foreach (KeyValuePair<string, float> kvp in updateOrderDict)
+            {
+                newOrderTab.FilteredOrderItems.First(x => x.Name == kvp.Key).LastOrderAmount = kvp.Value;
+            }
+
+            newOrderTab.SaveNewOrderCommand.Execute(null);
+            orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
+            PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
+
+            try
+            {
+                Assert.IsNotNull(newOrder);
+                
+                List<InventoryItem> orderItems = newOrder.GetPOItems()[0];
+                foreach (InventoryItem item in orderItems)
+                {
+                    Assert.AreEqual(updateOrderDict[item.Name], item.LastOrderAmount);
+                }
+            }
+            finally
+            {
+                orderTab.DeleteOpenOrderCommand.Execute(null);
+            }
+
+            Assert.IsFalse(File.Exists(newOrder.GetOrderPath()));
+        }
+
+        [TestMethod]
+        public void ReceiveOrderUITest()
+        {
+            OrderTabVM orderTab = _vm.OrderTab;
+            Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
+
+            orderTab.AddNewOrderCommand.Execute(null);
+            NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
+            newOrderTab.OrderVendor = berryMan;
+            newOrderTab.ClearOrderCommand.Execute(null);
+
+            Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
+            {
+                { "Artichoke Hearts", 44f },
+                { "Avocado", 22f },
+                { "Vanilla", 11f }
+            };
+
+            foreach (KeyValuePair<string, float> kvp in updateOrderDict)
+            {
+                newOrderTab.FilteredOrderItems.First(x => x.Name == kvp.Key).LastOrderAmount = kvp.Value;
+            }
+
+            newOrderTab.SaveNewOrderCommand.Execute(null);
+            orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
+            PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
+
+            try
+            {
+                Assert.IsNotNull(newOrder);
+                newOrder.ReceivedCheck = true;
+                orderTab.ReceivedOrdersCommand.Execute(null);
+
+                List<InventoryItem> receivedItems = newOrder.GetPOItems()[1];
+                foreach (InventoryItem item in receivedItems)
+                {
+                    Assert.AreEqual(updateOrderDict[item.Name], item.LastOrderAmount);
+                }
+                Assert.AreEqual(DateTime.Today, newOrder.ReceivedDate);
+            }
+            finally
+            {
+                orderTab.DeleteOpenOrderCommand.Execute(null);
+            }
+        }
+
+        [TestMethod]
+        public void ViewOpenOrderTest()
+        {
+            OrderTabVM orderTab = _vm.OrderTab;
+            Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
+
+            orderTab.AddNewOrderCommand.Execute(null);
+            NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
+            newOrderTab.OrderVendor = berryMan;
+            newOrderTab.ClearOrderCommand.Execute(null);
+
+            Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
+            {
+                { "Artichoke Hearts", 44f },
+                { "Avocado", 22f },
+                { "Vanilla", 11f }
+            };
+
+            foreach (KeyValuePair<string, float> kvp in updateOrderDict)
+            {
+                newOrderTab.FilteredOrderItems.First(x => x.Name == kvp.Key).LastOrderAmount = kvp.Value;
+            }
+
+            newOrderTab.SaveNewOrderCommand.Execute(null);
+            orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
+            PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
+
+            try
+            {
+                orderTab.ViewOpenOrderCommand.Execute(null);
+                ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
+            }
+            finally
+            {
+
+            }
+        }
+
+        [TestMethod]
+        public void PartialReceiveOrderTest()
+        {
+            OrderTabVM orderTab = _vm.OrderTab;
+            Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
+
+            orderTab.AddNewOrderCommand.Execute(null);
+            NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
+            newOrderTab.OrderVendor = berryMan;
+            newOrderTab.ClearOrderCommand.Execute(null);
+
+            Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
+            {
+                { "Artichoke Hearts", 44f },
+                { "Avocado", 22f },
+                { "Vanilla", 11f }
+            };
+
+            foreach (KeyValuePair<string, float> kvp in updateOrderDict)
+            {
+                newOrderTab.FilteredOrderItems.First(x => x.Name == kvp.Key).LastOrderAmount = kvp.Value;
+            }
+
+            newOrderTab.SaveNewOrderCommand.Execute(null);
+            orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
+            PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
+
+            try
+            {
+                // finish testing logic
+
+                List<InventoryItem> receivedItems = newOrder.GetPOItems()[1];
+                foreach (InventoryItem item in receivedItems)
+                {
+                    Assert.AreEqual(updateOrderDict[item.Name], item.LastOrderAmount);
+                }
+                Assert.AreEqual(DateTime.Today, newOrder.ReceivedDate);
+            }
+            finally
+            {
+                orderTab.DeleteOpenOrderCommand.Execute(null);
+            }
+        }
+
+        [TestMethod]
+        public void ReOpenOrderTest()
+        {
+
+        }
+
         #endregion
 
         private T GetOpenTempTabVM<T>() where T : TempTabVM

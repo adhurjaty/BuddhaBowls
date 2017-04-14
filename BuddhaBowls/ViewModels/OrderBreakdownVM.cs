@@ -122,7 +122,7 @@ namespace BuddhaBowls
         {
             get
             {
-                return Items.Sum(x => x.PriceExtension);
+                return Items.Sum(x => x.PurchaseExtension);
             }
         }
 

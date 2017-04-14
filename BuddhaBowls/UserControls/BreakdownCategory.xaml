@@ -27,22 +27,12 @@
         <Border Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding Background}" />
         <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Stretch" Text="{Binding Category}"
                    Background="{Binding Background}" FontWeight="Bold"/>
-        <!--<ListBox Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Background="{Binding ElementName=BreakdownList, Path=DataContext.Background}">
-                        <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" Margin="10, 0"/>
-                        <TextBlock Text="{Binding Path=PriceExtension, StringFormat=c}" HorizontalAlignment="Right" Margin="10, 0" />
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>-->
         <DataGrid x:Name="BreakdownGrid" Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" HeadersVisibility="None"
                   CanUserAddRows="False" AutoGenerateColumns="False" BeginningEdit="DataGrid_BeginningEdit" RowEditEnding="BreakdownGrid_RowEditEnding">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Name, Mode=OneWay}" Width="2*" />
-                <DataGridTextColumn Binding="{Binding Path=LastOrderAmount}" Width="1*" />
-                <DataGridTextColumn x:Name="PriceColumn" Binding="{Binding Path=PriceExtension, StringFormat=c}" Width="1*" />
+                <DataGridTextColumn Binding="{Binding Path=LastOrderAmount}" Width="1*" IsReadOnly="True" />
+                <DataGridTextColumn x:Name="PriceColumn" Binding="{Binding Path=PurchaseExtension, StringFormat=c}" Width="1*" IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>
         <Border Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding Background}" />

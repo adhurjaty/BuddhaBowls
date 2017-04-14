@@ -38,36 +38,35 @@ namespace BuddhaBowls.Models
             VendorName = vendor.Name;
             OrderDate = orderDate;
 
+            // need to insert here to get the ID
             Insert();
 
             foreach (InventoryItem item in inventoryItems)
             {
-                item.LastPurchasedDate = DateTime.Now;
+                item.LastPurchasedDate = item.LastPurchasedDate == null || item.LastPurchasedDate < orderDate ? orderDate : item.LastPurchasedDate;
             }
             ModelHelper.CreateTable(inventoryItems, GetOrderTableName());
-            UpdatePrices(inventoryItems, vendor);
-        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="inventoryItems"></param>
-        /// <param name="vendor"></param>
-        private void UpdatePrices(List<InventoryItem> inventoryItems, Vendor vendor)
-        {
+            // update the vendor table last order amounts (prices as well, may want to change this)
             vendor.Update(inventoryItems);
         }
 
         public void Receive()
         {
-            CombinePartial();
-            ReceivedDate = DateTime.Now;
+            if (IsPartial)
+            {
+                CombinePartial();
+            }
+            ReceivedDate = DateTime.Today;
             Update();
         }
 
         public void ReOpen()
         {
-            CombinePartial();
+            if (IsPartial)
+            {
+                CombinePartial();
+            }
             ReceivedDate = null;
             Update();
         }
@@ -131,6 +130,23 @@ namespace BuddhaBowls.Models
             return Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + Id.ToString());
         }
 
+        public string GetOrderPath()
+        {
+            return Path.Combine(Properties.Settings.Default.DBLocation, GetOrderTableName() + ".csv");
+        }
+
+        public string[] GetPartialOrderPaths()
+        {
+            List<string> paths = new List<string>();
+            string[] tables = new string[] { GetOpenPartialOrderTableName(), GetReceivedPartialOrderTableName() };
+            foreach (string table in tables)
+            {
+                paths.Add(Path.Combine(Properties.Settings.Default.DBLocation, table + ".csv"));
+            }
+
+            return paths.ToArray();
+        }
+
         private string GetOrderTableName()
         {
             return @"Orders\" + VendorName + "_" + Id.ToString();
@@ -148,15 +164,12 @@ namespace BuddhaBowls.Models
 
         private void CombinePartial()
         {
-            if (IsPartial)
-            {
-                List<InventoryItem>[] bothItems = GetPOItems();
-                List<InventoryItem> items = bothItems[0].Concat(bothItems[1]).ToList();
-                _dbInt.DestroyTable(GetOpenPartialOrderTableName());
-                _dbInt.DestroyTable(GetReceivedPartialOrderTableName());
-                ModelHelper.CreateTable(items, GetOrderTableName());
-                IsPartial = false;
-            }
+            List<InventoryItem>[] bothItems = GetPOItems();
+            List<InventoryItem> items = bothItems[0].Concat(bothItems[1]).ToList();
+            _dbInt.DestroyTable(GetOpenPartialOrderTableName());
+            _dbInt.DestroyTable(GetReceivedPartialOrderTableName());
+            ModelHelper.CreateTable(items, GetOrderTableName());
+            IsPartial = false;
         }
 
         #region Overrides
@@ -168,7 +181,15 @@ namespace BuddhaBowls.Models
 
         public override void Destroy()
         {
-            _dbInt.DestroyTable(GetOrderTableName());
+            if (IsPartial)
+            {
+                _dbInt.DestroyTable(GetOpenPartialOrderTableName());
+                _dbInt.DestroyTable(GetReceivedPartialOrderTableName());
+            }
+            else
+            {
+                _dbInt.DestroyTable(GetOrderTableName());
+            }
             base.Destroy();
         }
         #endregion

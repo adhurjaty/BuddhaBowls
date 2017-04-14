@@ -251,7 +251,7 @@ namespace BuddhaBowls
         #endregion
 
         /// <summary>
-        /// Normal constructor
+        /// Constructor for Master list
         /// </summary>
         public InventoryListVM() : base()
         {
@@ -263,6 +263,10 @@ namespace BuddhaBowls
             SetCommandsAndControl();
         }
 
+        /// <summary>
+        /// Constructor for a new inventory
+        /// </summary>
+        /// <param name="countDel"></param>
         public InventoryListVM(StatusUpdatedDel countDel) : base()
         {
             CountChanged = countDel;
@@ -274,7 +278,7 @@ namespace BuddhaBowls
         }
 
         /// <summary>
-        /// Constructor for edit inventory list
+        /// Constructor for edit inventory
         /// </summary>
         /// <param name="countDel"></param>
         /// <param name="inv"></param>
@@ -293,7 +297,7 @@ namespace BuddhaBowls
 
         private void AddInventoryItem(object obj)
         {
-            NewInventoryItemWizard wizard = new NewInventoryItemWizard();
+            NewInventoryItemWizard wizard = new NewInventoryItemWizard(Refresh);
             wizard.Add("New Item");
         }
 
@@ -310,13 +314,13 @@ namespace BuddhaBowls
                 }
                 _models.DeleteInventoryItem(item);
                 SelectedInventoryItem = null;
-                ParentContext.Refresh();
+                Refresh();
             }
         }
 
         private void EditInventoryItem(object obj)
         {
-            NewInventoryItemWizard wizard = new NewInventoryItemWizard(SelectedInventoryItem.ToInventoryItem());
+            NewInventoryItemWizard wizard = new NewInventoryItemWizard(Refresh, SelectedInventoryItem.ToInventoryItem());
             wizard.Add("New Item");
         }
 

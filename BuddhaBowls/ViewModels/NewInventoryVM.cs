@@ -22,6 +22,8 @@ namespace BuddhaBowls
     /// </summary>
     public class NewInventoryVM : TempTabVM, INotifyPropertyChanged
     {
+        private RefreshDel RefreshInv;
+
         #region Data Bindings
 
         private DateTime? _inventoryDate;
@@ -68,18 +70,20 @@ namespace BuddhaBowls
 
         #endregion
 
-        public NewInventoryVM() : base()
+        public NewInventoryVM(RefreshDel refresh) : base()
         {
             _tabControl = new NewInventory(this);
+            RefreshInv = refresh;
             InvListVM = new InventoryListVM(InventoryItemCountChanged);
             InventoryControl = InvListVM.TabControl;
             
             InitICommand();
         }
 
-        public NewInventoryVM(Inventory inv) : base()
+        public NewInventoryVM(RefreshDel refresh, Inventory inv) : base()
         {
             _tabControl = new NewInventory(this);
+            RefreshInv = refresh;
             InvListVM = new InventoryListVM(inv, InventoryItemCountChanged);
             InventoryControl = InvListVM.TabControl;
             InventoryDate = inv.Date;
@@ -148,7 +152,7 @@ namespace BuddhaBowls
 
         public override void Refresh()
         {
-            ((InventoryListVM)InventoryControl.DataContext).Refresh();
+            RefreshInv();
         }
 
         #endregion

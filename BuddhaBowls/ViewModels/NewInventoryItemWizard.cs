@@ -14,6 +14,7 @@ namespace BuddhaBowls
     public class NewInventoryItemWizard : WizardVM
     {
         private bool _newItem;
+        private RefreshDel RefreshInvItems;
 
         #region Content Binders
 
@@ -82,9 +83,10 @@ namespace BuddhaBowls
 
         #endregion
 
-        public NewInventoryItemWizard() : base()
+        public NewInventoryItemWizard(RefreshDel refresh) : base()
         {
             _newItem = true;
+            RefreshInvItems = refresh;
             Item = new InventoryItem();
             SetDefaultValues();
             VendorList = new ObservableCollection<VendorInfo>();
@@ -93,9 +95,10 @@ namespace BuddhaBowls
             InitICommand();
         }
 
-        public NewInventoryItemWizard(InventoryItem item) : base()
+        public NewInventoryItemWizard(RefreshDel refresh, InventoryItem item) : base()
         {
             _newItem = false;
+            RefreshInvItems = refresh;
             Item = item;
             Header = "Edit Inventory Item";
 
@@ -139,7 +142,7 @@ namespace BuddhaBowls
 
                 invItem.Update();
 
-                ParentContext.Refresh();
+                RefreshInvItems();
                 Close();
             }
         }
