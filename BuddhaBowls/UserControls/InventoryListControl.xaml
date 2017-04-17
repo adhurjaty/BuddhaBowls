@@ -69,14 +69,16 @@
                 <!--Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}" />-->
                 <DataGridTextColumn Header="Unit Price" Binding="{Binding Path=LastPurchasedPrice, StringFormat=c}" Width="2*" />
                 <!--Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}" />-->
-                <DataGridTemplateColumn Header="Vendor" Width="3*" > <!--Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}"> -->
+                <DataGridTemplateColumn Header="Vendor" Width="3*"> <!--Visibility="{Binding Path=Data.EditVendorVisibility, Source={StaticResource proxy}}">-->
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ComboBox ItemsSource="{Binding Vendors}" SelectedItem="{Binding SelectedVendor}" SelectionChanged="ComboBox_Selected"
-                                      DisplayMemberPath="Name" Margin="0, 0, 10, 0"/>
+                                      DisplayMemberPath="Name" Margin="0, 0, 10, 0" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <!--<DataGridTextColumn Header="Vendor" Width="3*" Binding="{Binding SelectedVendor.Name}" IsReadOnly="True"
+                                    Visibility="{Binding Path=Data.ReadOnlyVendorVisibility, Source={StaticResource proxy}}" />-->
                 <DataGridTextColumn Header="Conversion" Binding="{Binding Path=Conversion, StringFormat=0.##}" Width="1*"
                                     Visibility="{Binding Path=Data.NewInvVisibility, Source={StaticResource proxy}}"/>
                 <DataGridTextColumn Header="Count Unit" Binding="{Binding Path=CountUnit}" Width="1*"

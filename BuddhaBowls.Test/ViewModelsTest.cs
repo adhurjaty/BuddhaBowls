@@ -629,6 +629,7 @@ namespace BuddhaBowls.Test
         {
             string name = "My New Vendor";
             VendorTabVM vendorTab = CreateTestVendor(name, "mynew@example.com");
+            InventoryListVM invList = _vm.InventoryTab.InvListVM;
 
             Vendor newVendor = vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == name);
             vendorTab.SelectedVendor = newVendor;
@@ -645,6 +646,9 @@ namespace BuddhaBowls.Test
                     float refPrice = refVals[1];
                     Assert.AreEqual(refConversion, item.Conversion);
                     Assert.AreEqual(refPrice, item.LastPurchasedPrice);
+
+                    VendorInventoryItem listItem = invList.FilteredItems.First(x => x.Id == item.Id);
+                    CollectionAssert.Contains(listItem.Vendors.Select(x => x.Name).ToList(), name);
                 }
             }
             finally
@@ -653,6 +657,50 @@ namespace BuddhaBowls.Test
             }
 
             Assert.IsNull(vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == name));
+            foreach (string itemName in _vendorSoldDict.Keys)
+            {
+                VendorInventoryItem listItem = invList.FilteredItems.First(x => x.Name == itemName);
+                CollectionAssert.DoesNotContain(listItem.Vendors.Select(x => x.Name).ToList(), name);
+            }
+        }
+
+        [TestMethod]
+        public void AddNewVendorNewInvTest()
+        {
+            string name = "My New Vendor";
+            _vm.InventoryTab.AddCommand.Execute(null);
+            InventoryListVM invList = GetOpenTempTabVM<NewInventoryVM>().InvListVM;
+            VendorTabVM vendorTab = CreateTestVendor(name, "mynew@example.com");
+
+            Vendor newVendor = vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == name);
+            vendorTab.SelectedVendor = newVendor;
+
+            try
+            {
+                List<InventoryItem> vendorItems = newVendor.GetInventoryItems();
+                foreach (InventoryItem item in vendorItems)
+                {
+                    float[] refVals = _vendorSoldDict[item.Name];
+                    float refConversion = refVals[0];
+                    float refPrice = refVals[1];
+                    Assert.AreEqual(refConversion, item.Conversion);
+                    Assert.AreEqual(refPrice, item.LastPurchasedPrice);
+
+                    VendorInventoryItem listItem = invList.FilteredItems.First(x => x.Id == item.Id);
+                    CollectionAssert.Contains(listItem.Vendors.Select(x => x.Name).ToList(), name);
+                }
+            }
+            finally
+            {
+                vendorTab.DeleteVendorCommand.Execute(null);
+            }
+
+            Assert.IsNull(vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == name));
+            foreach (string itemName in _vendorSoldDict.Keys)
+            {
+                VendorInventoryItem listItem = invList.FilteredItems.First(x => x.Name == itemName);
+                CollectionAssert.DoesNotContain(listItem.Vendors.Select(x => x.Name).ToList(), name);
+            }
         }
 
         [TestMethod]
@@ -704,13 +752,18 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void ResetVendorVMTest()
         {
+            VendorTabVM vendorTab = _vm.VendorTab;
+            Vendor berryMan = vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == "Berry Man");
 
-        }
+            string origEmail = berryMan.Email;
+            berryMan.Email = "akljsflkjsd";
+            string origPhone = berryMan.PhoneNumber;
+            berryMan.PhoneNumber = "98765543";
 
-        [TestMethod]
-        public void ChangeVendorItemsTest()
-        {
+            vendorTab.ResetCommand.Execute(null);
 
+            Assert.AreEqual(origEmail, berryMan.Email);
+            Assert.AreEqual(origPhone, berryMan.PhoneNumber);
         }
 
         #endregion

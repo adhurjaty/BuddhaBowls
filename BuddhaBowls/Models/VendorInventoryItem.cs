@@ -70,7 +70,7 @@ namespace BuddhaBowls.Models
         }
 
         /// <summary>
-        /// Writes new price to DB when user has changed the price in the datagrid
+        /// Writes new price to DB when user has changed the price or conversion in the datagrid
         /// </summary>
         public void UpdateVendorProps()
         {

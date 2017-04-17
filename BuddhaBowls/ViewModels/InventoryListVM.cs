@@ -237,6 +237,22 @@ namespace BuddhaBowls
                 }
             }
         }
+
+        //public Visibility EditVendorVisibility
+        //{
+        //    get
+        //    {
+        //        return _inventory == null ? Visibility.Visible : Visibility.Hidden;
+        //    }
+        //}
+
+        //public Visibility ReadOnlyVendorVisibility
+        //{
+        //    get
+        //    {
+        //        return _inventory != null ? Visibility.Visible : Visibility.Hidden;
+        //    }
+        //}
         #endregion
 
         #region ICommand and CanExecute

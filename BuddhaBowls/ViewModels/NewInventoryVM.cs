@@ -152,7 +152,8 @@ namespace BuddhaBowls
 
         public override void Refresh()
         {
-            RefreshInv();
+            InvListVM.Refresh();
+            //RefreshInv();
         }
 
         #endregion
