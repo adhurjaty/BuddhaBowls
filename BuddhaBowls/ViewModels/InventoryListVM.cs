@@ -297,7 +297,7 @@ namespace BuddhaBowls
 
         private void AddInventoryItem(object obj)
         {
-            NewInventoryItemWizard wizard = new NewInventoryItemWizard(Refresh);
+            NewInventoryItemWizard wizard = new NewInventoryItemWizard(AddNewItem);
             wizard.Add("New Item");
         }
 
@@ -313,14 +313,14 @@ namespace BuddhaBowls
                     v.RemoveInvItem(item);
                 }
                 _models.DeleteInventoryItem(item);
+                ParentContext.RemoveInvItem(item);
                 SelectedInventoryItem = null;
-                Refresh();
             }
         }
 
         private void EditInventoryItem(object obj)
         {
-            NewInventoryItemWizard wizard = new NewInventoryItemWizard(Refresh, SelectedInventoryItem.ToInventoryItem());
+            NewInventoryItemWizard wizard = new NewInventoryItemWizard(AddNewItem, SelectedInventoryItem.ToInventoryItem());
             wizard.Add("New Item");
         }
 
@@ -387,6 +387,25 @@ namespace BuddhaBowls
             FilterText = "";
         }
 
+        private void AddNewItem(InventoryItem item)
+        {
+            ParentContext.AddInvItem(item);
+        }
+
+        public void AddItem(InventoryItem item)
+        {
+            VendorInventoryItem vendorItem = new VendorInventoryItem(_models.GetVendorsFromItem(item), item);
+            FilteredItems.Add(vendorItem);
+            _inventoryItems.Add(vendorItem);
+        }
+
+        public void RemoveItem(InventoryItem item)
+        {
+            VendorInventoryItem vendorItem = _inventoryItems.FirstOrDefault(x => x.Id == item.Id);
+            FilteredItems.Remove(vendorItem);
+            _inventoryItems.Remove(vendorItem);
+        }
+
         public void MoveDown(InventoryItem item)
         {
             MoveInList(item, false);
@@ -424,7 +443,7 @@ namespace BuddhaBowls
 
         public void RowEdited(VendorInventoryItem item)
         {
-            item.UpdateVendorPrice();
+            item.UpdateVendorProps();
             if (!IsMasterList)
             {
                 InventoryItemCountChanged();

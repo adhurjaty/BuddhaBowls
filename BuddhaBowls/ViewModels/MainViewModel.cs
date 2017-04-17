@@ -352,6 +352,28 @@ namespace BuddhaBowls
             }
         }
 
+        public void AddInvItem(InventoryItem item)
+        {
+            InventoryTab.AddInvItem(item);
+
+            foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
+            {
+                if (tempVM.GetType() == typeof(NewInventoryVM))
+                    ((NewInventoryVM)tempVM).InvListVM.AddItem(item);
+            }
+        }
+
+        public void RemoveInvItem(InventoryItem item)
+        {
+            InventoryTab.RemoveInvItem(item);
+
+            foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
+            {
+                if(tempVM.GetType() == typeof(NewInventoryVM))
+                    ((NewInventoryVM)tempVM).InvListVM.RemoveItem(item);
+            }
+        }
+
         /// <summary>
         /// Looks through fields in add/edit form to ensure that user-supplied values are valid and changes types when necessary
         /// </summary>

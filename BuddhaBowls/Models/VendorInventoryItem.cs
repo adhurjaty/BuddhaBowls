@@ -72,9 +72,10 @@ namespace BuddhaBowls.Models
         /// <summary>
         /// Writes new price to DB when user has changed the price in the datagrid
         /// </summary>
-        public void UpdateVendorPrice()
+        public void UpdateVendorProps()
         {
             NotifyPropertyChanged("LastPurchasedPrice");
+            NotifyPropertyChanged("Conversion");
             InventoryItem item = ToInventoryItem();
             if (SelectedVendor != null)
             {
@@ -133,9 +134,11 @@ namespace BuddhaBowls.Models
             {
                 InventoryItem item = _vendorDict[SelectedVendor];
                 LastPurchasedPrice = item.LastPurchasedPrice;
+                Conversion = item.Conversion;
                 PurchasedUnit = item.PurchasedUnit;
                 NotifyPropertyChanged("LastPurchasedPrice");
                 NotifyPropertyChanged("PurchasedUnit");
+                NotifyPropertyChanged("Conversion");
                 LastVendorId = SelectedVendor.Id;
             }
         }

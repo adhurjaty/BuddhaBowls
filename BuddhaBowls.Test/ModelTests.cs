@@ -388,7 +388,7 @@ namespace BuddhaBowls.Test
 
             try
             {
-                vi.UpdateVendorPrice();
+                vi.UpdateVendorProps();
 
                 InventoryItem testItem = vendors[0].GetInventoryItems().First(x => x.Name == "Feta");
                 Assert.AreEqual(69.69f, testItem.LastPurchasedPrice);
@@ -400,7 +400,7 @@ namespace BuddhaBowls.Test
             {
                 vi.SelectedVendor = vendors[0];
                 vi.LastPurchasedPrice = tempPrice0;
-                vi.UpdateVendorPrice();
+                vi.UpdateVendorProps();
             }
         }
 

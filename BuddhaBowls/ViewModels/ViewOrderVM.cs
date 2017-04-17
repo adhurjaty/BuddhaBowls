@@ -90,6 +90,7 @@ namespace BuddhaBowls
         {
             _order = po;
             _tabControl = new ViewOrderTabControl(this);
+            RefreshOrders = refresh;
 
             MoveToReceivedCommand = new RelayCommand(MoveToReceived, x => MoveToReceivedCanExecute);
             MoveToOpenCommand = new RelayCommand(MoveToOpen, x => MoveToOpenCanExecute);

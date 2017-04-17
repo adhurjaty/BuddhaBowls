@@ -11,10 +11,12 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
+    public delegate void AddInvDel(InventoryItem item);
+
     public class NewInventoryItemWizard : WizardVM
     {
         private bool _newItem;
-        private RefreshDel RefreshInvItems;
+        private AddInvDel AddInv;
 
         #region Content Binders
 
@@ -83,10 +85,10 @@ namespace BuddhaBowls
 
         #endregion
 
-        public NewInventoryItemWizard(RefreshDel refresh) : base()
+        public NewInventoryItemWizard(AddInvDel addInv) : base()
         {
             _newItem = true;
-            RefreshInvItems = refresh;
+            AddInv = addInv;
             Item = new InventoryItem();
             SetDefaultValues();
             VendorList = new ObservableCollection<VendorInfo>();
@@ -95,10 +97,10 @@ namespace BuddhaBowls
             InitICommand();
         }
 
-        public NewInventoryItemWizard(RefreshDel refresh, InventoryItem item) : base()
+        public NewInventoryItemWizard(AddInvDel addInv, InventoryItem item) : base()
         {
             _newItem = false;
-            RefreshInvItems = refresh;
+            AddInv = addInv;
             Item = item;
             Header = "Edit Inventory Item";
 
@@ -142,7 +144,7 @@ namespace BuddhaBowls
 
                 invItem.Update();
 
-                RefreshInvItems();
+                AddInv(invItem);
                 Close();
             }
         }

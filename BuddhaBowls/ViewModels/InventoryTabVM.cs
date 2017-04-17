@@ -231,6 +231,16 @@ namespace BuddhaBowls
                 InvListVM.Refresh();
         }
 
+        public void AddInvItem(InventoryItem item)
+        {
+            InvListVM.AddItem(item);
+        }
+
+        public void RemoveInvItem(InventoryItem item)
+        {
+            InvListVM.RemoveItem(item);
+        }
+
         #endregion
 
         protected override void ChangePageState(PageState state)

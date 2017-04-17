@@ -154,7 +154,7 @@ namespace BuddhaBowls
         public OrderTabVM() : base()
         {
 
-            ReceivedOrdersCommand = new RelayCommand(MoveReceivedOrders, x => DBConnection);
+            ReceivedOrdersCommand = new RelayCommand(MoveToReceivedOrders, x => DBConnection);
             ClearReceivedCheckCommand = new RelayCommand(ClearReceivedChecks, x => DBConnection);
             ViewOpenOrderCommand = new RelayCommand(ViewOpenOrder, x => ViewOpenOrderCanExecute && DBConnection);
             ViewReceivedOrderCommand = new RelayCommand(ViewReceivedOrder, x => ViewReceivedOrderCanExecute && DBConnection);
@@ -189,12 +189,13 @@ namespace BuddhaBowls
         /// Move the received orders
         /// </summary>
         /// <param name="obj"></param>
-        private void MoveReceivedOrders(object obj)
+        private void MoveToReceivedOrders(object obj)
         {
             foreach (PurchaseOrder order in OpenOrders.Where(x => x.ReceivedCheck))
             {
                 order.Receive();
             }
+            SelectedOpenOrder = null;
 
             RefreshOrderList();
         }
@@ -203,6 +204,7 @@ namespace BuddhaBowls
         {
             SelectedReceivedOrder.ReceivedCheck = false;
             SelectedReceivedOrder.ReOpen();
+            SelectedReceivedOrder = null;
             RefreshOrderList();
         }
 

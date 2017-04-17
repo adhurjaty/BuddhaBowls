@@ -128,11 +128,13 @@ namespace BuddhaBowls
         private void ShowSold(object obj)
         {
             InventoryList = new ObservableCollection<InventoryVendorItem>(InventoryList.Where(x => x.IsSold));
+            ShowSoldVisibility = Visibility.Hidden;
         }
 
         private void ShowAll(object obj)
         {
             InventoryList = new ObservableCollection<InventoryVendorItem>(_inventoryItems);
+            ShowSoldVisibility = Visibility.Visible;
         }
         #endregion
 

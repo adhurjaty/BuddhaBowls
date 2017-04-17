@@ -78,7 +78,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Conversion" Binding="{Binding Path=Conversion, StringFormat=0.##}" Width="1*"
-                                    Visibility="{Binding Path=Data.NewInvVisibility, Source={StaticResource proxy}}" IsReadOnly="True"/>
+                                    Visibility="{Binding Path=Data.NewInvVisibility, Source={StaticResource proxy}}"/>
                 <DataGridTextColumn Header="Count Unit" Binding="{Binding Path=CountUnit}" Width="1*"
                                     Visibility="{Binding Path=Data.NewInvVisibility, Source={StaticResource proxy}}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Count Price" Binding="{Binding Path=CountPrice, StringFormat=c}" Width="2*"
