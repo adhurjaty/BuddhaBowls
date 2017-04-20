@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>26</ApplicationRevision>
+    <ApplicationRevision>27</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -160,6 +160,9 @@
     <Compile Include="UserControls\InventoryHistoryControl.xaml.cs">
       <DependentUpon>InventoryHistoryControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\MasterInventoryControl.xaml.cs">
+      <DependentUpon>MasterInventoryControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\NewInventory.xaml.cs">
       <DependentUpon>NewInventory.xaml</DependentUpon>
     </Compile>
@@ -195,7 +198,6 @@
     </Compile>
     <Compile Include="ViewModels\ChangeableTabVM.cs" />
     <Compile Include="ViewModels\CompareInvVM.cs" />
-    <Compile Include="ViewModels\EditRecipeVM.cs" />
     <Compile Include="ViewModels\InventoryListVM.cs" />
     <Compile Include="ViewModels\ModalVM.cs" />
     <Compile Include="ViewModels\NewInventoryVM.cs" />
@@ -270,6 +272,10 @@
     <Page Include="UserControls\InventoryHistoryControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\MasterInventoryControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\NewInventory.xaml">
       <SubType>Designer</SubType>

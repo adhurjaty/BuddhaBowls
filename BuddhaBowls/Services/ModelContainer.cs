@@ -123,9 +123,8 @@ namespace BuddhaBowls.Services
         {
             string tableName = Path.Combine(Properties.Resources.RecipeFolder, recipeName);
 
-            List<RecipeItem> items = ModelHelper.InstantiateList<RecipeItem>(tableName, false);
-
             List<IItem> recipeList = new List<IItem>();
+            List<RecipeItem> items = ModelHelper.InstantiateList<RecipeItem>(tableName, false);
             foreach (RecipeItem item in items)
             {
                 IItem addItem;
@@ -283,6 +282,18 @@ namespace BuddhaBowls.Services
         public void AddPurchaseOrder(PurchaseOrder order)
         {
             PurchaseOrders.Add(order);
+        }
+
+        public List<string> GetRecipeCategories()
+        {
+            HashSet<string> categories = new HashSet<string>();
+            foreach (Recipe rec in Recipes)
+            {
+                if (!string.IsNullOrWhiteSpace(rec.Category))
+                    ItemCategories.Add(rec.Category);
+            }
+
+            return categories.ToList();
         }
 
         private void SetInventoryCategories()

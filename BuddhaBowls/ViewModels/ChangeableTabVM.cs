@@ -16,6 +16,8 @@ namespace BuddhaBowls
         //protected enum PageState { Primary, Secondary, Error };
         //protected PageState _pageState;
         protected int _pageIndex;
+        // hate this pre-initialization but it makes _tabCache easier to deal with
+        protected UserControl[] _tabCache = new UserControl[5];
 
         #region Content Binders
 
@@ -47,34 +49,6 @@ namespace BuddhaBowls
             }
         }
 
-        //private string _primaryPageName;
-        //public string PrimaryPageName
-        //{
-        //    get
-        //    {
-        //        return _primaryPageName;
-        //    }
-        //    set
-        //    {
-        //        _primaryPageName = value;
-        //        NotifyPropertyChanged("PrimaryPageName");
-        //    }
-        //}
-
-        //private string _secondaryPageName;
-        //public string SecondaryPageName
-        //{
-        //    get
-        //    {
-        //        return _secondaryPageName;
-        //    }
-        //    set
-        //    {
-        //        _secondaryPageName = value;
-        //        NotifyPropertyChanged("SecondaryPageName");
-        //    }
-        //}
-
         private UserControl _tabControl;
         public UserControl TabControl
         {
@@ -92,18 +66,11 @@ namespace BuddhaBowls
 
         #region ICommand and CanExecute
 
-        //public ICommand PrimaryCommand{ get; set; }
-        //public ICommand SecondaryCommand{ get; set; }
-
         #endregion
 
         public ChangeableTabVM() : base()
         {
-            //_pageState = DBConnection ? PageState.Primary : PageState.Error;
-
-            //PrimaryCommand = new RelayCommand(SwtichToPrimary, x => _pageState == PageState.Secondary);
-            //SecondaryCommand = new RelayCommand(SwtichToSecondary, x => _pageState == PageState.Primary);
-            _pageIndex = 0;
+            _pageIndex = DBConnection ? 0 : -1;
 
             ChangePageState(_pageIndex);
         }
@@ -114,11 +81,6 @@ namespace BuddhaBowls
         {
             ChangePageState((int)idx);
         }
-
-        //private void SwtichToSecondary(object obj)
-        //{
-        //    ChangePageState(PageState.Secondary);
-        //}
 
         #endregion
 
@@ -133,11 +95,21 @@ namespace BuddhaBowls
 
         protected virtual void ChangePageState(int pageIdx)
         {
-            if(SwitchButtonList != null && SwitchButtonList.Count > _pageIndex)
-                SwitchButtonList[_pageIndex].CanExecute = true;
+            if(pageIdx != -1)
+            {
+                if (SwitchButtonList != null)
+                {
+                    if (_pageIndex > -1)
+                    {
+                        SwitchButtonList[_pageIndex].CanExecute = true;
+                        if (_tabCache == null)
+                            _tabCache = new UserControl[SwitchButtonList.Count];
+                        _tabCache[_pageIndex] = TabControl;
+                    }
+                    SwitchButtonList[pageIdx].CanExecute = false;
+                }
+            }
             _pageIndex = pageIdx;
-            if(SwitchButtonList != null && SwitchButtonList.Count > pageIdx)
-                SwitchButtonList[pageIdx].CanExecute = false;
         }
     }
 

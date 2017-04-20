@@ -33,9 +33,6 @@ namespace BuddhaBowls
             Ingredients = new ObservableCollection<IItem>(editItem.ItemList);
             Header = "Edit " + editItem.Name;
 
-            ((RelayCommand)SaveCommand).ChangeCallback(Save);
-
-            InitFieldsCollection(editItem);
             Refresh();
         }
 
@@ -43,7 +40,6 @@ namespace BuddhaBowls
 
         private void Save(object obj)
         {
-            ErrorMessage = ParentContext.ObjectFromFields(ref _editItem, FieldsCollection, true);
             _editItem.ItemList = Ingredients.ToList();
 
             if (string.IsNullOrEmpty(ErrorMessage))

@@ -24,8 +24,6 @@
                 Command="{Binding ViewCommand}" />
         <Button Grid.Row="0" Height="30" Width="70" Content="Compare" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="140, 0"
                 Command="{Binding CompareCommand}" />
-        <Button Grid.Row="0" Height="30" Width="120" Content="Excel Inventory List" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="210, 0"
-                Command="{Binding InvListCommand}" />
         <DataGrid x:Name="dataGrid2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding InventoryList}"
                                 SelectedItem="{Binding SelectedInventory}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="-1,0,1,0"

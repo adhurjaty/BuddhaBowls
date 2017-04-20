@@ -12,12 +12,12 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public delegate void AddInvDel(InventoryItem item);
+    public delegate void AddItemDel<T>(T item);
 
     public class NewInventoryItemWizard : WizardVM
     {
         private bool _newItem;
-        private AddInvDel AddInv;
+        private AddItemDel<InventoryItem> AddInv;
 
         #region Content Binders
 
@@ -118,7 +118,7 @@ namespace BuddhaBowls
 
         #endregion
 
-        public NewInventoryItemWizard(AddInvDel addInv) : base()
+        public NewInventoryItemWizard(AddItemDel<InventoryItem> addInv) : base()
         {
             _newItem = true;
             AddInv = addInv;
@@ -130,7 +130,7 @@ namespace BuddhaBowls
             InitICommand();
         }
 
-        public NewInventoryItemWizard(AddInvDel addInv, InventoryItem item) : base()
+        public NewInventoryItemWizard(AddItemDel<InventoryItem> addInv, InventoryItem item) : base()
         {
             _newItem = false;
             AddInv = addInv;

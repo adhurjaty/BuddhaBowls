@@ -683,5 +683,38 @@ namespace BuddhaBowls.Test
         }
 
         #endregion
+
+        #region Recipe Tests
+
+        [TestMethod]
+        public void InsertAndDeleteRecipeTest()
+        {
+            string name = "Test Recipe";
+            string category = "Test Rec Category";
+            Recipe recipe = new Recipe() { Name = name, Category = category, RecipeUnitConversion = 1 };
+            recipe.ItemList = new List<IItem>()
+            {
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Avocado" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Black Beans" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Cinnamon" } }),
+                new Recipe(new Dictionary<string, string>() { { "Name", "Chopped Clams" } })
+            };
+
+            try
+            {
+                recipe.Insert();
+                Recipe dbRecipe = new Recipe(new Dictionary<string, string>() { { "Name", name } });
+
+                Assert.AreEqual(name, dbRecipe.Name);
+                Assert.AreEqual(category, dbRecipe.Category);
+                List<IItem> items = dbRecipe.
+            }
+            finally
+            {
+                recipe.Destroy();
+            }
+        }
+
+        #endregion
     }
 }

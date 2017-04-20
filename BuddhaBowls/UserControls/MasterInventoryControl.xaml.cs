@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace BuddhaBowls.UserControls
 {
     /// <summary>
-    /// Interaction logic for NewRecipe.xaml
+    /// Interaction logic for MasterInventoryControl.xaml
     /// </summary>
-    public partial class NewRecipe : UserControl
+    public partial class MasterInventoryControl : UserControl
     {
-        public NewRecipe(NewRecipeVM context)
+        public MasterInventoryControl(InventoryTabVM context)
         {
             InitializeComponent();
             DataContext = context;

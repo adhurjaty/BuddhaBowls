@@ -8,6 +8,7 @@ using System.Windows;
 using BuddhaBowls.Services;
 using BuddhaBowls.Helpers;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace BuddhaBowls.Test
 {
@@ -378,14 +379,16 @@ namespace BuddhaBowls.Test
         {
             OrderTabVM orderTab = _vm.OrderTab;
             Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
-            float[] initAmounts = new float[] { 1, 3, 5, 1 };
             float[] clearedAmounts = new float[] { 0, 0, 0, 0 };
 
             orderTab.AddNewOrderCommand.Execute(null);
             NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
             newOrderTab.OrderVendor = berryMan;
 
-            CollectionAssert.AreEqual(initAmounts, newOrderTab.FilteredOrderItems.Select(x => x.LastOrderAmount).ToArray());
+            foreach (InventoryItem item in newOrderTab.FilteredOrderItems)
+            {
+                Assert.AreNotEqual(0, item.LastOrderAmount);
+            }
             newOrderTab.ClearOrderCommand.Execute(null);
             CollectionAssert.AreEqual(clearedAmounts, newOrderTab.FilteredOrderItems.Select(x => x.LastOrderAmount).ToArray());
         }
@@ -825,6 +828,8 @@ namespace BuddhaBowls.Test
             newInvVM.VendorList.Add(new VendorInfo(v1) { Conversion = 2 });
             newInvVM.VendorList.Add(new VendorInfo(v2) { Conversion = 4 });
 
+            newInvVM.InvOrderList = new ObservableCollection<InventoryItem>(_vm.GetModelContainer().InventoryItems);
+
             newInvVM.FinishCommand.Execute(null);
 
             return listVM;
@@ -873,6 +878,20 @@ namespace BuddhaBowls.Test
             newVendorTab.FinishCommand.Execute(null);
 
             return vendorTab;
+        }
+
+        private RecipeTabVM CreateTestBatchRecipe(string recipeName, List<IItem> items)
+        {
+            RecipeTabVM recipeTab = _vm.RecipeTab;
+            recipeTab.AddNewItemCommand.Execute(null);
+
+            NewRecipeVM newRecipeTab = GetOpenTempTabVM<NewRecipeVM>();
+            newRecipeTab.Item.Name = recipeName;
+            newRecipeTab.Ingredients = new ObservableCollection<IItem>(items);
+
+
+
+            return recipeTab;
         }
 
         private InventoryItem SelectInBreakdown(string name, ref OrderBreakdownVM context)

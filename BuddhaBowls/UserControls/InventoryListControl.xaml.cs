@@ -21,9 +21,13 @@ namespace BuddhaBowls.UserControls
     /// </summary>
     public partial class InventoryListControl : UserControl
     {
-        public InventoryListControl(InventoryListVM context)
+        public InventoryListControl()
         {
             InitializeComponent();
+        }
+
+        public InventoryListControl(InventoryListVM context) : this()
+        {
             DataContext = context;
         }
 

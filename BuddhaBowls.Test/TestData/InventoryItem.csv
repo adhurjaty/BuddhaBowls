@@ -11,13 +11,13 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 9,Whole Milk,Dairy,2 GALLON,GALLON,2,CUP,32,4,1,18.5,0,
 10,Yogurt,Dairy,6 QUARTS,QUART,5,OZ-wt,18,1,1,55.56,0,
 11,Pesto,Dairy,4/33.5,BUCKET,4,OZ-wt,4,4,0.97,126,0,
-12,Cookie Dough,Dairy,BUCKET,BUCKET,1,OZ-wt,,4,1,9.29,0,12/28/2016 11:52
+12,Cookie Dough,Dairy,BUCKET,BUCKET,1,OZ-wt,,4,1,9.29,0,12/28/2016 11:52:00 AM
 13,Pizza Sauce,Dry Goods,6# CANS,CAN,6,EA,6,4,1,20.03,0,
 14,Stewed Tomatoes,Dry Goods,6# CANS,CAN,6,EA,6,4,1,13.62,0,
 15,Black Beans,Dry Goods,6# CANS,CAN,6,EA,6,4,1,19.29,0,
 16,Garbanzo Beans,Dry Goods,6# CANS,CAN,6,EA,6,4,1,21.63,0,
 17,Pinto Beans,Dry Goods,6# CANS,CAN,6,EA,6,2,1,22.33,0,
-18,Artichoke Hearts,Dry Goods,6# CANS,CAN,6,OZ-wt,324,1,1,44.95,44,4/17/2017 12:00:00 AM
+18,Artichoke Hearts,Dry Goods,6# CANS,CAN,6,OZ-wt,324,1,1,44.95,44,4/19/2017 12:00:00 AM
 19,Mayonnaise,Dry Goods,4 GAL,JUG,4,EA,4,1,1,23.01,0,
 20,BBQ Sauce,Dry Goods,CS 39.5lbs,JUG,4,OZ-wt,632,2,0.98,33.88,0,
 21,Macaroni,Dry Goods,2lb,BAG,2,EA,320,44.2,2.41,14.29,0,
@@ -28,8 +28,8 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 26,Clam Juice,Dry Goods,12x48oz CANS,CAN,12,EA,12,2,1,28.86,0,
 27,Nutella,Dry Goods,53oz,JAR,2,OZ-wt,53,11,0.9,11.99,0,
 28,Honey,Dry Goods,5lbs,JUG,1,OZ-wt,80,1,0.95,13.93,0,
-29,Vanilla,Dry Goods,EA,5lb BUCKET,700,Oz-fl,16,1,100,80,11,4/17/2017 12:00:00 AM
-30,Balsamic Vinegar,Dry Goods,5 LITER,JUG,1,OZ-wt,169.07,16,1,17.89,20,12/28/2016 11:52
+29,Vanilla,Dry Goods,EA,5lb BUCKET,700,Oz-fl,16,1,100,80,11,4/19/2017 12:00:00 AM
+30,Balsamic Vinegar,Dry Goods,5 LITER,JUG,1,OZ-wt,169.07,16,1,17.89,20,12/28/2016 11:52:00 AM
 31,Tapatio,Dry Goods,12 EACH,BOTTLE,12,EA,12,8,1,17.74,0,
 32,Sriracha,Dry Goods,12 EACH,BOTTLE,12,EA,12,12,1,21.38,0,
 33,Chicken Broth,Dry Goods,4 EA,BOTTLE,4,,,4,0,40,0,
@@ -37,20 +37,20 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 35,Canola Oil Bottles,Dry Goods,EACH,BOTTLE,18,,,2,0,20.01,0,
 36,Olive Oil,Dry Goods,6 GAL,JUG,6,OZ-fl,768,3,0.99,67,0,
 37,Flour,Dry Goods,25lb,BAG,1,CUP,66.67,6,1,6.67,0,
-38,Sugar (BROWN),Dry Goods,Sugar (Brown),QUART,16,CUP,62.5,1.5,1,13.99,0,12/28/2016 11:52
-39,Sugar (POWDERED),Dry Goods,7lbs,EACH,1,OZ-wt,112,0,1,4.69,0,12/28/2016 11:52
+38,Sugar (BROWN),Dry Goods,Sugar (Brown),QUART,16,CUP,62.5,1.5,1,13.99,0,12/28/2016 11:52:00 AM
+39,Sugar (POWDERED),Dry Goods,7lbs,EACH,1,OZ-wt,112,0,1,4.69,0,12/28/2016 11:52:00 AM
 40,Tahini,Dry Goods,40lbs,LB,40,OZ-wt,640,36.4,0.98,60.69,0,
 41,Kalamata Olives,Dry Goods,EACH,JAR,1,OZ-wt,64.8,1,1,46.49,0,
 42,Lemon Juice,Dry Goods,1 Gal,GAL,1,OZ-wt,128,40,1,10.2,0,
 43,Dried Basil,Herbs,24oz,OZ-wt,24,TBL,274.29,1,1,7.71,0,
 44,Thyme,Herbs,2lbs,OZ-wt,32,TBL,243.81,1,1,13.3,0,
-45,Oregano,Herbs,1lb,OZ-wt,16,TBL,232.73,1,1,10.3,0,12/28/2016 11:52
+45,Oregano,Herbs,1lb,OZ-wt,16,TBL,232.73,1,1,10.3,0,12/28/2016 11:52:00 AM
 46,Cumin,Herbs,4.5lbs,OZ-wt,72,TBL,360,1,1,29.37,0,
 47,Cayenne Pepper,Herbs,,OZ-wt,0,TBL,1,1,1,0,0,
-48,Pepper,Herbs,5lbs,OZ-wt,80,TBL,312.2,1,1,45,0,12/28/2016 11:52
+48,Pepper,Herbs,5lbs,OZ-wt,80,TBL,312.2,1,1,45,0,12/28/2016 11:52:00 AM
 49,Salt,Herbs,25lbs,Container,8.9,TBL,615,1,1,5.12,0,
 50,Chili Powder,Herbs,20oz,OZ-wt,20,TBL,78.05,5,1,5.49,0,
-51,Paprika,Herbs,8.5oz,OZ-wt,8.5,TBL,36.96,2,1,3.79,0,12/28/2016 11:52
+51,Paprika,Herbs,8.5oz,OZ-wt,8.5,TBL,36.96,2,1,3.79,0,12/28/2016 11:52:00 AM
 52,Old Bay Seasoning,Herbs,,,0,TBL,,1.5,1,0,0,
 53,Cinnamon,Herbs,10.7oz,Container,1,OZ-wt,32,1,1,2.59,0,
 54,Yellow Onions,Produce,50lb,BAG,1,OZ-wt,800,1,0.85,10.5,0,
@@ -61,12 +61,12 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 59,Mushrooms,Produce,10lb,FLAT,1,OZ-wt,160,1,0.95,17.5,0,
 60,Cucumbers,Produce,36 COUNT,CASE,1,OZ-wt,420,0.75,0.95,22.5,0,
 61,Tomatoes,Produce,25lb,CASE,1,OZ-wt,400,1,0.97,13.95,0,
-62,Avocado,Produce,1/2 CASE,EACH,24,EA,24,3,1,38,22,4/17/2017 12:00:00 AM
+62,Avocado,Produce,1/2 CASE,EACH,24,EA,24,3,1,38,22,4/19/2017 12:00:00 AM
 63,Celery,Produce,1/2 CASE,1/2 CASE,1,BUNCH,12,2,1,2.05,0,
 64,Fresh Basil,Produce,1lb,BAG,1,OZ-wt,16,4,0.65,4.95,0,
 65,Jalapenos,Produce,2lb BAG,BAG,1,OZ-wt,32,8,0.95,3.55,0,
 66,Pineapple,Produce,EACH,EACH,1,OZ-wt,44,10,1,2.99,0,
-67,Strawberries (Produce A),Produce,1lb,BASKET,1,OZ-wt,16,2,0.85,3.75,0,12/28/2016 11:52
+67,Strawberries (Produce A),Produce,1lb,BASKET,1,OZ-wt,16,2,0.85,3.75,0,12/28/2016 11:52:00 AM
 68,Strawberries (Costco),Produce,2lbs,BASKET,1,OZ-wt,32,0,0.85,3.49,0,
 69,Blueberries (PA),Produce,BASKET,BASKET,1,OZ-wt,16,3,0.85,4.95,0,
 70,Blueberries (Costco),Produce,BASKET,BASKET,1,OZ-wt,32,8,0.85,5.29,100,

@@ -15,6 +15,7 @@ namespace BuddhaBowls.Models
         public float? RecipeUnitConversion { get; set; }
         public string Category { get; set; }
         public float Count { get; set; }
+        public string CountUnit { get; set; }
         public float? Price { get; set; }
         public bool IsBatch { get; set; }
 
@@ -31,6 +32,17 @@ namespace BuddhaBowls.Models
         public Recipe() : base()
         {
             _tableName = "Recipe";
+        }
+
+        public Recipe(Dictionary<string, string> searchParams) : this()
+        {
+            string[] record = _dbInt.GetRecord(_tableName, searchParams);
+
+            if (record != null)
+            {
+                InitializeObject(record);
+
+            }
         }
 
         public float GetCost()
@@ -59,6 +71,12 @@ namespace BuddhaBowls.Models
             }
             ModelHelper.CreateTable(GetInRecipeItems(), GetRecipeTableName());
             return base.Insert();
+        }
+
+        public override void Destroy()
+        {
+            _dbInt.DestroyTable(GetRecipeTableName());
+            base.Destroy();
         }
 
         public override string[] GetPropertiesDB(string[] omit = null)

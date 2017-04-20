@@ -18,8 +18,10 @@ namespace BuddhaBowls
     /// <summary>
     /// Temp tab to create a new recipe
     /// </summary>
-    public class NewRecipeVM : TempTabVM
+    public class NewRecipeVM : WizardVM
     {
+        private bool _newItem;
+        private AddItemDel<Recipe> SaveItem;
         protected List<IItem> _availableItems;
 
         #region Content Binders
@@ -41,7 +43,6 @@ namespace BuddhaBowls
         }
 
         public float Price { get; set; }
-        public string Category { get; set; }
 
         private InventoryItem _selectedItem;
         public InventoryItem SelectedItem
@@ -107,34 +108,6 @@ namespace BuddhaBowls
             }
         }
 
-        private string _errorMessage;
-        public string ErrorMessage
-        {
-            get
-            {
-                return _errorMessage;
-            }
-            set
-            {
-                _errorMessage = value;
-                NotifyPropertyChanged("ErrorMessage");
-            }
-        }
-
-        private ObservableCollection<FieldSetting> _fieldsCollection;
-        public ObservableCollection<FieldSetting> FieldsCollection
-        {
-            get
-            {
-                return _fieldsCollection;
-            }
-            set
-            {
-                _fieldsCollection = value;
-                NotifyPropertyChanged("FieldsCollection");
-            }
-        }
-
         private string _modalTitle;
         public string ModalTitle
         {
@@ -148,14 +121,40 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("ModalTitle");
             }
         }
+
+        private Recipe _item;
+        public Recipe Item
+        {
+            get
+            {
+                return _item;
+            }
+            set
+            {
+                _item = value;
+                NotifyPropertyChanged("Item");
+            }
+        }
+
+        private int _nameError;
+        public int NameError
+        {
+            get
+            {
+                return _nameError;
+            }
+            set
+            {
+                _nameError = value;
+                NotifyPropertyChanged("NameError");
+            }
+        }
         #endregion
 
         #region ICommand Properties and Can Execute
 
         public ICommand AddItemCommand { get; set; }
         public ICommand RemoveItemCommand { get; set; }
-        public ICommand SaveCommand { get; set; }
-        public ICommand CancelCommand { get; set; }
         public ICommand ModalOkCommand { get; set; }
         public ICommand ModalCancelCommand { get; set; }
 
@@ -185,22 +184,53 @@ namespace BuddhaBowls
 
         #endregion
 
-        public NewRecipeVM(bool isBatch)
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="addDel"></param>
+        private NewRecipeVM(AddItemDel<Recipe> addDel)
         {
+            AddItemCommand = new RelayCommand(AddItem);
+            RemoveItemCommand = new RelayCommand(RemoveItem, x => RemoveCanExecute);
+            ModalOkCommand = new RelayCommand(ModalOk, x => ModalOkCanExecute);
+            ModalCancelCommand = new RelayCommand(ModalCancel);
+
+            CategoryList = _models.GetRecipeCategories();
+            SaveItem = addDel;
+            FinishVisibility = Visibility.Visible;
+        }
+
+        /// <summary>
+        /// New recipe constructor
+        /// </summary>
+        /// <param name="isBatch"></param>
+        /// <param name="addDel"></param>
+        public NewRecipeVM(bool isBatch, AddItemDel<Recipe> addDel) : this(addDel)
+        {
+            _newItem = true;
             IsBatch = isBatch;
-            _tabControl = new NewRecipe(this);
 
             Header = "New " + (isBatch ? "Batch Recipe" : "Menu Item");
             _availableItems = new List<IItem>();
 
-            AddItemCommand = new RelayCommand(AddItem);
-            RemoveItemCommand = new RelayCommand(RemoveItem, x => RemoveCanExecute);
-            SaveCommand = new RelayCommand(Save);
-            CancelCommand = new RelayCommand(Cancel);
-            ModalOkCommand = new RelayCommand(ModalOk, x => ModalOkCanExecute);
-            ModalCancelCommand = new RelayCommand(ModalCancel);
+            Item = new Recipe();
+            Item.IsBatch = isBatch;
+            Refresh();
+        }
 
-            InitFieldsCollection();
+        /// <summary>
+        /// Edit recipe constructor
+        /// </summary>
+        /// <param name="recipe"></param>
+        /// <param name="addDel"></param>
+        public NewRecipeVM(Recipe recipe, AddItemDel<Recipe> addDel) : this(addDel)
+        {
+            _newItem = false;
+            IsBatch = recipe.IsBatch;
+            Header = "Edit " + recipe.Name;
+            _availableItems = recipe.ItemList;
+
+            Item = recipe;
             Refresh();
         }
 
@@ -217,22 +247,6 @@ namespace BuddhaBowls
         {
             _availableItems.Remove(SelectedItem);
             Refresh();
-        }
-
-        private void Save(object obj)
-        {
-            Recipe newRecipe = new Recipe();
-            ErrorMessage = ParentContext.ObjectFromFields(ref newRecipe, FieldsCollection, true);
-            newRecipe.IsBatch = IsBatch;
-            newRecipe.ItemList = Ingredients.ToList();
-
-            if (string.IsNullOrEmpty(ErrorMessage))
-            {
-                newRecipe.Insert();
-                _models.Recipes.Add(newRecipe);
-                ParentContext.RecipeTab.RefreshList();
-                Close();
-            }
         }
 
         private void Cancel(object obj)
@@ -258,33 +272,6 @@ namespace BuddhaBowls
 
         #region Initializers
 
-        protected void InitFieldsCollection(IItem item = null)
-        {
-            if(item == null)
-            {
-                item = new Recipe();
-            }
-            if(IsBatch)
-            {
-                FieldsCollection = new ObservableCollection<FieldSetting>(new List<FieldSetting>()
-                {
-                    new FieldSetting("Name") { Value = item.Name },
-                    new FieldSetting("Category") { Value = item.Category },
-                    new FieldSetting("RecipeUnit") { Value = item.RecipeUnit },
-                    new FieldSetting("RecipeUnitConversion") { Value = item.RecipeUnitConversion.ToString() },
-                    new FieldSetting("Count") { Value = item.Count.ToString() },
-                });
-            }
-            else
-            {
-                FieldsCollection = new ObservableCollection<FieldSetting>(new List<FieldSetting>()
-                {
-                    new FieldSetting("Name") { Value = item.Name },
-                    new FieldSetting("Price") { Value = ((Recipe)item).Price.ToString() },
-                });
-            }
-        }
-
         #endregion
 
         #region Update UI
@@ -300,22 +287,56 @@ namespace BuddhaBowls
             {
                 Ingredients = new ObservableCollection<IItem>(MainHelper.SortItems(_availableItems));
                 RemainingItems = new ObservableCollection<IItem>(_models.InventoryItems
-                                                                                .Where(x => !_availableItems.Select(y => y.Id).Contains(x.Id))
-                                                                                .OrderBy(x => x.Name));
+                                                                        .Where(x => !_availableItems.Select(y => y.Id).Contains(x.Id))
+                                                                        .OrderBy(x => x.Name));
             }
         }
 
-        public void ClearErrors()
+        protected override void SetWizardStep()
         {
-            ErrorMessage = "";
-            foreach (FieldSetting field in FieldsCollection)
-            {
-                field.Error = 0;
-            }
-
-            NotifyPropertyChanged("FieldsCollection");
+            WizardStepControl = new NewRecipe(this);
+            base.SetWizardStep();
         }
 
+        protected override void FinishWizard(object obj)
+        {
+            if (ValidateInputs())
+            {
+                Item.ItemList = Ingredients.ToList();
+
+                if (_newItem)
+                {
+                    Item.Insert();
+                    _models.Recipes.Add(Item);
+                }
+                else
+                {
+                    Item.Update();
+                }
+                SaveItem(Item);
+                Close();
+            }
+        }
+
+        protected override bool ValidateInputs()
+        {
+            if(string.IsNullOrWhiteSpace(Item.Name))
+            {
+                ErrorMessage = "Must supply recipe name";
+                NameError = 2;
+                return false;
+            }
+            if(_models.Recipes.Select(x => x.Name.ToUpper().Replace(" ", "")).Contains(Item.Name.ToUpper().Replace(" ", "")))
+            {
+                ErrorMessage = Item.Name + " already exists";
+                NameError = 2;
+                return false;
+            }
+
+            NameError = 0;
+            ErrorMessage = "";
+            return true;
+        }
         #endregion
     }
 }

@@ -77,6 +77,7 @@ namespace BuddhaBowls
         {
             TabControl = new RecipeTabControl(this);
             Header = "Recipe";
+
             InitSwitchButtons(new string[] { "Batch Items", "Menu Items" });
 
             AddNewItemCommand = new RelayCommand(AddItem, x => DBConnection);
@@ -88,7 +89,7 @@ namespace BuddhaBowls
 
         private void AddItem(object obj)
         {
-            NewRecipeVM tabVM = new NewRecipeVM(_pageIndex == 0);
+            NewRecipeVM tabVM = new NewRecipeVM(_pageIndex == 0, SaveRecipeHandler);
             tabVM.Add("New Recipe");
         }
 
@@ -105,19 +106,9 @@ namespace BuddhaBowls
             }
         }
 
-        private void ChangeToMenuState(object obj)
-        {
-            ChangePageState(1);
-        }
-
-        private void ChangeToBatchState(object obj)
-        {
-            ChangePageState(0);
-        }
-
         private void EditRecipe(object obj)
         {
-            EditRecipeVM tabVM = new EditRecipeVM(_pageIndex == 0, SelectedItem);
+            NewRecipeVM tabVM = new NewRecipeVM(SelectedItem, SaveRecipeHandler);
             tabVM.Add("Edit Recipe");
         }
 
@@ -139,6 +130,11 @@ namespace BuddhaBowls
         }
 
         public void RefreshList()
+        {
+            ChangePageState(_pageIndex);
+        }
+
+        private void SaveRecipeHandler(Recipe rec)
         {
             ChangePageState(_pageIndex);
         }

@@ -112,14 +112,7 @@ namespace BuddhaBowls
             CompareCommand = new RelayCommand(CompareInventories, x => CompareCanExecute && DBConnection);
             InvListCommand = new RelayCommand(GenerateInvList, x => DBConnection);
 
-            if (DBConnection)
-            {
-                InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
-            }
-            else
-            {
-                DisplayItemsNotFound();
-            }
+            // rest of initialization in ChangePageState called from base()
         }
 
         #region ICommand Helpers
@@ -202,6 +195,7 @@ namespace BuddhaBowls
                 MessageBox.Show("Excel process currently running. If you don't know what this means, hit OK and restart the application", "Excel Warning", MessageBoxButton.OK);
             }
         }
+
         #endregion
 
         #region Initializers
@@ -255,15 +249,18 @@ namespace BuddhaBowls
                 case 0:
                     if(InvListVM == null)
                         InvListVM = new InventoryListVM();
-                    TabControl = InvListVM.TabControl;
+                    if(InventoryList == null)
+                        InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
+                    TabControl = _tabCache[0] ?? new MasterInventoryControl(this);
                     break;
                 case 1:
 
                     break;
                 case 2:
-                    TabControl = new InventoryHistoryControl(this);
+                    TabControl = _tabCache[2] ?? new InventoryHistoryControl(this);
                     break;
-                default:
+                case -1:
+                    DisplayItemsNotFound();
                     break;
             }
         }
