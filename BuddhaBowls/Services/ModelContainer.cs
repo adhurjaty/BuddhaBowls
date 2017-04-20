@@ -206,9 +206,6 @@ namespace BuddhaBowls.Services
             }
             else
             {
-                Properties.Settings.Default.InventoryOrder.Add(item.Name);
-                Properties.Settings.Default.Save();
-
                 item.Id = item.Insert();
                 InventoryItems.Add(item);
                 if (!ItemCategories.Contains(item.Category))
@@ -228,6 +225,7 @@ namespace BuddhaBowls.Services
             InventoryItems.RemoveAll(x => x.Id == item.Id);
             Properties.Settings.Default.InventoryOrder.Remove(item.Name);
             item.Destroy();
+            SetInventoryCategories();
             return true;
         }
 

@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Models;
 using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
@@ -76,12 +77,44 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("SelectedItem");
             }
         }
+
+        private ObservableCollection<InventoryItem> _invOrderList;
+        public ObservableCollection<InventoryItem> InvOrderList
+        {
+            get
+            {
+                return _invOrderList;
+            }
+            set
+            {
+                _invOrderList = value;
+                NotifyPropertyChanged("InvOrderList");
+            }
+        }
+
+        private InventoryItem _selectedOrderedItem;
+        public InventoryItem SelectedOrderedItem
+        {
+            get
+            {
+                return _selectedOrderedItem;
+            }
+            set
+            {
+                _selectedOrderedItem = value;
+                NotifyPropertyChanged("SelectedOrderedItem");
+            }
+        }
         #endregion
 
         #region ICommand and Can Execute
 
         public ICommand AddVendorCommand { get; set; }
         public ICommand DeleteVendorCommand { get; set; }
+        public ICommand PlaceAboveCommand { get; set; }
+        public ICommand PlaceBelowCommand { get; set; }
+        public ICommand MoveUpCommand { get; set; }
+        public ICommand MoveDownCommand { get; set; }
 
         #endregion
 
@@ -128,8 +161,10 @@ namespace BuddhaBowls
             if (ValidateInputs())
             {
                 InventoryItem invItem = Item;
-                //if (!_newItem)
-                //    invItem = ((VendorInventoryItem)invItem).ToInventoryItem();
+
+                Properties.Settings.Default.InventoryOrder = InvOrderList.Select(x => x.Name).ToList();
+                Properties.Settings.Default.Save();
+
                 _models.AddUpdateInventoryItem(ref invItem);
 
                 foreach(VendorInfo v in VendorList)
@@ -149,6 +184,48 @@ namespace BuddhaBowls
             }
         }
 
+        private void PlaceAbove(object obj)
+        {
+            int idx = InvOrderList.IndexOf(SelectedOrderedItem);
+            RemoveExistingItem();
+            InvOrderList.Insert(idx, Item);
+        }
+
+        private void PlaceBelow(object obj)
+        {
+            RemoveExistingItem();
+            int idx = InvOrderList.IndexOf(SelectedOrderedItem);
+            if(idx == InvOrderList.Count - 1)
+                InvOrderList.Add(Item);
+            else
+                InvOrderList.Insert(idx + 1, Item);
+        }
+
+        private void MoveUp(object obj)
+        {
+            SelectedOrderedItem = GetItemInOrderList();
+            if(SelectedOrderedItem != null)
+            {
+                MoveInList(SelectedOrderedItem, true);
+            }
+        }
+
+        private void MoveDown(object obj)
+        {
+            SelectedOrderedItem = GetItemInOrderList();
+            if (SelectedOrderedItem != null)
+            {
+                MoveInList(SelectedOrderedItem, false);
+            }
+        }
+
+        private void MoveInList(InventoryItem item, bool up)
+        {
+            List<InventoryItem> newItemInList = MainHelper.MoveInList(item, up, InvOrderList.ToList());
+
+            InvOrderList = new ObservableCollection<InventoryItem>(newItemInList);
+        }
+
         #endregion
 
         #region Initializers
@@ -157,6 +234,10 @@ namespace BuddhaBowls
         {
             AddVendorCommand = new RelayCommand(AddVendor);
             DeleteVendorCommand = new RelayCommand(DeleteVendor, x => SelectedItem != null);
+            PlaceAboveCommand = new RelayCommand(PlaceAbove, x => SelectedOrderedItem != null);
+            PlaceBelowCommand = new RelayCommand(PlaceBelow, x => SelectedOrderedItem != null);
+            MoveUpCommand = new RelayCommand(MoveUp);
+            MoveDownCommand = new RelayCommand(MoveDown);
         }
 
         private void SetDefaultValues()
@@ -165,6 +246,18 @@ namespace BuddhaBowls
         }
 
         #endregion
+
+        private InventoryItem GetItemInOrderList()
+        {
+            return InvOrderList.FirstOrDefault(x => x.Id == Item.Id);
+        }
+
+        private void RemoveExistingItem()
+        {
+            InventoryItem existingItem = GetItemInOrderList();
+            if (existingItem != null)
+                InvOrderList.Remove(existingItem);
+        }
 
         private void InitVendors()
         {
@@ -187,11 +280,22 @@ namespace BuddhaBowls
                 case 0:
                     WizardStepControl = new AddInvStep1(this);
                     BackVisibility = Visibility.Hidden;
+                    Header = "Item Info";
                     break;
                 case 1:
                     WizardStepControl = new AddInvStep2(this);
-                    FinishVisibility = Visibility.Visible;
+                    NextVisibility = Visibility.Visible;
                     BackVisibility = Visibility.Visible;
+                    Header = "Vendor Info";
+                    break;
+                case 2:
+                    if (InvOrderList == null)
+                        InvOrderList = new ObservableCollection<InventoryItem>(MainHelper.SortItems(_models.InventoryItems));
+                    if (!_newItem)
+                        SelectedOrderedItem = InvOrderList.FirstOrDefault(x => x.Id == Item.Id);
+                    WizardStepControl = new AddInvStep3(this);
+                    FinishVisibility = Visibility.Visible;
+                    Header = "Put item in order";
                     break;
                 default:
                     break;
@@ -202,7 +306,8 @@ namespace BuddhaBowls
         {
             if(_currentStep == 0)
             {
-                if (_models.InventoryItems.Select(x => x.Name.ToUpper()).Contains(Item.Name.ToUpper()) && _newItem)
+                if (string.IsNullOrWhiteSpace(Item.Name) || (_models.InventoryItems.Select(x => x.Name.ToUpper()).Contains(Item.Name.ToUpper())
+                    && _newItem))
                     return false;
                 return !string.IsNullOrEmpty(Item.Name) &&
                        !string.IsNullOrEmpty(Item.Category) &&

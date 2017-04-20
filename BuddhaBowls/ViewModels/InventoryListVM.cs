@@ -340,6 +340,10 @@ namespace BuddhaBowls
             wizard.Add("New Item");
         }
 
+        /// <summary>
+        /// Return the displayed inventory list to original order (no filter text)
+        /// </summary>
+        /// <param name="obj"></param>
         private void ResetList(object obj)
         {
             FilterText = "";
@@ -403,18 +407,39 @@ namespace BuddhaBowls
             FilterText = "";
         }
 
+        /// <summary>
+        /// Adds an item across the application
+        /// </summary>
+        /// <param name="item"></param>
         private void AddNewItem(InventoryItem item)
         {
             ParentContext.AddInvItem(item);
         }
 
+        /// <summary>
+        /// Adds an item to this list
+        /// </summary>
+        /// <param name="item"></param>
         public void AddItem(InventoryItem item)
         {
             VendorInventoryItem vendorItem = new VendorInventoryItem(_models.GetVendorsFromItem(item), item);
-            FilteredItems.Add(vendorItem);
-            _inventoryItems.Add(vendorItem);
+            int idx = Properties.Settings.Default.InventoryOrder.FindIndex(x => x == item.Name);
+            if (idx != -1)
+            {
+                FilteredItems.Insert(idx, vendorItem);
+                _inventoryItems.Insert(idx, vendorItem);
+            }
+            else
+            {
+                FilteredItems.Add(vendorItem);
+                _inventoryItems.Add(vendorItem);
+            }
         }
 
+        /// <summary>
+        /// Removes an item from this list
+        /// </summary>
+        /// <param name="item"></param>
         public void RemoveItem(InventoryItem item)
         {
             VendorInventoryItem vendorItem = _inventoryItems.FirstOrDefault(x => x.Id == item.Id);
@@ -434,16 +459,9 @@ namespace BuddhaBowls
 
         private void MoveInList(InventoryItem item, bool up)
         {
-            List<InventoryItem> orderedList = FilteredItems.Select(x => (InventoryItem)x).ToList();
-            int idx = orderedList.IndexOf(item);
-            orderedList.RemoveAt(idx);
+            List<InventoryItem> newItemInList = MainHelper.MoveInList(item, up, FilteredItems.Select(x => (InventoryItem)x).ToList());
 
-            if (idx > 0 && up)
-                orderedList.Insert(idx - 1, item);
-            if (idx < orderedList.Count - 1 && !up)
-                orderedList.Insert(idx + 1, item);
-
-            FilteredItems = new ObservableCollection<VendorInventoryItem>(orderedList.Select(x => (VendorInventoryItem)x));
+            FilteredItems = new ObservableCollection<VendorInventoryItem>(newItemInList.Select(x => (VendorInventoryItem)x));
             SaveInvOrder();
         }
 

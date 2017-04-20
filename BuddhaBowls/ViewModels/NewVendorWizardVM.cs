@@ -116,7 +116,7 @@ namespace BuddhaBowls
                 if (vendItemIds.Contains(item.Id))
                     item.IsSold = true;
             }
-            Header = "Edit Vendor";
+            Header = "Edit Vendor " + v.Name;
             InventoryList = new ObservableCollection<InventoryVendorItem>(_inventoryItems);
 
             OnlySoldCommand = new RelayCommand(ShowSold);

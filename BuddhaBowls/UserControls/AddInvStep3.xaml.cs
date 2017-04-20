@@ -16,21 +16,14 @@ using System.Windows.Shapes;
 namespace BuddhaBowls.UserControls
 {
     /// <summary>
-    /// Interaction logic for RecipeTabControl.xaml
+    /// Interaction logic for AddInvStep3.xaml
     /// </summary>
-    public partial class RecipeTabControl : UserControl
+    public partial class AddInvStep3 : UserControl
     {
-        public RecipeTabControl(RecipeTabVM context)
+        public AddInvStep3(NewInventoryItemWizard context)
         {
             InitializeComponent();
             DataContext = context;
-        }
-
-        private void FilterItems_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox textBox = FilterItemBox;
-
-            ((RecipeTabVM)DataContext).FilterItems(textBox.Text);
         }
     }
 }

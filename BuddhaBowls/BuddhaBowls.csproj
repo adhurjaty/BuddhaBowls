@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>24</ApplicationRevision>
+    <ApplicationRevision>26</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -126,6 +126,9 @@
     <Compile Include="UserControls\AddInvStep2.xaml.cs">
       <DependentUpon>AddInvStep2.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\AddInvStep3.xaml.cs">
+      <DependentUpon>AddInvStep3.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\AddVendorStep1.xaml.cs">
       <DependentUpon>AddVendorStep1.xaml</DependentUpon>
     </Compile>
@@ -217,6 +220,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\AddInvStep2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AddInvStep3.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

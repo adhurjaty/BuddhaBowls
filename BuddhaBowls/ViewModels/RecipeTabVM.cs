@@ -77,8 +77,7 @@ namespace BuddhaBowls
         {
             TabControl = new RecipeTabControl(this);
             Header = "Recipe";
-            PrimaryPageName = "Batch Items";
-            SecondaryPageName = "Menu Items";
+            InitSwitchButtons(new string[] { "Batch Items", "Menu Items" });
 
             AddNewItemCommand = new RelayCommand(AddItem, x => DBConnection);
             DeleteItemCommand = new RelayCommand(DeleteItem, x => SelectedItemCanExecute && DBConnection);
@@ -89,7 +88,7 @@ namespace BuddhaBowls
 
         private void AddItem(object obj)
         {
-            NewRecipeVM tabVM = new NewRecipeVM(_pageState == PageState.Primary);
+            NewRecipeVM tabVM = new NewRecipeVM(_pageIndex == 0);
             tabVM.Add("New Recipe");
         }
 
@@ -108,17 +107,17 @@ namespace BuddhaBowls
 
         private void ChangeToMenuState(object obj)
         {
-            ChangePageState(PageState.Secondary);
+            ChangePageState(1);
         }
 
         private void ChangeToBatchState(object obj)
         {
-            ChangePageState(PageState.Primary);
+            ChangePageState(0);
         }
 
         private void EditRecipe(object obj)
         {
-            EditRecipeVM tabVM = new EditRecipeVM(_pageState == PageState.Primary, SelectedItem);
+            EditRecipeVM tabVM = new EditRecipeVM(_pageIndex == 0, SelectedItem);
             tabVM.Add("Edit Recipe");
         }
 
@@ -134,30 +133,30 @@ namespace BuddhaBowls
         /// Filter list of inventory items based on the string in the filter box above datagrids
         /// </summary>
         /// <param name="filterStr"></param>
-        public void FilterInventoryItems(string filterStr)
+        public override void FilterItems(string filterStr)
         {
             FilteredItems = MainHelper.FilterInventoryItems(filterStr, _recipeItems.Select(x => (IItem)x));
         }
 
         public void RefreshList()
         {
-            ChangePageState(_pageState);
+            ChangePageState(_pageIndex);
         }
         #endregion
 
-        protected override void ChangePageState(PageState state)
+        protected override void ChangePageState(int pageIdx)
         {
-            base.ChangePageState(state);
+            base.ChangePageState(pageIdx);
 
-            switch (state)
+            switch (pageIdx)
             {
-                case PageState.Primary:
+                case 0:
                     _recipeItems = _models.Recipes.Where(x => x.IsBatch).ToList();
                     break;
-                case PageState.Secondary:
+                case 1:
                     _recipeItems = _models.Recipes.Where(x => !x.IsBatch).ToList();
                     break;
-                case PageState.Error:
+                case -1:
                     _recipeItems = new List<Recipe>() { new Recipe() { Name = "DB not found" } };
                     break;
             }

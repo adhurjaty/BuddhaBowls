@@ -100,8 +100,11 @@ namespace BuddhaBowls
         public InventoryTabVM() : base()
         {
             Header = "Inventory";
-            PrimaryPageName = "Current";
-            SecondaryPageName = "History";
+
+            InitSwitchButtons(new string[] { "Master", "Prep", "History" });
+            
+            //PrimaryPageName = "Master";
+            //SecondaryPageName = "History";
 
             AddCommand = new RelayCommand(StartNewInventory, x => DBConnection);
             DeleteCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute && DBConnection);
@@ -243,18 +246,21 @@ namespace BuddhaBowls
 
         #endregion
 
-        protected override void ChangePageState(PageState state)
+        protected override void ChangePageState(int pageIdx)
         {
-            base.ChangePageState(state);
+            base.ChangePageState(pageIdx);
 
-            switch(state)
+            switch(pageIdx)
             {
-                case PageState.Primary:
+                case 0:
                     if(InvListVM == null)
                         InvListVM = new InventoryListVM();
                     TabControl = InvListVM.TabControl;
                     break;
-                case PageState.Secondary:
+                case 1:
+
+                    break;
+                case 2:
                     TabControl = new InventoryHistoryControl(this);
                     break;
                 default:

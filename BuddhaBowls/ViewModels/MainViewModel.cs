@@ -307,36 +307,6 @@ namespace BuddhaBowls
         }
 
         /// <summary>
-        /// Collects the property names and values for display in the add/edit form
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        //public ObservableCollection<FieldSetting> GetFieldsAndValues<T>(T obj = null) where T : Model, new()
-        //{
-        //    ObservableCollection<FieldSetting> fieldsAndVals = new ObservableCollection<FieldSetting>();
-        //    string[] properties = new T().GetPropertiesDB(new string[] { "Id" });
-
-        //    foreach (string prop in properties)
-        //    {
-        //        FieldSetting fs = new FieldSetting();
-        //        fs.Name = prop;
-
-        //        if (obj != null)
-        //            if (obj.GetPropertyValue(prop) != null)
-        //                fs.Value = obj.GetPropertyValue(prop).ToString();
-        //            else
-        //                fs.Value = "";
-        //        else
-        //            fs.Value = "";
-
-        //        fieldsAndVals.Add(fs);
-        //    }
-
-        //    return fieldsAndVals;
-        //}
-
-        /// <summary>
         /// Run all refresh methods for all permanent tabs
         /// </summary>
         public void Refresh()
@@ -346,9 +316,12 @@ namespace BuddhaBowls
             VendorTab.RefreshVendorList();
             RecipeTab.RefreshList();
 
-            foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
+            if (TempTabVM.TabStack != null)
             {
-                tempVM.Refresh();
+                foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
+                {
+                    tempVM.Refresh();
+                }
             }
         }
 

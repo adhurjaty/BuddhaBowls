@@ -1,7 +1,7 @@
 Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Count,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate
 0,Mozzarella,Dairy,CASE 30lb,5lb BAG,6,OZ-wt,480,111,1,59,2,
 1,Cheddar,Dairy,CASE 20lb,5lb BAG,4,OZ-wt,320,1,1,20,3,
-2,Pepper Jack,Dairy,CASE 20lb,5lb BAG,4,CUP,320,2,1,44.19,2,12/28/2016 11:52
+2,Pepper Jack,Dairy,CASE 20lb,5lb BAG,4,CUP,320,2,1,44.19,2,12/28/2016 11:52:00 AM
 3,Feta,Dairy,CASE 10lb,5lb BAG,2,OZ-wt,160,4,1,57.53,5,
 4,Butter,Dairy,CASE 30lb,1lb,30,OZ-wt,480,1,1,76.99,2,
 5,Sour Cream,Dairy,CASE 10lb,5lb BUCKET,2,OZ-wt,160,1,0.95,32.4,3,
@@ -9,7 +9,7 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 7,Whipped Cream,Dairy,CS 3 each,CAN,3,OZ-wt,32,5,1,9.39,0,
 8,Eggs,Dairy,15 DOZEN,TRAY,6,EA,180,1,0.95,19.91,0,
 9,Whole Milk,Dairy,2 GALLON,GALLON,2,CUP,32,4,1,18.5,0,
-10,Yogurt,Dairy,6 QUARTS,QUART,6,OZ-wt,18,1,1,14.5,0,
+10,Yogurt,Dairy,6 QUARTS,QUART,5,OZ-wt,18,1,1,55.56,0,
 11,Pesto,Dairy,4/33.5,BUCKET,4,OZ-wt,4,4,0.97,126,0,
 12,Cookie Dough,Dairy,BUCKET,BUCKET,1,OZ-wt,,4,1,9.29,0,12/28/2016 11:52
 13,Pizza Sauce,Dry Goods,6# CANS,CAN,6,EA,6,4,1,20.03,0,
@@ -73,7 +73,7 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 71,Garlic Peeled,Produce,5lb JAR,JAR,1,OZ-wt,114.29,4,0.98,17,0,
 72,Chicken Breast,Poultry,40lb CASE,CASE,1,OZ-wt,640,3,0.85,68.7,0,
 73,Ground Beef,Meats,20lb CASE,LOG,2,EA,2,0.5,1,25.42,0,
-74,Italian Sausage,Meats,10lb CASE,BAG,2,OZ-wt,160,11,0.91,17.54,0,12/28/2016 11:52
+74,Italian Sausage,Meats,10lb CASE,BAG,2,OZ-wt,160,11,0.91,17.54,0,12/28/2016 11:52:00 AM
 75,Bacon Bits,Meats,10lb CASE,BAG,2,OZ-wt,160,4,1,70,0,
 76,Sourdough,Bread,EACH,EACH,1,EA,1,183,1,0.75,0,
 77,Whole Wheat,Bread,EACH,EACH,1,EA,1,84,1,0.75,0,

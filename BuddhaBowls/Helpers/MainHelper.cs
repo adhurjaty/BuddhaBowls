@@ -113,6 +113,19 @@ namespace BuddhaBowls.Helpers
                                                         .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
         }
 
+        public static List<T> MoveInList<T>(T item, bool up, List<T> orderedList)
+        {
+            int idx = orderedList.IndexOf(item);
+            orderedList.RemoveAt(idx);
+
+            if (idx > 0 && up)
+                orderedList.Insert(idx - 1, item);
+            if (idx < orderedList.Count - 1 && !up)
+                orderedList.Insert(idx + 1, item);
+
+            return orderedList;
+        }
+
         //public static List<VendorItem> GetVendorPrices(string vendorName)
         //{
         //    string tableName = Path.Combine(Properties.Resources.VendorFolder, vendorName);

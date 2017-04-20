@@ -26,6 +26,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Inventory Item Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
                 <DataGridTextColumn Header="Purchased Price" Binding="{Binding LastPurchasedPrice, StringFormat=c}" Width="2*" />
+                <DataGridTextColumn Header="Conv" Binding="{Binding Conversion}" Width="1*" />
                 <DataGridTemplateColumn Header="Purchased Unit" Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

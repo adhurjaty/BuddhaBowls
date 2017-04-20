@@ -650,6 +650,13 @@ namespace BuddhaBowls.Test
                     VendorInventoryItem listItem = invList.FilteredItems.First(x => x.Id == item.Id);
                     CollectionAssert.Contains(listItem.Vendors.Select(x => x.Name).ToList(), name);
                 }
+
+                InventoryListVM listVM = _vm.InventoryTab.InvListVM;
+                foreach (InventoryItem item in vendorItems)
+                {
+                    VendorInventoryItem listItem = listVM.FilteredItems.First(x => x.Id == item.Id);
+                    CollectionAssert.Contains(listItem.Vendors.Select(x => x.Name).ToList(), newVendor.Name);
+                }
             }
             finally
             {
@@ -764,6 +771,30 @@ namespace BuddhaBowls.Test
 
             Assert.AreEqual(origEmail, berryMan.Email);
             Assert.AreEqual(origPhone, berryMan.PhoneNumber);
+        }
+
+        #endregion
+
+        #region RecipeTabVM Tests
+
+        [TestMethod]
+        public void LoadRecipesTest()
+        {
+            RecipeTabVM recipeTab = _vm.RecipeTab;
+
+            Assert.AreEqual("Balsamic Vinegar", recipeTab.FilteredItems[0].Name);
+        }
+
+        [TestMethod]
+        public void AddNewRecipeVMTest()
+        {
+
+        }
+
+        [TestMethod]
+        public void EditRecipeVMTest()
+        {
+
         }
 
         #endregion

@@ -140,6 +140,7 @@ namespace BuddhaBowls.Models
                 NotifyPropertyChanged("PurchasedUnit");
                 NotifyPropertyChanged("Conversion");
                 LastVendorId = SelectedVendor.Id;
+                Update();
             }
         }
     }

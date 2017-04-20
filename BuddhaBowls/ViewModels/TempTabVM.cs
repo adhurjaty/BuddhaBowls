@@ -11,7 +11,20 @@ namespace BuddhaBowls
     public class TempTabVM : TabVM
     {
         protected UserControl _tabControl;
-        public string Header;
+
+        private string _header;
+        public string Header
+        {
+            get
+            {
+                return _header;
+            }
+            set
+            {
+                _header = value;
+                NotifyPropertyChanged("Header");
+            }
+        }
 
         // Stack of temporary tabs adds and removes from the front
         public static List<UserControl> TabStack;
