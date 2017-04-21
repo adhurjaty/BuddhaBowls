@@ -74,14 +74,14 @@ namespace BuddhaBowls.Models
         }
 
         /// <summary>
-        /// Get the cost per Recipe Unit
+        /// Get the recipe cost for this item
         /// </summary>
         /// <returns></returns>
         public float GetCost()
         {
             if (RecipeUnitConversion == null || RecipeUnitConversion == 0 || Yield == null || Yield == 0)
                 return 0;
-            return CountPrice / ((float)RecipeUnitConversion * (float)Yield);
+            return CountPrice / ((float)RecipeUnitConversion * (float)Yield) * Count;
         }
 
         /// <summary>

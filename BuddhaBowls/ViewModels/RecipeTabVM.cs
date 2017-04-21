@@ -23,8 +23,8 @@ namespace BuddhaBowls
         private List<Recipe> _recipeItems;
 
         #region Content Binders
-        private ObservableCollection<IItem> _filteredItems;
-        public ObservableCollection<IItem> FilteredItems
+        private ObservableCollection<Recipe> _filteredItems;
+        public ObservableCollection<Recipe> FilteredItems
         {
             get
             {
@@ -126,7 +126,7 @@ namespace BuddhaBowls
         /// <param name="filterStr"></param>
         public override void FilterItems(string filterStr)
         {
-            FilteredItems = MainHelper.FilterInventoryItems(filterStr, _recipeItems.Select(x => (IItem)x));
+            FilteredItems = MainHelper.FilterInventoryItems(filterStr, _recipeItems);
         }
 
         public void RefreshList()
@@ -158,7 +158,7 @@ namespace BuddhaBowls
             }
 
             FilterText = "";
-            FilteredItems = new ObservableCollection<IItem>(_recipeItems);
+            FilteredItems = new ObservableCollection<Recipe>(_recipeItems);
         }
     }
 }

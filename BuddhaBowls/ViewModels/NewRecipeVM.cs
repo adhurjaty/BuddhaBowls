@@ -22,7 +22,7 @@ namespace BuddhaBowls
     {
         private bool _newItem;
         private AddItemDel<Recipe> SaveItem;
-        protected List<IItem> _availableItems;
+        protected List<IItem> _ingredientItems;
 
         #region Content Binders
 
@@ -211,7 +211,7 @@ namespace BuddhaBowls
             IsBatch = isBatch;
 
             Header = "New " + (isBatch ? "Batch Recipe" : "Menu Item");
-            _availableItems = new List<IItem>();
+            _ingredientItems = new List<IItem>();
 
             Item = new Recipe();
             Item.IsBatch = isBatch;
@@ -228,7 +228,7 @@ namespace BuddhaBowls
             _newItem = false;
             IsBatch = recipe.IsBatch;
             Header = "Edit " + recipe.Name;
-            _availableItems = recipe.ItemList;
+            _ingredientItems = recipe.GetIItems(); //recipe.ItemList;
 
             Item = recipe;
             Refresh();
@@ -245,7 +245,7 @@ namespace BuddhaBowls
 
         private void RemoveItem(object obj)
         {
-            _availableItems.Remove(SelectedItem);
+            _ingredientItems.Remove(SelectedItem);
             Refresh();
         }
 
@@ -257,7 +257,7 @@ namespace BuddhaBowls
         private void ModalOk(object obj)
         {
             ItemToAdd.Count = 0;
-            _availableItems.Add(ItemToAdd);
+            _ingredientItems.Add(ItemToAdd);
             Refresh();
             ModalVisibility = Visibility.Hidden;
         }
@@ -278,16 +278,16 @@ namespace BuddhaBowls
 
         public override void Refresh()
         {
-            if (_availableItems == null)
+            if (_ingredientItems == null)
             {
                 Ingredients = new ObservableCollection<IItem>();
-                RemainingItems = new ObservableCollection<IItem>(_models.InventoryItems.OrderBy(x => x.Name));
+                RemainingItems = new ObservableCollection<IItem>(_models.GetAllIItems().OrderBy(x => x.Name));
             }
             else
             {
-                Ingredients = new ObservableCollection<IItem>(MainHelper.SortItems(_availableItems));
-                RemainingItems = new ObservableCollection<IItem>(_models.InventoryItems
-                                                                        .Where(x => !_availableItems.Select(y => y.Id).Contains(x.Id))
+                Ingredients = new ObservableCollection<IItem>(MainHelper.SortItems(_ingredientItems));
+                RemainingItems = new ObservableCollection<IItem>(_models.GetAllIItems()
+                                                                        .Where(x => !_ingredientItems.Select(y => y.Name).Contains(x.Name))
                                                                         .OrderBy(x => x.Name));
             }
         }
@@ -302,16 +302,14 @@ namespace BuddhaBowls
         {
             if (ValidateInputs())
             {
-                Item.ItemList = Ingredients.ToList();
-
                 if (_newItem)
                 {
-                    Item.Insert();
+                    Item.Insert(Ingredients.ToList());
                     _models.Recipes.Add(Item);
                 }
                 else
                 {
-                    Item.Update();
+                    Item.Update(Ingredients.ToList());
                 }
                 SaveItem(Item);
                 Close();
@@ -326,7 +324,7 @@ namespace BuddhaBowls
                 NameError = 2;
                 return false;
             }
-            if(_models.Recipes.Select(x => x.Name.ToUpper().Replace(" ", "")).Contains(Item.Name.ToUpper().Replace(" ", "")))
+            if(_newItem && _models.Recipes.Select(x => x.Name.ToUpper().Replace(" ", "")).Contains(Item.Name.ToUpper().Replace(" ", "")))
             {
                 ErrorMessage = Item.Name + " already exists";
                 NameError = 2;

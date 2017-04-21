@@ -179,10 +179,11 @@ namespace BuddhaBowls.Test
                 LastPurchasedPrice = 20,
                 Conversion = 2,
                 RecipeUnitConversion = 10,
+                Count = 2,
                 Yield = 1
             };
 
-            Assert.AreEqual(1, inv.GetCost());
+            Assert.AreEqual(2, inv.GetCost());
         }
 
         [TestMethod]
@@ -692,7 +693,7 @@ namespace BuddhaBowls.Test
             string name = "Test Recipe";
             string category = "Test Rec Category";
             Recipe recipe = new Recipe() { Name = name, Category = category, RecipeUnitConversion = 1 };
-            recipe.ItemList = new List<IItem>()
+            List<IItem> recipeItems = new List<IItem>()
             {
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Avocado" } }),
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Black Beans" } }),
@@ -702,12 +703,88 @@ namespace BuddhaBowls.Test
 
             try
             {
+                recipe.Insert(recipeItems);
+                Recipe dbRecipe = new Recipe(new Dictionary<string, string>() { { "Name", name } });
+
+                Assert.AreEqual(name, dbRecipe.Name);
+                Assert.AreEqual(category, dbRecipe.Category);
+                List<RecipeItem> items = dbRecipe.GetRecipeItems();
+                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), items.Select(x => x.Name).ToList());
+            }
+            finally
+            {
+                recipe.Destroy();
+            }
+
+            Recipe emptyRecipe = new Recipe(new Dictionary<string, string>() { { "Name", name } });
+            Assert.IsNull(emptyRecipe.Name);
+            Assert.IsFalse(File.Exists(emptyRecipe.GetRecipeTablePath()));
+        }
+
+        [TestMethod]
+        public void InsertAndDeleteEmptyRecipeTest()
+        {
+            string name = "Test Recipe";
+            string category = "Test Rec Category";
+            Recipe recipe = new Recipe() { Name = name, Category = category, RecipeUnitConversion = 1 };
+
+            try
+            {
                 recipe.Insert();
                 Recipe dbRecipe = new Recipe(new Dictionary<string, string>() { { "Name", name } });
 
                 Assert.AreEqual(name, dbRecipe.Name);
                 Assert.AreEqual(category, dbRecipe.Category);
-                List<IItem> items = dbRecipe.
+                List<RecipeItem> items = dbRecipe.GetRecipeItems();
+                // make sure no error occurs when trying to find items
+
+                Assert.IsFalse(File.Exists(dbRecipe.GetRecipeTablePath()));
+            }
+            finally
+            {
+                recipe.Destroy();
+            }
+
+            Recipe emptyRecipe = new Recipe(new Dictionary<string, string>() { { "Name", name } });
+            Assert.IsNull(emptyRecipe.Name);
+        }
+
+        [TestMethod]
+        public void UpdateRecipeTest()
+        {
+            string name = "Test Recipe";
+            string category = "Test Rec Category";
+            Recipe recipe = new Recipe() { Name = name, Category = category, RecipeUnitConversion = 1 };
+            List<IItem> recipeItems = new List<IItem>()
+            {
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Avocado" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Black Beans" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Cinnamon" } }),
+                new Recipe(new Dictionary<string, string>() { { "Name", "Chopped Clams" } })
+            };
+
+            recipe.Insert(recipeItems);
+
+            recipeItems = new List<IItem>()
+            {
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Eggs" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Feta" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Flour" } }),
+                new Recipe(new Dictionary<string, string>() { { "Name", "Granola" } })
+            };
+
+            string newCategory = "New Category";
+            recipe.Category = newCategory;
+
+            try
+            {
+                recipe.Update(recipeItems);
+
+                Recipe dbRecipe = new Recipe(new Dictionary<string, string>() { { "Name", name } });
+
+                Assert.AreEqual(newCategory, dbRecipe.Category);
+                List<RecipeItem> items = dbRecipe.GetRecipeItems();
+                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), items.Select(x => x.Name).ToList());
             }
             finally
             {
@@ -715,6 +792,171 @@ namespace BuddhaBowls.Test
             }
         }
 
+        [TestMethod]
+        public void UpdateRecipeEmptyTest()
+        {
+            string name = "Test Recipe";
+            string category = "Test Rec Category";
+            Recipe recipe = new Recipe() { Name = name, Category = category, RecipeUnitConversion = 1 };
+            List<IItem> recipeItems = new List<IItem>()
+            {
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Avocado" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Black Beans" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Cinnamon" } }),
+                new Recipe(new Dictionary<string, string>() { { "Name", "Chopped Clams" } })
+            };
+
+            recipe.Insert(recipeItems);
+
+            string newCategory = "New Category";
+            recipe.Category = newCategory;
+
+            try
+            {
+                recipe.Update();
+
+                Recipe dbRecipe = new Recipe(new Dictionary<string, string>() { { "Name", name } });
+
+                Assert.AreEqual(newCategory, dbRecipe.Category);
+                List<RecipeItem> items = dbRecipe.GetRecipeItems();
+                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), items.Select(x => x.Name).ToList());
+            }
+            finally
+            {
+                recipe.Destroy();
+            }
+        }
+
+        [TestMethod]
+        public void GetRecipeTest()
+        {
+            Recipe recipe = new Recipe(new Dictionary<string, string>() { { "Name", "New England Clam Chowder" } });
+
+            Dictionary<string, float> desired = new Dictionary<string, float>()
+            {
+                { "Butter", 16 },
+                { "Heavy Cream", 8 },
+                { "Chopped Clams", 1.5f },
+                { "Clam Juice", 2 },
+                { "Flour", 6 },
+                { "Thyme", 3 },
+                { "Pepper", 3 },
+                { "Salt", 6 },
+                { "Old Bay Seasoning", 1.5f },
+                { "Yellow Onions", 100 },
+                { "Potatoes", 120 },
+                { "Celery", 2 }
+            };
+
+            foreach (IItem item in recipe.GetIItems())
+            {
+                Assert.AreEqual(desired[item.Name], item.Count);
+            }
+        }
+
+        [TestMethod]
+        public void GetBatchItemCostTest()
+        {
+            Recipe clam = MockObjects.GetRecipe("New England Clam Chowder");
+
+            float cost = clam.GetCost();
+
+            Assert.AreEqual(7.06, Math.Round(cost, 2));
+        }
+
+        [TestMethod]
+        public void GetCategoryCostTest()
+        {
+            Recipe clam = MockObjects.GetRecipe("New England Clam Chowder");
+
+            Dictionary<string, float> catCost = clam.GetCategoryCosts();
+
+            Dictionary<string, float> refCosts = new Dictionary<string, float>()
+            {
+                { "Dairy", 1.08f },
+                { "Dry Goods", 1.87f },
+                { "Herbs", 0.02f },
+                { "Produce", 4.09f }
+            };
+
+            foreach (string key in catCost.Keys)
+            {
+                float refCost = refCosts[key];
+                float testCost = (float)Math.Round(catCost[key], 2);
+                Assert.AreEqual(refCost, testCost);
+            }
+
+            float totalCost = (float)Math.Round(new List<float>(catCost.Values).Sum(), 2);
+            Assert.AreEqual(7.06f, totalCost);
+        }
+
+        [TestMethod]
+        public void GetComplexRecipeCostTest()
+        {
+            Recipe recipe = new Recipe() { Name = "Test Recipe", IsBatch = true };
+            List<IItem> desired = CreateComplexRecipe();
+
+            try
+            {
+                recipe.Insert(desired);
+                Assert.AreEqual(14.13, Math.Round(recipe.GetCost(), 2));
+            }
+            finally
+            {
+                recipe.Destroy();
+            }
+        }
+
+        [TestMethod]
+        public void GetComplexRecipeCategoryCostTest()
+        {
+            Recipe recipe = new Recipe() { Name = "Test Recipe", IsBatch = true };
+            List<IItem> desired = CreateComplexRecipe();
+
+            Dictionary<string, float> refCosts = new Dictionary<string, float>()
+            {
+                { "Dairy", 2.17f },
+                { "Dry Goods", 3.74f },
+                { "Herbs", 0.03f },
+                { "Produce", 8.18f }
+            };
+
+            try
+            {
+                recipe.Insert(desired);
+                Dictionary<string, float> catCost = recipe.GetCategoryCosts();
+                foreach (string key in catCost.Keys)
+                {
+                    float refCost = refCosts[key];
+                    float testCost = (float)Math.Round(catCost[key], 2);
+                    Assert.AreEqual(refCost, testCost);
+                }
+            }
+            finally
+            {
+                recipe.Destroy();
+            }
+        }
         #endregion
+
+        private List<IItem> CreateComplexRecipe()
+        {
+            return new List<IItem>()
+            {
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Butter" } }) { Count = 16 },
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Heavy Cream" } }) { Count = 8 },
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Chopped Clams" } }) { Count = 1.5f },
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Clam Juice" } }) { Count = 2 },
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Flour" } }) { Count = 6 },
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Thyme" } }) { Count = 3 },
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Pepper" } }) { Count = 3 },
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Salt" } }) { Count = 6 },
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Old Bay Seasoning" } }) { Count = 1.5f },
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Yellow Onions" } }) { Count = 100 },
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Potatoes" } }) { Count = 120 },
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Celery" } }) { Count = 2 },
+                new Recipe(new Dictionary<string, string>() { { "Name", "New England Clam Chowder" } }) { Count = 1 },
+            };
+        }
     }
 }

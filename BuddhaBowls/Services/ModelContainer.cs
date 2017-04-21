@@ -43,10 +43,10 @@ namespace BuddhaBowls.Services
             if (InventoryItems == null || Recipes == null)
                 return;
 
-            foreach(Recipe rec in Recipes)
-            {
-                rec.ItemList = GetRecipe(rec.Name);
-            }
+            //foreach(Recipe rec in Recipes)
+            //{
+            //    rec.ItemList = GetRecipe(rec);
+            //}
         }
 
         private void InitializeInventoryOrder()
@@ -66,28 +66,7 @@ namespace BuddhaBowls.Services
         /// <returns>Cost</returns>
         public float GetBatchItemCost(Recipe rec)
         {
-            float cost = 0;
-            foreach(IItem item in rec.ItemList)
-            {
-                cost += item.GetCost() * item.Count;
-            }
-
-            return cost;
-        }
-
-
-        public Dictionary<string, float> GetCategoryCosts(Recipe rec)
-        {
-            Dictionary<string, float> costDict = new Dictionary<string, float>();
-
-            foreach(IItem item in rec.ItemList)
-            {
-                if(!costDict.Keys.Contains(item.Category))
-                    costDict[item.Category] = 0;
-                costDict[item.Category] += item.GetCost() * item.Count;
-            }
-
-            return costDict;
+            return rec.GetCost();
         }
 
         /// <summary>
@@ -119,38 +98,36 @@ namespace BuddhaBowls.Services
         /// Loads a recipe and returns a list of the items
         /// </summary>
         /// <param name="recipeName">Name of the recipe file (no extension)</param>
-        public List<IItem> GetRecipe(string recipeName)
-        {
-            string tableName = Path.Combine(Properties.Resources.RecipeFolder, recipeName);
+        //public List<IItem> GetRecipe(Recipe recipe)
+        //{
+        //    List<IItem> recipeList = new List<IItem>();
 
-            List<IItem> recipeList = new List<IItem>();
-            List<RecipeItem> items = ModelHelper.InstantiateList<RecipeItem>(tableName, false);
-            foreach (RecipeItem item in items)
-            {
-                IItem addItem;
-                // if this is a recipe and not an inventory item (something that is purchased directly)
-                if (item.InventoryItemId == null)
-                {
-                    addItem = Recipes.FirstOrDefault(x => x.Name == item.Name);
-                    if (addItem != null)
-                        ((Recipe)addItem).ItemList = GetRecipe(addItem.Name);
-                }
-                else
-                {
-                    addItem = InventoryItems.FirstOrDefault(x => x.Id == item.InventoryItemId);
-                }
+        //    foreach (RecipeItem item in recipe.GetRecipeItems())
+        //    {
+        //        IItem addItem;
+        //        // if this is a recipe and not an inventory item (something that is purchased directly)
+        //        if (item.InventoryItemId == null)
+        //        {
+        //            addItem = Recipes.FirstOrDefault(x => x.Name == item.Name);
+        //            if (addItem != null)
+        //                ((Recipe)addItem).ItemList = GetRecipe((Recipe)addItem);
+        //        }
+        //        else
+        //        {
+        //            addItem = InventoryItems.FirstOrDefault(x => x.Id == item.InventoryItemId);
+        //        }
 
-                if (addItem != null)
-                {
-                    // copy to prevent overwriting values from the database
-                    addItem = addItem.Copy();
-                    addItem.Count = item.Quantity;
-                    recipeList.Add(addItem);
-                }
-            }
+        //        if (addItem != null)
+        //        {
+        //            // copy to prevent overwriting values from the database
+        //            addItem = addItem.Copy();
+        //            addItem.Count = item.Quantity;
+        //            recipeList.Add(addItem);
+        //        }
+        //    }
 
-            return recipeList;
-        }
+        //    return recipeList;
+        //}
 
         /// <summary>
         /// Get all inventory items and batch recipe items
@@ -294,6 +271,11 @@ namespace BuddhaBowls.Services
             }
 
             return categories.ToList();
+        }
+
+        public List<IItem> GetAllIItems()
+        {
+            return InventoryItems.Select(x => (IItem)x).Concat(Recipes).ToList();
         }
 
         private void SetInventoryCategories()

@@ -791,13 +791,73 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void AddNewRecipeVMTest()
         {
+            string name = "New Recipe";
+            List<IItem> recipeItems = new List<IItem>()
+            {
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Avocado" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Black Beans" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Cinnamon" } }),
+                new Recipe(new Dictionary<string, string>() { { "Name", "New England Clam Chowder" } })
+            };
 
+            RecipeTabVM recipeTab = CreateTestBatchRecipe(name, recipeItems);
+            Recipe newRecipe = recipeTab.FilteredItems.FirstOrDefault(x => x.Name == name);
+            recipeTab.SelectedItem = newRecipe;
+
+            try
+            {
+                Assert.AreEqual(name, newRecipe.Name);
+                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), newRecipe.GetRecipeItems().Select(x => x.Name).ToList());
+            }
+            finally
+            {
+                recipeTab.DeleteItemCommand.Execute(null);
+            }
+
+            Recipe emptyRecipe = recipeTab.FilteredItems.FirstOrDefault(x => x.Name == name);
+            Assert.IsNull(emptyRecipe);
         }
 
         [TestMethod]
         public void EditRecipeVMTest()
         {
+            string name = "New Recipe";
+            List<IItem> recipeItems = new List<IItem>()
+            {
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Avocado" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Black Beans" } }),
+                new InventoryItem(new Dictionary<string, string>() { { "Name", "Cinnamon" } }),
+                new Recipe(new Dictionary<string, string>() { { "Name", "New England Clam Chowder" } })
+            };
 
+            RecipeTabVM recipeTab = CreateTestBatchRecipe(name, recipeItems);
+            Recipe newRecipe = recipeTab.FilteredItems.FirstOrDefault(x => x.Name == name);
+            recipeTab.SelectedItem = newRecipe;
+
+            try
+            {
+                recipeTab.EditItemCommand.Execute(null);
+                NewRecipeVM editRecipeTab = GetOpenTempTabVM<NewRecipeVM>();
+                Assert.AreEqual(name, editRecipeTab.Item.Name);
+
+                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), editRecipeTab.Ingredients.Select(x => x.Name).ToList());
+
+                editRecipeTab.ItemToAdd = new InventoryItem(new Dictionary<string, string>() { { "Name", "Butter" } });
+                editRecipeTab.ModalOkCommand.Execute(null);
+
+                editRecipeTab.Ingredients.First(x => x.Name == "Avocado").Count = 42;
+
+                editRecipeTab.FinishCommand.Execute(null);
+
+                Recipe editedRecipe = recipeTab.FilteredItems.First(x => x.Name == name);
+                List<RecipeItem> editedIngredients = editedRecipe.GetRecipeItems();
+                CollectionAssert.Contains(editedIngredients.Select(x => x.Name).ToList(), "Butter");
+                Assert.AreEqual(42, editedIngredients.First(x => x.Name == "Avocado").Quantity);
+            }
+            finally
+            {
+                newRecipe.Destroy();
+            }
         }
 
         #endregion
@@ -883,13 +943,15 @@ namespace BuddhaBowls.Test
         private RecipeTabVM CreateTestBatchRecipe(string recipeName, List<IItem> items)
         {
             RecipeTabVM recipeTab = _vm.RecipeTab;
+            recipeTab.SwitchButtonList[0].SwitchCommand.Execute(0);
+
             recipeTab.AddNewItemCommand.Execute(null);
 
             NewRecipeVM newRecipeTab = GetOpenTempTabVM<NewRecipeVM>();
             newRecipeTab.Item.Name = recipeName;
             newRecipeTab.Ingredients = new ObservableCollection<IItem>(items);
 
-
+            newRecipeTab.FinishCommand.Execute(null);
 
             return recipeTab;
         }
