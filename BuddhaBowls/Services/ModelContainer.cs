@@ -16,10 +16,10 @@ namespace BuddhaBowls.Services
 
         public List<InventoryItem> InventoryItems { get; set; }
         public List<Recipe> Recipes { get; set; }
-        public HashSet<string> ItemCategories { get; set; }
         public List<PurchaseOrder> PurchaseOrders { get; set; }
         public List<Vendor> Vendors { get; set; }
         public List<Inventory> Inventories { get; set; }
+        public List<PrepItem> PrepItems { get; set; }
 
         public ModelContainer()
         {
@@ -27,7 +27,6 @@ namespace BuddhaBowls.Services
             InitializeInventoryOrder();
             if (InventoryItems != null)
             {
-                SetInventoryCategories();
                 SetCategoryColors();
             }
         }
@@ -39,14 +38,10 @@ namespace BuddhaBowls.Services
             PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder") ?? new List<PurchaseOrder>();
             Vendors = ModelHelper.InstantiateList<Vendor>("Vendor") ?? new List<Vendor>();
             Inventories = ModelHelper.InstantiateList<Inventory>("Inventory") ?? new List<Inventory>();
+            PrepItems = ModelHelper.InstantiateList<PrepItem>("PrepItem") ?? new List<PrepItem>();
 
             if (InventoryItems == null || Recipes == null)
                 return;
-
-            //foreach(Recipe rec in Recipes)
-            //{
-            //    rec.ItemList = GetRecipe(rec);
-            //}
         }
 
         private void InitializeInventoryOrder()
@@ -95,41 +90,6 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
-        /// Loads a recipe and returns a list of the items
-        /// </summary>
-        /// <param name="recipeName">Name of the recipe file (no extension)</param>
-        //public List<IItem> GetRecipe(Recipe recipe)
-        //{
-        //    List<IItem> recipeList = new List<IItem>();
-
-        //    foreach (RecipeItem item in recipe.GetRecipeItems())
-        //    {
-        //        IItem addItem;
-        //        // if this is a recipe and not an inventory item (something that is purchased directly)
-        //        if (item.InventoryItemId == null)
-        //        {
-        //            addItem = Recipes.FirstOrDefault(x => x.Name == item.Name);
-        //            if (addItem != null)
-        //                ((Recipe)addItem).ItemList = GetRecipe((Recipe)addItem);
-        //        }
-        //        else
-        //        {
-        //            addItem = InventoryItems.FirstOrDefault(x => x.Id == item.InventoryItemId);
-        //        }
-
-        //        if (addItem != null)
-        //        {
-        //            // copy to prevent overwriting values from the database
-        //            addItem = addItem.Copy();
-        //            addItem.Count = item.Quantity;
-        //            recipeList.Add(addItem);
-        //        }
-        //    }
-
-        //    return recipeList;
-        //}
-
-        /// <summary>
         /// Get all inventory items and batch recipe items
         /// </summary>
         /// <returns></returns>
@@ -144,7 +104,13 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public List<string> GetCountUnits()
         {
-            return EnsureCaseInsensitive(new HashSet<string>(InventoryItems.Select(x => x.CountUnit)
+            return EnsureCaseInsensitive(new HashSet<string>(GetAllIItems().Select(x => x.CountUnit)
+                                                                           .Where(x => !string.IsNullOrEmpty(x)))).ToList();
+        }
+
+        public List<string> GetPrepCountUnits()
+        {
+            return EnsureCaseInsensitive(new HashSet<string>(PrepItems.Select(x => x.CountUnit)
                                                                            .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
@@ -154,7 +120,7 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public List<string> GetRecipeUnits()
         {
-            return EnsureCaseInsensitive(new HashSet<string>(InventoryItems.Select(x => x.RecipeUnit)
+            return EnsureCaseInsensitive(new HashSet<string>(GetAllIItems().Select(x => x.RecipeUnit)
                                                                             .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
@@ -184,8 +150,6 @@ namespace BuddhaBowls.Services
             {
                 item.Id = item.Insert();
                 InventoryItems.Add(item);
-                if (!ItemCategories.Contains(item.Category))
-                    SetInventoryCategories();
             }
         }
 
@@ -201,7 +165,6 @@ namespace BuddhaBowls.Services
             InventoryItems.RemoveAll(x => x.Id == item.Id);
             Properties.Settings.Default.InventoryOrder.Remove(item.Name);
             item.Destroy();
-            SetInventoryCategories();
             return true;
         }
 
@@ -267,7 +230,7 @@ namespace BuddhaBowls.Services
             foreach (Recipe rec in Recipes)
             {
                 if (!string.IsNullOrWhiteSpace(rec.Category))
-                    ItemCategories.Add(rec.Category);
+                    categories.Add(rec.Category);
             }
 
             return categories.ToList();
@@ -278,15 +241,17 @@ namespace BuddhaBowls.Services
             return InventoryItems.Select(x => (IItem)x).Concat(Recipes).ToList();
         }
 
-        private void SetInventoryCategories()
+        public List<string> GetInventoryCategories()
         {
-            ItemCategories = new HashSet<string>();
+            HashSet<string> categories = new HashSet<string>();
 
             foreach (InventoryItem item in InventoryItems)
             {
                 if(!string.IsNullOrWhiteSpace(item.Category))
-                    ItemCategories.Add(item.Category);
+                    categories.Add(item.Category);
             }
+
+            return categories.ToList();
         }
 
         /// <summary>
@@ -300,7 +265,7 @@ namespace BuddhaBowls.Services
 
             FieldInfo[] fields = typeof(GlobalVar).GetFields().Where(x => x.Name.IndexOf(COLOR) != -1).ToArray();
             string[] fieldNames = fields.Select(x => x.Name).ToArray();
-            foreach (string category in ItemCategories)
+            foreach (string category in GetInventoryCategories())
             {
                 int idx = Array.IndexOf(fieldNames, category.ToUpper().Replace(' ', '_') + COLOR);
                 if (idx > -1)

@@ -159,6 +159,8 @@ namespace BuddhaBowls
         public ICommand ReportCommand { get; set; }
         // Save button in Settings form
         public ICommand SaveSettingsCommand { get; set; }
+        // Refresh command for debug
+        public ICommand RefreshCommand { get; set; }
 
         public bool ReportCanExecute
         {
@@ -183,6 +185,7 @@ namespace BuddhaBowls
             BrowseButtonCommand = new RelayCommand(BrowseHelper);
             ReportCommand = new RelayCommand(ReportHelper, x => ReportCanExecute);
             SaveSettingsCommand = new RelayCommand(SaveSettingsHelper, x => SaveSettingsCanExecute);
+            RefreshCommand = new RelayCommand(RefreshHelper);
 
             ModalContext = this;
 
@@ -249,6 +252,12 @@ namespace BuddhaBowls
             _models = new ModelContainer();
             InitTabsAndModel();
         }
+
+        private void RefreshHelper(object obj)
+        {
+            Refresh();
+        }
+
         #endregion
 
         #region Initializers

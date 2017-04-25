@@ -216,7 +216,7 @@ namespace BuddhaBowls
 
         private void InitAutocompleteLists()
         {
-            CategoryList = _models.ItemCategories.OrderBy(x => x).ToList();
+            CategoryList = _models.GetInventoryCategories().OrderBy(x => x).ToList();
             CountUnitsList = _models.GetCountUnits();
             RecipeUnitsList = _models.GetRecipeUnits();
             PurchasedUnitsList = _models.GetPurchasedUnits();
@@ -240,7 +240,7 @@ namespace BuddhaBowls
 
         protected virtual bool ValidateInputs()
         {
-            return true;
+            return false;
         }
     }
 }

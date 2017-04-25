@@ -195,6 +195,7 @@ namespace BuddhaBowls
     {
         public string Category { get; set; }
         public float Count { get; set; }
+        public string CountUnit { get; set; }
         public float EndCount { get; set; }
         public string Name { get; set; }
         public string RecipeUnit { get; set; }

@@ -9,6 +9,7 @@ namespace BuddhaBowls.Models
         string RecipeUnit { get; set; }
         float? RecipeUnitConversion { get; set; }
         float Count { get; set; }
+        string CountUnit { get; set; }
 
         float GetCost();
         void Destroy();

@@ -153,7 +153,7 @@ namespace BuddhaBowls
 
                 // color the cells if it is a category line
                 string category = contents[i][0].Split(' ')[0].ToUpper();
-                string key = _models.ItemCategories.FirstOrDefault(x => x.StartsWith(category));
+                string key = _models.GetInventoryCategories().FirstOrDefault(x => x.StartsWith(category));
                 if (!string.IsNullOrEmpty(key))
                 {
                     ((Excel.Range)sheet.Range[sheet.Cells[i + 1, 1], sheet.Cells[i + 1, numCols]]).Interior.Color =
@@ -414,7 +414,7 @@ namespace BuddhaBowls
 
                     // color the cells if it is a category line
                     string category = contents[i][0].Split(' ')[0].ToUpper();
-                    string key = _models.ItemCategories.FirstOrDefault(x => x.StartsWith(category));
+                    string key = _models.GetInventoryCategories().FirstOrDefault(x => x.StartsWith(category));
                     if (!string.IsNullOrEmpty(key))
                     {
                         Excel.Range colorRange = sheet.Range[sheet.Cells[i + 1, 1], sheet.Cells[i + 1, numCols]];

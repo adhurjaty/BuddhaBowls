@@ -69,7 +69,35 @@ namespace BuddhaBowls
         }
 
         public InventoryListVM InvListVM { get; set; }
-        
+
+        private ObservableCollection<PrepItem> _prepItemList;
+        public ObservableCollection<PrepItem> PrepItemList
+        {
+            get
+            {
+                return _prepItemList;
+            }
+            set
+            {
+                _prepItemList = value;
+                NotifyPropertyChanged("PrepItemList");
+            }
+        }
+
+        private PrepItem _selectedPrepItem;
+        public PrepItem SelectedPrepItem
+        {
+            get
+            {
+                return _selectedPrepItem;
+            }
+            set
+            {
+                _selectedPrepItem = value;
+                NotifyPropertyChanged("SelectedPrepItem");
+            }
+        }
+
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -82,6 +110,9 @@ namespace BuddhaBowls
         // Compare button
         public ICommand CompareCommand { get; set; }
         public ICommand InvListCommand { get; set; }
+        public ICommand AddPrepCommand { get; set; }
+        public ICommand DeletePrepCommand { get; set; }
+        public ICommand EditPrepCommand { get; set; }
 
         public bool DeleteEditCanExecute
         {
@@ -111,7 +142,9 @@ namespace BuddhaBowls
             ViewCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute && DBConnection);
             CompareCommand = new RelayCommand(CompareInventories, x => CompareCanExecute && DBConnection);
             InvListCommand = new RelayCommand(GenerateInvList, x => DBConnection);
-
+            AddPrepCommand = new RelayCommand(NewPrepItem);
+            DeletePrepCommand = new RelayCommand(DeletePrepItem, x => SelectedPrepItem != null);
+            EditPrepCommand = new RelayCommand(EditPrepItem, x => SelectedPrepItem != null);
             // rest of initialization in ChangePageState called from base()
         }
 
@@ -192,8 +225,32 @@ namespace BuddhaBowls
             }
             else
             {
-                MessageBox.Show("Excel process currently running. If you don't know what this means, hit OK and restart the application", "Excel Warning", MessageBoxButton.OK);
+                MessageBox.Show("Excel process currently running. If you don't know what this means, hit OK and restart the application",
+                    "Excel Warning", MessageBoxButton.OK);
             }
+        }
+
+        private void NewPrepItem(object obj)
+        {
+            NewPrepItemVM tabVM = new NewPrepItemVM(AddPrepItem);
+            tabVM.Add("New Prep Item");
+        }
+
+        private void DeletePrepItem(object obj)
+        {
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this record?", "Delete record?", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                _models.PrepItems.Remove(SelectedPrepItem);
+                SelectedPrepItem.Destroy();
+                SelectedPrepItem = null;
+                PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderBy(x => x.Name));
+            }
+        }
+
+        private void EditPrepItem(object obj)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -213,6 +270,12 @@ namespace BuddhaBowls
 
         #region Update UI Methods
 
+        public override void FilterItems(string filterStr)
+        {
+            PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
+                                                                          .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
+        }
+
         /// <summary>
         /// Called when Master List is edited
         /// </summary>
@@ -226,6 +289,7 @@ namespace BuddhaBowls
             InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
             if(InvListVM != null)
                 InvListVM.Refresh();
+            PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderBy(x => x.Name));
         }
 
         public void AddInvItem(InventoryItem item)
@@ -236,6 +300,11 @@ namespace BuddhaBowls
         public void RemoveInvItem(InventoryItem item)
         {
             InvListVM.RemoveItem(item);
+        }
+
+        public void AddPrepItem(PrepItem item)
+        {
+            PrepItemList.Add(item);
         }
 
         #endregion
@@ -249,14 +318,16 @@ namespace BuddhaBowls
                 case 0:
                     if(InvListVM == null)
                         InvListVM = new InventoryListVM();
-                    if(InventoryList == null)
-                        InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
                     TabControl = _tabCache[0] ?? new MasterInventoryControl(this);
                     break;
                 case 1:
-
+                    if (PrepItemList == null)
+                        PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderBy(x => x.Name));
+                    TabControl = _tabCache[1] ?? new PrepListControl(this);
                     break;
                 case 2:
+                    if (InventoryList == null)
+                        InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
                     TabControl = _tabCache[2] ?? new InventoryHistoryControl(this);
                     break;
                 case -1:

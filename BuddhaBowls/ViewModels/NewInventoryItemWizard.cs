@@ -317,7 +317,7 @@ namespace BuddhaBowls
                        Item.Yield != 0;
             }
 
-            return base.ValidateInputs();
+            return true;
         }
 
         private void AddVendor(Vendor item)

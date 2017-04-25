@@ -25,5 +25,16 @@ namespace BuddhaBowls.UserControls
             InitializeComponent();
             DataContext = context;
         }
+
+        private void Ingredients_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            if (((DataGrid)sender).SelectedItem != null)
+            {
+                ((DataGrid)sender).RowEditEnding -= Ingredients_RowEditEnding;
+                ((DataGrid)sender).CommitEdit();
+                ((DataGrid)sender).RowEditEnding += Ingredients_RowEditEnding;
+                ((NewRecipeVM)DataContext).CountChanged();
+            }
+        }
     }
 }

@@ -116,6 +116,7 @@
     <Compile Include="Helpers\ErrorHandler.cs" />
     <Compile Include="Models\IItem.cs" />
     <Compile Include="Models\Inventory.cs" />
+    <Compile Include="Models\PrepItem.cs" />
     <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\Vendor.cs" />
     <Compile Include="Models\VendorInventoryItem.cs" />
@@ -169,6 +170,9 @@
     <Compile Include="UserControls\NewOrder.xaml.cs">
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\NewPrepItem.xaml.cs">
+      <DependentUpon>NewPrepItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\NewRecipe.xaml.cs">
       <DependentUpon>NewRecipe.xaml</DependentUpon>
     </Compile>
@@ -180,6 +184,9 @@
     <Compile Include="Services\ModelContainer.cs" />
     <Compile Include="UserControls\BreakdownCategory.xaml.cs">
       <DependentUpon>BreakdownCategory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\PrepListControl.xaml.cs">
+      <DependentUpon>PrepListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\RecipeTabControl.xaml.cs">
       <DependentUpon>RecipeTabControl.xaml</DependentUpon>
@@ -203,6 +210,7 @@
     <Compile Include="ViewModels\NewInventoryVM.cs" />
     <Compile Include="ViewModels\InventoryTabVM.cs" />
     <Compile Include="ViewModels\NewInventoryItemWizard.cs" />
+    <Compile Include="ViewModels\NewPrepItemVM.cs" />
     <Compile Include="ViewModels\NewVendorWizardVM.cs" />
     <Compile Include="ViewModels\TabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -289,11 +297,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\NewPrepItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\NewRecipe.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\OrderTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\PrepListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

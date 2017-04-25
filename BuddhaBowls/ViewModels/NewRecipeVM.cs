@@ -39,13 +39,14 @@ namespace BuddhaBowls
             {
                 _ingredients = value;
                 NotifyPropertyChanged("Ingredients");
+                NotifyPropertyChanged("RecipeCost");
             }
         }
 
         public float Price { get; set; }
 
-        private InventoryItem _selectedItem;
-        public InventoryItem SelectedItem
+        private IItem _selectedItem;
+        public IItem SelectedItem
         {
             get
             {
@@ -72,7 +73,7 @@ namespace BuddhaBowls
             }
         }
 
-        public InventoryItem ItemToAdd { get; set; }
+        public IItem ItemToAdd { get; set; }
 
         private Visibility _modalVisibility = Visibility.Hidden;
         public Visibility ModalVisibility
@@ -149,6 +150,17 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("NameError");
             }
         }
+
+        public float RecipeCost
+        {
+            get
+            {
+                if (Ingredients != null && Ingredients.Count > 0)
+                    return Ingredients.Sum(x => x.GetCost());
+                return 0;
+            }
+        }
+
         #endregion
 
         #region ICommand Properties and Can Execute
@@ -188,7 +200,7 @@ namespace BuddhaBowls
         /// Default constructor
         /// </summary>
         /// <param name="addDel"></param>
-        private NewRecipeVM(AddItemDel<Recipe> addDel)
+        private NewRecipeVM(AddItemDel<Recipe> addDel) : base()
         {
             AddItemCommand = new RelayCommand(AddItem);
             RemoveItemCommand = new RelayCommand(RemoveItem, x => RemoveCanExecute);
@@ -215,6 +227,7 @@ namespace BuddhaBowls
 
             Item = new Recipe();
             Item.IsBatch = isBatch;
+            Item.RecipeUnitConversion = 1;
             Refresh();
         }
 
@@ -247,11 +260,6 @@ namespace BuddhaBowls
         {
             _ingredientItems.Remove(SelectedItem);
             Refresh();
-        }
-
-        private void Cancel(object obj)
-        {
-            Close();
         }
 
         private void ModalOk(object obj)
@@ -290,6 +298,8 @@ namespace BuddhaBowls
                                                                         .Where(x => !_ingredientItems.Select(y => y.Name).Contains(x.Name))
                                                                         .OrderBy(x => x.Name));
             }
+            if (Item != null)
+                RemainingItems.Remove(Item);
         }
 
         protected override void SetWizardStep()
@@ -335,6 +345,12 @@ namespace BuddhaBowls
             ErrorMessage = "";
             return true;
         }
+
+        public void CountChanged()
+        {
+            NotifyPropertyChanged("RecipeCost");
+        }
+
         #endregion
     }
 }

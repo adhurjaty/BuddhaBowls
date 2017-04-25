@@ -16,14 +16,20 @@ namespace BuddhaBowls.Models
         public string Category { get; set; }
         public float Count { get; set; }
         public string CountUnit { get; set; }
-        public float? Price { get; set; }
         public bool IsBatch { get; set; }
 
         public float RecipeCost
         {
             get
             {
-                return GetCost();
+                try
+                {
+                    return GetIItems().Sum(x => x.GetCost());
+                }
+                catch (Exception e)
+                {
+                    return 0;
+                }
             }
         }
 
@@ -47,14 +53,7 @@ namespace BuddhaBowls.Models
 
         public float GetCost()
         {
-            try
-            {
-                return GetIItems().Sum(x => x.GetCost());
-            }
-            catch(Exception e)
-            {
-                return 0;
-            }
+            return RecipeCost * Count;
         }
 
         public Dictionary<string, float> GetCategoryCosts()
@@ -86,13 +85,15 @@ namespace BuddhaBowls.Models
 
         public void Update(List<IItem> items)
         {
-            ModelHelper.CreateTable(ConvToRecipeItems(items), GetRecipeTableName());
+            if(items != null && items.Count > 0)
+                ModelHelper.CreateTable(ConvToRecipeItems(items), GetRecipeTableName());
             base.Update();
         }
 
         public int Insert(List<IItem> items)
         {
-            ModelHelper.CreateTable(ConvToRecipeItems(items), GetRecipeTableName());
+            if(items != null && items.Count > 0)
+                ModelHelper.CreateTable(ConvToRecipeItems(items), GetRecipeTableName());
             return base.Insert();
         }
 

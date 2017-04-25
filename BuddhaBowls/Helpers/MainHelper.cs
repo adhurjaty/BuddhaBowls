@@ -107,7 +107,7 @@ namespace BuddhaBowls.Helpers
         public static ObservableCollection<T> FilterInventoryItems<T>(string filterStr, IEnumerable<T> items) where T : IItem
         {
             if (string.IsNullOrWhiteSpace(filterStr))
-                return new ObservableCollection<T>(MainHelper.SortItems(items));
+                return new ObservableCollection<T>(SortItems(items));
             else
                 return new ObservableCollection<T>(items.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
                                                         .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));

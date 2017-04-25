@@ -51,7 +51,8 @@
                 </Grid>
             </TabItem>
         </TabControl>
-
+        <Button Content="Refresh" Width="80" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 5, 10, 0"
+                Command="{Binding RefreshCommand}" />
         <Dialog:CustomDialog Title="{Binding ModalTitle}" HorizontalAlignment="Stretch" Grid.RowSpan="4" Visibility="{Binding ModalVisibility}"
                              Background="LightCyan" DataContext="{Binding ModalContext}">
             <Grid>

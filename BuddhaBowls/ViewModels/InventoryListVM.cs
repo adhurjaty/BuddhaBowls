@@ -238,21 +238,6 @@ namespace BuddhaBowls
             }
         }
 
-        //public Visibility EditVendorVisibility
-        //{
-        //    get
-        //    {
-        //        return _inventory == null ? Visibility.Visible : Visibility.Hidden;
-        //    }
-        //}
-
-        //public Visibility ReadOnlyVendorVisibility
-        //{
-        //    get
-        //    {
-        //        return _inventory != null ? Visibility.Visible : Visibility.Hidden;
-        //    }
-        //}
         #endregion
 
         #region ICommand and CanExecute
@@ -422,6 +407,14 @@ namespace BuddhaBowls
         /// <param name="item"></param>
         public void AddItem(InventoryItem item)
         {
+            // don't double add new item
+            VendorInventoryItem existingItem = _inventoryItems.FirstOrDefault(x => x.Id == item.Id);
+            if(existingItem != null)
+            {
+                FilteredItems.Remove(existingItem);
+                _inventoryItems.Remove(existingItem);
+            }
+
             VendorInventoryItem vendorItem = new VendorInventoryItem(_models.GetVendorsFromItem(item), item);
             int idx = Properties.Settings.Default.InventoryOrder.FindIndex(x => x == item.Name);
             if (idx != -1)
@@ -512,7 +505,7 @@ namespace BuddhaBowls
         {
             List<PriceExpanderItem> items = new List<PriceExpanderItem>();
             TotalValueMessage = "Inventory Value: " + FilteredItems.Sum(x => x.PriceExtension).ToString("c");
-            foreach (string category in _models.ItemCategories)
+            foreach (string category in _models.GetInventoryCategories())
             {
                 float value = _inventoryItems.Where(x => x.Category.ToUpper() == category.ToUpper()).Sum(x => x.PriceExtension);
                 items.Add(new PriceExpanderItem() { Label = category + " Value:", Price = value });

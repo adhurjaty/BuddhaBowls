@@ -204,7 +204,7 @@ namespace BuddhaBowls
             ObservableCollection<BreakdownCategoryItem> breakdown = new ObservableCollection<BreakdownCategoryItem>();
             total = 0;
 
-            foreach (string category in _models.ItemCategories)
+            foreach (string category in _models.GetInventoryCategories())
             {
                 IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
                 if (items.Count() > 0)

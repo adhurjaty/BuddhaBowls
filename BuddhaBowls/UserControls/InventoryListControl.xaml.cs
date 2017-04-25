@@ -31,16 +31,6 @@ namespace BuddhaBowls.UserControls
             DataContext = context;
         }
 
-        //public void HideArrowColumn()
-        //{
-        //    arrowColumn.Visibility = Visibility.Collapsed;
-        //}
-
-        //public void ShowArrowColumn()
-        //{
-        //    arrowColumn.Visibility = Visibility.Visible;
-        //}
-
         private void FilterItems_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox textBox = FilterItemBox;

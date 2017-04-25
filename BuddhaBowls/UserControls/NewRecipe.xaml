@@ -10,7 +10,7 @@
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              mc:Ignorable="d" 
              d:DesignHeight="380" d:DesignWidth="800">
-    <Grid Grid.Row="1">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
@@ -58,16 +58,15 @@
                 Margin="0, 30, 5, 0" Command="{Binding RemoveItemCommand}">
             <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
-        <DataGrid Grid.Column="2" ItemsSource="{Binding Ingredients}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1, 60, 1, 1"
+        <DataGrid Grid.Column="2" ItemsSource="{Binding Ingredients}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1, 60, 1, 20"
                 ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False"
-                CanUserAddRows="False">
+                CanUserAddRows="False" RowEditEnding="Ingredients_RowEditEnding">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
                 <DataGridTextColumn Header="Recipe Unit" Binding="{Binding Path=RecipeUnit, Mode=OneWay}" Width="3*"/>
                 <DataGridTextColumn Header="QTY" Binding="{Binding Path=Count}" Width="2*" />
             </DataGrid.Columns>
         </DataGrid>
-        <Label x:Name="label9" Grid.Row="2" Content="{Binding ErrorMessage}" HorizontalAlignment="Left" VerticalAlignment="Center"
-                Margin="5,0,0,0" Width="250" Height="25" Foreground="Red" />
+        <TextBlock Text="{Binding Path=RecipeCost, StringFormat=Cost: {0:C}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10, 0, 0, 0" />
     </Grid>
 </UserControl>
