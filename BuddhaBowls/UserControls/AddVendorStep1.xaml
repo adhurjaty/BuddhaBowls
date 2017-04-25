@@ -22,6 +22,8 @@
         <Label Grid.Column="0" Grid.Row="0" Content="Name:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
         <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Vend.Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="200"
                     Height="25" Margin="10, 0" />
+        <Border Grid.Column="1" BorderThickness="{Binding NameError}"  BorderBrush="Red" Margin="10, 0" HorizontalAlignment="Left"
+                    VerticalAlignment="Center" Width="200" Height="25" />
         <Label Grid.Column="0" Grid.Row="1" Content="Email Address:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
         <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Vend.Email}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="200"
                     Height="25" Margin="10, 0" />

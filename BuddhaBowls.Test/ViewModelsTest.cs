@@ -724,7 +724,7 @@ namespace BuddhaBowls.Test
 
             try
             {
-                vendorTab.ChangeVendorItemsCommand.Execute(null);
+                vendorTab.EditVendorCommand.Execute(null);
                 SetVendorItemsVM setItemsTab = GetOpenTempTabVM<SetVendorItemsVM>();
 
                 foreach (InventoryItem item in setItemsTab.VendorItems)

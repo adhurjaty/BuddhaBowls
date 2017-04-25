@@ -84,6 +84,20 @@ namespace BuddhaBowls
             }
         }
 
+        private int _nameError;
+        public int NameError
+        {
+            get
+            {
+                return _nameError;
+            }
+            set
+            {
+                _nameError = value;
+                NotifyPropertyChanged("NameError");
+            }
+        }
+
         #endregion
 
         #region ICommand and CanExecute
@@ -105,10 +119,9 @@ namespace BuddhaBowls
             ShowAllCommand = new RelayCommand(ShowAll);
         }
 
-        public NewVendorWizardVM(Vendor v) : base()
+        public NewVendorWizardVM(Vendor v) : this()
         {
             _newVendor = false;
-            _inventoryItems = _models.InventoryItems.Select(x => new InventoryVendorItem(x)).ToList();
             Vend = v;
             List<int> vendItemIds = v.GetInventoryItems().Select(x => x.Id).ToList();
             foreach (InventoryVendorItem item in _inventoryItems)
@@ -117,10 +130,8 @@ namespace BuddhaBowls
                     item.IsSold = true;
             }
             Header = "Edit Vendor " + v.Name;
-            InventoryList = new ObservableCollection<InventoryVendorItem>(_inventoryItems);
 
-            OnlySoldCommand = new RelayCommand(ShowSold);
-            ShowAllCommand = new RelayCommand(ShowAll);
+            ShowSold(null);
         }
 
         #region ICommand Helpers
@@ -142,13 +153,21 @@ namespace BuddhaBowls
 
         protected override bool ValidateInputs()
         {
-            if(_currentStep == 0)
+            if (string.IsNullOrWhiteSpace(Vend.Name))
             {
-                if (_models.Vendors.FirstOrDefault(x => x.Name == Vend.Name) != null && _newVendor)
-                    return false;
-                return !string.IsNullOrEmpty(Vend.Name);
+                ErrorMessage = "Must supply vendor name";
+                NameError = 2;
+                return false;
+            }
+            if (_newVendor && _models.Vendors.Select(x => x.Name.ToUpper().Replace(" ", "")).Contains(Vend.Name.ToUpper().Replace(" ", "")))
+            {
+                ErrorMessage = Vend.Name + " already exists";
+                NameError = 2;
+                return false;
             }
 
+            NameError = 0;
+            ErrorMessage = "";
             return true;
         }
 

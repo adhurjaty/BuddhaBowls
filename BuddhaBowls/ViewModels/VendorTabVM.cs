@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
 using System;
@@ -18,6 +19,8 @@ namespace BuddhaBowls
 {
     public class VendorTabVM : TabVM
     {
+        private Dictionary<int, ObservableCollection<VendorInventoryItem>> _vItemsCache;
+
         #region Data Bindings
         public string FilterText { get; set; }
 
@@ -35,7 +38,23 @@ namespace BuddhaBowls
             }
         }
 
-        public Vendor SelectedVendor { get; set; }
+        private Vendor _selectedVendor;
+        public Vendor SelectedVendor
+        {
+            get
+            {
+                return _selectedVendor;
+            }
+            set
+            {
+                _selectedVendor = value;
+                if (_selectedVendor != null)
+                    LoadVendorItems();
+                else
+                    SelectedVendorItems = new ObservableCollection<VendorInventoryItem>();
+            }
+        }
+
         public string AddEditHeader { get; private set; }
         public ObservableCollection<FieldSetting> FieldsCollection { get; private set; }
 
@@ -52,6 +71,34 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("AddEditErrorMessage");
             }
         }
+
+        private ObservableCollection<VendorInventoryItem> _selectedVendorItems;
+        public ObservableCollection<VendorInventoryItem> SelectedVendorItems
+        {
+            get
+            {
+                return _selectedVendorItems;
+            }
+            set
+            {
+                _selectedVendorItems = value;
+                NotifyPropertyChanged("SelectedVendorItems");
+            }
+        }
+
+        private List<string> _purchasedUnitsList;
+        public List<string> PurchasedUnitsList
+        {
+            get
+            {
+                return _purchasedUnitsList;
+            }
+            set
+            {
+                _purchasedUnitsList = value;
+                NotifyPropertyChanged("PurchasedUnitsList");
+            }
+        }
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -65,7 +112,7 @@ namespace BuddhaBowls
         public ICommand ResetCommand { get; set; }
         // Change Rec List button in vendor main tab
         public ICommand ChangeRecListOrderCommand { get; set; }
-        public ICommand ChangeVendorItemsCommand { get; set; }
+        public ICommand EditVendorCommand { get; set; }
         public ICommand GetOrderSheetCommand { get; set; }
 
         public bool SelectedVendorCanExecute
@@ -75,8 +122,6 @@ namespace BuddhaBowls
                 return SelectedVendor != null;
             }
         }
-
-        public bool AlterVendorCanExecute { get; set; }
 
         public bool GenOrderSheetCanExecute
         {
@@ -90,18 +135,21 @@ namespace BuddhaBowls
                 return false;
             }
         }
+
         #endregion
 
         public VendorTabVM() : base()
         {
             AddVendorCommand = new RelayCommand(AddVendor, x => DBConnection);
             DeleteVendorCommand = new RelayCommand(DeleteVendor, x => SelectedVendorCanExecute && DBConnection);
-            SaveCommand = new RelayCommand(SaveVendor, x => AlterVendorCanExecute && DBConnection);
-            ResetCommand = new RelayCommand(ResetVendor, x => AlterVendorCanExecute && DBConnection);
+            SaveCommand = new RelayCommand(SaveVendor, x => DBConnection);
+            ResetCommand = new RelayCommand(ResetVendor, x => DBConnection);
             //ChangeRecListOrderCommand = new RelayCommand(ChangeRecOrder, x => SelectedVendorCanExecute);
-            ChangeVendorItemsCommand = new RelayCommand(ChangeVendorItems, x => SelectedVendorCanExecute && DBConnection);
+            EditVendorCommand = new RelayCommand(EditVendor, x => SelectedVendorCanExecute && DBConnection);
             GetOrderSheetCommand = new RelayCommand(GenerateOrderSheet, x => GenOrderSheetCanExecute && DBConnection);
 
+            _vItemsCache = new Dictionary<int, ObservableCollection<VendorInventoryItem>>();
+            PurchasedUnitsList = _models.GetPurchasedUnits();
             InitVendors();
         }
 
@@ -115,23 +163,18 @@ namespace BuddhaBowls
 
         private void ResetVendor(object obj)
         {
-            foreach (Vendor vendor in FilteredVendorList)
-            {
-                vendor.Reset();
-            }
+            _vItemsCache = new Dictionary<int, ObservableCollection<VendorInventoryItem>>();
 
-            RefreshVendorList();
-            AlterVendorCanExecute = false;
+            LoadVendorItems();
         }
 
         private void SaveVendor(object obj)
         {
-            foreach(Vendor v in FilteredVendorList)
+            foreach (KeyValuePair<int, ObservableCollection<VendorInventoryItem>> kvp in _vItemsCache)
             {
-                v.Update();
+                Vendor v = _models.Vendors.First(x => x.Id == kvp.Key);
+                v.Update(kvp.Value.Select(x => x.ToInventoryItem()).ToList());
             }
-            RefreshVendorList();
-            AlterVendorCanExecute = false;
         }
 
         private void DeleteVendor(object obj)
@@ -146,9 +189,10 @@ namespace BuddhaBowls
             }
         }
 
-        private void ChangeVendorItems(object obj)
+        private void EditVendor(object obj)
         {
-            SetVendorItemsVM tabVM = new SetVendorItemsVM(SelectedVendor);
+            _vItemsCache.Remove(SelectedVendor.Id);
+            NewVendorWizardVM tabVM = new NewVendorWizardVM(SelectedVendor);
             tabVM.Add("Vendor Items");
         }
 
@@ -201,6 +245,26 @@ namespace BuddhaBowls
         {
             AddEditErrorMessage = "";
         }
+
+        private void LoadVendorItems()
+        {
+            if(!_vItemsCache.Keys.Contains(SelectedVendor.Id))
+            {
+                List<InventoryItem> vendorItems = SelectedVendor.GetInventoryItems();
+                if (vendorItems != null)
+                {
+                    _vItemsCache[SelectedVendor.Id] = new ObservableCollection<VendorInventoryItem>(MainHelper.SortItems(vendorItems).
+                                                            Select(x => new VendorInventoryItem(_models.GetVendorsFromItem(x), x)));
+                }
+                else
+                {
+                    _vItemsCache[SelectedVendor.Id] = null;
+                }
+            }
+
+            SelectedVendorItems = _vItemsCache[SelectedVendor.Id];
+        }
+
         #endregion
     }
 }
