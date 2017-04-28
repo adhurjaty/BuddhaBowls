@@ -407,6 +407,7 @@ namespace BuddhaBowls
         /// <param name="item"></param>
         public void AddItem(InventoryItem item)
         {
+            FilterText = "";
             // don't double add new item
             VendorInventoryItem existingItem = _inventoryItems.FirstOrDefault(x => x.Id == item.Id);
             if(existingItem != null)

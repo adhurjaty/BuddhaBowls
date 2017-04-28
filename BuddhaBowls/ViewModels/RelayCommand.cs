@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Input;
 
 namespace BuddhaBowls
@@ -52,7 +53,14 @@ namespace BuddhaBowls
 
         public void Execute(object parameter)
         {
-            _execute(parameter);
+            try
+            {
+                _execute(parameter);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public void OnCanExecuteChanged()
