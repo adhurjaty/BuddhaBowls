@@ -334,14 +334,17 @@ namespace BuddhaBowls
             }
         }
 
-        public void AddInvItem(InventoryItem item)
+        public void AddedInvItem()
         {
-            InventoryTab.AddInvItem(item);
+            InventoryTab.AddedInvItem();
+            VendorTab.Refresh();
 
             foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
             {
                 if (tempVM.GetType() == typeof(NewInventoryVM))
-                    ((NewInventoryVM)tempVM).InvListVM.AddItem(item);
+                    ((NewInventoryVM)tempVM).InvListVM.Refresh();
+                if (tempVM.GetType() == typeof(NewVendorWizardVM))
+                    ((NewVendorWizardVM)tempVM).Refresh();
             }
         }
 

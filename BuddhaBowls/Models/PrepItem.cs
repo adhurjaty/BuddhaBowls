@@ -8,17 +8,27 @@ namespace BuddhaBowls.Models
 {
     public class PrepItem : Model
     {
-        public int WillNeed { get; set; }
-        public int MayNeed { get; set; }
-        public int NotNeed { get; set; }
         public string Name { get; set; }
         public string CountUnit { get; set; }
+        public float Cost { get; set; }
         public int LineCount { get; set; }
-        public int LineCountPar { get; set; }
         public int WalkInCount { get; set; }
-        public int WalkInCountPar { get; set; }
-        public float Threshold { get; set; }
-        public int PrepQty { get; set; }
+
+        public int TotalCount
+        {
+            get
+            {
+                return LineCount + WalkInCount;
+            }
+        }
+
+        public float Extension
+        {
+            get
+            {
+                return Cost * TotalCount;
+            }
+        }
 
         public PrepItem() : base()
         {
@@ -39,5 +49,6 @@ namespace BuddhaBowls.Models
         {
             Name = item.Name;
         }
+
     }
 }

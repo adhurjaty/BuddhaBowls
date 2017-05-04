@@ -229,12 +229,13 @@ namespace BuddhaBowls
         public void RefreshVendorList()
         {
             FilteredVendorList = new ObservableCollection<Vendor>(_models.Vendors.OrderBy(x => x.Name));
+            _vItemsCache = new Dictionary<int, ObservableCollection<VendorInventoryItem>>();
         }
 
         public void FilterVendors(string filterStr)
         {
             if (string.IsNullOrWhiteSpace(filterStr))
-                RefreshVendorList();
+                new ObservableCollection<Vendor>(_models.Vendors.OrderBy(x => x.Name));
             else
                 FilteredVendorList = new ObservableCollection<Vendor>(_models.Vendors
                                                         .Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
@@ -248,18 +249,29 @@ namespace BuddhaBowls
 
         private void LoadVendorItems()
         {
-            if(!_vItemsCache.Keys.Contains(SelectedVendor.Id))
+            if (!_vItemsCache.Keys.Contains(SelectedVendor.Id))
             {
-                List<InventoryItem> vendorItems = SelectedVendor.GetInventoryItems();
-                if (vendorItems != null)
+                List<VendorInventoryItem> vendorItems = _models.VendorInvItems.Where(x => x.Vendors.Contains(SelectedVendor))
+                                                            .Select(x => x.Copy()).ToList();
+                foreach (VendorInventoryItem item in vendorItems)
                 {
-                    _vItemsCache[SelectedVendor.Id] = new ObservableCollection<VendorInventoryItem>(MainHelper.SortItems(vendorItems).
-                                                            Select(x => new VendorInventoryItem(_models.GetVendorsFromItem(x), x)));
+                    item.SelectedVendor = SelectedVendor;
                 }
-                else
-                {
-                    _vItemsCache[SelectedVendor.Id] = null;
-                }
+
+                _vItemsCache[SelectedVendor.Id] = new ObservableCollection<VendorInventoryItem>(vendorItems);
+                //SelectedVendorItems = new ObservableCollection<VendorInventoryItem>(vendorItems);
+
+                //List<InventoryItem> vendorItems = SelectedVendor.GetInventoryItems();
+                //if (vendorItems != null)
+                //{
+                //    _vItemsCache[SelectedVendor.Id] = new ObservableCollection<VendorInventoryItem>(MainHelper.SortItems(vendorItems).
+                //                                            Select(x => new VendorInventoryItem(_models.GetVendorsFromItem(x), x)
+                //                                                                { SelectedVendor = SelectedVendor }));
+                //}
+                //else
+                //{
+                //    _vItemsCache[SelectedVendor.Id] = null;
+                //}
             }
 
             SelectedVendorItems = _vItemsCache[SelectedVendor.Id];

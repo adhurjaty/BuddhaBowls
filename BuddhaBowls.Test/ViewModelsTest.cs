@@ -96,6 +96,8 @@ namespace BuddhaBowls.Test
             _vm.DataFileFolder = validPath;
             _vm.SaveSettingsCommand.Execute(null);
 
+            _vm.InventoryTab.SwitchButtonList.First(x => x.PageName == "History").SwitchCommand.Execute(2);
+
             Assert.AreEqual(DateTime.Parse("3/22/2017  8:28:00 PM"), new List<Inventory>(_vm.InventoryTab.InventoryList)[0].Date);
             Assert.AreEqual("Another guy", _vm.VendorTab.FilteredVendorList[0].Name);
         }
@@ -121,6 +123,7 @@ namespace BuddhaBowls.Test
         {
             InventoryTabVM tabVM = _vm.InventoryTab;
             DateTime invDate = DateTime.Today;
+            tabVM.SwitchButtonList.First(x => x.PageName == "History").SwitchCommand.Execute(2);
             int initInvCount = tabVM.InventoryList.Count;
 
             tabVM.AddCommand.Execute(null);
@@ -714,7 +717,7 @@ namespace BuddhaBowls.Test
         }
 
         [TestMethod]
-        public void ChangeVendorItemsVMTest()
+        public void EditVendorVMTest()
         {
             string name = "My New Vendor";
             VendorTabVM vendorTab = CreateTestVendor(name, "mynew@example.com");
@@ -725,9 +728,9 @@ namespace BuddhaBowls.Test
             try
             {
                 vendorTab.EditVendorCommand.Execute(null);
-                SetVendorItemsVM setItemsTab = GetOpenTempTabVM<SetVendorItemsVM>();
+                NewVendorWizardVM editItemsTab = GetOpenTempTabVM<NewVendorWizardVM>();
 
-                foreach (InventoryItem item in setItemsTab.VendorItems)
+                foreach (InventoryItem item in editItemsTab.InventoryList)
                 {
                     float[] refVals = _vendorSoldDict[item.Name];
                     float refConversion = refVals[0];
@@ -736,17 +739,14 @@ namespace BuddhaBowls.Test
                     Assert.AreEqual(refPrice, item.LastPurchasedPrice);
                 }
 
-                setItemsTab.ItemToAdd = new InventoryItem(new Dictionary<string, string>() { { "Name", "Vanilla" } });
-                setItemsTab.ModalOkCommand.Execute(null);
-                InventoryItem newVendorItem = setItemsTab.VendorItems.FirstOrDefault(x => x.Name == "Vanilla");
-
-                Assert.IsNotNull(newVendorItem);
-                Assert.IsNull(setItemsTab.RemainingItems.FirstOrDefault(x => x.Name == "Vanilla"));
+                editItemsTab.ShowAllCommand.Execute(null);
+                InventoryVendorItem newVendorItem = editItemsTab.InventoryList.First(x => x.Name == "Vanilla");
+                newVendorItem.IsSold = true;
 
                 newVendorItem.Conversion = 7;
                 newVendorItem.LastPurchasedPrice = 77.40f;
 
-                setItemsTab.SaveCommand.Execute(null);
+                editItemsTab.FinishCommand.Execute(null);
 
                 List<InventoryItem> vendorItems = newVendor.GetInventoryItems();
                 InventoryItem testVendorItem = vendorItems.First(x => x.Name == "Vanilla");
@@ -764,16 +764,20 @@ namespace BuddhaBowls.Test
         {
             VendorTabVM vendorTab = _vm.VendorTab;
             Vendor berryMan = vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == "Berry Man");
+            vendorTab.SelectedVendor = berryMan;
 
-            string origEmail = berryMan.Email;
-            berryMan.Email = "akljsflkjsd";
-            string origPhone = berryMan.PhoneNumber;
-            berryMan.PhoneNumber = "98765543";
+            VendorInventoryItem item = vendorTab.SelectedVendorItems[0];
+            float origConv = item.Conversion;
+            float origCount = item.Count;
+
+            item.Conversion = 666f;
+            item.Count = 123f;
 
             vendorTab.ResetCommand.Execute(null);
+            item = vendorTab.SelectedVendorItems[0];
 
-            Assert.AreEqual(origEmail, berryMan.Email);
-            Assert.AreEqual(origPhone, berryMan.PhoneNumber);
+            Assert.AreEqual(origConv, item.Conversion);
+            Assert.AreEqual(origCount, item.Count);
         }
 
         #endregion
@@ -785,7 +789,7 @@ namespace BuddhaBowls.Test
         {
             RecipeTabVM recipeTab = _vm.RecipeTab;
 
-            Assert.AreEqual("Balsamic Vinegar", recipeTab.FilteredItems[0].Name);
+            Assert.AreEqual("Mac & Cheese", recipeTab.FilteredItems[0].Name);
         }
 
         [TestMethod]

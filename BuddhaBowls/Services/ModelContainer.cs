@@ -14,12 +14,30 @@ namespace BuddhaBowls.Services
     {
         private Dictionary<string, string> _categoryColors;
 
-        public List<InventoryItem> InventoryItems { get; set; }
+        private List<InventoryItem> _inventoryItems;
+        public List<InventoryItem> InventoryItems
+        {
+            get
+            {
+                return _inventoryItems;
+            }
+            set
+            {
+                _inventoryItems = value;
+
+                if (_inventoryItems != null && VendorInvItems == null)
+                {
+                    VendorInvItems = _inventoryItems.Select(x => new VendorInventoryItem(GetVendorsFromItem(x), x)).ToList();
+                }
+            }
+        }
+
         public List<Recipe> Recipes { get; set; }
         public List<PurchaseOrder> PurchaseOrders { get; set; }
         public List<Vendor> Vendors { get; set; }
         public List<Inventory> Inventories { get; set; }
         public List<PrepItem> PrepItems { get; set; }
+        public List<VendorInventoryItem> VendorInvItems { get; private set; }
 
         public ModelContainer()
         {
@@ -33,15 +51,12 @@ namespace BuddhaBowls.Services
 
         private void InitializeModels()
         {
-            InventoryItems = ModelHelper.InstantiateList<InventoryItem>("InventoryItem") ?? new List<InventoryItem>();
+            Vendors = ModelHelper.InstantiateList<Vendor>("Vendor") ?? new List<Vendor>();
+            InventoryItems = MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem") ?? new List<InventoryItem>()).ToList();
             Recipes = ModelHelper.InstantiateList<Recipe>("Recipe") ?? new List<Recipe>();
             PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder") ?? new List<PurchaseOrder>();
-            Vendors = ModelHelper.InstantiateList<Vendor>("Vendor") ?? new List<Vendor>();
             Inventories = ModelHelper.InstantiateList<Inventory>("Inventory") ?? new List<Inventory>();
             PrepItems = ModelHelper.InstantiateList<PrepItem>("PrepItem") ?? new List<PrepItem>();
-
-            if (InventoryItems == null || Recipes == null)
-                return;
         }
 
         private void InitializeInventoryOrder()
@@ -145,12 +160,16 @@ namespace BuddhaBowls.Services
                 item.Update();
                 int itemId = item.Id;
                 InventoryItems[InventoryItems.FindIndex(x => x.Id == itemId)] = item;
+                VendorInvItems[VendorInvItems.FindIndex(x => x.Id == itemId)] = new VendorInventoryItem(GetVendorsFromItem(item), item);
             }
             else
             {
                 item.Id = item.Insert();
                 InventoryItems.Add(item);
+                VendorInvItems.Add(new VendorInventoryItem(GetVendorsFromItem(item), item));
             }
+            InventoryItems = MainHelper.SortItems(InventoryItems).ToList();
+            VendorInvItems = MainHelper.SortItems(VendorInvItems).ToList();
         }
 
         /// <summary>
@@ -163,9 +182,19 @@ namespace BuddhaBowls.Services
             if(InventoryItems.First(x => x.Id == item.Id) == null)
                 return false;
             InventoryItems.RemoveAll(x => x.Id == item.Id);
+            VendorInvItems.RemoveAll(x => x.Id == item.Id);
             Properties.Settings.Default.InventoryOrder.Remove(item.Name);
             item.Destroy();
             return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ReOrderInvList()
+        {
+            InventoryItems = MainHelper.SortItems(InventoryItems).ToList();
+            VendorInvItems = MainHelper.SortItems(VendorInvItems).ToList();
         }
 
         /// <summary>
@@ -184,6 +213,15 @@ namespace BuddhaBowls.Services
                 vendor.Id = vendor.Insert(vendorItems);
                 Vendors.Add(vendor);
             }
+
+            foreach (InventoryItem item in vendorItems)
+            {
+                VendorInventoryItem vInvItem = VendorInvItems.FirstOrDefault(x => x.Id == item.Id);
+                if (vInvItem != null)
+                {
+                    vInvItem.AddVendor(vendor, item);
+                }
+            }
         }
 
         /// <summary>
@@ -192,6 +230,11 @@ namespace BuddhaBowls.Services
         /// <param name="vendor"></param>
         public void DeleteVendor(Vendor vendor)
         {
+            foreach (VendorInventoryItem item in VendorInvItems.Where(x => x.Vendors.Contains(vendor)))
+            {
+                item.DeleteVendor(vendor);
+            }
+
             Vendors.Remove(vendor);
             vendor.Destroy();
         }
@@ -276,6 +319,61 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
+        /// Gets the all category breakdown of the value of inventory (inventory and prep items)
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string, float> GetCategoryValues()
+        {
+            Dictionary<string, float> costDict = new Dictionary<string, float>();
+            foreach (InventoryItem item in InventoryItems)
+            {
+                if (!costDict.Keys.Contains(item.Category))
+                    costDict[item.Category] = 0;
+                costDict[item.Category] += item.PriceExtension;
+            }
+
+            foreach(KeyValuePair<string, float> kvp in GetPrepCatValues())
+            {
+                if (!costDict.Keys.Contains(kvp.Key))
+                    costDict[kvp.Key] = 0;
+                costDict[kvp.Key] += kvp.Value;
+            }
+
+            return costDict;
+        }
+
+        public Dictionary<string, float> GetPrepCatValues()
+        {
+            Dictionary<string, float> costDict = new Dictionary<string, float>();
+
+            foreach (PrepItem item in PrepItems)
+            {
+                InventoryItem invItem = InventoryItems.FirstOrDefault(x => x.Name == item.Name);
+                if (invItem != null)
+                {
+                    if (!costDict.Keys.Contains(invItem.Category))
+                        costDict[invItem.Category] = 0;
+                    costDict[invItem.Category] += item.Extension;
+                    continue;
+                }
+
+                // separate prep item extension costs among the categories
+                Recipe recipe = Recipes.FirstOrDefault(x => x.Name == item.Name);
+                if (recipe != null)
+                {
+                    foreach (KeyValuePair<string, float> kvp in recipe.GetCatCostProportions())
+                    {
+                        if (!costDict.Keys.Contains(kvp.Key))
+                            costDict[kvp.Key] = 0;
+                        costDict[kvp.Key] += kvp.Value * item.Extension;
+                    }
+                }
+            }
+
+            return costDict;
+        }
+
+        /// <summary>
         /// Converts case-sensitive hashset into case insensitive (will not store OZ-wt AND OZ-WT)
         /// </summary>
         /// <param name="set"></param>
@@ -287,5 +385,36 @@ namespace BuddhaBowls.Services
                    : new HashSet<string>(set, StringComparer.OrdinalIgnoreCase);
         }
 
+        /// <summary>
+        /// Alters VendorInvItems property to have all same items in list
+        /// </summary>
+        private void SyncVendorItems()
+        {
+            List<int> vItemsIds = VendorInvItems.Select(x => x.Id).ToList();
+            for (int i = 0; i < InventoryItems.Count; i++)
+            {
+                int invId = InventoryItems[i].Id;
+                if(i >= VendorInvItems.Count)
+                {
+                    VendorInvItems.Add(new VendorInventoryItem(GetVendorsFromItem(InventoryItems[i]), InventoryItems[i]));
+                    continue;
+                }
+                if (invId != VendorInvItems[i].Id)
+                {
+                    VendorInventoryItem vItem;
+                    if (vItemsIds.Contains(invId))
+                    {
+                        vItem = VendorInvItems.First(x => x.Id == invId);
+                        VendorInvItems.Remove(vItem);
+                        VendorInvItems.Insert(i, vItem);
+                    }
+                    else
+                    {
+                        vItem = new VendorInventoryItem(GetVendorsFromItem(InventoryItems[i]), InventoryItems[i]);
+                    }
+                    VendorInvItems.Insert(i, vItem);
+                }
+            }
+        }
     }
 }

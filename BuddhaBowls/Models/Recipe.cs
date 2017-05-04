@@ -149,5 +149,21 @@ namespace BuddhaBowls.Models
         {
             return _dbInt.FilePath(GetRecipeTableName());
         }
+
+        public Dictionary<string, float> GetCatCostProportions()
+        {
+            Dictionary<string, float> propDict = GetCategoryCosts();
+            float totalCost = GetCost();
+
+            if (totalCost == 0)
+                return null;
+
+            foreach (KeyValuePair<string, float> kvp in propDict)
+            {
+                propDict[kvp.Key] /= totalCost;
+            }
+
+            return propDict;
+        }
     }
 }

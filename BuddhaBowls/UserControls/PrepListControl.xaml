@@ -32,15 +32,13 @@
                 ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding PrepItemList}"
                 SelectedItem="{Binding SelectedPrepItem}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="-1,0,1,0">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="May Need" Binding="{Binding MayNeed}" Width="80"/>
-                <DataGridTextColumn Header="Will Need" Binding="{Binding WilNeed}" Width="80"/>
-                <DataGridTextColumn Header="Not Needed" Binding="{Binding NotNeed}" Width="80"/>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="3*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Count Unit" Binding="{Binding CountUnit}" Width="2*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Line Count" Binding="{Binding LineCount}" Width="2*"/>
-                <DataGridTextColumn Header="Walk-in Count" Binding="{Binding WalkInCount}" Width="2*"/>
-                <DataGridTextColumn Header="Threshold" Binding="{Binding Threshold}" Width="60"/>
-                <DataGridTextColumn Header="Qty" Binding="{Binding PrepQty}" Width="50"/>
+                <DataGridTextColumn Header="Product" Binding="{Binding Name}" Width="2*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Prep Unit" Binding="{Binding CountUnit}" Width="2*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Unit Cost" Binding="{Binding Cost}" Width="1*"/>
+                <DataGridTextColumn Header="Line Count" Binding="{Binding LineCount}" Width="1*"/>
+                <DataGridTextColumn Header="Walk-in Count" Binding="{Binding WalkInCount}" Width="1*"/>
+                <DataGridTextColumn Header="Total" Binding="{Binding TotalCount}" Width="1*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Extension" Binding="{Binding Path=Extension, StringFormat=c}" Width="1*" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

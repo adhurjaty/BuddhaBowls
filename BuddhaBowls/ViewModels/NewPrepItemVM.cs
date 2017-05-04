@@ -44,34 +44,6 @@ namespace BuddhaBowls
             }
         }
 
-        private bool _lineExtra;
-        public bool LineExtra
-        {
-            get
-            {
-                return _lineExtra;
-            }
-            set
-            {
-                _lineExtra = value;
-                NotifyPropertyChanged("LineExtra");
-            }
-        }
-
-        private bool _walkInExtra;
-        public bool WalkInExtra
-        {
-            get
-            {
-                return _walkInExtra;
-            }
-            set
-            {
-                _walkInExtra = value;
-                NotifyPropertyChanged("WalkInExtra");
-            }
-        }
-
         private List<string> _prepCountUnitList;
         public List<string> PrepCountUnitList
         {
@@ -86,6 +58,20 @@ namespace BuddhaBowls
             }
         }
 
+        //private int _nameError;
+        //public int NameError
+        //{
+        //    get
+        //    {
+        //        return _nameError;
+        //    }
+        //    set
+        //    {
+        //        _nameError = value;
+        //        NotifyPropertyChanged("NameError");
+        //    }
+        //}
+
         #endregion
 
         #region ICommand and CanExecute
@@ -96,8 +82,6 @@ namespace BuddhaBowls
         {
             SaveItem = addDel;
             Item = new PrepItem();
-            Item.LineCountPar = 1;
-            Item.WalkInCountPar = 1;
             Header = "New Prep Item";
             _newItem = true;
             NameList = _models.GetAllIItems().Select(x => x.Name).ToList();
@@ -110,20 +94,6 @@ namespace BuddhaBowls
             Item = item;
             Header = "Edit " + item.Name;
             _newItem = false;
-        }
-
-        private int _nameError;
-        public int NameError
-        {
-            get
-            {
-                return _nameError;
-            }
-            set
-            {
-                _nameError = value;
-                NotifyPropertyChanged("NameError");
-            }
         }
 
         #region ICommand Helpers
@@ -167,17 +137,14 @@ namespace BuddhaBowls
             if (string.IsNullOrWhiteSpace(Item.Name))
             {
                 ErrorMessage = "Must supply prep item name";
-                NameError = 2;
                 return false;
             }
             if (_newItem && _models.PrepItems.Select(x => x.Name.ToUpper().Replace(" ", "")).Contains(Item.Name.ToUpper().Replace(" ", "")))
             {
                 ErrorMessage = Item.Name + " already exists as a prep item";
-                NameError = 2;
                 return false;
             }
 
-            NameError = 0;
             ErrorMessage = "";
             return true;
         }

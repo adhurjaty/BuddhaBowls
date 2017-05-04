@@ -14,3 +14,4 @@ Id,Name,RecipeUnit,RecipeUnitConversion,Category,CountUnit,RecipeUnitConversion,
 12,Roasted Bell Peppers,OZ-wt,36.23,MAC + SOUPS,,1,0,TRUE
 13,Sauteed Mushrooms,OZ-wt,22.1,MAC + SOUPS,,1,0,TRUE
 14,Tomato Basil,OZ-wt,518.4,MAC + SOUPS,,1,0,TRUE
+15,Test Recipe,,,,,,0,True

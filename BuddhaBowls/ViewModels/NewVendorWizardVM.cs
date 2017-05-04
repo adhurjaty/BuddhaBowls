@@ -110,8 +110,7 @@ namespace BuddhaBowls
         public NewVendorWizardVM() : base()
         {
             _newVendor = true;
-            _inventoryItems = _models.InventoryItems.Select(x => new InventoryVendorItem(x)).ToList();
-            InventoryList = new ObservableCollection<InventoryVendorItem>(_inventoryItems);
+            Refresh();
             Vend = new Vendor();
             Header = "New Vendor";
 
@@ -123,12 +122,15 @@ namespace BuddhaBowls
         {
             _newVendor = false;
             Vend = v;
-            List<int> vendItemIds = v.GetInventoryItems().Select(x => x.Id).ToList();
-            foreach (InventoryVendorItem item in _inventoryItems)
-            {
-                if (vendItemIds.Contains(item.Id))
-                    item.IsSold = true;
-            }
+            Refresh();
+            //foreach (InventoryVendorItem item in _inventoryItems)
+            //{
+            //    if (vendItemIds.Contains(item.Id))
+            //    {
+
+            //        item.IsSold = true;
+            //    }
+            //}
             Header = "Edit Vendor " + v.Name;
 
             ShowSold(null);
@@ -210,6 +212,31 @@ namespace BuddhaBowls
         {
             InventoryList = MainHelper.FilterInventoryItems(filterStr, _inventoryItems);
         }
+
+        public override void Refresh()
+        {
+            if(_newVendor)
+            {
+                _inventoryItems = _models.InventoryItems.Select(x => new InventoryVendorItem(x)).ToList();
+                InventoryList = new ObservableCollection<InventoryVendorItem>(_inventoryItems);
+            }
+            else
+            {
+                List<InventoryItem> vendItems = Vend.GetInventoryItems();
+                List<int> vendItemIds = vendItems.Select(x => x.Id).ToList();
+                foreach (InventoryItem vItem in vendItems)
+                {
+                    int listItemIdx = _inventoryItems.FindIndex(x => x.Id == vItem.Id);
+                    if (listItemIdx != -1)
+                    {
+                        _inventoryItems[listItemIdx] = new InventoryVendorItem(vItem) { IsSold = true };
+                    }
+                }
+
+                InventoryList = new ObservableCollection<InventoryVendorItem>(_inventoryItems);
+            }
+        }
+
         #endregion
     }
 

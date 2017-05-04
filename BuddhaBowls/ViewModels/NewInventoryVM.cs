@@ -90,6 +90,7 @@ namespace BuddhaBowls
 
             InitICommand();
             ((RelayCommand)SaveCountCommand).ChangeCallback(SaveOldInventory);
+            Header = "Edit Inventory " + inv.Date.ToShortDateString();
         }
         
         #region ICommand Helpers

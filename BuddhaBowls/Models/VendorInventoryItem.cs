@@ -53,6 +53,21 @@ namespace BuddhaBowls.Models
         {
         }
 
+        public VendorInventoryItem(InventoryItem item, Vendor v)
+        {
+            foreach (string property in item.GetPropertiesDB())
+            {
+                SetProperty(property, item.GetPropertyValue(property));
+            }
+            Id = item.Id;
+            _vendorDict = new Dictionary<Vendor, InventoryItem>();
+            if (v != null)
+            {
+                _vendorDict[v] = item;
+                SelectedVendor = v;
+            }
+        }
+
         public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict, InventoryItem item)
         {
             _vendorDict = vendorDict;
@@ -105,6 +120,30 @@ namespace BuddhaBowls.Models
             NotifyPropertyChanged("CountPrice");
         }
 
+        public void AddVendor(Vendor v, InventoryItem item)
+        {
+            Vendor existingVendor = Vendors.FirstOrDefault(x => x.Id == v.Id);
+            if (existingVendor != null)
+            {
+                _vendorDict.Remove(existingVendor);
+            }
+            _vendorDict[v] = item;
+            NotifyPropertyChanged("Vendors");
+            UpdateProperties();
+        }
+
+        public void DeleteVendor(Vendor vendor)
+        {
+            _vendorDict.Remove(vendor);
+            NotifyPropertyChanged("Vendors");
+            UpdateProperties();
+        }
+
+        public void SetVendorDict(Dictionary<Vendor, InventoryItem> vDict)
+        {
+            _vendorDict = vDict;
+        }
+
         public override int Insert()
         {
             return ToInventoryItem().Insert();
@@ -125,6 +164,14 @@ namespace BuddhaBowls.Models
             return ToInventoryItem().GetPropertiesDB();
         }
 
+        public new VendorInventoryItem Copy()
+        {
+            VendorInventoryItem cpy = base.Copy<VendorInventoryItem>();
+            cpy.SetVendorDict(_vendorDict);
+            cpy.SelectedVendor = SelectedVendor;
+            return cpy;
+        }
+
         /// <summary>
         /// Displays different property values to datagrid when the user changes the vendor on the datagrid
         /// </summary>
@@ -143,5 +190,6 @@ namespace BuddhaBowls.Models
                 Update();
             }
         }
+
     }
 }

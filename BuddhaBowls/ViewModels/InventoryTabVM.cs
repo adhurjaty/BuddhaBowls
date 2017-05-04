@@ -133,9 +133,6 @@ namespace BuddhaBowls
             Header = "Inventory";
 
             InitSwitchButtons(new string[] { "Master", "Prep", "History" });
-            
-            //PrimaryPageName = "Master";
-            //SecondaryPageName = "History";
 
             AddCommand = new RelayCommand(StartNewInventory, x => DBConnection);
             DeleteCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute && DBConnection);
@@ -292,9 +289,10 @@ namespace BuddhaBowls
             PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderBy(x => x.Name));
         }
 
-        public void AddInvItem(InventoryItem item)
+        public void AddedInvItem()
         {
-            InvListVM.AddItem(item);
+            InvListVM.Refresh();
+            //InvListVM.AddItem(item);
         }
 
         public void RemoveInvItem(InventoryItem item)

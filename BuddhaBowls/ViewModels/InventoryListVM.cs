@@ -298,7 +298,7 @@ namespace BuddhaBowls
 
         private void AddInventoryItem(object obj)
         {
-            NewInventoryItemWizard wizard = new NewInventoryItemWizard(AddNewItem);
+            NewInventoryItemWizard wizard = new NewInventoryItemWizard();
             wizard.Add("New Item");
         }
 
@@ -321,7 +321,7 @@ namespace BuddhaBowls
 
         private void EditInventoryItem(object obj)
         {
-            NewInventoryItemWizard wizard = new NewInventoryItemWizard(AddNewItem, SelectedInventoryItem.ToInventoryItem());
+            NewInventoryItemWizard wizard = new NewInventoryItemWizard(SelectedInventoryItem.ToInventoryItem());
             wizard.Add("New Item");
         }
 
@@ -331,8 +331,8 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void ResetList(object obj)
         {
-            FilterText = "";
             FilterItems("");
+            Refresh();
         }
 
         private void StartEditOrder(object obj)
@@ -343,6 +343,7 @@ namespace BuddhaBowls
         private void SaveOrder(object obj)
         {
             EditOrderVisibility = Visibility.Visible;
+            SaveInvOrder();
         }
 
         #endregion
@@ -378,56 +379,22 @@ namespace BuddhaBowls
 
         public override void Refresh()
         {
-            if (_inventory == null)
-            {
-                _inventoryItems = MainHelper.SortItems(_models.InventoryItems.Select(x =>
-                                    new VendorInventoryItem(_models.GetVendorsFromItem(x), x))).ToList();
-            }
+            if (IsMasterList)
+                _inventoryItems = _models.VendorInvItems;
             else
             {
-                _inventoryItems = MainHelper.SortItems(_inventory.GetInventoryHistory().Select(x =>
-                                    new VendorInventoryItem(_models.GetVendorsFromItem(x), x)).ToList()).ToList();
+                if (_inventory == null)
+                {
+                    _inventoryItems = _models.VendorInvItems.Select(x => x.Copy()).ToList();
+                }
+                else
+                {
+                    _inventoryItems = MainHelper.SortItems(_inventory.GetInventoryHistory().Select(x =>
+                                    new VendorInventoryItem(x, _models.Vendors.FirstOrDefault(y => y.Id == x.LastVendorId)))).ToList();
+                }
             }
             FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
             FilterText = "";
-        }
-
-        /// <summary>
-        /// Adds an item across the application
-        /// </summary>
-        /// <param name="item"></param>
-        private void AddNewItem(InventoryItem item)
-        {
-            ParentContext.AddInvItem(item);
-        }
-
-        /// <summary>
-        /// Adds an item to this list
-        /// </summary>
-        /// <param name="item"></param>
-        public void AddItem(InventoryItem item)
-        {
-            FilterText = "";
-            // don't double add new item
-            VendorInventoryItem existingItem = _inventoryItems.FirstOrDefault(x => x.Id == item.Id);
-            if(existingItem != null)
-            {
-                FilteredItems.Remove(existingItem);
-                _inventoryItems.Remove(existingItem);
-            }
-
-            VendorInventoryItem vendorItem = new VendorInventoryItem(_models.GetVendorsFromItem(item), item);
-            int idx = Properties.Settings.Default.InventoryOrder.FindIndex(x => x == item.Name);
-            if (idx != -1)
-            {
-                FilteredItems.Insert(idx, vendorItem);
-                _inventoryItems.Insert(idx, vendorItem);
-            }
-            else
-            {
-                FilteredItems.Add(vendorItem);
-                _inventoryItems.Add(vendorItem);
-            }
         }
 
         /// <summary>
@@ -456,7 +423,6 @@ namespace BuddhaBowls
             List<InventoryItem> newItemInList = MainHelper.MoveInList(item, up, FilteredItems.Select(x => (InventoryItem)x).ToList());
 
             FilteredItems = new ObservableCollection<VendorInventoryItem>(newItemInList.Select(x => (VendorInventoryItem)x));
-            SaveInvOrder();
         }
 
         private void SaveInvOrder()
@@ -467,6 +433,7 @@ namespace BuddhaBowls
             string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
             Directory.CreateDirectory(dir);
             File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), Properties.Settings.Default.InventoryOrder);
+            _models.ReOrderInvList();
         }
 
         public void RowEdited(VendorInventoryItem item)
@@ -477,6 +444,8 @@ namespace BuddhaBowls
                 InventoryItemCountChanged();
                 item.UpdateProperties();
             }
+            else
+                item.Update();
         }
 
         /// <summary>
@@ -502,17 +471,42 @@ namespace BuddhaBowls
             Refresh();
         }
 
+        /// <summary>
+        /// Upates prices in the category price breakdown dropdown list
+        /// </summary>
         private void UpdateInvValue()
         {
             List<PriceExpanderItem> items = new List<PriceExpanderItem>();
-            TotalValueMessage = "Inventory Value: " + FilteredItems.Sum(x => x.PriceExtension).ToString("c");
-            foreach (string category in _models.GetInventoryCategories())
+            float totalValue = 0;
+            foreach (KeyValuePair<string, float> kvp in GetCategoryValues())
             {
-                float value = _inventoryItems.Where(x => x.Category.ToUpper() == category.ToUpper()).Sum(x => x.PriceExtension);
-                items.Add(new PriceExpanderItem() { Label = category + " Value:", Price = value });
+                items.Add(new PriceExpanderItem() { Label = kvp.Key + " Value:", Price = kvp.Value });
+                totalValue += kvp.Value;
             }
+            TotalValueMessage = "Inventory Value: " + totalValue.ToString("c");
 
             CategoryPrices = new ObservableCollection<PriceExpanderItem>(items);
+        }
+
+        /// <summary>
+        /// Used to calculate value of each category - different method for master vs new inventory list
+        /// </summary>
+        /// <returns></returns>
+        private Dictionary<string, float> GetCategoryValues()
+        {
+            if (IsMasterList)
+                return _models.GetCategoryValues();
+
+            Dictionary<string, float> costDict = _models.GetPrepCatValues();
+
+            foreach (InventoryItem item in _inventoryItems)
+            {
+                if (!costDict.Keys.Contains(item.Category))
+                    costDict[item.Category] = 0;
+                costDict[item.Category] += item.PriceExtension;
+            }
+
+            return costDict;
         }
         #endregion
 

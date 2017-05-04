@@ -857,26 +857,26 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void GetBatchItemCostTest()
         {
-            Recipe clam = MockObjects.GetRecipe("New England Clam Chowder");
+            Recipe clam = new Recipe(new Dictionary<string, string>() { { "Name", "New England Clam Chowder" } });
 
-            float cost = clam.GetCost();
+            float cost = clam.RecipeCost;
 
-            Assert.AreEqual(7.06, Math.Round(cost, 2));
+            Assert.AreEqual(9.37f, Math.Round(cost, 2));
         }
 
         [TestMethod]
         public void GetCategoryCostTest()
         {
-            Recipe clam = MockObjects.GetRecipe("New England Clam Chowder");
+            Recipe clam = new Recipe(new Dictionary<string, string>() { { "Name", "New England Clam Chowder" } });
 
             Dictionary<string, float> catCost = clam.GetCategoryCosts();
 
             Dictionary<string, float> refCosts = new Dictionary<string, float>()
             {
-                { "Dairy", 1.08f },
-                { "Dry Goods", 1.87f },
-                { "Herbs", 0.02f },
-                { "Produce", 4.09f }
+                { "Dairy", 2.49f },
+                { "Dry Goods", 0.32f },
+                { "Herbs", 0.15f },
+                { "Produce", 6.41f }
             };
 
             foreach (string key in catCost.Keys)
@@ -887,7 +887,7 @@ namespace BuddhaBowls.Test
             }
 
             float totalCost = (float)Math.Round(new List<float>(catCost.Values).Sum(), 2);
-            Assert.AreEqual(7.06f, totalCost);
+            Assert.AreEqual(9.37f, totalCost);
         }
 
         [TestMethod]
@@ -899,7 +899,7 @@ namespace BuddhaBowls.Test
             try
             {
                 recipe.Insert(desired);
-                Assert.AreEqual(14.13, Math.Round(recipe.GetCost(), 2));
+                Assert.AreEqual(16.06, Math.Round(recipe.RecipeCost, 2));
             }
             finally
             {

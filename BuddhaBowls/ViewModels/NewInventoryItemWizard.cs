@@ -17,7 +17,6 @@ namespace BuddhaBowls
     public class NewInventoryItemWizard : WizardVM
     {
         private bool _newItem;
-        private AddItemDel<InventoryItem> AddInv;
 
         #region Content Binders
 
@@ -118,10 +117,9 @@ namespace BuddhaBowls
 
         #endregion
 
-        public NewInventoryItemWizard(AddItemDel<InventoryItem> addInv) : base()
+        public NewInventoryItemWizard() : base()
         {
             _newItem = true;
-            AddInv = addInv;
             Item = new InventoryItem();
             SetDefaultValues();
             VendorList = new ObservableCollection<VendorInfo>();
@@ -130,10 +128,9 @@ namespace BuddhaBowls
             InitICommand();
         }
 
-        public NewInventoryItemWizard(AddItemDel<InventoryItem> addInv, InventoryItem item) : base()
+        public NewInventoryItemWizard(InventoryItem item) : base()
         {
             _newItem = false;
-            AddInv = addInv;
             Item = item;
             Header = "Edit Inventory Item";
 
@@ -167,6 +164,7 @@ namespace BuddhaBowls
 
                 _models.AddUpdateInventoryItem(ref invItem);
 
+                // write new item to the different Vendors that offer the new/edited item
                 foreach(VendorInfo v in VendorList)
                 {
                     Vendor vendor = _models.Vendors.First(x => x.Name == v.Vendor);
@@ -178,8 +176,9 @@ namespace BuddhaBowls
                 }
 
                 invItem.Update();
+                _models.VendorInvItems.First(x => x.Id == invItem.Id).SetVendorDict(_models.GetVendorsFromItem(invItem));
 
-                AddInv(invItem);
+                ParentContext.AddedInvItem();
                 Close();
             }
         }
