@@ -48,27 +48,11 @@ namespace BuddhaBowls
             set
             {
                 _selectedVendor = value;
+                SelectedVendorItem = null;
                 if (_selectedVendor != null)
                     LoadVendorItems();
                 else
                     SelectedVendorItems = new ObservableCollection<VendorInventoryItem>();
-            }
-        }
-
-        /// <summary>
-        /// Selected inventory item (needs vendor to be selected)
-        /// </summary>
-        private InventoryItem _selectedVendorItem;
-        public InventoryItem SelectedVendorItem
-        {
-            get
-            {
-                return _selectedVendorItem;
-            }
-            set
-            {
-                _selectedVendorItem = value;
-                NotifyPropertyChanged("SelectedVendorItem");
             }
         }
 
@@ -100,6 +84,23 @@ namespace BuddhaBowls
             {
                 _selectedVendorItems = value;
                 NotifyPropertyChanged("SelectedVendorItems");
+            }
+        }
+
+        /// <summary>
+        /// Selected inventory item (needs vendor to be selected)
+        /// </summary>
+        private VendorInventoryItem _selectedVendorItem;
+        public VendorInventoryItem SelectedVendorItem
+        {
+            get
+            {
+                return _selectedVendorItem;
+            }
+            set
+            {
+                _selectedVendorItem = value;
+                NotifyPropertyChanged("SelectedVendorItem");
             }
         }
 
@@ -168,7 +169,7 @@ namespace BuddhaBowls
             //ChangeRecListOrderCommand = new RelayCommand(ChangeRecOrder, x => SelectedVendorCanExecute);
             EditVendorCommand = new RelayCommand(EditVendor, x => SelectedVendorCanExecute && DBConnection);
             GetOrderSheetCommand = new RelayCommand(GenerateOrderSheet, x => GenOrderSheetCanExecute && DBConnection);
-            AddVendorItemCommand = new RelayCommand(AddVendorItem, x => SelectedVendorItem != null);
+            AddVendorItemCommand = new RelayCommand(AddVendorItem, x => SelectedVendor != null);
             DeleteVendorItemCommand = new RelayCommand(DeleteVendorItem, x => SelectedVendorItem != null);
 
             _vItemsCache = new Dictionary<int, ObservableCollection<VendorInventoryItem>>();
@@ -236,12 +237,15 @@ namespace BuddhaBowls
 
         private void AddVendorItem(object obj)
         {
-            throw new NotImplementedException();
+            List<InventoryItem> remainingItems = _models.InventoryItems.Where(x => !SelectedVendorItems.Select(y => y.Id).Contains(x.Id)).ToList();
+            ModalVM<InventoryItem> modal = new ModalVM<InventoryItem>("Add Inv Item", remainingItems, AddInvItemToVendor);
+            ParentContext.ModalContext = modal;
         }
 
         private void DeleteVendorItem(object obj)
         {
-            throw new NotImplementedException();
+            SelectedVendor.RemoveInvItem(SelectedVendorItem.ToInventoryItem());
+            SelectedVendorItems.Remove(SelectedVendorItem);
         }
 
         #endregion
@@ -310,6 +314,13 @@ namespace BuddhaBowls
             SelectedVendorItems = _vItemsCache[SelectedVendor.Id];
         }
 
+        public void AddInvItemToVendor(InventoryItem item)
+        {
+            SelectedVendorItems.Add(new VendorInventoryItem(item, SelectedVendor));
+            SelectedVendorItems = new ObservableCollection<VendorInventoryItem>(MainHelper.SortItems(SelectedVendorItems));
+
+            SelectedVendor.Update(SelectedVendorItems.Select(x => x.ToInventoryItem()).ToList());
+        }
         #endregion
     }
 }

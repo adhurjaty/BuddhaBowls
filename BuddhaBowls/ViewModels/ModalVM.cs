@@ -12,11 +12,11 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public delegate void ModalOkDel(Vendor item);
+    public delegate void ModalOkDel<T>(T item);
 
-    public class ModalVM : INotifyPropertyChanged
+    public class ModalVM<T> : INotifyPropertyChanged where T : Model
     {
-        public ModalOkDel OkProc;
+        public ModalOkDel<T> OkProc;
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -41,8 +41,8 @@ namespace BuddhaBowls
             }
         }
 
-        private List<Vendor> _remainingItems;
-        public List<Vendor> RemainingItems
+        private List<T> _remainingItems;
+        public List<T> RemainingItems
         {
             get
             {
@@ -55,7 +55,7 @@ namespace BuddhaBowls
             }
         }
 
-        public Vendor ItemToAdd { get; set; }
+        public T ItemToAdd { get; set; }
 
         private Visibility _modalVisibility = Visibility.Hidden;
         public Visibility ModalVisibility
@@ -86,13 +86,13 @@ namespace BuddhaBowls
         }
 
         #endregion
-
-        public ModalVM(string header, List<Vendor> remainingItems, ModalOkDel okCallback)
+        public ModalVM(string header, List<T> remainingItems, ModalOkDel<T> okCallback)
         {
             ModalTitle = header;
-            RemainingItems = remainingItems;
             OkProc = okCallback;
             ModalVisibility = Visibility.Visible;
+
+            RemainingItems = remainingItems;
 
             ModalOkCommand = new RelayCommand(ModalOk, x => ModalOkCanExecute);
             ModalCancelCommand = new RelayCommand(ModalCancel);
