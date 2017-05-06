@@ -15,7 +15,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
-        <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="New Inventory" VerticalAlignment="Center" HorizontalAlignment="Center"
+        <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="{Binding Header}" VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="30"/>
         <DatePicker Grid.Row="1" SelectedDate="{Binding InventoryDate}" Height="25" Width="130" HorizontalAlignment="Left" VerticalAlignment="Top"
                     Margin="10, 35, 0, 0"/>

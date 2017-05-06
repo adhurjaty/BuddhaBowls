@@ -55,6 +55,23 @@ namespace BuddhaBowls
             }
         }
 
+        /// <summary>
+        /// Selected inventory item (needs vendor to be selected)
+        /// </summary>
+        private InventoryItem _selectedVendorItem;
+        public InventoryItem SelectedVendorItem
+        {
+            get
+            {
+                return _selectedVendorItem;
+            }
+            set
+            {
+                _selectedVendorItem = value;
+                NotifyPropertyChanged("SelectedVendorItem");
+            }
+        }
+
         public string AddEditHeader { get; private set; }
         public ObservableCollection<FieldSetting> FieldsCollection { get; private set; }
 
@@ -115,6 +132,10 @@ namespace BuddhaBowls
         public ICommand EditVendorCommand { get; set; }
         public ICommand GetOrderSheetCommand { get; set; }
 
+        // add and remove the item that the selected vendor sells
+        public ICommand AddVendorItemCommand { get; set; }
+        public ICommand DeleteVendorItemCommand { get; set; }
+
         public bool SelectedVendorCanExecute
         {
             get
@@ -147,6 +168,8 @@ namespace BuddhaBowls
             //ChangeRecListOrderCommand = new RelayCommand(ChangeRecOrder, x => SelectedVendorCanExecute);
             EditVendorCommand = new RelayCommand(EditVendor, x => SelectedVendorCanExecute && DBConnection);
             GetOrderSheetCommand = new RelayCommand(GenerateOrderSheet, x => GenOrderSheetCanExecute && DBConnection);
+            AddVendorItemCommand = new RelayCommand(AddVendorItem, x => SelectedVendorItem != null);
+            DeleteVendorItemCommand = new RelayCommand(DeleteVendorItem, x => SelectedVendorItem != null);
 
             _vItemsCache = new Dictionary<int, ObservableCollection<VendorInventoryItem>>();
             PurchasedUnitsList = _models.GetPurchasedUnits();
@@ -211,6 +234,16 @@ namespace BuddhaBowls
             }
         }
 
+        private void AddVendorItem(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void DeleteVendorItem(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Initializers
@@ -218,7 +251,7 @@ namespace BuddhaBowls
         private void InitVendors()
         {
             if (DBConnection)
-                RefreshVendorList();
+                Refresh();
             else
                 FilteredVendorList = new ObservableCollection<Vendor>() { new Vendor() { Name = "Could not connect to DB" } };
         }
@@ -226,7 +259,7 @@ namespace BuddhaBowls
         #endregion
 
         #region Update UI Methods
-        public void RefreshVendorList()
+        public override void Refresh()
         {
             FilteredVendorList = new ObservableCollection<Vendor>(_models.Vendors.OrderBy(x => x.Name));
             _vItemsCache = new Dictionary<int, ObservableCollection<VendorInventoryItem>>();

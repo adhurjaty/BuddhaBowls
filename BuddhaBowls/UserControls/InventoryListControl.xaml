@@ -67,7 +67,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
                 <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="2*"/>
-                <DataGridTextColumn Header="Unit" Binding="{Binding Path=PurchasedUnit, Mode=OneWay}" Width="2*" />
+                <DataGridTextColumn Header="Unit" Binding="{Binding Path=CountUnit, Mode=OneWay}" Width="2*" />
                 <!--Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}" />-->
                 <DataGridTextColumn Header="Unit Price" Binding="{Binding Path=LastPurchasedPrice, StringFormat=c}" Width="2*" />
                 <!--Visibility="{Binding Path=Data.MasterVisibility, Source={StaticResource proxy}}" />-->

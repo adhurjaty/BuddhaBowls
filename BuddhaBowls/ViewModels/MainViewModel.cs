@@ -322,7 +322,7 @@ namespace BuddhaBowls
         {
             OrderTab.RefreshOrderList();
             InventoryTab.Refresh();
-            VendorTab.RefreshVendorList();
+            VendorTab.Refresh();
             RecipeTab.RefreshList();
 
             if (TempTabVM.TabStack != null)

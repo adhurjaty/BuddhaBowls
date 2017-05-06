@@ -247,7 +247,15 @@ namespace BuddhaBowls
 
         private void EditPrepItem(object obj)
         {
-            throw new NotImplementedException();
+            NewPrepItemVM tabVM = new NewPrepItemVM(SelectedPrepItem, AddPrepItem);
+            tabVM.Add("Edit Prep Item");
+        }
+
+        public void PrepRowEdited(PrepItem item)
+        {
+            item.NotifyChanges();
+            item.Update();
+            
         }
 
         #endregion

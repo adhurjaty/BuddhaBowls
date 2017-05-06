@@ -393,6 +393,7 @@ namespace BuddhaBowls
                                     new VendorInventoryItem(x, _models.Vendors.FirstOrDefault(y => y.Id == x.LastVendorId)))).ToList();
                 }
             }
+            UpdateInvValue();
             FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
             FilterText = "";
         }
@@ -430,9 +431,7 @@ namespace BuddhaBowls
             Properties.Settings.Default.InventoryOrder = FilteredItems.Select(x => x.Name).ToList();
             Properties.Settings.Default.Save();
 
-            string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
-            Directory.CreateDirectory(dir);
-            File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), Properties.Settings.Default.InventoryOrder);
+            _models.SaveInvOrder();
             _models.ReOrderInvList();
         }
 
@@ -449,7 +448,7 @@ namespace BuddhaBowls
         }
 
         /// <summary>
-        /// Called when Master List is edited
+        /// Called when New/Edit Inventory List is edited
         /// </summary>
         public void InventoryItemCountChanged()
         {
@@ -515,8 +514,8 @@ namespace BuddhaBowls
         /// </summary>
         public void SaveNew(DateTime invDate)
         {
-            ResetList(null);
-            foreach (VendorInventoryItem item in FilteredItems)
+            FilterText = "";
+            foreach (VendorInventoryItem item in _inventoryItems)
             {
                 InventoryItem invItem = item.ToInventoryItem();
                 _models.AddUpdateInventoryItem(ref invItem);
@@ -539,6 +538,8 @@ namespace BuddhaBowls
             {
                 _models.Inventories.Add(inv);
             }
+
+            ParentContext.InventoryTab.InvListVM.UpdateInvValue();
         }
 
         public void SaveOld()

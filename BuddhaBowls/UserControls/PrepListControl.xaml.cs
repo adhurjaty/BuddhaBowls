@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuddhaBowls.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,6 +36,18 @@ namespace BuddhaBowls.UserControls
             TextBox textBox = FilterItemBox;
 
             ((InventoryTabVM)DataContext).FilterItems(textBox.Text);
+        }
+
+        private void dataGrid2_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            if (((DataGrid)sender).SelectedItem != null)
+            {
+                ((DataGrid)sender).RowEditEnding -= dataGrid2_RowEditEnding;
+                ((DataGrid)sender).CommitEdit();
+                ((DataGrid)sender).RowEditEnding += dataGrid2_RowEditEnding;
+                ((InventoryTabVM)DataContext).PrepRowEdited((PrepItem)e.Row.Item);
+            }
+            
         }
     }
 }

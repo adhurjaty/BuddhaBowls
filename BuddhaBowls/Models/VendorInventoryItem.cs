@@ -135,6 +135,7 @@ namespace BuddhaBowls.Models
         public void DeleteVendor(Vendor vendor)
         {
             _vendorDict.Remove(vendor);
+            vendor.RemoveInvItem(ToInventoryItem());
             NotifyPropertyChanged("Vendors");
             UpdateProperties();
         }

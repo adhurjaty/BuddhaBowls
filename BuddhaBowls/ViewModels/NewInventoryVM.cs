@@ -78,6 +78,7 @@ namespace BuddhaBowls
             InventoryControl = InvListVM.TabControl;
             
             InitICommand();
+            Header = "New Inventory";
         }
 
         public NewInventoryVM(RefreshDel refresh, Inventory inv) : base()
@@ -144,7 +145,7 @@ namespace BuddhaBowls
         #region Update UI Methods
 
         /// <summary>
-        /// Called when Master List is edited
+        /// Enables reset and save buttons
         /// </summary>
         public void InventoryItemCountChanged()
         {
@@ -154,7 +155,6 @@ namespace BuddhaBowls
         public override void Refresh()
         {
             InvListVM.Refresh();
-            //RefreshInv();
         }
 
         #endregion

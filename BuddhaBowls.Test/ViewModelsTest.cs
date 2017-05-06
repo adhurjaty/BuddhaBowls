@@ -320,6 +320,42 @@ namespace BuddhaBowls.Test
                 item.Destroy();
             }
         }
+
+        [TestMethod]
+        public void RemoveVendorFromInvItemVM()
+        {
+            string name = "My New Item";
+            Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
+            Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
+            InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
+
+            VendorInventoryItem item = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
+
+            try
+            {
+                listVM.SelectedInventoryItem = item;
+                listVM.EditCommand.Execute(null);
+
+                NewInventoryItemWizard wizardVM = GetOpenTempTabVM<NewInventoryItemWizard>();
+
+                wizardVM.NextCommand.Execute(null);
+                VendorInfo delVendor = wizardVM.VendorList.First(x => x.Vendor == "Another guy");
+                wizardVM.SelectedItem = delVendor;
+                wizardVM.DeleteVendorCommand.Execute(null);
+                wizardVM.NextCommand.Execute(null);
+                wizardVM.FinishCommand.Execute(null);
+
+                // redundant (I think) but reminder that the Master List should have changed
+                item = listVM.FilteredItems.First(x => x.Name == name);
+
+                Assert.AreEqual(1, item.Vendors.Count);
+                Assert.AreEqual(v2.Name, item.Vendors[0].Name);
+            }
+            finally
+            {
+                item.Destroy();
+            }
+        }
         #endregion
 
         #region OrderTabVM Tests

@@ -361,16 +361,27 @@ namespace BuddhaBowls.Services
                 Recipe recipe = Recipes.FirstOrDefault(x => x.Name == item.Name);
                 if (recipe != null)
                 {
-                    foreach (KeyValuePair<string, float> kvp in recipe.GetCatCostProportions())
+                    Dictionary<string, float> recipeCatProps = recipe.GetCatCostProportions();
+                    if (recipeCatProps != null)
                     {
-                        if (!costDict.Keys.Contains(kvp.Key))
-                            costDict[kvp.Key] = 0;
-                        costDict[kvp.Key] += kvp.Value * item.Extension;
+                        foreach (KeyValuePair<string, float> kvp in recipeCatProps)
+                        {
+                            if (!costDict.Keys.Contains(kvp.Key))
+                                costDict[kvp.Key] = 0;
+                            costDict[kvp.Key] += kvp.Value * item.Extension;
+                        }
                     }
                 }
             }
 
             return costDict;
+        }
+
+        public void SaveInvOrder()
+        {
+            string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
+            Directory.CreateDirectory(dir);
+            File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), Properties.Settings.Default.InventoryOrder);
         }
 
         /// <summary>

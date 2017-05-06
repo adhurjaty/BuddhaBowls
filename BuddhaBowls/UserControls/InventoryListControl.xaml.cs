@@ -44,7 +44,6 @@ namespace BuddhaBowls.UserControls
             {
                 ((DataGrid)sender).RowEditEnding -= MasterList_RowEditEnding;
                 ((DataGrid)sender).CommitEdit();
-                //((DataGrid)sender).Items.Refresh();
                 ((DataGrid)sender).RowEditEnding += MasterList_RowEditEnding;
                 ((InventoryListVM)DataContext).RowEdited(((VendorInventoryItem)e.Row.Item));
             }

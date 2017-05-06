@@ -161,11 +161,14 @@ namespace BuddhaBowls
 
                 Properties.Settings.Default.InventoryOrder = InvOrderList.Select(x => x.Name).ToList();
                 Properties.Settings.Default.Save();
+                _models.SaveInvOrder();
 
                 _models.AddUpdateInventoryItem(ref invItem);
 
+                List<Vendor> itemVendors = new List<Vendor>();
+
                 // write new item to the different Vendors that offer the new/edited item
-                foreach(VendorInfo v in VendorList)
+                foreach (VendorInfo v in VendorList)
                 {
                     Vendor vendor = _models.Vendors.First(x => x.Name == v.Vendor);
                     invItem.LastPurchasedPrice = v.Price;
@@ -173,6 +176,18 @@ namespace BuddhaBowls
                     invItem.PurchasedUnit = v.PurchasedUnit;
                     invItem.Yield = Yield;
                     vendor.Update(invItem);
+                    itemVendors.Add(vendor);
+                }
+
+                // delete vendors that were removed
+                VendorInventoryItem existingItem = _models.VendorInvItems.FirstOrDefault(x => x.Id == Item.Id);
+                if (existingItem != null)
+                {
+                    List<Vendor> delVendors = existingItem.Vendors.Except(itemVendors).ToList();
+                    foreach(Vendor vendor in delVendors)
+                    {
+                        existingItem.DeleteVendor(vendor);
+                    }
                 }
 
                 invItem.Update();

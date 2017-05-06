@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class PrepItem : Model
+    public class PrepItem : Model, INotifyPropertyChanged
     {
         public string Name { get; set; }
         public string CountUnit { get; set; }
@@ -30,6 +32,14 @@ namespace BuddhaBowls.Models
             }
         }
 
+        // INotifyPropertyChanged event and method
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public PrepItem() : base()
         {
             _tableName = "PrepItem";
@@ -50,5 +60,10 @@ namespace BuddhaBowls.Models
             Name = item.Name;
         }
 
+        public void NotifyChanges()
+        {
+            NotifyPropertyChanged("TotalCount");
+            NotifyPropertyChanged("Extension");
+        }
     }
 }

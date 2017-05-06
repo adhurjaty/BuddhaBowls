@@ -34,20 +34,23 @@
                 <ColumnDefinition Width="5*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Row="0" Grid.Column="0" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
-                    Margin="0, 0, 35, 0" Command="{Binding AddVendorCommand}">
+                    Margin="0, 0, 5, 0" Command="{Binding AddVendorCommand}">
                 <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </Button>
-            <Button Grid.Row="0" Grid.Column="0" Content="Edit" HorizontalAlignment="Right" Margin="0,0,70,0" VerticalAlignment="Center"
+            <Button Grid.Row="0" Grid.Column="0" Content="Edit" HorizontalAlignment="Right" Margin="0,0,40,0" VerticalAlignment="Center"
                     Width="70" Command="{Binding EditVendorCommand}"/>
-            <Button Grid.Row="0" Grid.Column="0" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
-                    Margin="0, 0, 5, 0" Command="{Binding DeleteVendorCommand}">
-                <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-            </Button>
-            <Button Grid.Row="0" Grid.Column="1" Content="Get Order Sheet" HorizontalAlignment="Right" Margin="0,0,155,0"  VerticalAlignment="Center"
+            <Button Grid.Row="0" Grid.Column="1" Content="Get Order Sheet" HorizontalAlignment="Left" Margin="40,0,155,0"  VerticalAlignment="Center"
                     Width="130" Command="{Binding GetOrderSheetCommand}"/>
-            <Button Grid.Row="0" Grid.Column="1" Content="Change Rec List Order" Height="25" Width="150" HorizontalAlignment="Right"
-                    VerticalAlignment="Center" Margin="0, 0, 5, 0" Command="{Binding ChangeRecListOrderCommand}" />
-            
+            <Button Grid.Row="0" Grid.Column="1" Content="Change Rec List Order" Height="25" Width="150" HorizontalAlignment="Left"
+                    VerticalAlignment="Center" Margin="170, 0, 0, 0" Command="{Binding ChangeRecListOrderCommand}" />
+            <Button Grid.Row="0" Grid.Column="1" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
+                    Margin="0, 0, 35, 0" Command="{Binding AddVendorItemCommand}">
+                <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </Button>
+            <Button Grid.Row="0" Grid.Column="1" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
+                    Margin="0, 0, 5, 0" Command="{Binding DeleteVendorItemCommand}">
+                <iconPacks:PackIconFontAwesome Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </Button>
             <DataGrid Grid.Row="1" Grid.Column="0" ItemsSource="{Binding FilteredVendorList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedVendor}" AutoGenerateColumns="False"
                       CanUserAddRows="False">
@@ -57,7 +60,7 @@
             </DataGrid>
             <DataGrid Grid.Row="1" Grid.Column="1" ItemsSource="{Binding SelectedVendorItems}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Margin="1, 1, 1, 1" ScrollViewer.VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False"
-                      CanUserSortColumns="False" CanUserReorderColumns="False">
+                      CanUserSortColumns="False" CanUserReorderColumns="False" SelectedItem="{Binding SelectedVendorItem}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Inventory Item Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
                     <DataGridTextColumn Header="Purchased Price" Binding="{Binding LastPurchasedPrice, StringFormat=c}" Width="2*" />
