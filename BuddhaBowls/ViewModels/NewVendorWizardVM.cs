@@ -98,12 +98,28 @@ namespace BuddhaBowls
             }
         }
 
+        private Visibility _deleteVendorVisibility = Visibility.Hidden;
+        public Visibility DeleteVendorVisibility
+        {
+            get
+            {
+                return _deleteVendorVisibility;
+            }
+            set
+            {
+                _deleteVendorVisibility = value;
+                NotifyPropertyChanged("DeleteVendorVisibility");
+            }
+        }
+
+
         #endregion
 
         #region ICommand and CanExecute
 
         public ICommand OnlySoldCommand { get; set; }
         public ICommand ShowAllCommand { get; set; }
+        public ICommand DeleteVendorCommand { get; set; }
 
         #endregion
 
@@ -116,6 +132,7 @@ namespace BuddhaBowls
 
             OnlySoldCommand = new RelayCommand(ShowSold);
             ShowAllCommand = new RelayCommand(ShowAll);
+            DeleteVendorCommand = new RelayCommand(DeleteVendor);
         }
 
         public NewVendorWizardVM(Vendor v) : this()
@@ -123,15 +140,9 @@ namespace BuddhaBowls
             _newVendor = false;
             Vend = v;
             Refresh();
-            //foreach (InventoryVendorItem item in _inventoryItems)
-            //{
-            //    if (vendItemIds.Contains(item.Id))
-            //    {
 
-            //        item.IsSold = true;
-            //    }
-            //}
             Header = "Edit Vendor " + v.Name;
+            DeleteVendorVisibility = Visibility.Visible;
 
             ShowSold(null);
         }
@@ -149,6 +160,19 @@ namespace BuddhaBowls
             InventoryList = new ObservableCollection<InventoryVendorItem>(_inventoryItems);
             ShowSoldVisibility = Visibility.Visible;
         }
+
+        private void DeleteVendor(object obj)
+        {
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete " + Vend.Name,
+                                                      "Delete " + Vend.Name + "?", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                _models.DeleteVendor(Vend);
+                Close();
+                ParentContext.Refresh();
+            }
+        }
+
         #endregion
 
         #region Base Overrides
@@ -203,8 +227,8 @@ namespace BuddhaBowls
                 Vendor vendor = Vend;
                 _models.AddUpdateVendor(ref vendor, InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList());
 
-                ParentContext.Refresh();
                 Close();
+                ParentContext.Refresh();
             }
         }
 

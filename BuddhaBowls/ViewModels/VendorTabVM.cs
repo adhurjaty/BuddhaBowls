@@ -120,10 +120,7 @@ namespace BuddhaBowls
         #endregion
 
         #region ICommand Bindings and Can Execute
-        // plus button
         public ICommand AddVendorCommand { get; set; }
-        // minus button
-        public ICommand DeleteVendorCommand { get; set; }
         // save button
         public ICommand SaveCommand { get; set; }
         // reset button
@@ -163,7 +160,6 @@ namespace BuddhaBowls
         public VendorTabVM() : base()
         {
             AddVendorCommand = new RelayCommand(AddVendor, x => DBConnection);
-            DeleteVendorCommand = new RelayCommand(DeleteVendor, x => SelectedVendorCanExecute && DBConnection);
             SaveCommand = new RelayCommand(SaveVendor, x => DBConnection);
             ResetCommand = new RelayCommand(ResetVendor, x => DBConnection);
             //ChangeRecListOrderCommand = new RelayCommand(ChangeRecOrder, x => SelectedVendorCanExecute);
@@ -198,18 +194,6 @@ namespace BuddhaBowls
             {
                 Vendor v = _models.Vendors.First(x => x.Id == kvp.Key);
                 v.Update(kvp.Value.Select(x => x.ToInventoryItem()).ToList());
-            }
-        }
-
-        private void DeleteVendor(object obj)
-        {
-            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete " + SelectedVendor.Name,
-                                                      "Delete " + SelectedVendor.Name + "?", MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes)
-            {
-                _models.DeleteVendor(SelectedVendor);
-                SelectedVendor = null;
-                ParentContext.Refresh();
             }
         }
 

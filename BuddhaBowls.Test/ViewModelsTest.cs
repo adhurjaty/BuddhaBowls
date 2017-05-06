@@ -702,7 +702,7 @@ namespace BuddhaBowls.Test
             }
             finally
             {
-                vendorTab.DeleteVendorCommand.Execute(null);
+                DeleteVendorVM(newVendor);
             }
 
             Assert.IsNull(vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == name));
@@ -741,7 +741,7 @@ namespace BuddhaBowls.Test
             }
             finally
             {
-                vendorTab.DeleteVendorCommand.Execute(null);
+                DeleteVendorVM(newVendor);
             }
 
             Assert.IsNull(vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == name));
@@ -994,6 +994,14 @@ namespace BuddhaBowls.Test
             newRecipeTab.FinishCommand.Execute(null);
 
             return recipeTab;
+        }
+
+        private void DeleteVendorVM(Vendor v)
+        {
+            _vm.VendorTab.SelectedVendor = v;
+            _vm.VendorTab.EditVendorCommand.Execute(null);
+            NewVendorWizardVM editVendTab = GetOpenTempTabVM<NewVendorWizardVM>();
+            editVendTab.DeleteVendorCommand.Execute(null);
         }
 
         private InventoryItem SelectInBreakdown(string name, ref OrderBreakdownVM context)
