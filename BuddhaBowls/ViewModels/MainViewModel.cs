@@ -343,20 +343,9 @@ namespace BuddhaBowls
             foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
             {
                 if (tempVM.GetType() == typeof(NewInventoryVM))
-                    ((NewInventoryVM)tempVM).InvListVM.Refresh();
+                    ((NewInventoryVM)tempVM).InvListVM.AddedItem();
                 if (tempVM.GetType() == typeof(NewVendorWizardVM))
                     ((NewVendorWizardVM)tempVM).Refresh();
-            }
-        }
-
-        public void RemoveInvItem(InventoryItem item)
-        {
-            InventoryTab.RemoveInvItem(item);
-
-            foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
-            {
-                if(tempVM.GetType() == typeof(NewInventoryVM))
-                    ((NewInventoryVM)tempVM).InvListVM.RemoveItem(item);
             }
         }
 

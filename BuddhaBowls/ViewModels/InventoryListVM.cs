@@ -296,7 +296,7 @@ namespace BuddhaBowls
 
         #region ICommand Helpers
 
-        private void AddInventoryItem(object obj)
+        private void NewInventoryHelper(object obj)
         {
             NewInventoryItemWizard wizard = new NewInventoryItemWizard();
             wizard.Add("New Item");
@@ -314,7 +314,8 @@ namespace BuddhaBowls
                     v.RemoveInvItem(item);
                 }
                 _models.DeleteInventoryItem(item);
-                ParentContext.RemoveInvItem(item);
+                FilteredItems.Remove(SelectedInventoryItem);
+                ParentContext.InventoryTab.RemoveInvItem(item);
                 SelectedInventoryItem = null;
             }
         }
@@ -354,7 +355,7 @@ namespace BuddhaBowls
         {
             TabControl = new InventoryListControl(this);
 
-            AddCommand = new RelayCommand(AddInventoryItem);
+            AddCommand = new RelayCommand(NewInventoryHelper);
             DeleteCommand = new RelayCommand(DeleteInventoryItem, x => SelectedInventoryItem != null);
             EditCommand = new RelayCommand(EditInventoryItem, x => SelectedInventoryItem != null);
             ResetCommand = new RelayCommand(ResetList);
@@ -399,14 +400,33 @@ namespace BuddhaBowls
         }
 
         /// <summary>
+        /// Updates inventory items list on notification that a new item has been added
+        /// </summary>
+        public void AddedItem()
+        {
+            FilterText = "";
+
+            // find the new vendor inventory item
+            List<int> newIds = _models.VendorInvItems.Select(x => x.Id).Except(_inventoryItems.Select(x => x.Id)).ToList();
+            if (newIds.Count == 0)
+                return;
+            VendorInventoryItem newItem = _models.VendorInvItems.First(x => x.Id == newIds[0]);
+
+            // add and sort to list
+            _inventoryItems.Add(newItem);
+            _inventoryItems = MainHelper.SortItems(_inventoryItems).ToList();
+            FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
+        }
+
+        /// <summary>
         /// Removes an item from this list
         /// </summary>
         /// <param name="item"></param>
         public void RemoveItem(InventoryItem item)
         {
             VendorInventoryItem vendorItem = _inventoryItems.FirstOrDefault(x => x.Id == item.Id);
-            FilteredItems.Remove(vendorItem);
             _inventoryItems.Remove(vendorItem);
+            FilteredItems.Remove(vendorItem);
         }
 
         public void MoveDown(InventoryItem item)

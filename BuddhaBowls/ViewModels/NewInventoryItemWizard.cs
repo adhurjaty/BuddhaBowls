@@ -159,6 +159,7 @@ namespace BuddhaBowls
             {
                 InventoryItem invItem = Item;
 
+                // save desired inventory order
                 Properties.Settings.Default.InventoryOrder = InvOrderList.Select(x => x.Name).ToList();
                 Properties.Settings.Default.Save();
                 _models.SaveInvOrder();

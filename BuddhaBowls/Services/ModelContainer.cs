@@ -201,7 +201,7 @@ namespace BuddhaBowls.Services
         /// Adds or updates vendor in DB and model container
         /// </summary>
         /// <param name="vendor"></param>
-        public void AddUpdateVendor(ref Vendor vendor, List<InventoryItem> vendorItems = null)
+        public void AddUpdateVendor(ref Vendor vendor, List<InventoryItem> vendorItems)
         {
             // remove reference of this vendor from old VendorInventoryItems
             List<InventoryItem> oldVendorItems = vendor.GetInventoryItems();
@@ -239,6 +239,19 @@ namespace BuddhaBowls.Services
             }
         }
 
+        public void AddUpdateVendor(ref Vendor vendor)
+        {
+            int vendorId = vendor.Id;
+            if (Vendors.FirstOrDefault(x => x.Id == vendorId) != null)
+            {
+                vendor.Update();
+            }
+            else
+            {
+                vendor.Id = vendor.Insert();
+                Vendors.Add(vendor);
+            }
+        }
         /// <summary>
         /// Deletes vendor from DB and model container
         /// </summary>

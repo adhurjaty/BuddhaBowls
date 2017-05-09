@@ -290,7 +290,9 @@ namespace BuddhaBowls.Test
 
             for (int i = 0; i < 6; i++)
             {
-                listVM.FilteredItems[i].Count = 66;
+                VendorInventoryItem vItem = listVM.FilteredItems[i];
+                vItem.Count = 66;
+                listVM.RowEdited(vItem);
             }
 
             string name = "My New Item";
