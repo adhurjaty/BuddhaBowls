@@ -89,7 +89,7 @@ namespace BuddhaBowls.Helpers
         /// <typeparam name="T">IItem type</typeparam>
         public static IEnumerable<IGrouping<string, T>> CategoryGrouping<T>(List<T> items) where T : IItem
         {
-            return SortItems(items).GroupBy(x => x.Category).OrderBy(x => x.Key);
+            return SortItems(items).GroupBy(x => x.Category).OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.First().Name));
         }
 
         /// <summary>

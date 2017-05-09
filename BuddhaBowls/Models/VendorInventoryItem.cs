@@ -26,7 +26,7 @@ namespace BuddhaBowls.Models
         {
             get
             {
-                return _vendorDict.Keys.ToList();
+                return _vendorDict.Keys.OrderBy(x => x.Name).ToList();
             }
         }
 

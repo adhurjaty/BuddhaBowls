@@ -279,7 +279,7 @@ namespace BuddhaBowls
             Dictionary<Vendor, InventoryItem> vendorDict = _models.GetVendorsFromItem(Item);
             VendorList = new ObservableCollection<VendorInfo>();
 
-            foreach(KeyValuePair<Vendor, InventoryItem> kvp in vendorDict)
+            foreach(KeyValuePair<Vendor, InventoryItem> kvp in vendorDict.OrderBy(x => x.Key.Name))
             {
                 Vendor v = kvp.Key;
                 InventoryItem invItem = kvp.Value;
@@ -338,6 +338,7 @@ namespace BuddhaBowls
         private void AddVendor(Vendor item)
         {
             VendorList.Add(new VendorInfo(item));
+            VendorList = new ObservableCollection<VendorInfo>(VendorList.OrderBy(x => x.Vendor));
         }
     }
 
