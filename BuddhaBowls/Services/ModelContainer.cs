@@ -203,6 +203,21 @@ namespace BuddhaBowls.Services
         /// <param name="vendor"></param>
         public void AddUpdateVendor(ref Vendor vendor, List<InventoryItem> vendorItems = null)
         {
+            // remove reference of this vendor from old VendorInventoryItems
+            List<InventoryItem> oldVendorItems = vendor.GetInventoryItems();
+            if (oldVendorItems != null)
+            {
+                List<int> removedItemIds = oldVendorItems.Select(x => x.Id).Except(vendorItems.Select(x => x.Id)).ToList();
+                if (removedItemIds.Count > 0)
+                {
+                    List<VendorInventoryItem> removedItems = removedItemIds.Select(x => VendorInvItems.First(y => y.Id == x)).ToList();
+                    foreach (VendorInventoryItem item in removedItems)
+                    {
+                        item.DeleteVendor(vendor);
+                    }
+                }
+            }
+
             int vendorId = vendor.Id;
             if(Vendors.FirstOrDefault(x => x.Id == vendorId) != null)
             {
@@ -392,8 +407,7 @@ namespace BuddhaBowls.Services
         private HashSet<string> EnsureCaseInsensitive(HashSet<string> set)
         {
             return set.Comparer == StringComparer.OrdinalIgnoreCase
-                   ? set
-                   : new HashSet<string>(set, StringComparer.OrdinalIgnoreCase);
+                   ? set : new HashSet<string>(set, StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>

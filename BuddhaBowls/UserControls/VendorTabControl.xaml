@@ -13,7 +13,7 @@
             <RowDefinition Height="60" />
             <RowDefinition Height="60" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="30" />
+            <!--<RowDefinition Height="30" />-->
         </Grid.RowDefinitions>
         <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="Vendors" VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="30"/>
@@ -53,13 +53,13 @@
             </Button>
             <DataGrid Grid.Row="1" Grid.Column="0" ItemsSource="{Binding FilteredVendorList}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedVendor}" AutoGenerateColumns="False"
-                      CanUserAddRows="False">
+                      CanUserAddRows="False" Margin="1,0,1,0">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Vendor" Binding="{Binding Name}" Width="*" IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
             <DataGrid Grid.Row="1" Grid.Column="1" ItemsSource="{Binding SelectedVendorItems}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                      Margin="1, 1, 1, 1" ScrollViewer.VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False"
+                      Margin="0, 0, 1, 1" ScrollViewer.VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False"
                       CanUserSortColumns="False" CanUserReorderColumns="False" SelectedItem="{Binding SelectedVendorItem}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Inventory Item Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
@@ -76,7 +76,7 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
-        <Button Grid.Row="4" Height ="25" Width="80" Content="Save" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding SaveCommand}" />
-        <Button Grid.Row="4" Height ="25" Width="80" Content="Reset" HorizontalAlignment="Right" Margin="85, 0" Command="{Binding ResetCommand}" />
+        <!--<Button Grid.Row="4" Height ="25" Width="80" Content="Save" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding SaveCommand}" />
+        <Button Grid.Row="4" Height ="25" Width="80" Content="Reset" HorizontalAlignment="Right" Margin="85, 0" Command="{Binding ResetCommand}" />-->
     </Grid>
 </UserControl>

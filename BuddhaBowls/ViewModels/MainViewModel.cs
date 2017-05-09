@@ -255,6 +255,7 @@ namespace BuddhaBowls
 
         private void RefreshHelper(object obj)
         {
+            _models = new ModelContainer();
             Refresh();
         }
 

@@ -50,6 +50,17 @@ namespace BuddhaBowls.Models
         /// <param name="items"></param>
         public void Update(List<InventoryItem> items)
         {
+            ModelHelper.CreateTable(items, GetPriceTableName());
+
+            base.Update();
+        }
+
+        /// <summary>
+        /// Updates items within the purchase list (does not remove any items from list)
+        /// </summary>
+        /// <param name="inventoryItems"></param>
+        public void UpdateItems(List<InventoryItem> items)
+        {
             if (items != null && items.Count > 0)
             {
                 if (!File.Exists(_dbInt.FilePath(GetPriceTableName())))

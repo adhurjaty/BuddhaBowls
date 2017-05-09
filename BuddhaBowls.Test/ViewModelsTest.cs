@@ -795,27 +795,89 @@ namespace BuddhaBowls.Test
             }
         }
 
+        //[TestMethod]
+        //public void ResetVendorVMTest()
+        //{
+        //    VendorTabVM vendorTab = _vm.VendorTab;
+        //    Vendor berryMan = vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == "Berry Man");
+        //    vendorTab.SelectedVendor = berryMan;
+
+        //    VendorInventoryItem item = vendorTab.SelectedVendorItems[0];
+        //    float origConv = item.Conversion;
+        //    float origCount = item.Count;
+
+        //    item.Conversion = 666f;
+        //    item.Count = 123f;
+
+        //    vendorTab.ResetCommand.Execute(null);
+        //    item = vendorTab.SelectedVendorItems[0];
+
+        //    Assert.AreEqual(origConv, item.Conversion);
+        //    Assert.AreEqual(origCount, item.Count);
+        //}
+
         [TestMethod]
-        public void ResetVendorVMTest()
+        public void RemoveVendorItemFromEditTest()
         {
-            VendorTabVM vendorTab = _vm.VendorTab;
-            Vendor berryMan = vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == "Berry Man");
-            vendorTab.SelectedVendor = berryMan;
+            string name = "My New Vendor";
+            VendorTabVM vendorTab = CreateTestVendor(name, "mynew@example.com");
 
-            VendorInventoryItem item = vendorTab.SelectedVendorItems[0];
-            float origConv = item.Conversion;
-            float origCount = item.Count;
+            Vendor newVendor = vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == name);
+            vendorTab.SelectedVendor = newVendor;
+            int origCount = vendorTab.SelectedVendorItems.Count;
 
-            item.Conversion = 666f;
-            item.Count = 123f;
+            try
+            {
+                vendorTab.EditVendorCommand.Execute(null);
+                NewVendorWizardVM editItemsTab = GetOpenTempTabVM<NewVendorWizardVM>();
+                editItemsTab.NextCommand.Execute(null);
 
-            vendorTab.ResetCommand.Execute(null);
-            item = vendorTab.SelectedVendorItems[0];
+                InventoryVendorItem removeItem = editItemsTab.InventoryList.First(x => x.Name == "Pesto");
+                removeItem.IsSold = false;
 
-            Assert.AreEqual(origConv, item.Conversion);
-            Assert.AreEqual(origCount, item.Count);
+                editItemsTab.FinishCommand.Execute(null);
+
+                List<InventoryItem> vendorItems = newVendor.GetInventoryItems();
+
+                vendorTab.SelectedVendor = newVendor;
+                Assert.AreEqual(origCount - 1, vendorTab.SelectedVendorItems.Count);
+                Assert.AreEqual(origCount - 1, vendorItems.Count);
+                CollectionAssert.DoesNotContain(vendorTab.SelectedVendorItems.Select(x => x.Name).ToList(), "Pesto");
+                CollectionAssert.DoesNotContain(vendorItems.Select(x => x.Name).ToList(), "Pesto");
+            }
+            finally
+            {
+                newVendor.Destroy();
+            }
         }
 
+        [TestMethod]
+        public void AddVendorItemCheckEditTest()
+        {
+            // add an item to vendor and check that that item appears when editing item
+            string name = "My New Vendor";
+            VendorTabVM vendorTab = CreateTestVendor(name, "mynew@example.com");
+
+            Vendor newVendor = vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == name);
+            vendorTab.SelectedVendor = newVendor;
+
+            try
+            {
+                // add sourdough to vendor list
+                vendorTab.AddInvItemToVendor(new InventoryItem(new Dictionary<string, string>() { { "Name", "Sourdough" } }));
+
+                vendorTab.EditVendorCommand.Execute(null);
+                NewVendorWizardVM editItemsTab = GetOpenTempTabVM<NewVendorWizardVM>();
+                editItemsTab.NextCommand.Execute(null);
+
+                CollectionAssert.Contains(editItemsTab.InventoryList.Select(x => x.Name).ToList(), "Sourdough");
+                Assert.IsTrue(editItemsTab.InventoryList.First(x => x.Name == "Sourdough").IsSold);
+            }
+            finally
+            {
+                newVendor.Destroy();
+            }
+        }
         #endregion
 
         #region RecipeTabVM Tests

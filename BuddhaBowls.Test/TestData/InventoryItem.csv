@@ -74,7 +74,7 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 72,Ground Beef,Meats,40lb CASE,LOG,1,EA,2,3,1,68.7,2,,2
 73,Italian Sausage,Meats,20lb CASE,BAG,2,OZ-wt,160,10,0.91,25.42,6,1/31/2017 6:10:00 PM,2
 74,Bacon Bits,Meats,10lb CASE,BAG,2,OZ-wt,160,6,1,17.54,2,1/31/2017 6:10:00 PM,2
-75,Sourdough,Bread,10lb CASE,EACH,2,EA,1,183,1,70,0,,2
+75,Sourdough,Bread,10lb CASE,EACH,2,EA,1,183,1,70,0,,5
 76,Whole Wheat,Bread,EACH,EACH,1,EA,1,84,1,0.75,0,,
 77,Biopack #4,Paper Goods,Stack,EACH,4,EA,4,8,1,10,40,,
 78,Allspice,Herbs,CS 3 each,OZ-wt,5,TBL,50,1122,100,12,0,,0
