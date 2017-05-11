@@ -454,11 +454,11 @@ namespace BuddhaBowls
 
         public string GenerateOrder(PurchaseOrder po, Vendor vendor, string filepath = "")
         {
+
             List<InventoryItem> items = po.GetOpenPOItems();
             if (items == null)
                 items = po.GetReceivedPOItems();
 
-            HashSet<string> categories = new HashSet<string>(items.Select(x => x.Category));
             Dictionary<string, float> categoryCosts = new Dictionary<string, float>();
 
             Excel.Worksheet sheet = _sheets.Add();
@@ -503,52 +503,10 @@ namespace BuddhaBowls
             row++;
             row++;
 
-            int startRow = 0;
-            foreach(string category in categories)
-            {
-                long color = _models.GetColorFromCategory(category);
-                range = (Excel.Range)sheet.Range[sheet.Cells[row, 1], sheet.Cells[row, 6]];
-                range.Interior.Color = color;
-                range.WrapText = true;
-                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-                range.Borders.Weight = Excel.XlBorderWeight.xlThick;
-                range.Font.Bold = true;
-                sheet.Cells[row, 1] = "Pack Size";
-                sheet.Cells[row, 2] = "Purchased Unit";
-                sheet.Cells[row, 3] = category;
-                sheet.Cells[row, 4] = "Order Amt";
-                sheet.Cells[row, 5] = "Current Price";
-                sheet.Cells[row, 6] = "Extension";
-                row++;
-
-                startRow = row;
-                categoryCosts[category] = 0;
-                foreach(InventoryItem item in items.Where(x => x.Category.ToUpper() == category.ToUpper()).OrderBy(x => x.Name))
-                {
-                    sheet.Cells[row, 1] = item.Conversion.ToString();
-                    sheet.Cells[row, 2] = item.PurchasedUnit;
-                    sheet.Cells[row, 3] = item.Name;
-                    sheet.Cells[row, 4] = item.LastOrderAmount != 0 ? item.LastOrderAmount.ToString() : "";
-                    sheet.Cells[row, 5] = item.LastPurchasedPrice.ToString("c");
-                    sheet.Cells[row, 6] = item.PriceExtension.ToString("c");
-                    categoryCosts[category] += item.PriceExtension;
-                    row++;
-                }
-
-                ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 5]]).Merge();
-                ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 5]]).Font.Bold = true;
-                sheet.Cells[row, 4] = category + " Total:";
-                sheet.Cells[row, 6] = categoryCosts[category].ToString("c");
-                ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 6]]).Interior.Color = color;
-                ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row, 6]]).Borders.Weight = Excel.XlBorderWeight.xlMedium;
-                ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row, 6]]).BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
-
-                row++;
-            }
+            row = FillOrderSheet(ref sheet, items, row, ref categoryCosts);
             row++;
 
-            startRow = row;
+            int startRow = row;
             foreach(KeyValuePair<string, float> kvp in categoryCosts)
             {
                 range = ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 5]]);
@@ -589,6 +547,57 @@ namespace BuddhaBowls
             }
 
             return filepath;
+        }
+
+        public int FillOrderSheet(ref Excel.Worksheet sheet, List<InventoryItem> items, int row, ref Dictionary<string, float> categoryCosts)
+        {
+            int startRow = 0;
+            foreach (IGrouping<string, InventoryItem> invGroup in MainHelper.CategoryGrouping(items))
+            {
+                string category = invGroup.Key;
+                long categoryColor = _models.GetColorFromCategory(category);
+                Excel.Range range = (Excel.Range)sheet.Range[sheet.Cells[row, 1], sheet.Cells[row, 6]];
+                range.Interior.Color = categoryColor;
+                range.WrapText = true;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                range.Borders.Weight = Excel.XlBorderWeight.xlThick;
+                range.Font.Bold = true;
+                sheet.Cells[row, 1] = "Pack Size";
+                sheet.Cells[row, 2] = "Purchased Unit";
+                sheet.Cells[row, 3] = category;
+                sheet.Cells[row, 4] = "Order Amt";
+                sheet.Cells[row, 5] = "Current Price";
+                sheet.Cells[row, 6] = "Extension";
+                row++;
+
+                startRow = row;
+                categoryCosts[category] = 0;
+                foreach (InventoryItem item in invGroup)
+                {
+                    sheet.Cells[row, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    sheet.Cells[row, 1] = item.Conversion.ToString();
+                    sheet.Cells[row, 2] = item.PurchasedUnit;
+                    sheet.Cells[row, 3] = item.Name;
+                    sheet.Cells[row, 4] = item.LastOrderAmount != 0 ? item.LastOrderAmount.ToString() : "";
+                    sheet.Cells[row, 5] = item.LastPurchasedPrice.ToString("c");
+                    sheet.Cells[row, 6] = item.PriceExtension.ToString("c");
+                    categoryCosts[category] += item.PriceExtension;
+                    row++;
+                }
+
+                ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 5]]).Merge();
+                ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 5]]).Font.Bold = true;
+                sheet.Cells[row, 4] = category + " Total:";
+                sheet.Cells[row, 6] = categoryCosts[category].ToString("c");
+                ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 6]]).Interior.Color = categoryColor;
+                ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row, 6]]).Borders.Weight = Excel.XlBorderWeight.xlMedium;
+                ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row, 6]]).BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
+
+                row++;
+            }
+
+            return row;
         }
 
         public string GenerateReceivingList(PurchaseOrder po, Vendor vendor)
@@ -692,16 +701,72 @@ namespace BuddhaBowls
         public string GenerateVendorOrderSheet(Vendor vendor)
         {
             List<InventoryItem> items = vendor.GetInventoryItems();
+
+            Dictionary<string, float> categoryCosts = new Dictionary<string, float>();
+
+            Excel.Worksheet sheet = _sheets.Add();
+
+            // format column widths
+            sheet.Columns[2].ColumnWidth = 12;
+            sheet.Columns[3].ColumnWidth = 15;
+            sheet.Columns[4].ColumnWidth = 15;
+            sheet.Columns[6].ColumnWidth = 12;
+
+            sheet.Name = vendor.Name + " Items";
+
+            int row = 1;
+            Excel.Range range = sheet.Range[sheet.Cells[row, 1], sheet.Cells[row, 6]];
+            range.Merge();
+            sheet.Cells[row, 1] = vendor.Name + " Items";
+            sheet.Cells[row, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            row++;
+            row++;
+
+            sheet.Cells[row, 1] = "Contact";
+            sheet.Cells[row, 2].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range = sheet.Range[sheet.Cells[row, 2], sheet.Cells[row, 3]];
+            range.Merge();
+            sheet.Cells[row, 2] = vendor.Contact;
+            range = sheet.Range[sheet.Cells[row, 5], sheet.Cells[row, 6]];
+            range.Merge();
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            row++;
+            sheet.Cells[row, 1] = "Phone:";
+            range = sheet.Range[sheet.Cells[row, 2], sheet.Cells[row, 3]];
+            range.Merge();
+            sheet.Cells[row, 2] = vendor.PhoneNumber;
+            sheet.Cells[row, 2].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            sheet.Cells[row, 4] = "Date:";
+            range = sheet.Range[sheet.Cells[row, 5], sheet.Cells[row, 6]];
+            range.Merge();
+            range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            row++;
+            row++;
             for(int i = 0; i < items.Count; i++)
             {
                 items[i].LastOrderAmount = 0;
+                items[i].Count = 0;
             }
 
-            PurchaseOrder po = new PurchaseOrder(vendor, items, DateTime.Now);
+            FillOrderSheet(ref sheet, items, row, ref categoryCosts);
+
             string outDir = Path.GetDirectoryName(vendor.GetOrderSheetPath());
             if (!Directory.Exists(outDir))
                 Directory.CreateDirectory(outDir);
-            return GenerateOrder(po, vendor, vendor.GetOrderSheetPath());
+
+            string filepath = Path.Combine(outDir, vendor.Name + "_Items.xlsx");
+
+            try
+            {
+                _workbook.SaveAs(filepath);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Can't save purchase order. Check that purchase orders are closed on your machine and there are no open Excel processes",
+                                "Vendor Items Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return filepath;
         }
 
         private bool IsWorkbookOpen(string filePath)

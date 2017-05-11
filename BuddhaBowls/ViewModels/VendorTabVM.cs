@@ -206,17 +206,17 @@ namespace BuddhaBowls
 
         private void GenerateOrderSheet(object obj)
         {
-            if(File.Exists(SelectedVendor.GetOrderSheetPath()))
-            {
-                new Thread(delegate ()
-                {
-                    System.Diagnostics.Process.Start(SelectedVendor.GetOrderSheetPath());
-                }).Start();
-            }
-            else
-            {
-                ParentContext.GenerateVendorOrderList(SelectedVendor);
-            }
+            //if(File.Exists(SelectedVendor.GetOrderSheetPath()))
+            //{
+            //    new Thread(delegate ()
+            //    {
+            //        System.Diagnostics.Process.Start(SelectedVendor.GetOrderSheetPath());
+            //    }).Start();
+            //}
+            //else
+            //{
+            ParentContext.GenerateVendorOrderList(SelectedVendor);
+            //}
         }
 
         private void AddVendorItem(object obj)
