@@ -9,18 +9,10 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class VendorInventoryItem : InventoryItem, INotifyPropertyChanged
+    public class VendorInventoryItem : InventoryItem
     {
         // dictionary relating the vendor to the inventory item (differ in conversion, price, and purchased unit)
         private Dictionary<Vendor, InventoryItem> _vendorDict;
-        
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         public List<Vendor> Vendors
         {
@@ -68,20 +60,23 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict, InventoryItem item)
+        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict)
         {
             _vendorDict = vendorDict;
-
-            foreach (string property in item.GetPropertiesDB())
-            {
-                SetProperty(property, item.GetPropertyValue(property));
-            }
-            Id = item.Id;
 
             if (LastVendorId != null)
                 SelectedVendor = vendorDict.Keys.FirstOrDefault(x => x.Id == LastVendorId);
             else
                 SelectedVendor = vendorDict.Keys.FirstOrDefault();
+
+            InventoryItem item = _vendorDict[SelectedVendor];
+            CopyInvItem(item);
+
+            if(string.IsNullOrEmpty(SelectedVendor.Name))
+            {
+                SelectedVendor = null;
+                _vendorDict = new Dictionary<Vendor, InventoryItem>();
+            }
         }
 
         /// <summary>
@@ -91,12 +86,20 @@ namespace BuddhaBowls.Models
         {
             NotifyPropertyChanged("LastPurchasedPrice");
             NotifyPropertyChanged("Conversion");
-            InventoryItem item = ToInventoryItem();
             if (SelectedVendor != null)
             {
-                SelectedVendor.Update(item);
+                InventoryItem item = ToInventoryItem();
                 _vendorDict[SelectedVendor] = item;
             }
+        }
+
+        public void CopyInvItem(InventoryItem item)
+        {
+            foreach (string property in item.GetPropertiesDB())
+            {
+                SetProperty(property, item.GetPropertyValue(property));
+            }
+            Id = item.Id;
         }
 
         /// <summary>
@@ -112,6 +115,32 @@ namespace BuddhaBowls.Models
             }
             item.Id = Id;
             return item;
+        }
+
+        public InventoryItem GetInvItemFromVendor(Vendor v)
+        {
+            if (_vendorDict.Keys.Contains(v))
+            {
+                InventoryItem item = _vendorDict[v];
+                item.NotifyChanges();
+                return item;
+            }
+            return null;
+        }
+
+        public void SetVendorItem(Vendor v, InventoryItem item)
+        {
+            if (v != null && _vendorDict.Keys.Contains(v))
+            {
+                SelectedVendor = v;
+                _vendorDict[v] = item;
+                UpdateVendorParams();
+            }
+            else
+            {
+                CopyInvItem(item);
+            }
+            Update();
         }
 
         public void UpdateProperties()
@@ -152,7 +181,14 @@ namespace BuddhaBowls.Models
 
         public override void Update()
         {
-            ToInventoryItem().Update();
+            InventoryItem item = ToInventoryItem();
+
+            foreach (Vendor vendor in Vendors)
+            {
+                vendor.Update(GetInvItemFromVendor(vendor));
+            }
+
+            item.Update();
         }
 
         public override void Destroy()
@@ -169,7 +205,8 @@ namespace BuddhaBowls.Models
         {
             VendorInventoryItem cpy = base.Copy<VendorInventoryItem>();
             cpy.SetVendorDict(_vendorDict);
-            cpy.SelectedVendor = SelectedVendor;
+            if (_vendorDict.Count > 0)
+                cpy.SelectedVendor = SelectedVendor;
             return cpy;
         }
 
@@ -188,9 +225,7 @@ namespace BuddhaBowls.Models
                 NotifyPropertyChanged("PurchasedUnit");
                 NotifyPropertyChanged("Conversion");
                 LastVendorId = SelectedVendor.Id;
-                Update();
             }
         }
-
     }
 }

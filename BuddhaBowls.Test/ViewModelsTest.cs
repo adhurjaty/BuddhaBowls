@@ -420,7 +420,7 @@ namespace BuddhaBowls.Test
         {
             OrderTabVM orderTab = _vm.OrderTab;
             Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
-            float[] clearedAmounts = new float[] { 0, 0, 0, 0 };
+            float[] clearedAmounts = new float[] { 0, 0, 0, 0, 0 };
 
             orderTab.AddNewOrderCommand.Execute(null);
             NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();

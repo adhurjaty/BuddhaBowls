@@ -1,13 +1,15 @@
 ﻿using BuddhaBowls.Helpers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class InventoryItem : Model, IItem
+    public class InventoryItem : Model, IItem, INotifyPropertyChanged
     {
         public string Name { get; set; }
         public string Category { get; set; }
@@ -58,6 +60,14 @@ namespace BuddhaBowls.Models
             }
         }
 
+        // INotifyPropertyChanged event and method
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public InventoryItem() : base()
         {
             _tableName = "InventoryItem";
@@ -100,6 +110,13 @@ namespace BuddhaBowls.Models
         public float GetPrevOrderAmount()
         {
             return new InventoryItem(new Dictionary<string, string>() { { "Id", Id.ToString() } }).LastOrderAmount;
+        }
+
+        public void NotifyChanges()
+        {
+            NotifyPropertyChanged("LastPurchasedPrice");
+            NotifyPropertyChanged("PurchasedUnit");
+            NotifyPropertyChanged("Conversion");
         }
 
         /// <summary>

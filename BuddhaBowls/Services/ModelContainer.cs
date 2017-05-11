@@ -27,7 +27,7 @@ namespace BuddhaBowls.Services
 
                 if (_inventoryItems != null && VendorInvItems == null)
                 {
-                    VendorInvItems = _inventoryItems.Select(x => new VendorInventoryItem(GetVendorsFromItem(x), x)).ToList();
+                    VendorInvItems = _inventoryItems.Select(x => new VendorInventoryItem(GetVendorsFromItem(x))).ToList();
                 }
             }
         }
@@ -160,13 +160,13 @@ namespace BuddhaBowls.Services
                 item.Update();
                 int itemId = item.Id;
                 InventoryItems[InventoryItems.FindIndex(x => x.Id == itemId)] = item;
-                VendorInvItems[VendorInvItems.FindIndex(x => x.Id == itemId)] = new VendorInventoryItem(GetVendorsFromItem(item), item);
+                //VendorInvItems[VendorInvItems.FindIndex(x => x.Id == itemId)].Update(item);
             }
             else
             {
                 item.Id = item.Insert();
                 InventoryItems.Add(item);
-                VendorInvItems.Add(new VendorInventoryItem(GetVendorsFromItem(item), item));
+                VendorInvItems.Add(new VendorInventoryItem(GetVendorsFromItem(item)));
             }
             InventoryItems = MainHelper.SortItems(InventoryItems).ToList();
             VendorInvItems = MainHelper.SortItems(VendorInvItems).ToList();
@@ -286,6 +286,9 @@ namespace BuddhaBowls.Services
                     }
                 }
             }
+
+            if(vendorDict.Count == 0)
+                vendorDict[new Vendor()] = item;
 
             return vendorDict;
         }
@@ -434,7 +437,7 @@ namespace BuddhaBowls.Services
                 int invId = InventoryItems[i].Id;
                 if(i >= VendorInvItems.Count)
                 {
-                    VendorInvItems.Add(new VendorInventoryItem(GetVendorsFromItem(InventoryItems[i]), InventoryItems[i]));
+                    VendorInvItems.Add(new VendorInventoryItem(GetVendorsFromItem(InventoryItems[i])));
                     continue;
                 }
                 if (invId != VendorInvItems[i].Id)
@@ -448,7 +451,7 @@ namespace BuddhaBowls.Services
                     }
                     else
                     {
-                        vItem = new VendorInventoryItem(GetVendorsFromItem(InventoryItems[i]), InventoryItems[i]);
+                        vItem = new VendorInventoryItem(GetVendorsFromItem(InventoryItems[i]));
                     }
                     VendorInvItems.Insert(i, vItem);
                 }

@@ -19,7 +19,7 @@ namespace BuddhaBowls
 {
     public class VendorTabVM : TabVM
     {
-        private Dictionary<int, ObservableCollection<VendorInventoryItem>> _vItemsCache;
+        private Dictionary<int, ObservableCollection<InventoryItem>> _vItemsCache;
 
         #region Data Bindings
         public string FilterText { get; set; }
@@ -52,7 +52,7 @@ namespace BuddhaBowls
                 if (_selectedVendor != null)
                     LoadVendorItems();
                 else
-                    SelectedVendorItems = new ObservableCollection<VendorInventoryItem>();
+                    SelectedVendorItems = new ObservableCollection<InventoryItem>();
                 NotifyPropertyChanged("SelectedVendor");
             }
         }
@@ -74,8 +74,8 @@ namespace BuddhaBowls
             }
         }
 
-        private ObservableCollection<VendorInventoryItem> _selectedVendorItems;
-        public ObservableCollection<VendorInventoryItem> SelectedVendorItems
+        private ObservableCollection<InventoryItem> _selectedVendorItems;
+        public ObservableCollection<InventoryItem> SelectedVendorItems
         {
             get
             {
@@ -91,8 +91,8 @@ namespace BuddhaBowls
         /// <summary>
         /// Selected inventory item (needs vendor to be selected)
         /// </summary>
-        private VendorInventoryItem _selectedVendorItem;
-        public VendorInventoryItem SelectedVendorItem
+        private InventoryItem _selectedVendorItem;
+        public InventoryItem SelectedVendorItem
         {
             get
             {
@@ -169,7 +169,7 @@ namespace BuddhaBowls
             AddVendorItemCommand = new RelayCommand(AddVendorItem, x => SelectedVendor != null);
             DeleteVendorItemCommand = new RelayCommand(DeleteVendorItem, x => SelectedVendorItem != null);
 
-            _vItemsCache = new Dictionary<int, ObservableCollection<VendorInventoryItem>>();
+            _vItemsCache = new Dictionary<int, ObservableCollection<InventoryItem>>();
             PurchasedUnitsList = _models.GetPurchasedUnits();
             InitVendors();
         }
@@ -228,7 +228,7 @@ namespace BuddhaBowls
 
         private void DeleteVendorItem(object obj)
         {
-            SelectedVendor.RemoveInvItem(SelectedVendorItem.ToInventoryItem());
+            SelectedVendor.RemoveInvItem(SelectedVendorItem);
             SelectedVendorItems.Remove(SelectedVendorItem);
         }
 
@@ -251,7 +251,7 @@ namespace BuddhaBowls
         {
             //SelectedVendorItems = new ObservableCollection<VendorInventoryItem>();
             FilteredVendorList = new ObservableCollection<Vendor>(_models.Vendors.OrderBy(x => x.Name));
-            _vItemsCache = new Dictionary<int, ObservableCollection<VendorInventoryItem>>();
+            _vItemsCache = new Dictionary<int, ObservableCollection<InventoryItem>>();
             SelectedVendor = SelectedVendor;
         }
 
@@ -274,13 +274,10 @@ namespace BuddhaBowls
         {
             if (!_vItemsCache.Keys.Contains(SelectedVendor.Id))
             {
-                List<VendorInventoryItem> vendorItems = _models.VendorInvItems.Where(x => x.Vendors.Contains(SelectedVendor)).ToList();
-                foreach (VendorInventoryItem item in vendorItems)
-                {
-                    item.SelectedVendor = SelectedVendor;
-                }
+                List<InventoryItem> vendorItems = _models.VendorInvItems.Select(x => x.GetInvItemFromVendor(SelectedVendor))
+                                                                        .Where(x => x != null).ToList();
 
-                _vItemsCache[SelectedVendor.Id] = new ObservableCollection<VendorInventoryItem>(MainHelper.SortItems(vendorItems));
+                _vItemsCache[SelectedVendor.Id] = new ObservableCollection<InventoryItem>(MainHelper.SortItems(vendorItems));
             }
 
             SelectedVendorItems = _vItemsCache[SelectedVendor.Id];
@@ -288,18 +285,19 @@ namespace BuddhaBowls
 
         public void AddInvItemToVendor(InventoryItem item)
         {
-            SelectedVendorItems.Add(new VendorInventoryItem(item, SelectedVendor));
-            SelectedVendorItems = new ObservableCollection<VendorInventoryItem>(MainHelper.SortItems(SelectedVendorItems));
+            SelectedVendorItems.Add(item);
+            SelectedVendorItems = new ObservableCollection<InventoryItem>(MainHelper.SortItems(SelectedVendorItems));
             _vItemsCache[SelectedVendor.Id] = SelectedVendorItems;
             _models.VendorInvItems.First(x => x.Id == item.Id).AddVendor(SelectedVendor, item);
 
-            SelectedVendor.Update(SelectedVendorItems.Select(x => x.ToInventoryItem()).ToList());
+            SelectedVendor.Update(SelectedVendorItems.ToList());
         }
 
-        public void VendorItemChanged(VendorInventoryItem item)
+        public void VendorItemChanged(InventoryItem item)
         {
-            item.UpdateVendorProps();
+            item.NotifyChanges();
             item.Update();
+            _models.VendorInvItems.First(x => x.Id == item.Id).SetVendorItem(SelectedVendor, item);
         }
         #endregion
     }

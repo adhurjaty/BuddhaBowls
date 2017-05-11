@@ -380,7 +380,7 @@ namespace BuddhaBowls.Test
             ModelContainer models = new ModelContainer();
             InventoryItem item = models.InventoryItems.First(x => x.Name == "Feta");
             Dictionary<Vendor, InventoryItem> vendDict = models.GetVendorsFromItem(item);
-            VendorInventoryItem vi = new VendorInventoryItem(vendDict, item);
+            VendorInventoryItem vi = new VendorInventoryItem(vendDict);
             List<Vendor> vendors = new List<Vendor>(vendDict.Keys);
 
             vi.SelectedVendor = vendors[0];
@@ -390,6 +390,7 @@ namespace BuddhaBowls.Test
             try
             {
                 vi.UpdateVendorProps();
+                vi.Update();
 
                 InventoryItem testItem = vendors[0].GetInventoryItems().First(x => x.Name == "Feta");
                 Assert.AreEqual(69.69f, testItem.LastPurchasedPrice);
@@ -411,7 +412,7 @@ namespace BuddhaBowls.Test
             ModelContainer models = new ModelContainer();
             InventoryItem item = models.InventoryItems.First(x => x.Name == "Feta");
             Dictionary<Vendor, InventoryItem> vendDict = models.GetVendorsFromItem(item);
-            VendorInventoryItem vi = new VendorInventoryItem(vendDict, item);
+            VendorInventoryItem vi = new VendorInventoryItem(vendDict);
 
             string[] refProperties = (new InventoryItem()).GetPropertiesDB();
             CollectionAssert.AreEqual(refProperties, vi.ToInventoryItem().GetPropertiesDB());

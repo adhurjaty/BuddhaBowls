@@ -25,7 +25,7 @@ namespace BuddhaBowls.UserControls
                 ((DataGrid)sender).RowEditEnding -= DataGrid_RowEditEnding;
                 ((DataGrid)sender).CommitEdit();
                 ((DataGrid)sender).RowEditEnding += DataGrid_RowEditEnding;
-                ((VendorTabVM)DataContext).VendorItemChanged(((VendorInventoryItem)e.Row.Item));
+                ((VendorTabVM)DataContext).VendorItemChanged(((InventoryItem)e.Row.Item));
             }
         }
     }

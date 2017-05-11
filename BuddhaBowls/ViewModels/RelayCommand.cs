@@ -61,7 +61,7 @@ namespace BuddhaBowls
             {
                 MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
+}
 
         public void OnCanExecuteChanged()
         {

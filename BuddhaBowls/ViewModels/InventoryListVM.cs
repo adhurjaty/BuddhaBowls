@@ -539,6 +539,7 @@ namespace BuddhaBowls
             {
                 InventoryItem invItem = item.ToInventoryItem();
                 _models.AddUpdateInventoryItem(ref invItem);
+                _models.VendorInvItems.First(x => x.Id == item.Id).SetVendorItem(item.SelectedVendor, invItem);
             }
 
             Inventory inv = new Inventory(invDate);
