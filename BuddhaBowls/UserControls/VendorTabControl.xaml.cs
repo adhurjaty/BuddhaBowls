@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using BuddhaBowls.Models;
+using System.Windows.Controls;
 
 namespace BuddhaBowls.UserControls
 {
@@ -17,9 +18,15 @@ namespace BuddhaBowls.UserControls
             ((VendorTabVM)DataContext).FilterVendors(FilterVendorBox.Text);
         }
 
-        //public void VendorList_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        //{
-        //    ((VendorTabVM)DataContext).AlterVendorCanExecute = true;
-        //}
+        private void DataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            if (((DataGrid)sender).SelectedItem != null)
+            {
+                ((DataGrid)sender).RowEditEnding -= DataGrid_RowEditEnding;
+                ((DataGrid)sender).CommitEdit();
+                ((DataGrid)sender).RowEditEnding += DataGrid_RowEditEnding;
+                ((VendorTabVM)DataContext).VendorItemChanged(((VendorInventoryItem)e.Row.Item));
+            }
+        }
     }
 }

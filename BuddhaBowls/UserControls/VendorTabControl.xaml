@@ -60,7 +60,7 @@
             </DataGrid>
             <DataGrid Grid.Row="1" Grid.Column="1" ItemsSource="{Binding SelectedVendorItems}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Margin="0, 0, 1, 1" ScrollViewer.VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False"
-                      CanUserSortColumns="False" CanUserReorderColumns="False" SelectedItem="{Binding SelectedVendorItem}">
+                      CanUserSortColumns="False" CanUserReorderColumns="False" SelectedItem="{Binding SelectedVendorItem}" RowEditEnding="DataGrid_RowEditEnding">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Inventory Item Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
                     <DataGridTextColumn Header="Purchased Price" Binding="{Binding LastPurchasedPrice, StringFormat=c}" Width="2*" />

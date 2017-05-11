@@ -274,8 +274,7 @@ namespace BuddhaBowls
         {
             if (!_vItemsCache.Keys.Contains(SelectedVendor.Id))
             {
-                List<VendorInventoryItem> vendorItems = _models.VendorInvItems.Where(x => x.Vendors.Contains(SelectedVendor))
-                                                            .Select(x => x.Copy()).ToList();
+                List<VendorInventoryItem> vendorItems = _models.VendorInvItems.Where(x => x.Vendors.Contains(SelectedVendor)).ToList();
                 foreach (VendorInventoryItem item in vendorItems)
                 {
                     item.SelectedVendor = SelectedVendor;
@@ -295,6 +294,12 @@ namespace BuddhaBowls
             _models.VendorInvItems.First(x => x.Id == item.Id).AddVendor(SelectedVendor, item);
 
             SelectedVendor.Update(SelectedVendorItems.Select(x => x.ToInventoryItem()).ToList());
+        }
+
+        public void VendorItemChanged(VendorInventoryItem item)
+        {
+            item.UpdateVendorProps();
+            item.Update();
         }
         #endregion
     }
