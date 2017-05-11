@@ -216,10 +216,10 @@ namespace BuddhaBowls.Test
                 Assert.AreEqual(name, dbItem.Name);
                 Assert.AreEqual("EA", dbItem.CountUnit);
 
-                List<InventoryItem> v1Items = v1.GetInventoryItems();
+                List<InventoryItem> v1Items = v1.ItemList;
                 InventoryItem v1Item = v1Items.First(x => x.Name == name);
                 Assert.AreEqual(2, v1Item.Conversion);
-                List<InventoryItem> v2Items = v2.GetInventoryItems();
+                List<InventoryItem> v2Items = v2.ItemList;
                 InventoryItem v2Item = v2Items.First(x => x.Name == name);
                 Assert.AreEqual(4, v2Item.Conversion);
             }
@@ -231,9 +231,9 @@ namespace BuddhaBowls.Test
 
             VendorInventoryItem noItem = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
             Assert.IsNull(noItem);
-            InventoryItem noV1Item = v1.GetInventoryItems().FirstOrDefault(x => x.Name == name);
+            InventoryItem noV1Item = v1.ItemList.FirstOrDefault(x => x.Name == name);
             Assert.IsNull(noV1Item);
-            InventoryItem noV2Item = v2.GetInventoryItems().FirstOrDefault(x => x.Name == name);
+            InventoryItem noV2Item = v2.ItemList.FirstOrDefault(x => x.Name == name);
             Assert.IsNull(noV2Item);
         }
 
@@ -263,10 +263,10 @@ namespace BuddhaBowls.Test
                 Assert.AreEqual(name, dbItem.Name);
                 Assert.AreEqual("EA", dbItem.CountUnit);
 
-                List<InventoryItem> v1Items = v1.GetInventoryItems();
+                List<InventoryItem> v1Items = v1.ItemList;
                 InventoryItem v1Item = v1Items.First(x => x.Name == name);
                 Assert.AreEqual(2, v1Item.Conversion);
-                List<InventoryItem> v2Items = v2.GetInventoryItems();
+                List<InventoryItem> v2Items = v2.ItemList;
                 InventoryItem v2Item = v2Items.First(x => x.Name == name);
                 Assert.AreEqual(4, v2Item.Conversion);
             }
@@ -341,7 +341,7 @@ namespace BuddhaBowls.Test
                 NewInventoryItemWizard wizardVM = GetOpenTempTabVM<NewInventoryItemWizard>();
 
                 wizardVM.NextCommand.Execute(null);
-                VendorInfo delVendor = wizardVM.VendorList.First(x => x.Vendor == "Another guy");
+                VendorInfo delVendor = wizardVM.VendorList.First(x => x.Name == "Another guy");
                 wizardVM.SelectedItem = delVendor;
                 wizardVM.DeleteVendorCommand.Execute(null);
                 wizardVM.NextCommand.Execute(null);
@@ -385,7 +385,7 @@ namespace BuddhaBowls.Test
             Vendor selectVendor = _vm.GetModelContainer().Vendors.First(x => x.Name == "Sysco");
             newOrderTab.OrderVendor = selectVendor;
 
-            List<InventoryItem> refItems = MainHelper.SortItems(selectVendor.GetInventoryItems()).ToList();
+            List<InventoryItem> refItems = MainHelper.SortItems(selectVendor.ItemList).ToList();
             CollectionAssert.AreEqual(refItems.Select(x => x.Name).ToList(), newOrderTab.FilteredOrderItems.Select(x => x.Name).ToList());
             CollectionAssert.AreEqual(refItems.Select(x => x.LastOrderAmount).ToList(),
                                       newOrderTab.FilteredOrderItems.Select(x => x.LastOrderAmount).ToList());
@@ -682,7 +682,7 @@ namespace BuddhaBowls.Test
             {
                 Assert.IsNotNull(newVendor);
 
-                List<InventoryItem> vendorItems = newVendor.GetInventoryItems();
+                List<InventoryItem> vendorItems = newVendor.ItemList;
                 foreach (InventoryItem item in vendorItems)
                 {
                     float[] refVals = _vendorSoldDict[item.Name];
@@ -728,7 +728,7 @@ namespace BuddhaBowls.Test
 
             try
             {
-                List<InventoryItem> vendorItems = newVendor.GetInventoryItems();
+                List<InventoryItem> vendorItems = newVendor.ItemList;
                 foreach (InventoryItem item in vendorItems)
                 {
                     float[] refVals = _vendorSoldDict[item.Name];
@@ -786,7 +786,7 @@ namespace BuddhaBowls.Test
 
                 editItemsTab.FinishCommand.Execute(null);
 
-                List<InventoryItem> vendorItems = newVendor.GetInventoryItems();
+                List<InventoryItem> vendorItems = newVendor.ItemList;
                 InventoryItem testVendorItem = vendorItems.First(x => x.Name == "Vanilla");
                 Assert.AreEqual(7, testVendorItem.Conversion);
                 Assert.AreEqual(77.40f, testVendorItem.LastPurchasedPrice);
@@ -839,7 +839,7 @@ namespace BuddhaBowls.Test
 
                 editItemsTab.FinishCommand.Execute(null);
 
-                List<InventoryItem> vendorItems = newVendor.GetInventoryItems();
+                List<InventoryItem> vendorItems = newVendor.ItemList;
 
                 vendorTab.SelectedVendor = newVendor;
                 Assert.AreEqual(origCount - 1, vendorTab.SelectedVendorItems.Count);

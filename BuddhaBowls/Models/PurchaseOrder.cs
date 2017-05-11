@@ -48,7 +48,7 @@ namespace BuddhaBowls.Models
             ModelHelper.CreateTable(inventoryItems, GetOrderTableName());
 
             // update the vendor table last order amounts (prices as well, may want to change this)
-            vendor.UpdateItems(inventoryItems);
+            vendor.Update(inventoryItems);
         }
 
         public void Receive()

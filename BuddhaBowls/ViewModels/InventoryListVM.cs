@@ -457,14 +457,15 @@ namespace BuddhaBowls
 
         public void RowEdited(VendorInventoryItem item)
         {
-            item.UpdateVendorProps();
-            if (!IsMasterList)
+            if (IsMasterList)
             {
-                InventoryItemCountChanged();
-                item.UpdateProperties();
+                item.Update();
             }
             else
-                item.Update();
+            {
+                InventoryItemCountChanged();
+                item.NotifyAllChanges();
+            }
         }
 
         /// <summary>

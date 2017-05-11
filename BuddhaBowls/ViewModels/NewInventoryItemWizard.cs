@@ -143,7 +143,7 @@ namespace BuddhaBowls
 
         private void AddVendor(object obj)
         {
-            List<Vendor> remainingItems = _models.Vendors.Where(x => !VendorList.Select(y => y.Vendor).Contains(x.Name)).ToList();
+            List<Vendor> remainingItems = _models.Vendors.Where(x => !VendorList.Select(y => y.Name).Contains(x.Name)).ToList();
             ModalVM<Vendor> modal = new ModalVM<Vendor>("Add Vendor", remainingItems, AddVendor);
             ParentContext.ModalContext = modal;
         }
@@ -166,33 +166,31 @@ namespace BuddhaBowls
 
                 _models.AddUpdateInventoryItem(ref invItem);
 
-                List<Vendor> itemVendors = new List<Vendor>();
+                //Item.Update(VendorList);
+                //// write new item to the different Vendors that offer the new/edited item
+                //foreach (VendorInfo v in VendorList)
+                //{
+                //    Vendor vendor = _models.Vendors.First(x => x.Name == v.Name);
+                //    invItem.LastPurchasedPrice = v.Price;
+                //    invItem.Conversion = v.Conversion;
+                //    invItem.PurchasedUnit = v.PurchasedUnit;
+                //    invItem.Yield = Yield;
+                //    vendor.Update(invItem);
+                //    itemVendors.Add(vendor);
+                //}
 
-                // write new item to the different Vendors that offer the new/edited item
-                foreach (VendorInfo v in VendorList)
-                {
-                    Vendor vendor = _models.Vendors.First(x => x.Name == v.Vendor);
-                    invItem.LastPurchasedPrice = v.Price;
-                    invItem.Conversion = v.Conversion;
-                    invItem.PurchasedUnit = v.PurchasedUnit;
-                    invItem.Yield = Yield;
-                    vendor.Update(invItem);
-                    itemVendors.Add(vendor);
-                }
+                // update the VendorInventoryItem with vendors
+                VendorInventoryItem vInvItem = _models.VendorInvItems.First(x => x.Id == Item.Id);
+                vInvItem.Update(VendorList.ToList());
 
-                // delete vendors that were removed
-                VendorInventoryItem existingItem = _models.VendorInvItems.FirstOrDefault(x => x.Id == Item.Id);
-                if (existingItem != null)
-                {
-                    List<Vendor> delVendors = existingItem.Vendors.Except(itemVendors).ToList();
-                    foreach(Vendor vendor in delVendors)
-                    {
-                        existingItem.DeleteVendor(vendor);
-                    }
-                }
+                //List<Vendor> delVendors = vInvItem.Vendors.Except(itemVendors).ToList();
+                //foreach(Vendor vendor in delVendors)
+                //{
+                //    vInvItem.DeleteVendor(vendor);
+                //}
 
-                invItem.Update();
-                _models.VendorInvItems.First(x => x.Id == invItem.Id).SetVendorDict(_models.GetVendorsFromItem(invItem));
+                //invItem.Update();
+                //_models.VendorInvItems.First(x => x.Id == invItem.Id).SetVendorDict(_models.GetVendorsFromItem(invItem));
 
                 ParentContext.AddedInvItem();
                 Close();
@@ -338,13 +336,20 @@ namespace BuddhaBowls
         private void AddVendor(Vendor item)
         {
             VendorList.Add(new VendorInfo(item));
-            VendorList = new ObservableCollection<VendorInfo>(VendorList.OrderBy(x => x.Vendor));
+            VendorList = new ObservableCollection<VendorInfo>(VendorList.OrderBy(x => x.Name));
         }
     }
 
     public class VendorInfo
     {
-        public string Vendor { get; set; }
+        public Vendor Vend { get; set; }
+        public string Name
+        {
+            get
+            {
+                return Vend.Name;
+            }
+        }
         public float Price { get; set; }
         public string PurchasedUnit { get; set; }
         public float Conversion { get; set; }
@@ -357,12 +362,12 @@ namespace BuddhaBowls
 
         public VendorInfo(Vendor vendor) : this()
         {
-            Vendor = vendor.Name;
+            Vend = vendor;
         }
 
         public VendorInfo(Vendor vendor, InventoryItem item) : this()
         {
-            Vendor = vendor.Name;
+            Vend = vendor;
             Price = item.LastPurchasedPrice;
             PurchasedUnit = item.PurchasedUnit;
             Conversion = item.Conversion;

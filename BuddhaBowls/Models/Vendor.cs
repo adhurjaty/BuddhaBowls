@@ -15,6 +15,8 @@ namespace BuddhaBowls.Models
         public string PhoneNumber { get; set; }
         public string Contact { get; set; }
 
+        public List<InventoryItem> ItemList { get; set; }
+
         public Vendor() : base()
         {
             _tableName = "Vendor";
@@ -27,6 +29,7 @@ namespace BuddhaBowls.Models
             if (record != null)
             {
                 InitializeObject(record);
+                ItemList = GetInventoryItems();
             }
         }
 
@@ -39,6 +42,7 @@ namespace BuddhaBowls.Models
         {
             if(items != null && items.Count > 0)
                 ModelHelper.CreateTable(items, GetPriceTableName());
+            ItemList = items;
 
             return base.Insert();
         }
@@ -51,30 +55,7 @@ namespace BuddhaBowls.Models
         public void Update(List<InventoryItem> items)
         {
             ModelHelper.CreateTable(items, GetPriceTableName());
-
-            base.Update();
-        }
-
-        /// <summary>
-        /// Updates items within the purchase list (does not remove any items from list)
-        /// </summary>
-        /// <param name="inventoryItems"></param>
-        public void UpdateItems(List<InventoryItem> items)
-        {
-            if (items != null && items.Count > 0)
-            {
-                if (!File.Exists(_dbInt.FilePath(GetPriceTableName())))
-                {
-                    ModelHelper.CreateTable(items, GetPriceTableName());
-                }
-                else
-                {
-                    foreach (InventoryItem item in items)
-                    {
-                        AddInvItem(item);
-                    }
-                }
-            }
+            ItemList = items;
 
             base.Update();
         }
@@ -102,6 +83,12 @@ namespace BuddhaBowls.Models
             base.Destroy();
         }
 
+        public override string[] GetPropertiesDB(string[] omit = null)
+        {
+            string[] vendOmit = new string[] { "ItemList" };
+            return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, vendOmit));
+        }
+
         /// <summary>
         /// Reset vendor back to when it was last saved in the DB
         /// </summary>
@@ -113,16 +100,6 @@ namespace BuddhaBowls.Models
             {
                 InitializeObject(record);
             }
-        }
-
-        /// <summary>
-        /// Gets the inventory items that the vendor offers for sale
-        /// </summary>
-        public List<InventoryItem> GetInventoryItems()
-        {
-            if(_dbInt.TableExists(GetPriceTableName()))
-                return ModelHelper.InstantiateList<InventoryItem>(GetPriceTableName(), false);
-            return null;
         }
 
         /// <summary>
@@ -165,6 +142,17 @@ namespace BuddhaBowls.Models
         public void RemoveInvItem(InventoryItem item)
         {
             _dbInt.DeleteRecord(GetPriceTableName(), new Dictionary<string, string>() { { "Id", item.Id.ToString() } });
+            ItemList.RemoveAll(x => x.Id == item.Id);
+        }
+
+        /// <summary>
+        /// Gets the inventory items that the vendor offers for sale
+        /// </summary>
+        private List<InventoryItem> GetInventoryItems()
+        {
+            if (_dbInt.TableExists(GetPriceTableName()))
+                return ModelHelper.InstantiateList<InventoryItem>(GetPriceTableName(), false);
+            return null;
         }
 
         /// <summary>
@@ -176,6 +164,16 @@ namespace BuddhaBowls.Models
             if (!_dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id))
             {
                 _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict(), item.Id);
+            }
+
+            InventoryItem existingItem = ItemList.FirstOrDefault(x => x.Id == item.Id);
+            if(existingItem == null)
+            {
+                ItemList.Add(item);
+            }
+            else
+            {
+                ItemList[ItemList.IndexOf(existingItem)] = item;
             }
         }
 

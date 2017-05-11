@@ -700,7 +700,7 @@ namespace BuddhaBowls
 
         public string GenerateVendorOrderSheet(Vendor vendor)
         {
-            List<InventoryItem> items = vendor.GetInventoryItems();
+            List<InventoryItem> items = vendor.ItemList;
 
             Dictionary<string, float> categoryCosts = new Dictionary<string, float>();
 

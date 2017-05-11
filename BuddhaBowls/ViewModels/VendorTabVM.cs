@@ -296,8 +296,8 @@ namespace BuddhaBowls
         public void VendorItemChanged(InventoryItem item)
         {
             item.NotifyChanges();
-            item.Update();
             _models.VendorInvItems.First(x => x.Id == item.Id).SetVendorItem(SelectedVendor, item);
+            item.Update();
         }
         #endregion
     }

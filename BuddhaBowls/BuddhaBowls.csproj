@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>31</ApplicationRevision>
+    <ApplicationRevision>32</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -191,9 +191,6 @@
     <Compile Include="UserControls\RecipeTabControl.xaml.cs">
       <DependentUpon>RecipeTabControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\SetVendorItems.xaml.cs">
-      <DependentUpon>SetVendorItems.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControls\VendorTabControl.xaml.cs">
       <DependentUpon>VendorTabControl.xaml</DependentUpon>
     </Compile>
@@ -215,7 +212,6 @@
     <Compile Include="ViewModels\TabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NewOrderVM.cs" />
-    <Compile Include="ViewModels\SetVendorItemsVM.cs" />
     <Compile Include="ViewModels\NewRecipeVM.cs" />
     <Compile Include="ViewModels\OrderBreakdownVM.cs" />
     <Compile Include="ViewModels\OrderTabVM.cs" />
@@ -314,10 +310,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\RecipeTabControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\SetVendorItems.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

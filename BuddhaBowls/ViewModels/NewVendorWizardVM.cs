@@ -247,7 +247,7 @@ namespace BuddhaBowls
             }
             else
             {
-                List<InventoryItem> vendItems = Vend.GetInventoryItems();
+                List<InventoryItem> vendItems = Vend.ItemList;
                 List<int> vendItemIds = vendItems.Select(x => x.Id).ToList();
                 foreach (InventoryItem vItem in vendItems)
                 {

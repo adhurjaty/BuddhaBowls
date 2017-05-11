@@ -27,7 +27,8 @@ namespace BuddhaBowls.Services
 
                 if (_inventoryItems != null && VendorInvItems == null)
                 {
-                    VendorInvItems = _inventoryItems.Select(x => new VendorInventoryItem(GetVendorsFromItem(x))).ToList();
+                    VendorInventoryItem.GetItemVendorDict = GetVendorsFromItem;
+                    VendorInvItems = _inventoryItems.Select(x => new VendorInventoryItem(x)).ToList();
                 }
             }
         }
@@ -160,16 +161,15 @@ namespace BuddhaBowls.Services
                 item.Update();
                 int itemId = item.Id;
                 InventoryItems[InventoryItems.FindIndex(x => x.Id == itemId)] = item;
-                //VendorInvItems[VendorInvItems.FindIndex(x => x.Id == itemId)].Update(item);
             }
             else
             {
                 item.Id = item.Insert();
                 InventoryItems.Add(item);
-                VendorInvItems.Add(new VendorInventoryItem(GetVendorsFromItem(item)));
+                VendorInvItems.Add(new VendorInventoryItem(item));
+                InventoryItems = MainHelper.SortItems(InventoryItems).ToList();
+                VendorInvItems = MainHelper.SortItems(VendorInvItems).ToList();
             }
-            InventoryItems = MainHelper.SortItems(InventoryItems).ToList();
-            VendorInvItems = MainHelper.SortItems(VendorInvItems).ToList();
         }
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace BuddhaBowls.Services
         public void AddUpdateVendor(ref Vendor vendor, List<InventoryItem> vendorItems)
         {
             // remove reference of this vendor from old VendorInventoryItems
-            List<InventoryItem> oldVendorItems = vendor.GetInventoryItems();
+            List<InventoryItem> oldVendorItems = vendor.ItemList;
             if (oldVendorItems != null)
             {
                 List<int> removedItemIds = oldVendorItems.Select(x => x.Id).Except(vendorItems.Select(x => x.Id)).ToList();
@@ -276,19 +276,13 @@ namespace BuddhaBowls.Services
             Dictionary<Vendor, InventoryItem> vendorDict = new Dictionary<Vendor, InventoryItem>();
             foreach(Vendor v in Vendors)
             {
-                List<InventoryItem> items = v.GetInventoryItems();
-                if (items != null)
+                if (v.ItemList != null)
                 {
-                    InventoryItem vendorItem = items.FirstOrDefault(x => x.Id == item.Id);
+                    InventoryItem vendorItem = v.ItemList.FirstOrDefault(x => x.Id == item.Id);
                     if (vendorItem != null)
-                    {
                         vendorDict[v] = vendorItem;
-                    }
                 }
             }
-
-            if(vendorDict.Count == 0)
-                vendorDict[new Vendor()] = item;
 
             return vendorDict;
         }
@@ -437,7 +431,7 @@ namespace BuddhaBowls.Services
                 int invId = InventoryItems[i].Id;
                 if(i >= VendorInvItems.Count)
                 {
-                    VendorInvItems.Add(new VendorInventoryItem(GetVendorsFromItem(InventoryItems[i])));
+                    VendorInvItems.Add(new VendorInventoryItem(InventoryItems[i]));
                     continue;
                 }
                 if (invId != VendorInvItems[i].Id)
@@ -451,7 +445,7 @@ namespace BuddhaBowls.Services
                     }
                     else
                     {
-                        vItem = new VendorInventoryItem(GetVendorsFromItem(InventoryItems[i]));
+                        vItem = new VendorInventoryItem(InventoryItems[i]);
                     }
                     VendorInvItems.Insert(i, vItem);
                 }

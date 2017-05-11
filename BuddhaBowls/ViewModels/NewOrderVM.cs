@@ -279,7 +279,7 @@ namespace BuddhaBowls
                 items = _vendorCache[OrderVendor.Id];
             else
             {
-                items = OrderVendor.GetInventoryItems();
+                items = OrderVendor.ItemList;
                 _vendorCache[OrderVendor.Id] = items;
             }
 

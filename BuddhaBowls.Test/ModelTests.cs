@@ -237,7 +237,7 @@ namespace BuddhaBowls.Test
                 Vendor dbVendor = new Vendor(new Dictionary<string, string>() { { "Name", "TestVendor" } });
                 Assert.AreEqual("testvendor@test.com", dbVendor.Email);
 
-                List<InventoryItem> newItemList = vend.GetInventoryItems();
+                List<InventoryItem> newItemList = vend.ItemList;
 
                 foreach (InventoryItem newItem in newItemList)
                 {
@@ -252,7 +252,7 @@ namespace BuddhaBowls.Test
             }
             Vendor newDbVendor = new Vendor(new Dictionary<string, string>() { { "Name", "TestVendor" } });
             Assert.IsNull(newDbVendor.Name);
-            Assert.IsNull(vend.GetInventoryItems());
+            Assert.IsNull(vend.ItemList);
         }
 
         [TestMethod]
@@ -282,7 +282,7 @@ namespace BuddhaBowls.Test
 
                 vend.PhoneNumber = "5559999";
                 vend.Update(itemList);
-                List<InventoryItem> newList = vend.GetInventoryItems();
+                List<InventoryItem> newList = vend.ItemList;
 
                 Vendor newVend = new Vendor(new Dictionary<string, string>() { { "Name", vend.Name } });
 
@@ -356,12 +356,12 @@ namespace BuddhaBowls.Test
             {
                 vend.Insert(itemList);
                 vend.Update(newItem);
-                List<InventoryItem> newList = vend.GetInventoryItems();
+                List<InventoryItem> newList = vend.ItemList;
 
                 Assert.IsNotNull(newList.First(x => x.Name == "Chopped Clams"));
 
                 vend.RemoveInvItem(newItem);
-                newList = vend.GetInventoryItems();
+                newList = vend.ItemList;
                 Assert.IsNull(newList.FirstOrDefault(x => x.Name == "Chopped Clams"));
             }
             finally
@@ -379,9 +379,8 @@ namespace BuddhaBowls.Test
         {
             ModelContainer models = new ModelContainer();
             InventoryItem item = models.InventoryItems.First(x => x.Name == "Feta");
-            Dictionary<Vendor, InventoryItem> vendDict = models.GetVendorsFromItem(item);
-            VendorInventoryItem vi = new VendorInventoryItem(vendDict);
-            List<Vendor> vendors = new List<Vendor>(vendDict.Keys);
+            VendorInventoryItem vi = new VendorInventoryItem(item);
+            List<Vendor> vendors = vi.Vendors;
 
             vi.SelectedVendor = vendors[0];
             float tempPrice0 = vi.LastPurchasedPrice;
@@ -389,10 +388,10 @@ namespace BuddhaBowls.Test
 
             try
             {
-                vi.UpdateVendorProps();
+                vi.NotifyAllChanges();
                 vi.Update();
 
-                InventoryItem testItem = vendors[0].GetInventoryItems().First(x => x.Name == "Feta");
+                InventoryItem testItem = vendors[0].ItemList.First(x => x.Name == "Feta");
                 Assert.AreEqual(69.69f, testItem.LastPurchasedPrice);
 
                 vi.SelectedVendor = vendors[1];
@@ -402,7 +401,7 @@ namespace BuddhaBowls.Test
             {
                 vi.SelectedVendor = vendors[0];
                 vi.LastPurchasedPrice = tempPrice0;
-                vi.UpdateVendorProps();
+                vi.NotifyAllChanges();
             }
         }
 
@@ -411,8 +410,7 @@ namespace BuddhaBowls.Test
         {
             ModelContainer models = new ModelContainer();
             InventoryItem item = models.InventoryItems.First(x => x.Name == "Feta");
-            Dictionary<Vendor, InventoryItem> vendDict = models.GetVendorsFromItem(item);
-            VendorInventoryItem vi = new VendorInventoryItem(vendDict);
+            VendorInventoryItem vi = new VendorInventoryItem(item);
 
             string[] refProperties = (new InventoryItem()).GetPropertiesDB();
             CollectionAssert.AreEqual(refProperties, vi.ToInventoryItem().GetPropertiesDB());
@@ -444,7 +442,7 @@ namespace BuddhaBowls.Test
 
             try
             {
-                List<InventoryItem> berryManItems = berryMan.GetInventoryItems();
+                List<InventoryItem> berryManItems = berryMan.ItemList;
                 List<InventoryItem> poItems = po.GetOpenPOItems();
 
                 foreach (KeyValuePair<string, float> kvp in updateOrderDict)

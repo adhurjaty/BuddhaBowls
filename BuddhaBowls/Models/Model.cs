@@ -48,15 +48,6 @@ namespace BuddhaBowls.Models
         public virtual void Update()
         {
             Dictionary<string, string> setDict = FieldsToDict();
-            //Dictionary<string, string> setDict = new Dictionary<string, string>();
-            //object value;
-
-            //foreach (string prop in GetPropertiesDB())
-            //{
-            //    value = GetPropertyValue(prop);
-            //    if (value != null && prop != "Id")
-            //        setDict[prop] = value.ToString();
-            //}
 
             _dbInt.UpdateRecord(_tableName, setDict, Id);
         }
