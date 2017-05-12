@@ -966,6 +966,86 @@ namespace BuddhaBowls.Test
 
         #endregion
 
+        #region Cross Tab Tests
+
+        [TestMethod]
+        public void ChangeMasterCheckVendorTest()
+        {
+            string name = "My New Item";
+            Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
+            Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
+            InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
+
+            VendorInventoryItem item = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
+
+            try
+            {
+                listVM.SelectedInventoryItem = item;
+                item.SelectedVendor = v1;
+                item.Conversion = 10;
+                item.LastPurchasedPrice = 10f;
+                listVM.RowEdited(item);
+
+                item.SelectedVendor = v2;
+                item.Conversion = 5;
+                item.LastPurchasedPrice = 5f;
+                listVM.RowEdited(item);
+
+                VendorTabVM vendorTab = _vm.VendorTab;
+                vendorTab.SelectedVendor = v1;
+                InventoryItem vendItem = vendorTab.SelectedVendorItems.First(x => x.Name == name);
+                Assert.AreEqual(10, vendItem.Conversion);
+                Assert.AreEqual(10f, vendItem.LastPurchasedPrice);
+
+                vendorTab.SelectedVendor = v2;
+                vendItem = vendorTab.SelectedVendorItems.First(x => x.Name == name);
+                Assert.AreEqual(5, vendItem.Conversion);
+                Assert.AreEqual(5f, vendItem.LastPurchasedPrice);
+            }
+            finally
+            {
+                item.Destroy();
+            }
+        }
+
+        [TestMethod]
+        public void ChangeVendorCheckMasterTest()
+        {
+
+        }
+
+        [TestMethod]
+        public void ChangeMasterCheckNewInvTest()
+        {
+
+        }
+
+        [TestMethod]
+        public void ChangeVendorCheckNewInvTest()
+        {
+
+        }
+
+        [TestMethod]
+        public void ChangeNewInvCheckMasterTest()
+        {
+
+        }
+
+        [TestMethod]
+        public void ChangeMasterCheckNewPOTest()
+        {
+
+        }
+
+        [TestMethod]
+        public void ChangeNewPOCheckMasterTest()
+        {
+
+        }
+
+        #endregion
+
         #region Helper Methods
 
         private T GetOpenTempTabVM<T>() where T : TempTabVM
@@ -988,6 +1068,8 @@ namespace BuddhaBowls.Test
                 CountUnit = "EA",
                 Yield = 1
             };
+
+            newInvVM.NextCommand.Execute(null);
 
             newInvVM.VendorList.Add(new VendorInfo(v1) { Conversion = 2 });
             newInvVM.VendorList.Add(new VendorInfo(v2) { Conversion = 4 });

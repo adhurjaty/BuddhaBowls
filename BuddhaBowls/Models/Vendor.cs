@@ -29,8 +29,13 @@ namespace BuddhaBowls.Models
             if (record != null)
             {
                 InitializeObject(record);
-                ItemList = GetInventoryItems();
+                InitItems();
             }
+        }
+
+        public void InitItems()
+        {
+            ItemList = GetInventoryItems();
         }
 
         /// <summary>

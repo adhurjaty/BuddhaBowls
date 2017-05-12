@@ -322,7 +322,7 @@ namespace BuddhaBowls
 
         private void EditInventoryItem(object obj)
         {
-            NewInventoryItemWizard wizard = new NewInventoryItemWizard(SelectedInventoryItem.ToInventoryItem());
+            NewInventoryItemWizard wizard = new NewInventoryItemWizard(SelectedInventoryItem);
             wizard.Add("New Item");
         }
 

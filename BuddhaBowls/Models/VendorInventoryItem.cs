@@ -70,6 +70,11 @@ namespace BuddhaBowls.Models
         {
         }
 
+        /// <summary>
+        /// Constructor used to load old inventories - does not allow user to switch vendors
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="v"></param>
         public VendorInventoryItem(InventoryItem item, Vendor v)
         {
             foreach (string property in item.GetPropertiesDB())
@@ -231,9 +236,9 @@ namespace BuddhaBowls.Models
 
             if (SelectedVendor != null)
             {
-                SelectedVendor.Update(GetInvItemFromVendor(SelectedVendor));
+                SelectedVendor.Update(item);
             }
-
+            NotifyAllChanges();
             item.Update();
         }
 
@@ -254,6 +259,7 @@ namespace BuddhaBowls.Models
             foreach (Vendor remVend in removedVendors)
             {
                 remVend.RemoveInvItem(invItem);
+                DeleteVendor(remVend);
             }
 
             UpdateVendorParams();

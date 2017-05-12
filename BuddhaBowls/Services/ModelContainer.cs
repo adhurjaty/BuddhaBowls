@@ -53,11 +53,20 @@ namespace BuddhaBowls.Services
         private void InitializeModels()
         {
             Vendors = ModelHelper.InstantiateList<Vendor>("Vendor") ?? new List<Vendor>();
+            AddVendorItems();
             InventoryItems = MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem") ?? new List<InventoryItem>()).ToList();
             Recipes = ModelHelper.InstantiateList<Recipe>("Recipe") ?? new List<Recipe>();
             PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder") ?? new List<PurchaseOrder>();
             Inventories = ModelHelper.InstantiateList<Inventory>("Inventory") ?? new List<Inventory>();
             PrepItems = ModelHelper.InstantiateList<PrepItem>("PrepItem") ?? new List<PrepItem>();
+        }
+
+        private void AddVendorItems()
+        {
+            foreach (Vendor vend in Vendors)
+            {
+                vend.InitItems();
+            }
         }
 
         private void InitializeInventoryOrder()
@@ -103,15 +112,6 @@ namespace BuddhaBowls.Services
         {
             return "#" + (_categoryColors.Keys.Contains(category.ToUpper()) ?
                             _categoryColors[category.ToUpper()] : GlobalVar.BLANK_COLOR);
-        }
-
-        /// <summary>
-        /// Get all inventory items and batch recipe items
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<IItem> GetIngredients()
-        {
-            return InventoryItems.Select(x => (IItem)x).Concat(Recipes.Where(x => x.IsBatch));
         }
 
         /// <summary>

@@ -117,6 +117,9 @@ namespace BuddhaBowls
 
         #endregion
 
+        /// <summary>
+        /// Constructor for new item
+        /// </summary>
         public NewInventoryItemWizard() : base()
         {
             _newItem = true;
@@ -128,14 +131,24 @@ namespace BuddhaBowls
             InitICommand();
         }
 
-        public NewInventoryItemWizard(InventoryItem item) : base()
+        /// <summary>
+        /// Constructor for editing item
+        /// </summary>
+        /// <param name="item"></param>
+        public NewInventoryItemWizard(VendorInventoryItem item) : base()
         {
             _newItem = false;
-            Item = item;
+            Item = item.ToInventoryItem();
             Header = "Edit Inventory Item";
 
             Yield = (item.Yield ?? 1) * 100;
-            InitVendors();
+
+            VendorList = new ObservableCollection<VendorInfo>();
+            foreach (Vendor vend in item.Vendors)
+            {
+                VendorList.Add(new VendorInfo(vend, item.GetInvItemFromVendor(vend)));
+            }
+
             InitICommand();
         }
 
@@ -166,31 +179,9 @@ namespace BuddhaBowls
 
                 _models.AddUpdateInventoryItem(ref invItem);
 
-                //Item.Update(VendorList);
-                //// write new item to the different Vendors that offer the new/edited item
-                //foreach (VendorInfo v in VendorList)
-                //{
-                //    Vendor vendor = _models.Vendors.First(x => x.Name == v.Name);
-                //    invItem.LastPurchasedPrice = v.Price;
-                //    invItem.Conversion = v.Conversion;
-                //    invItem.PurchasedUnit = v.PurchasedUnit;
-                //    invItem.Yield = Yield;
-                //    vendor.Update(invItem);
-                //    itemVendors.Add(vendor);
-                //}
-
                 // update the VendorInventoryItem with vendors
                 VendorInventoryItem vInvItem = _models.VendorInvItems.First(x => x.Id == Item.Id);
                 vInvItem.Update(VendorList.ToList());
-
-                //List<Vendor> delVendors = vInvItem.Vendors.Except(itemVendors).ToList();
-                //foreach(Vendor vendor in delVendors)
-                //{
-                //    vInvItem.DeleteVendor(vendor);
-                //}
-
-                //invItem.Update();
-                //_models.VendorInvItems.First(x => x.Id == invItem.Id).SetVendorDict(_models.GetVendorsFromItem(invItem));
 
                 ParentContext.AddedInvItem();
                 Close();
@@ -272,19 +263,19 @@ namespace BuddhaBowls
                 InvOrderList.Remove(existingItem);
         }
 
-        private void InitVendors()
-        {
-            Dictionary<Vendor, InventoryItem> vendorDict = _models.GetVendorsFromItem(Item);
-            VendorList = new ObservableCollection<VendorInfo>();
+        //private void InitVendors()
+        //{
+        //    Dictionary<Vendor, InventoryItem> vendorDict = _models.GetVendorsFromItem(Item);
+        //    VendorList = new ObservableCollection<VendorInfo>();
 
-            foreach(KeyValuePair<Vendor, InventoryItem> kvp in vendorDict.OrderBy(x => x.Key.Name))
-            {
-                Vendor v = kvp.Key;
-                InventoryItem invItem = kvp.Value;
+        //    foreach(KeyValuePair<Vendor, InventoryItem> kvp in vendorDict.OrderBy(x => x.Key.Name))
+        //    {
+        //        Vendor v = kvp.Key;
+        //        InventoryItem invItem = kvp.Value;
 
-                VendorList.Add(new VendorInfo(v, invItem));
-            }
-        }
+        //        VendorList.Add(new VendorInfo(v, invItem));
+        //    }
+        //}
 
         protected override void SetWizardStep()
         {
