@@ -9,9 +9,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Windows;
 using System.Windows.Input;
-
-// TODO: Deal with all of the ParentContext weirdness
 
 namespace BuddhaBowls
 {
@@ -22,8 +21,8 @@ namespace BuddhaBowls
     {
         private RefreshDel RefreshOrder;
         // stores vendor inventory offering
-        private List<InventoryItem> _sortedInvtems;
-        private Dictionary<int, List<InventoryItem>> _vendorCache;
+        private List<VendorInventoryItem> _sortedInvtems;
+        private List<VendorInventoryItem> _shownInvItems;
 
         #region Content Binders
         private OrderBreakdownVM _breakdownContext;
@@ -41,8 +40,8 @@ namespace BuddhaBowls
         }
 
         // Collection used for both Master List and New Order List
-        ObservableCollection<InventoryItem> _filteredOrderItems;
-        public ObservableCollection<InventoryItem> FilteredOrderItems
+        ObservableCollection<VendorInventoryItem> _filteredOrderItems;
+        public ObservableCollection<VendorInventoryItem> FilteredOrderItems
         {
             get
             {
@@ -55,7 +54,7 @@ namespace BuddhaBowls
             }
         }
 
-        public InventoryItem SelectedOrderItem { get; set; }
+        public VendorInventoryItem SelectedOrderItem { get; set; }
 
         // name of the vendor in the New Order form
         private Vendor _orderVendor;
@@ -92,6 +91,34 @@ namespace BuddhaBowls
         public ObservableCollection<Vendor> VendorList { get; set; }
 
         public DateTime OrderDate { get; set; } = DateTime.Today;
+
+        private List<string> _purchasedUnitList;
+        public List<string> PurchasedUnitList
+        {
+            get
+            {
+                return _purchasedUnitList;
+            }
+            set
+            {
+                _purchasedUnitList = value;
+                NotifyPropertyChanged("PurchasedUnitList");
+            }
+        }
+
+        private Visibility _unitVisibility = Visibility.Hidden;
+        public Visibility UnitVisibility
+        {
+            get
+            {
+                return _unitVisibility;
+            }
+            set
+            {
+                _unitVisibility = value;
+                NotifyPropertyChanged("UnitVisibility");
+            }
+        }
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -117,8 +144,7 @@ namespace BuddhaBowls
         {
             RefreshOrder = refresh;
             _tabControl = new NewOrder(this);
-            _sortedInvtems = new List<InventoryItem>();
-            _vendorCache = new Dictionary<int, List<InventoryItem>>();
+            _sortedInvtems = _models.VendorInvItems.Select(x => x.Copy()).ToList();
 
             SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
             CancelNewOrderCommand = new RelayCommand(CancelOrder);
@@ -130,6 +156,7 @@ namespace BuddhaBowls
             ShowSelectVendor();
             VendorList = new ObservableCollection<Vendor>(_models.Vendors);
             OrderVendor = null;
+            PurchasedUnitList = _models.GetPurchasedUnits();
         }
 
         #region ICommand Helpers
@@ -139,18 +166,23 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void SaveOrder(object obj)
         {
-            foreach (InventoryItem item in FilteredOrderItems.Where(x => x.LastOrderAmount > 0))
+            foreach (VendorInventoryItem item in _shownInvItems.Where(x => x.LastOrderAmount > 0))
             {
-                item.Update();
+                InventoryItem invItem = item.ToInventoryItem();
+                invItem.Update();
+                VendorInventoryItem origVitem = _models.VendorInvItems.First(x => x.Id == item.Id);
+                origVitem.SetVendorItem(item.SelectedVendor, invItem);
+                origVitem.SelectedVendor = item.SelectedVendor;
             }
 
-            List<InventoryItem> purchasedItems = _sortedInvtems.Where(x => x.LastOrderAmount > 0).ToList();
+            List<InventoryItem> purchasedItems = _shownInvItems.Where(x => x.LastOrderAmount > 0).Select(x => x.ToInventoryItem()).ToList();
             PurchaseOrder po = new PurchaseOrder(OrderVendor, purchasedItems, OrderDate);
 
             GenerateAfterOrderSaved(po, OrderVendor);
 
             _models.AddPurchaseOrder(po);
             RefreshOrder();
+            ParentContext.InventoryTab.InvListVM.UpdateInvValue();
 
             Close();
         }
@@ -204,16 +236,19 @@ namespace BuddhaBowls
             ObservableCollection<BreakdownCategoryItem> breakdown = new ObservableCollection<BreakdownCategoryItem>();
             total = 0;
 
-            foreach (string category in _models.GetInventoryCategories())
+            if (orderedItems != null)
             {
-                IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
-                if (items.Count() > 0)
+                foreach (string category in _models.GetInventoryCategories())
                 {
-                    BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
-                    bdItem.Background = _models.GetCategoryColorHex(category);
-                    breakdown.Add(bdItem);
+                    IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
+                    if (items.Count() > 0)
+                    {
+                        BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
+                        bdItem.Background = _models.GetCategoryColorHex(category);
+                        breakdown.Add(bdItem);
 
-                    total += bdItem.TotalAmount;
+                        total += bdItem.TotalAmount;
+                    }
                 }
             }
 
@@ -225,7 +260,7 @@ namespace BuddhaBowls
             float oTotal = 0;
             BreakdownContext = new OrderBreakdownVM()
             {
-                BreakdownList = GetOrderBreakdown(_sortedInvtems.Where(x => x.LastOrderAmount > 0), out oTotal),
+                BreakdownList = GetOrderBreakdown(_shownInvItems, out oTotal),
                 OrderTotal = oTotal,
                 Header = "Price Breakdown"
             };
@@ -236,7 +271,7 @@ namespace BuddhaBowls
         /// <summary>
         /// Called when New Order is edited
         /// </summary>
-        public void InventoryOrderAmountChanged(InventoryItem item)
+        public void RowEdited(VendorInventoryItem item)
         {
             //_editedIds.Add(item.Id);
 
@@ -258,53 +293,57 @@ namespace BuddhaBowls
         /// </summary>
         private void LoadVendorItems()
         {
-            List<InventoryItem> priceListItems = GetInventoryItems();
-            if (priceListItems != null)
-            {
-                _sortedInvtems = priceListItems;
+            FilterText = "";
 
-                RefreshInventoryList();
+            if (OrderVendor != null)
+                _shownInvItems = _sortedInvtems.Where(x => x.Vendors.Select(y => y.Id).Contains(OrderVendor.Id)).ToList();
+            else
+                _shownInvItems = null;
+
+            if (_shownInvItems != null && _shownInvItems.Count > 0)
+            {
+                foreach (VendorInventoryItem item in _shownInvItems)
+                {
+                    item.SelectedVendor = OrderVendor;
+                }
+                FilteredOrderItems = new ObservableCollection<VendorInventoryItem>(_shownInvItems);
+                UnitVisibility = Visibility.Visible;
             }
             else
             {
-                _sortedInvtems = new List<InventoryItem>();
                 ShowMissingVendorItems();
+                _shownInvItems = null;
+                UnitVisibility = Visibility.Hidden;
             }
+            SetLastOrderBreakdown();
         }
 
-        private List<InventoryItem> GetInventoryItems()
+        /// <summary>
+        /// Method used to update values that have been edited from the master list or vendor list
+        /// </summary>
+        /// <param name="item"></param>
+        public void EditedItem(VendorInventoryItem item)
         {
-            List<InventoryItem> items;
-            if (_vendorCache.Keys.Contains(OrderVendor.Id))
-                items = _vendorCache[OrderVendor.Id];
-            else
-            {
-                items = OrderVendor.ItemList;
-                _vendorCache[OrderVendor.Id] = items;
-            }
-
-            if(items != null)
-                return MainHelper.SortItems(items).ToList();
-            return null;
+            int idx = _sortedInvtems.FindIndex(x => x.Id == item.Id);
+            _sortedInvtems[idx] = item;
+            LoadVendorItems();
         }
 
         private void ShowSelectVendor()
         {
-            FilteredOrderItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Please Select Vendor" } };
+            FilteredOrderItems = new ObservableCollection<VendorInventoryItem>() { new VendorInventoryItem() { Name = "Please Select Vendor" } };
         }
 
         private void ShowMissingVendorItems()
         {
-            FilteredOrderItems = new ObservableCollection<InventoryItem>() { new InventoryItem() { Name = "Vendor has no items" } };
+            FilteredOrderItems = new ObservableCollection<VendorInventoryItem>() { new VendorInventoryItem() { Name = "Vendor has no items" } };
         }
 
         #endregion
 
         private void RefreshInventoryList()
         {
-            FilterText = "";
-            FilteredOrderItems = new ObservableCollection<InventoryItem>(_sortedInvtems);
-            SetLastOrderBreakdown();
+            LoadVendorItems();
         }
 
         private void GenerateAfterOrderSaved(PurchaseOrder po, Vendor vendor)

@@ -147,12 +147,7 @@ namespace BuddhaBowls
         {
             get
             {
-                if(SelectedVendor != null)
-                {
-                    return File.Exists(SelectedVendor.GetOrderSheetPath());
-                }
-
-                return false;
+                return SelectedVendorItems != null && SelectedVendorItems.Count > 0;
             }
         }
 
@@ -161,9 +156,6 @@ namespace BuddhaBowls
         public VendorTabVM() : base()
         {
             AddVendorCommand = new RelayCommand(AddVendor, x => DBConnection);
-            //SaveCommand = new RelayCommand(SaveVendor, x => DBConnection);
-            //ResetCommand = new RelayCommand(ResetVendor, x => DBConnection);
-            //ChangeRecListOrderCommand = new RelayCommand(ChangeRecOrder, x => SelectedVendorCanExecute);
             EditVendorCommand = new RelayCommand(EditVendor, x => SelectedVendorCanExecute && DBConnection);
             GetOrderSheetCommand = new RelayCommand(GenerateOrderSheet, x => GenOrderSheetCanExecute && DBConnection);
             AddVendorItemCommand = new RelayCommand(AddVendorItem, x => SelectedVendor != null);
@@ -181,21 +173,6 @@ namespace BuddhaBowls
             NewVendorWizardVM newVendor = new NewVendorWizardVM();
             newVendor.Add("New Vendor");
         }
-
-        //private void ResetVendor(object obj)
-        //{
-        //    _vItemsCache = new Dictionary<int, ObservableCollection<VendorInventoryItem>>();
-        //    LoadVendorItems();
-        //}
-
-        //private void SaveVendor(object obj)
-        //{
-        //    foreach (KeyValuePair<int, ObservableCollection<VendorInventoryItem>> kvp in _vItemsCache)
-        //    {
-        //        Vendor v = _models.Vendors.First(x => x.Id == kvp.Key);
-        //        v.Update(kvp.Value.Select(x => x.ToInventoryItem()).ToList());
-        //    }
-        //}
 
         private void EditVendor(object obj)
         {
@@ -296,8 +273,10 @@ namespace BuddhaBowls
         public void VendorItemChanged(InventoryItem item)
         {
             item.NotifyChanges();
-            _models.VendorInvItems.First(x => x.Id == item.Id).SetVendorItem(SelectedVendor, item);
+            VendorInventoryItem vendItem = _models.VendorInvItems.First(x => x.Id == item.Id);
+            vendItem.SetVendorItem(SelectedVendor, item);
             item.Update();
+            ParentContext.InvItemChanged(vendItem);
         }
         #endregion
     }

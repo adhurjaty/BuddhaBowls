@@ -429,6 +429,21 @@ namespace BuddhaBowls
             FilteredItems.Remove(vendorItem);
         }
 
+        /// <summary>
+        /// Method used to update values that have been edited from the master list or vendor list
+        /// </summary>
+        /// <param name="item"></param>
+        public void EditedItem(VendorInventoryItem item)
+        {
+            if (!IsMasterList && _inventory == null)
+            {
+                FilterText = "";
+                int idx = _inventoryItems.FindIndex(x => x.Id == item.Id);
+                _inventoryItems[idx] = item;
+                FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
+            }
+        }
+
         public void MoveDown(InventoryItem item)
         {
             MoveInList(item, false);
@@ -455,11 +470,16 @@ namespace BuddhaBowls
             _models.ReOrderInvList();
         }
 
+        /// <summary>
+        /// Called from code-behind. Writes changes to the DB if Master list otherwise display relevant changes
+        /// </summary>
+        /// <param name="item"></param>
         public void RowEdited(VendorInventoryItem item)
         {
             if (IsMasterList)
             {
                 item.Update();
+                ParentContext.InvItemChanged(item);
             }
             else
             {
@@ -494,7 +514,7 @@ namespace BuddhaBowls
         /// <summary>
         /// Upates prices in the category price breakdown dropdown list
         /// </summary>
-        private void UpdateInvValue()
+        public void UpdateInvValue()
         {
             List<PriceExpanderItem> items = new List<PriceExpanderItem>();
             float totalValue = 0;
@@ -540,7 +560,9 @@ namespace BuddhaBowls
             {
                 InventoryItem invItem = item.ToInventoryItem();
                 _models.AddUpdateInventoryItem(ref invItem);
-                _models.VendorInvItems.First(x => x.Id == item.Id).SetVendorItem(item.SelectedVendor, invItem);
+                VendorInventoryItem origVitem = _models.VendorInvItems.First(x => x.Id == item.Id);
+                origVitem.SetVendorItem(item.SelectedVendor, invItem);
+                origVitem.SelectedVendor = item.SelectedVendor;
             }
 
             Inventory inv = new Inventory(invDate);

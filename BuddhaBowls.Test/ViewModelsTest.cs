@@ -1011,37 +1011,283 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void ChangeVendorCheckMasterTest()
         {
+            string name = "My New Item";
+            Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
+            Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
+            InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
 
+            VendorInventoryItem item = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
+
+            try
+            {
+                listVM.SelectedInventoryItem = item;
+                item.SelectedVendor = v1;
+
+                VendorTabVM vendorTab = _vm.VendorTab;
+                vendorTab.SelectedVendor = v1;
+                vendorTab.SelectedVendorItem = vendorTab.SelectedVendorItems.First(x => x.Id == item.Id);
+
+                vendorTab.SelectedVendorItem.Conversion = 10;
+                vendorTab.SelectedVendorItem.LastPurchasedPrice = 10f;
+                vendorTab.VendorItemChanged(vendorTab.SelectedVendorItem);
+
+                vendorTab.SelectedVendor = v2;
+                vendorTab.SelectedVendorItem = vendorTab.SelectedVendorItems.First(x => x.Id == item.Id);
+
+                vendorTab.SelectedVendorItem.Conversion = 5;
+                vendorTab.SelectedVendorItem.LastPurchasedPrice = 5f;
+                vendorTab.VendorItemChanged(vendorTab.SelectedVendorItem);
+                
+                VendorInventoryItem vendItem = listVM.FilteredItems.First(x => x.Name == name);
+                Assert.AreEqual(v1.Id, listVM.SelectedInventoryItem.SelectedVendor.Id);
+                Assert.AreEqual(10, vendItem.Conversion);
+                Assert.AreEqual(10f, vendItem.LastPurchasedPrice);
+
+                vendItem.SelectedVendor = v2;
+                Assert.AreEqual(5, vendItem.Conversion);
+                Assert.AreEqual(5f, vendItem.LastPurchasedPrice);
+            }
+            finally
+            {
+                item.Destroy();
+            }
         }
 
         [TestMethod]
         public void ChangeMasterCheckNewInvTest()
         {
+            string name = "My New Item";
+            Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
+            Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
+            InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
 
+            VendorInventoryItem item = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
+
+            try
+            {
+                _vm.InventoryTab.AddCommand.Execute(null);
+                NewInventoryVM newInvTab = GetOpenTempTabVM<NewInventoryVM>();
+
+                listVM.SelectedInventoryItem = item;
+                item.SelectedVendor = v1;
+                item.Conversion = 10;
+                item.LastPurchasedPrice = 10f;
+                listVM.RowEdited(item);
+
+                item.SelectedVendor = v2;
+                item.Conversion = 5;
+                item.LastPurchasedPrice = 5f;
+                listVM.RowEdited(item);
+
+                VendorInventoryItem vendItem = newInvTab.InvListVM.FilteredItems.First(x => x.Name == name);
+                Assert.AreEqual(v2.Id, vendItem.SelectedVendor.Id);
+                Assert.AreEqual(5, vendItem.Conversion);
+                Assert.AreEqual(5f, vendItem.LastPurchasedPrice);
+
+                vendItem.SelectedVendor = v1;
+                Assert.AreEqual(10, vendItem.Conversion);
+                Assert.AreEqual(10f, vendItem.LastPurchasedPrice);
+            }
+            finally
+            {
+                item.Destroy();
+            }
         }
 
         [TestMethod]
         public void ChangeVendorCheckNewInvTest()
         {
+            string name = "My New Item";
+            Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
+            Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
+            InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
 
+            VendorInventoryItem item = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
+
+            try
+            {
+                _vm.InventoryTab.AddCommand.Execute(null);
+                NewInventoryVM newInv = GetOpenTempTabVM<NewInventoryVM>();
+
+                listVM.SelectedInventoryItem = item;
+                item.SelectedVendor = v1;
+
+                VendorTabVM vendorTab = _vm.VendorTab;
+                vendorTab.SelectedVendor = v1;
+                vendorTab.SelectedVendorItem = vendorTab.SelectedVendorItems.First(x => x.Id == item.Id);
+
+                vendorTab.SelectedVendorItem.Conversion = 10;
+                vendorTab.SelectedVendorItem.LastPurchasedPrice = 10f;
+                vendorTab.VendorItemChanged(vendorTab.SelectedVendorItem);
+
+                vendorTab.SelectedVendor = v2;
+                vendorTab.SelectedVendorItem = vendorTab.SelectedVendorItems.First(x => x.Id == item.Id);
+
+                vendorTab.SelectedVendorItem.Conversion = 5;
+                vendorTab.SelectedVendorItem.LastPurchasedPrice = 5f;
+                vendorTab.VendorItemChanged(vendorTab.SelectedVendorItem);
+
+                VendorInventoryItem vendItem = newInv.InvListVM.FilteredItems.First(x => x.Name == name);
+                Assert.AreEqual(v1.Id, listVM.SelectedInventoryItem.SelectedVendor.Id);
+                Assert.AreEqual(10, vendItem.Conversion);
+                Assert.AreEqual(10f, vendItem.LastPurchasedPrice);
+
+                vendItem.SelectedVendor = v2;
+                Assert.AreEqual(5, vendItem.Conversion);
+                Assert.AreEqual(5f, vendItem.LastPurchasedPrice);
+            }
+            finally
+            {
+                item.Destroy();
+            }
         }
 
         [TestMethod]
         public void ChangeNewInvCheckMasterTest()
         {
+            // ensure that master inventory does not change when changing new inventory (before saving)
 
+            string name = "My New Item";
+            Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
+            Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
+            InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
+
+            VendorInventoryItem item = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
+
+            try
+            {
+                item.SelectedVendor = v1;
+                _vm.InventoryTab.AddCommand.Execute(null);
+                NewInventoryVM newInv = GetOpenTempTabVM<NewInventoryVM>();
+                VendorInventoryItem vendItem = newInv.InvListVM.FilteredItems.First(x => x.Name == name);
+
+                listVM.SelectedInventoryItem = item;
+                item.SelectedVendor = v1;
+
+                VendorTabVM vendorTab = _vm.VendorTab;
+                vendItem.SelectedVendor = v1;
+                float v1conv = vendItem.Conversion;
+                float v1price = vendItem.LastPurchasedPrice;
+
+                vendItem.Conversion = 10;
+                vendItem.LastPurchasedPrice = 10f;
+                newInv.InvListVM.RowEdited(vendItem);
+
+                vendItem.SelectedVendor = v2;
+                float v2conv = vendItem.Conversion;
+                float v2price = vendItem.LastPurchasedPrice;
+
+                vendItem.Conversion = 5;
+                vendItem.LastPurchasedPrice = 5f;
+                newInv.InvListVM.RowEdited(vendItem);
+
+                Assert.AreEqual(v1.Id, listVM.SelectedInventoryItem.SelectedVendor.Id);
+                Assert.AreEqual(v1conv, listVM.SelectedInventoryItem.Conversion);
+                Assert.AreEqual(v1price, listVM.SelectedInventoryItem.LastPurchasedPrice);
+
+                listVM.SelectedInventoryItem.SelectedVendor = v2;
+                Assert.AreEqual(v2conv, listVM.SelectedInventoryItem.Conversion);
+                Assert.AreEqual(v2price, listVM.SelectedInventoryItem.LastPurchasedPrice);
+            }
+            finally
+            {
+                item.Destroy();
+            }
         }
 
         [TestMethod]
         public void ChangeMasterCheckNewPOTest()
         {
+            string name = "My New Item";
+            Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
+            Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
+            InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
 
+            VendorInventoryItem item = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
+
+            try
+            {
+                _vm.OrderTab.AddNewOrderCommand.Execute(null);
+                NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
+
+                listVM.SelectedInventoryItem = item;
+                item.SelectedVendor = v1;
+                item.Conversion = 10;
+                item.LastPurchasedPrice = 10f;
+                listVM.RowEdited(item);
+
+                item.SelectedVendor = v2;
+                item.Conversion = 5;
+                item.LastPurchasedPrice = 5f;
+                listVM.RowEdited(item);
+
+                newOrderTab.OrderVendor = v1;
+                VendorInventoryItem vendItem = newOrderTab.FilteredOrderItems.First(x => x.Name == name);
+                Assert.AreEqual(10, vendItem.Conversion);
+                Assert.AreEqual(10f, vendItem.LastPurchasedPrice);
+
+                newOrderTab.OrderVendor = v2;
+                vendItem = newOrderTab.FilteredOrderItems.First(x => x.Name == name);
+                Assert.AreEqual(5, vendItem.Conversion);
+                Assert.AreEqual(5f, vendItem.LastPurchasedPrice);
+            }
+            finally
+            {
+                item.Destroy();
+            }
         }
 
         [TestMethod]
         public void ChangeNewPOCheckMasterTest()
         {
+            // ensure that master inventory does not change when changing item info in new PO (before saving)
 
+            string name = "My New Item";
+            Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
+            Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
+            InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
+
+            VendorInventoryItem item = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
+
+            try
+            {
+                _vm.OrderTab.AddNewOrderCommand.Execute(null);
+                NewOrderVM newOrder = GetOpenTempTabVM<NewOrderVM>();
+                newOrder.OrderVendor = v1;
+                VendorInventoryItem vendItem = newOrder.FilteredOrderItems.First(x => x.Name == name);
+
+                listVM.SelectedInventoryItem = item;
+                item.SelectedVendor = v1;
+
+                VendorTabVM vendorTab = _vm.VendorTab;
+                vendItem.SelectedVendor = v1;
+                float v1conv = vendItem.Conversion;
+                float v1price = vendItem.LastPurchasedPrice;
+
+                vendItem.Conversion = 10;
+                vendItem.LastPurchasedPrice = 10f;
+                newOrder.RowEdited(vendItem);
+
+                newOrder.OrderVendor = v2;
+                float v2conv = vendItem.Conversion;
+                float v2price = vendItem.LastPurchasedPrice;
+
+                vendItem.Conversion = 5;
+                vendItem.LastPurchasedPrice = 5f;
+                newOrder.RowEdited(vendItem);
+
+                Assert.AreEqual(v1.Id, listVM.SelectedInventoryItem.SelectedVendor.Id);
+                Assert.AreEqual(v1conv, listVM.SelectedInventoryItem.Conversion);
+                Assert.AreEqual(v1price, listVM.SelectedInventoryItem.LastPurchasedPrice);
+
+                listVM.SelectedInventoryItem.SelectedVendor = v2;
+                Assert.AreEqual(v2conv, listVM.SelectedInventoryItem.Conversion);
+                Assert.AreEqual(v2price, listVM.SelectedInventoryItem.LastPurchasedPrice);
+            }
+            finally
+            {
+                item.Destroy();
+            }
         }
 
         #endregion

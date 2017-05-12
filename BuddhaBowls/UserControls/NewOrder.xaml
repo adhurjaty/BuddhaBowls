@@ -35,11 +35,20 @@
                                           ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedOrderItem, UpdateSourceTrigger=PropertyChanged}"
                                           AutoGenerateColumns="False" RowEditEnding="OrderList_RowEditEnding" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
                     <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="2*"/>
-                    <DataGridTextColumn Header="Unit" Binding="{Binding Path=PurchasedUnit, StringFormat=0.##}" Width="1*" IsReadOnly="True" />
+                    <DataGridTemplateColumn Header="Unit" Width="2*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox Text="{Binding PurchasedUnit}" IsEditable="True" ItemsSource="{Binding Path=DataContext.PurchasedUnitList,
+                                          RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                          Visibility="{Binding Path=DataContext.UnitVisibility, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <!--<DataGridTextColumn Header="Unit" Binding="{Binding Path=PurchasedUnit, StringFormat=0.##}" Width="1*" IsReadOnly="True" />-->
                     <DataGridTextColumn Header="Amt" Binding="{Binding Path=LastOrderAmount, StringFormat=0.##}" Width="1*" />
-                    <DataGridTextColumn Header="Price" Binding="{Binding Path=LastPurchasedPrice, StringFormat=c}" Width="2*" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Price" Binding="{Binding Path=LastPurchasedPrice, StringFormat=c}" Width="2*" />
                     <DataGridTextColumn Header="Extension" Binding="{Binding Path=PurchaseExtension, Mode=OneWay, StringFormat=c}" Width="2*" />
                 </DataGrid.Columns>
             </DataGrid>

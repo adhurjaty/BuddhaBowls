@@ -349,72 +349,19 @@ namespace BuddhaBowls
             }
         }
 
-        /// <summary>
-        /// Looks through fields in add/edit form to ensure that user-supplied values are valid and changes types when necessary
-        /// </summary>
-        /// <remarks>Probably will deprecate as I refactor new/edit recipe</remarks>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public string ObjectFromFields<T>(ref T item, IEnumerable<FieldSetting> fieldsCollection, bool newItem) where T : Model, new()
+        public void InvItemChanged(VendorInventoryItem item)
         {
-            foreach (FieldSetting field in fieldsCollection)
+            if (TempTabVM.TabStack != null)
             {
-                if (!item.IsNullable(field.Name) && string.IsNullOrWhiteSpace(field.Value))
+                VendorInventoryItem cpy = item.Copy();
+                foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
                 {
-                    field.Error = 1;
-                    return field.Name + " must be set";
+                    if (tempVM.GetType() == typeof(NewInventoryVM))
+                        ((NewInventoryVM)tempVM).InvListVM.EditedItem(cpy);
+                    if (tempVM.GetType() == typeof(NewOrderVM))
+                        ((NewOrderVM)tempVM).EditedItem(cpy);
                 }
-
-                if (field.Name == "Name" && _models.InventoryItems.FirstOrDefault(x => x.Name.ToUpper() == field.Value.ToUpper()) != null &&
-                   newItem)
-                {
-                    field.Error = 1;
-                    return field.Value + " already exists in the database";
-                }
-
-                if (item.GetPropertyType(field.Name) == typeof(int))
-                {
-                    int val = 0;
-                    int.TryParse(field.Value, out val);
-
-                    if (val == 0)
-                    {
-                        field.Error = 1;
-                        return field.Name + " must be an integer";
-                    }
-                }
-
-                if (item.GetPropertyType(field.Name) == typeof(float))
-                {
-                    float val = 0;
-                    float divisor = 1f;
-                    string valueStr = field.Value;
-
-                    if (valueStr.EndsWith("%"))
-                    {
-                        valueStr = valueStr.Remove(valueStr.Length - 1);
-                        divisor = 100f;
-                    }
-                    else if (valueStr.StartsWith("$"))
-                    {
-                        valueStr = valueStr.Remove(0, 1);
-                    }
-
-                    float.TryParse(valueStr, out val);
-
-                    if (val == 0)
-                    {
-                        field.Error = 1;
-                        return field.Name + " must be a number";
-                    }
-
-                    field.Value = (val / divisor).ToString();
-                }
-
-                field.Error = 0;
-                item.SetProperty(field.Name, field.Value);
             }
-            return "";
         }
 
         public void SaveSettings()

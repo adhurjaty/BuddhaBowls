@@ -94,11 +94,6 @@ namespace BuddhaBowls.Models
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, vendOmit));
         }
 
-        public override bool Equals(object obj)
-        {
-            return Id == ((Vendor)obj).Id;
-        }
-
         public override int GetHashCode()
         {
             return Id;

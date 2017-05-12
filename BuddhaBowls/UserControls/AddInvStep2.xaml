@@ -26,7 +26,7 @@
                   ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False"
                   CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Vendor" Binding="{Binding Path=Vendor, Mode=OneWay}" Width="3*"/>
+                <DataGridTextColumn Header="Vendor" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
                 <DataGridTextColumn Header="Purchased Price" Binding="{Binding Price, StringFormat=c}" Width="2*" />
                 <DataGridTemplateColumn Header="Purchased Unit" Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
