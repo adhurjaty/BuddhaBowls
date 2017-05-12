@@ -237,6 +237,7 @@ namespace BuddhaBowls.Models
             if (SelectedVendor != null)
             {
                 SelectedVendor.Update(item);
+                _vendorDict[SelectedVendor] = item;
             }
             NotifyAllChanges();
             item.Update();
