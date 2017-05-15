@@ -85,6 +85,7 @@ namespace BuddhaBowls.Models
             {
                 File.Delete(priceListPath);
             }
+            ItemList = null;
             base.Destroy();
         }
 

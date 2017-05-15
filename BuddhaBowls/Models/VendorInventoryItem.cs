@@ -252,6 +252,7 @@ namespace BuddhaBowls.Models
             List<Vendor> removedVendors = _vendorDict.Keys.Where(x => !vInfoList.Select(y => y.Name).Contains(x.Name)).ToList();
             foreach (VendorInfo v in vInfoList)
             {
+                invItem = ToInventoryItem();
                 invItem.LastPurchasedPrice = v.Price;
                 invItem.Conversion = v.Conversion;
                 invItem.PurchasedUnit = v.PurchasedUnit;

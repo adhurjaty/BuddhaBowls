@@ -581,7 +581,7 @@ namespace BuddhaBowls
                     sheet.Cells[row, 3] = item.Name;
                     sheet.Cells[row, 4] = item.LastOrderAmount != 0 ? item.LastOrderAmount.ToString() : "";
                     sheet.Cells[row, 5] = item.LastPurchasedPrice.ToString("c");
-                    sheet.Cells[row, 6] = item.PriceExtension.ToString("c");
+                    sheet.Cells[row, 6] = item.PurchaseExtension.ToString("c");
                     categoryCosts[category] += item.PriceExtension;
                     row++;
                 }
@@ -673,12 +673,12 @@ namespace BuddhaBowls
                 sheet.Cells[row, 3] = item.Name;
                 sheet.Cells[row, 4] = item.LastOrderAmount;
                 sheet.Cells[row, 5] = item.LastPurchasedPrice.ToString("c");
-                sheet.Cells[row, 6] = item.PriceExtension.ToString("c");
+                sheet.Cells[row, 6] = item.PurchaseExtension.ToString("c");
                 row++;
             }
 
             ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row-1, 7]]).BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
-            ((Excel.Range)sheet.Range[sheet.Cells[startRow+1, 1], sheet.Cells[row-1, 7]]).Borders.Weight = Excel.XlBorderWeight.xlMedium;
+            ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row-1, 7]]).Borders.Weight = Excel.XlBorderWeight.xlMedium;
 
             string outDir = Path.Combine(Properties.Settings.Default.DBLocation, "Receiving Lists");
             if (!Directory.Exists(outDir))

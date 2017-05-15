@@ -272,8 +272,7 @@ namespace BuddhaBowls.Test
             Dictionary<Vendor, InventoryItem> testDict = _models.GetVendorsFromItem(testItem);
             List<Vendor> keyList = new List<Vendor>(testDict.Keys);
 
-            Assert.IsNull(keyList[0].Name);
-            //Assert.AreEqual(0, keyList.Count);
+            Assert.AreEqual(0, keyList.Count);
         }
 
         [TestMethod]

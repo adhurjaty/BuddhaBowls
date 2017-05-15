@@ -214,7 +214,7 @@ namespace BuddhaBowls
                 item.LastOrderAmount = 0;
             }
 
-            RefreshInventoryList();
+            LoadVendorItems();
         }
 
         private void AutoSelectVendor(object obj)
@@ -240,7 +240,7 @@ namespace BuddhaBowls
             {
                 foreach (string category in _models.GetInventoryCategories())
                 {
-                    IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
+                    IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper() && x.LastOrderAmount > 0);
                     if (items.Count() > 0)
                     {
                         BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
