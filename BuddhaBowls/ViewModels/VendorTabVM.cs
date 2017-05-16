@@ -267,7 +267,7 @@ namespace BuddhaBowls
             _vItemsCache[SelectedVendor.Id] = SelectedVendorItems;
             _models.VendorInvItems.First(x => x.Id == item.Id).AddVendor(SelectedVendor, item);
 
-            SelectedVendor.Update(SelectedVendorItems.ToList());
+            SelectedVendor.ClearAndUpdate(SelectedVendorItems.ToList());
         }
 
         public void VendorItemChanged(InventoryItem item)

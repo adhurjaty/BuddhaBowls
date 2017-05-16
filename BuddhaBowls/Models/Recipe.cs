@@ -18,13 +18,15 @@ namespace BuddhaBowls.Models
         public string CountUnit { get; set; }
         public bool IsBatch { get; set; }
 
+        public List<IItem> ItemList { get; set; }
+
         public float RecipeCost
         {
             get
             {
                 try
                 {
-                    return GetIItems().Sum(x => x.GetCost());
+                    return ItemList.Sum(x => x.GetCost());
                 }
                 catch (Exception e)
                 {
@@ -47,7 +49,7 @@ namespace BuddhaBowls.Models
             if (record != null)
             {
                 InitializeObject(record);
-
+                LoadRecipe();
             }
         }
 
@@ -60,7 +62,7 @@ namespace BuddhaBowls.Models
         {
             Dictionary<string, float> costDict = new Dictionary<string, float>();
 
-            foreach (IItem item in GetIItems())
+            foreach (IItem item in ItemList)
             {
                 if (item.GetType() == typeof(Recipe))
                 {
@@ -85,21 +87,28 @@ namespace BuddhaBowls.Models
 
         public void Update(List<IItem> items)
         {
-            if(items != null && items.Count > 0)
+            if (items != null && items.Count > 0)
+            {
                 ModelHelper.CreateTable(ConvToRecipeItems(items), GetRecipeTableName());
+                ItemList = items;
+            }
             base.Update();
         }
 
         public int Insert(List<IItem> items)
         {
-            if(items != null && items.Count > 0)
+            if (items != null && items.Count > 0)
+            {
                 ModelHelper.CreateTable(ConvToRecipeItems(items), GetRecipeTableName());
+                ItemList = items;
+            }
             return base.Insert();
         }
 
         public override void Destroy()
         {
             _dbInt.DestroyTable(GetRecipeTableName());
+            ItemList = null;
             base.Destroy();
         }
 
@@ -114,14 +123,13 @@ namespace BuddhaBowls.Models
             return Copy<Recipe>();
         }
 
-        public List<RecipeItem> GetRecipeItems()
+        public void LoadRecipe()
         {
-            return ModelHelper.InstantiateList<RecipeItem>(GetRecipeTableName(), false);
-        }
-
-        public List<IItem> GetIItems()
-        {
-            return GetRecipeItems().Select(x => x.GetIItem()).ToList();
+            List<RecipeItem> items = ModelHelper.InstantiateList<RecipeItem>(GetRecipeTableName(), false);
+            if (items != null)
+                ItemList = items.Select(x => x.GetIItem()).ToList();
+            else
+                ItemList = null;
         }
 
         private List<RecipeItem> ConvToRecipeItems(List<IItem> items)

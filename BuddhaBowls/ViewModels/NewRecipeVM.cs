@@ -241,7 +241,7 @@ namespace BuddhaBowls
             _newItem = false;
             IsBatch = recipe.IsBatch;
             Header = "Edit " + recipe.Name;
-            _ingredientItems = recipe.GetIItems(); //recipe.ItemList;
+            _ingredientItems = recipe.ItemList;
 
             Item = recipe;
             Refresh();

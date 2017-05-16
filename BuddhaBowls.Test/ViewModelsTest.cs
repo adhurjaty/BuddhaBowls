@@ -903,7 +903,7 @@ namespace BuddhaBowls.Test
             try
             {
                 Assert.AreEqual(name, newRecipe.Name);
-                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), newRecipe.GetRecipeItems().Select(x => x.Name).ToList());
+                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), newRecipe.ItemList.Select(x => x.Name).ToList());
             }
             finally
             {
@@ -946,9 +946,8 @@ namespace BuddhaBowls.Test
                 editRecipeTab.FinishCommand.Execute(null);
 
                 Recipe editedRecipe = recipeTab.FilteredItems.First(x => x.Name == name);
-                List<RecipeItem> editedIngredients = editedRecipe.GetRecipeItems();
-                CollectionAssert.Contains(editedIngredients.Select(x => x.Name).ToList(), "Butter");
-                Assert.AreEqual(42, editedIngredients.First(x => x.Name == "Avocado").Quantity);
+                CollectionAssert.Contains(newRecipe.ItemList.Select(x => x.Name).ToList(), "Butter");
+                Assert.AreEqual(42, newRecipe.ItemList.First(x => x.Name == "Avocado").Count);
             }
             finally
             {

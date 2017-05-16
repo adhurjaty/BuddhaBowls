@@ -53,11 +53,25 @@ namespace BuddhaBowls.Models
         }
 
         /// <summary>
+        /// Update the vendor record and only update the items in the vendor price table
+        /// </summary>
+        /// <param name="items"></param>
+        public void Update(List<InventoryItem> items)
+        {
+            foreach (InventoryItem item in items)
+            {
+                ItemList[ItemList.FindIndex(x => x.Id == item.Id)] = item;
+            }
+
+            ClearAndUpdate(ItemList);
+        }
+
+        /// <summary>
         /// Update the vendor record and update the price table to match the supplied inventory items.
         /// </summary>
         /// <remarks>Creates a new price table if one does not already exist</remarks>
         /// <param name="items"></param>
-        public void Update(List<InventoryItem> items)
+        public void ClearAndUpdate(List<InventoryItem> items)
         {
             ModelHelper.CreateTable(items, GetPriceTableName());
             ItemList = items;

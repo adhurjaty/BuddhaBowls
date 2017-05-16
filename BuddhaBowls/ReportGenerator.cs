@@ -582,7 +582,7 @@ namespace BuddhaBowls
                     sheet.Cells[row, 4] = item.LastOrderAmount != 0 ? item.LastOrderAmount.ToString() : "";
                     sheet.Cells[row, 5] = item.LastPurchasedPrice.ToString("c");
                     sheet.Cells[row, 6] = item.PurchaseExtension.ToString("c");
-                    categoryCosts[category] += item.PriceExtension;
+                    categoryCosts[category] += item.PurchaseExtension;
                     row++;
                 }
 

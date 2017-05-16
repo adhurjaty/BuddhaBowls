@@ -281,7 +281,7 @@ namespace BuddhaBowls.Test
                 itemList[1].LastPurchasedPrice = 22.22f;
 
                 vend.PhoneNumber = "5559999";
-                vend.Update(itemList);
+                vend.ClearAndUpdate(itemList);
                 List<InventoryItem> newList = vend.ItemList;
 
                 Vendor newVend = new Vendor(new Dictionary<string, string>() { { "Name", vend.Name } });
@@ -707,8 +707,7 @@ namespace BuddhaBowls.Test
 
                 Assert.AreEqual(name, dbRecipe.Name);
                 Assert.AreEqual(category, dbRecipe.Category);
-                List<RecipeItem> items = dbRecipe.GetRecipeItems();
-                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), items.Select(x => x.Name).ToList());
+                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), recipe.ItemList.Select(x => x.Name).ToList());
             }
             finally
             {
@@ -731,11 +730,10 @@ namespace BuddhaBowls.Test
             {
                 recipe.Insert();
                 Recipe dbRecipe = new Recipe(new Dictionary<string, string>() { { "Name", name } });
+                // make sure no error occurs when trying to find items
 
                 Assert.AreEqual(name, dbRecipe.Name);
                 Assert.AreEqual(category, dbRecipe.Category);
-                List<RecipeItem> items = dbRecipe.GetRecipeItems();
-                // make sure no error occurs when trying to find items
 
                 Assert.IsFalse(File.Exists(dbRecipe.GetRecipeTablePath()));
             }
@@ -782,8 +780,7 @@ namespace BuddhaBowls.Test
                 Recipe dbRecipe = new Recipe(new Dictionary<string, string>() { { "Name", name } });
 
                 Assert.AreEqual(newCategory, dbRecipe.Category);
-                List<RecipeItem> items = dbRecipe.GetRecipeItems();
-                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), items.Select(x => x.Name).ToList());
+                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), recipe.ItemList.Select(x => x.Name).ToList());
             }
             finally
             {
@@ -817,8 +814,7 @@ namespace BuddhaBowls.Test
                 Recipe dbRecipe = new Recipe(new Dictionary<string, string>() { { "Name", name } });
 
                 Assert.AreEqual(newCategory, dbRecipe.Category);
-                List<RecipeItem> items = dbRecipe.GetRecipeItems();
-                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), items.Select(x => x.Name).ToList());
+                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), recipe.ItemList.Select(x => x.Name).ToList());
             }
             finally
             {
@@ -847,7 +843,7 @@ namespace BuddhaBowls.Test
                 { "Celery", 2 }
             };
 
-            foreach (IItem item in recipe.GetIItems())
+            foreach (IItem item in recipe.ItemList)
             {
                 Assert.AreEqual(desired[item.Name], item.Count);
             }
