@@ -14,7 +14,7 @@ namespace BuddhaBowls
 {
     public delegate void AddItemDel<T>(T item);
 
-    public class NewInventoryItemWizard : WizardVM
+    public class NewInventoryItemWizard : ReOrderVM
     {
         private bool _newItem;
 
@@ -77,33 +77,6 @@ namespace BuddhaBowls
             }
         }
 
-        private ObservableCollection<InventoryItem> _invOrderList;
-        public ObservableCollection<InventoryItem> InvOrderList
-        {
-            get
-            {
-                return _invOrderList;
-            }
-            set
-            {
-                _invOrderList = value;
-                NotifyPropertyChanged("InvOrderList");
-            }
-        }
-
-        private InventoryItem _selectedOrderedItem;
-        public InventoryItem SelectedOrderedItem
-        {
-            get
-            {
-                return _selectedOrderedItem;
-            }
-            set
-            {
-                _selectedOrderedItem = value;
-                NotifyPropertyChanged("SelectedOrderedItem");
-            }
-        }
         #endregion
 
         #region ICommand and Can Execute
@@ -188,48 +161,6 @@ namespace BuddhaBowls
             }
         }
 
-        private void PlaceAbove(object obj)
-        {
-            int idx = InvOrderList.IndexOf(SelectedOrderedItem);
-            RemoveExistingItem();
-            InvOrderList.Insert(idx, Item);
-        }
-
-        private void PlaceBelow(object obj)
-        {
-            RemoveExistingItem();
-            int idx = InvOrderList.IndexOf(SelectedOrderedItem);
-            if(idx == InvOrderList.Count - 1)
-                InvOrderList.Add(Item);
-            else
-                InvOrderList.Insert(idx + 1, Item);
-        }
-
-        private void MoveUp(object obj)
-        {
-            SelectedOrderedItem = GetItemInOrderList();
-            if(SelectedOrderedItem != null)
-            {
-                MoveInList(SelectedOrderedItem, true);
-            }
-        }
-
-        private void MoveDown(object obj)
-        {
-            SelectedOrderedItem = GetItemInOrderList();
-            if (SelectedOrderedItem != null)
-            {
-                MoveInList(SelectedOrderedItem, false);
-            }
-        }
-
-        private void MoveInList(InventoryItem item, bool up)
-        {
-            List<InventoryItem> newItemInList = MainHelper.MoveInList(item, up, InvOrderList.ToList());
-
-            InvOrderList = new ObservableCollection<InventoryItem>(newItemInList);
-        }
-
         #endregion
 
         #region Initializers
@@ -250,18 +181,6 @@ namespace BuddhaBowls
         }
 
         #endregion
-
-        private InventoryItem GetItemInOrderList()
-        {
-            return InvOrderList.FirstOrDefault(x => x.Id == Item.Id);
-        }
-
-        private void RemoveExistingItem()
-        {
-            InventoryItem existingItem = GetItemInOrderList();
-            if (existingItem != null)
-                InvOrderList.Remove(existingItem);
-        }
 
         //private void InitVendors()
         //{
@@ -297,7 +216,8 @@ namespace BuddhaBowls
                         InvOrderList = new ObservableCollection<InventoryItem>(MainHelper.SortItems(_models.InventoryItems));
                     if (!_newItem)
                         SelectedOrderedItem = InvOrderList.FirstOrDefault(x => x.Id == Item.Id);
-                    WizardStepControl = new AddInvStep3(this);
+                    _itemToMove = Item;
+                    WizardStepControl = new ChangeItemOrderControl(this);
                     FinishVisibility = Visibility.Visible;
                     Header = "Put item in order";
                     break;

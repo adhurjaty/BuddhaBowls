@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>33</ApplicationRevision>
+    <ApplicationRevision>34</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -127,8 +127,8 @@
     <Compile Include="UserControls\AddInvStep2.xaml.cs">
       <DependentUpon>AddInvStep2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\AddInvStep3.xaml.cs">
-      <DependentUpon>AddInvStep3.xaml</DependentUpon>
+    <Compile Include="UserControls\ChangeItemOrderControl.xaml.cs">
+      <DependentUpon>ChangeItemOrderControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\AddVendorStep1.xaml.cs">
       <DependentUpon>AddVendorStep1.xaml</DependentUpon>
@@ -201,6 +201,8 @@
       <DependentUpon>WizardControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ChangeableTabVM.cs" />
+    <Compile Include="ViewModels\ReOrderVM.cs" />
+    <Compile Include="ViewModels\ChangeRecListOrderVM.cs" />
     <Compile Include="ViewModels\CompareInvVM.cs" />
     <Compile Include="ViewModels\InventoryListVM.cs" />
     <Compile Include="ViewModels\ModalVM.cs" />
@@ -229,7 +231,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\AddInvStep3.xaml">
+    <Page Include="UserControls\ChangeItemOrderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

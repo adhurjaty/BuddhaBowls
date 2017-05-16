@@ -18,11 +18,15 @@ namespace BuddhaBowls.UserControls
     /// <summary>
     /// Interaction logic for AddInvStep3.xaml
     /// </summary>
-    public partial class AddInvStep3 : UserControl
+    public partial class ChangeItemOrderControl : UserControl
     {
-        public AddInvStep3(NewInventoryItemWizard context)
+        public ChangeItemOrderControl()
         {
             InitializeComponent();
+        }
+
+        public ChangeItemOrderControl(NewInventoryItemWizard context) : this()
+        {
             DataContext = context;
         }
     }

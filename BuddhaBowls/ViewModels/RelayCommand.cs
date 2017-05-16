@@ -57,7 +57,7 @@ namespace BuddhaBowls
             {
                 _execute(parameter);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }

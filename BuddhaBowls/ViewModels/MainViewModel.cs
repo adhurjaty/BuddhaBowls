@@ -337,6 +337,7 @@ namespace BuddhaBowls
 
         public void AddedInvItem()
         {
+            _models.InvOrderChanged();
             InventoryTab.AddedInvItem();
             VendorTab.Refresh();
 

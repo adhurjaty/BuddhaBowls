@@ -261,6 +261,7 @@ namespace BuddhaBowls.Services
                 Vendors.Add(vendor);
             }
         }
+
         /// <summary>
         /// Deletes vendor from DB and model container
         /// </summary>
@@ -416,6 +417,20 @@ namespace BuddhaBowls.Services
             string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
             Directory.CreateDirectory(dir);
             File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), Properties.Settings.Default.InventoryOrder);
+        }
+
+        /// <summary>
+        /// Reorder inventory items and vendor inventory items due to a change in the order
+        /// </summary>
+        public void InvOrderChanged()
+        {
+            InventoryItems = MainHelper.SortItems(InventoryItems).ToList();
+            VendorInvItems = MainHelper.SortItems(VendorInvItems).ToList();
+            foreach (Vendor vend in Vendors)
+            {
+                if(vend.ItemList != null && vend.ItemList.Count > 0)
+                    vend.ItemList = MainHelper.SortItems(vend.ItemList).ToList();
+            }
         }
 
         /// <summary>
