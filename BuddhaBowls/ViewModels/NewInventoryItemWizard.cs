@@ -83,10 +83,6 @@ namespace BuddhaBowls
 
         public ICommand AddVendorCommand { get; set; }
         public ICommand DeleteVendorCommand { get; set; }
-        public ICommand PlaceAboveCommand { get; set; }
-        public ICommand PlaceBelowCommand { get; set; }
-        public ICommand MoveUpCommand { get; set; }
-        public ICommand MoveDownCommand { get; set; }
 
         #endregion
 
@@ -169,10 +165,6 @@ namespace BuddhaBowls
         {
             AddVendorCommand = new RelayCommand(AddVendor);
             DeleteVendorCommand = new RelayCommand(DeleteVendor, x => SelectedItem != null);
-            PlaceAboveCommand = new RelayCommand(PlaceAbove, x => SelectedOrderedItem != null);
-            PlaceBelowCommand = new RelayCommand(PlaceBelow, x => SelectedOrderedItem != null);
-            MoveUpCommand = new RelayCommand(MoveUp);
-            MoveDownCommand = new RelayCommand(MoveDown);
         }
 
         private void SetDefaultValues()

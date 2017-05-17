@@ -67,10 +67,24 @@ namespace BuddhaBowls.Helpers
         {
             if (Properties.Settings.Default.InventoryOrder == null)
                 return items.OrderBy(x => x.Name);
-            return items.Where(x => Properties.Settings.Default.InventoryOrder.Contains(x.Name))
-                        .OrderBy(x => Properties.Settings.Default.InventoryOrder.IndexOf(x.Name))
-                        .Concat(items.Where(x => !Properties.Settings.Default.InventoryOrder.Contains(x.Name))
-                                     .OrderBy(x => x.Name));
+            return items.OrderBy(x => SortValue(x, Properties.Settings.Default.InventoryOrder)).ThenBy(x => x.Name);
+        }
+
+        public static IEnumerable<T> SortItems<T>(IEnumerable<T> items, List<string> itemOrder) where T : IItem
+        {
+            if (itemOrder == null)
+                return items.OrderBy(x => x.Name);
+            return items.OrderBy(x => SortValue(x, itemOrder))
+                        .ThenBy(x => SortValue(x, Properties.Settings.Default.InventoryOrder))
+                        .ThenBy(x => x.Name);
+        }
+
+        private static int SortValue<T>(T item, List<string> itemOrder) where T : IItem
+        {
+            int value = itemOrder.IndexOf(item.Name);
+            if (value != -1)
+                return value;
+            return 1000;
         }
 
         /// <summary>
@@ -118,12 +132,17 @@ namespace BuddhaBowls.Helpers
         public static List<T> MoveInList<T>(T item, bool up, List<T> orderedList)
         {
             int idx = orderedList.IndexOf(item);
-            orderedList.RemoveAt(idx);
 
             if (idx > 0 && up)
+            {
+                orderedList.RemoveAt(idx);
                 orderedList.Insert(idx - 1, item);
+            }
             if (idx < orderedList.Count - 1 && !up)
+            {
+                orderedList.RemoveAt(idx);
                 orderedList.Insert(idx + 1, item);
+            }
 
             return orderedList;
         }

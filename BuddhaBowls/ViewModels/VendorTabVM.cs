@@ -160,6 +160,7 @@ namespace BuddhaBowls
             GetOrderSheetCommand = new RelayCommand(GenerateOrderSheet, x => GenOrderSheetCanExecute && DBConnection);
             AddVendorItemCommand = new RelayCommand(AddVendorItem, x => SelectedVendor != null);
             DeleteVendorItemCommand = new RelayCommand(DeleteVendorItem, x => SelectedVendorItem != null);
+            ChangeRecListOrderCommand = new RelayCommand(EditRecList, x => SelectedVendor != null);
 
             _vItemsCache = new Dictionary<int, ObservableCollection<InventoryItem>>();
             PurchasedUnitsList = _models.GetPurchasedUnits();
@@ -183,17 +184,13 @@ namespace BuddhaBowls
 
         private void GenerateOrderSheet(object obj)
         {
-            //if(File.Exists(SelectedVendor.GetOrderSheetPath()))
-            //{
-            //    new Thread(delegate ()
-            //    {
-            //        System.Diagnostics.Process.Start(SelectedVendor.GetOrderSheetPath());
-            //    }).Start();
-            //}
-            //else
-            //{
             ParentContext.GenerateVendorOrderList(SelectedVendor);
-            //}
+        }
+
+        private void EditRecList(object obj)
+        {
+            ChangeRecListOrderVM recList = new ChangeRecListOrderVM(SelectedVendor);
+            recList.Add("Vendor Items Order");
         }
 
         private void AddVendorItem(object obj)

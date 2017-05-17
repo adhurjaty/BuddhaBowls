@@ -151,6 +151,11 @@ namespace BuddhaBowls.Models
             return Properties.Settings.Default.InventoryOrder;
         }
 
+        public List<InventoryItem> GetItemsRecListOrder()
+        {
+            return MainHelper.SortItems(ItemList, GetRecListOrder()).ToList();
+        }
+
         /// <summary>
         /// Gets the path to the order sheet for printing and filling out orders manually
         /// </summary>
@@ -173,7 +178,7 @@ namespace BuddhaBowls.Models
         /// <summary>
         /// Gets the inventory items that the vendor offers for sale
         /// </summary>
-        private List<InventoryItem> GetInventoryItems()
+        public List<InventoryItem> GetInventoryItems()
         {
             if (_dbInt.TableExists(GetPriceTableName()))
                 return ModelHelper.InstantiateList<InventoryItem>(GetPriceTableName(), false);

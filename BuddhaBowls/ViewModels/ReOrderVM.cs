@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace BuddhaBowls
 {
@@ -47,11 +48,19 @@ namespace BuddhaBowls
 
         #region ICommand and CanExecute
 
+        public ICommand PlaceAboveCommand { get; set; }
+        public ICommand PlaceBelowCommand { get; set; }
+        public ICommand MoveUpCommand { get; set; }
+        public ICommand MoveDownCommand { get; set; }
+
         #endregion
 
         public ReOrderVM() : base()
         {
-
+            PlaceAboveCommand = new RelayCommand(PlaceAbove, x => SelectedOrderedItem != null && _itemToMove != null);
+            PlaceBelowCommand = new RelayCommand(PlaceBelow, x => SelectedOrderedItem != null && _itemToMove != null);
+            MoveUpCommand = new RelayCommand(MoveUp, x => _itemToMove != null);
+            MoveDownCommand = new RelayCommand(MoveDown, x => _itemToMove != null);
         }
 
         #region ICommand Helpers

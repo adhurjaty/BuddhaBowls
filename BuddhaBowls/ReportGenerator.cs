@@ -604,7 +604,6 @@ namespace BuddhaBowls
         {
             List<InventoryItem> items = po.GetOpenPOItems();
             List<string> itemOrder = vendor.GetRecListOrder();
-            HashSet<string> categories = new HashSet<string>(items.Select(x => x.Category));
 
             Excel.Worksheet sheet = _sheets.Add();
 

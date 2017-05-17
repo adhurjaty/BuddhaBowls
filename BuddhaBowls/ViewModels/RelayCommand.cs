@@ -77,6 +77,11 @@ namespace BuddhaBowls
             _execute = newCallback;
         }
 
+        public void ChangeCanExecute(Predicate<object> canExecute)
+        {
+            _canExecute = canExecute;
+        }
+
         public void Destroy()
         {
             _canExecute = _ => false;

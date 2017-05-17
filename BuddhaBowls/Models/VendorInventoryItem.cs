@@ -273,7 +273,12 @@ namespace BuddhaBowls.Models
 
         public override void Destroy()
         {
-            ToInventoryItem().Destroy();
+            InventoryItem invItem = ToInventoryItem();
+            foreach (Vendor vend in Vendors)
+            {
+                vend.RemoveInvItem(invItem);
+            }
+            invItem.Destroy();
         }
 
         public override string[] GetPropertiesDB(string[] omit = null)

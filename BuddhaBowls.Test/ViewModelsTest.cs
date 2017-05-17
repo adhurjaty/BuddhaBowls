@@ -193,7 +193,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void NewInventoryItemFromMasterTest()
         {
-            string name = "My New Item";
+            string name = "My New Item11";
             Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
@@ -231,7 +231,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void NewInventoryItemFromNewInvTest()
         {
-            string name = "My New Item";
+            string name = "My New Item0";
             Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
@@ -286,7 +286,7 @@ namespace BuddhaBowls.Test
                 listVM.RowEdited(vItem);
             }
 
-            string name = "My New Item";
+            string name = "My New Item9";
             Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             CreateTestInventoryItem(name, v1, v2);
@@ -317,7 +317,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void RemoveVendorFromInvItemVM()
         {
-            string name = "My New Item";
+            string name = "My New Item8";
             Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
@@ -340,9 +340,11 @@ namespace BuddhaBowls.Test
 
                 // redundant (I think) but reminder that the Master List should have changed
                 item = listVM.FilteredItems.First(x => x.Name == name);
+                List<InventoryItem> remainingItems = delVendor.Vend.GetInventoryItems();
 
                 Assert.AreEqual(1, item.Vendors.Count);
                 Assert.AreEqual(v2.Name, item.Vendors[0].Name);
+                CollectionAssert.DoesNotContain(remainingItems.Select(x => x.Id).ToList(), item.Id);
             }
             finally
             {
@@ -962,7 +964,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void ChangeMasterCheckVendorTest()
         {
-            string name = "My New Item";
+            string name = "My New Item7";
             Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
@@ -1002,7 +1004,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void ChangeVendorCheckMasterTest()
         {
-            string name = "My New Item";
+            string name = "My New Item6";
             Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
@@ -1047,7 +1049,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void ChangeMasterCheckNewInvTest()
         {
-            string name = "My New Item";
+            string name = "My New Item5";
             Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
@@ -1088,7 +1090,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void ChangeVendorCheckNewInvTest()
         {
-            string name = "My New Item";
+            string name = "My New Item4";
             Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
@@ -1138,7 +1140,7 @@ namespace BuddhaBowls.Test
         {
             // ensure that master inventory does not change when changing new inventory (before saving)
 
-            string name = "My New Item";
+            string name = "My New Item3";
             Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
@@ -1189,7 +1191,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void ChangeMasterCheckNewPOTest()
         {
-            string name = "My New Item";
+            string name = "My New Item2";
             Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
@@ -1233,7 +1235,7 @@ namespace BuddhaBowls.Test
         {
             // ensure that master inventory does not change when changing item info in new PO (before saving)
 
-            string name = "My New Item";
+            string name = "My New Item1";
             Vendor v1 = new Vendor(new Dictionary<string, string>() { { "Name", "Another guy" } });
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);

@@ -16,16 +16,16 @@ using System.Windows.Shapes;
 namespace BuddhaBowls.UserControls
 {
     /// <summary>
-    /// Interaction logic for AddInvStep3.xaml
+    /// Interaction logic for ChangeRecOrderContol.xaml
     /// </summary>
-    public partial class ChangeItemOrderControl : UserControl
+    public partial class ChangeRecOrderContol : UserControl
     {
-        public ChangeItemOrderControl()
+        public ChangeRecOrderContol()
         {
             InitializeComponent();
         }
 
-        public ChangeItemOrderControl(WizardVM context) : this()
+        public ChangeRecOrderContol(ChangeRecListOrderVM context) : this()
         {
             DataContext = context;
         }
