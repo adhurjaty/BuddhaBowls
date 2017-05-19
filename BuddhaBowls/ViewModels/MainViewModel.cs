@@ -109,6 +109,20 @@ namespace BuddhaBowls
             }
         }
 
+        private BreadGuideVM _breadTab;
+        public BreadGuideVM BreadTab
+        {
+            get
+            {
+                return _breadTab;
+            }
+            set
+            {
+                _breadTab = value;
+                NotifyPropertyChanged("BreadTab");
+            }
+        }
+
         private RecipeTabVM _recipeTab;
         public RecipeTabVM RecipeTab
         {
@@ -279,6 +293,7 @@ namespace BuddhaBowls
             OrderTab = new OrderTabVM();
             InventoryTab = new InventoryTabVM();
             VendorTab = new VendorTabVM();
+            BreadTab = new BreadGuideVM();
             RecipeTab = new RecipeTabVM();
         }
 

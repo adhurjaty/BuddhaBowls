@@ -13,21 +13,29 @@
         BorderThickness="1"
         WindowStartupLocation="CenterScreen"
         Title="Buddha Bowls App Name TBD" Height="500" Width="800">
+    <Window.Resources>
+        <Style x:Key="TopMenu" BasedOn="{StaticResource MetroTabItem}" TargetType="{x:Type TabItem}">
+            <Setter Property="Controls:ControlsHelper.HeaderFontSize" Value="20"></Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
         <TabControl Name="Tabs">
-            <TabItem Header="Orders">
+            <TabItem Header="Orders" Style="{DynamicResource TopMenu}">
                 <uc:OrderTabControl DataContext="{Binding OrderTab}" />
             </TabItem>
-            <TabItem Header="Inventory">
+            <TabItem Header="Inventory" Style="{DynamicResource TopMenu}">
                 <uc:ChangeableTabControl DataContext="{Binding InventoryTab}" />
             </TabItem>
-            <TabItem Header="Vendors">
+            <TabItem Header="Vendors" Style="{DynamicResource TopMenu}">
                 <uc:VendorTabControl DataContext="{Binding VendorTab}" />
             </TabItem>
-            <TabItem Header="Recipes">
+            <TabItem Header="Bread" Style="{DynamicResource TopMenu}">
+                <uc:BreadGuideControl DataContext="{Binding BreadTab}" />
+            </TabItem>
+            <TabItem Header="Recipes" Style="{DynamicResource TopMenu}">
                 <uc:ChangeableTabControl DataContext="{Binding RecipeTab}" />
             </TabItem>
-            <TabItem Header="Settings">
+            <TabItem Header="Settings" Style="{DynamicResource TopMenu}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />

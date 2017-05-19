@@ -39,6 +39,7 @@ namespace BuddhaBowls.Services
         public List<Inventory> Inventories { get; set; }
         public List<PrepItem> PrepItems { get; set; }
         public List<VendorInventoryItem> VendorInvItems { get; private set; }
+        public BreadOrderWeek BreadWeek { get; set; }
 
         public ModelContainer()
         {
@@ -60,6 +61,7 @@ namespace BuddhaBowls.Services
             PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder") ?? new List<PurchaseOrder>();
             Inventories = ModelHelper.InstantiateList<Inventory>("Inventory") ?? new List<Inventory>();
             PrepItems = ModelHelper.InstantiateList<PrepItem>("PrepItem") ?? new List<PrepItem>();
+            BreadWeek = new BreadOrderWeek();
         }
 
         private void AddVendorItems()

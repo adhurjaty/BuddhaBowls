@@ -934,6 +934,58 @@ namespace BuddhaBowls.Test
         }
         #endregion
 
+        #region BreadOrder Tests
+
+        [TestMethod]
+        public void BreadOrderGetDictTest()
+        {
+            string breadDescStr = "Id=0;Name=test;BeginInventory=9;Delivery=8|Id=1;Name=other test;BeginInventory=1;Delivery=4";
+            BreadOrder bo = new BreadOrder() { Date = DateTime.Today, BreadDescDBString = breadDescStr };
+
+            Dictionary<string, BreadDescriptor> refBdList = new Dictionary<string, BreadDescriptor>()
+            {
+                { "test", new BreadDescriptor() { Id=0, Name = "test", BeginInventory = 9, Delivery = 8 } },
+                { "other test", new BreadDescriptor() { Id=0, Name = "other test", BeginInventory = 1, Delivery = 4 } }
+            };
+
+            Assert.AreEqual(refBdList.Count, bo.BreadDescDict.Count);
+
+            foreach (KeyValuePair<string, BreadDescriptor> kvp in refBdList)
+            {
+                foreach (string prop in kvp.Value.GetProperties())
+                {
+                    Assert.AreEqual(kvp.Value.GetPropertyValue(prop), bo.BreadDescDict[kvp.Key].GetPropertyValue(prop));
+                }
+            }
+        }
+
+        [TestMethod]
+        public void BreadOrderSetDictStrTest()
+        {
+            string breadDescStr = "Name=test;BeginInventory=9;Delivery=8;Id=0|Name=other test;BeginInventory=1;Delivery=4;Id=1";
+            BreadOrder bo = new BreadOrder() { Date = DateTime.Today, BreadDescDBString = breadDescStr };
+
+            Assert.AreEqual(breadDescStr, bo.BreadDescToStr());
+        }
+
+        [TestMethod]
+        public void BreadOrderSetPrevWeekTest()
+        {
+            BreadOrderWeek bow = new BreadOrderWeek();
+            DateTime date = new DateTime(2017, 5, 19); // Friday
+            DateTime startDate = new DateTime(2017, 5, 15); // Monday
+
+            bow.SetPrevWeek(date);
+
+            for (int i = 0; i < bow.BreadOrderDays.Length; i++)
+            {
+                BreadOrder order = bow.BreadOrderDays[i];
+                Assert.AreEqual(startDate.AddDays(i), order.Date);
+            }
+        }
+
+        #endregion
+
         private List<IItem> CreateComplexRecipe()
         {
             return new List<IItem>()

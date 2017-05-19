@@ -262,8 +262,9 @@ namespace BuddhaBowls.Models
         public string[] GetProperties(string[] omit = null)
         {
             if (omit != null)
-                return Array.FindAll(GetType().GetProperties().Select(x => x.Name).ToArray(), x => !omit.Contains(x));
-            return GetType().GetProperties().Select(x => x.Name).ToArray();
+                return Array.FindAll(GetType().GetProperties().Where(x => x.CanWrite).Select(x => x.Name).ToArray(),
+                                        x => !omit.Contains(x));
+            return GetType().GetProperties().Where(x => x.CanWrite).Select(x => x.Name).ToArray();
         }
 
         /// <summary>

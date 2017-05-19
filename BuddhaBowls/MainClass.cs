@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Squirrel;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
@@ -19,7 +20,10 @@ namespace BuddhaBowls
 
         public MainClass()
         {
-
+            //using (var mgr = new UpdateManager("C:\\Projects\\MyApp\\Releases"))
+            //{
+            //    mgr.UpdateApp().Wait();
+            //}
         }
 
         protected override void OnStartup(StartupEventArgs e)
