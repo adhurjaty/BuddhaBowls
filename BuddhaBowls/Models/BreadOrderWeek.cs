@@ -62,6 +62,7 @@ namespace BuddhaBowls.Models
                 BreadOrder order = BreadOrderDays[i];
                 if(order.BreadDescDict!= null)
                 {
+                    // put this stuff in the BreadOrder class
                     foreach (KeyValuePair<string, BreadDescriptor> kvp in order.BreadDescDict)
                     {
                         BreadOrder nextOrder = BreadOrderDays[i + 1];

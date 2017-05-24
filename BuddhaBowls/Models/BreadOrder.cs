@@ -14,6 +14,8 @@ namespace BuddhaBowls.Models
         public int SalesForecast { get; set; }
         public string BreadDescDBString { get; set; }
 
+        public BreadOrder NextBreadOrder { get; set; }
+
         public string Day
         {
             get
@@ -143,7 +145,7 @@ namespace BuddhaBowls.Models
 
         public override string[] GetPropertiesDB(string[] omit = null)
         {
-            string[] theseOmissions = new string[] { "Par", "ProjectedOrder", "Usage" };
+            string[] theseOmissions = new string[] { "Par", "ProjectedOrder", "Usage", "NextBreadOrder" };
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
     }
