@@ -944,8 +944,8 @@ namespace BuddhaBowls.Test
 
             Dictionary<string, BreadDescriptor> refBdList = new Dictionary<string, BreadDescriptor>()
             {
-                { "test", new BreadDescriptor() { Id=0, Name = "test", BeginInventory = 9, Delivery = 8 } },
-                { "other test", new BreadDescriptor() { Id=0, Name = "other test", BeginInventory = 1, Delivery = 4 } }
+                { "test", new BreadDescriptor(bo) { Id=0, Name = "test", BeginInventory = 9, Delivery = 8 } },
+                { "other test", new BreadDescriptor(bo) { Id=0, Name = "other test", BeginInventory = 1, Delivery = 4 } }
             };
 
             Assert.AreEqual(refBdList.Count, bo.BreadDescDict.Count);

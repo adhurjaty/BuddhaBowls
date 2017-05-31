@@ -12,30 +12,33 @@
         BorderBrush="{DynamicResource AccentColorBrush}"
         BorderThickness="1"
         WindowStartupLocation="CenterScreen"
-        Title="Buddha Bowls App Name TBD" Height="500" Width="800">
-    <Window.Resources>
-        <Style x:Key="TopMenu" BasedOn="{StaticResource MetroTabItem}" TargetType="{x:Type TabItem}">
-            <Setter Property="Controls:ControlsHelper.HeaderFontSize" Value="20"></Setter>
-        </Style>
-    </Window.Resources>
+        Title="Buddha Bowls" Height="500" Width="800">
     <Grid>
         <TabControl Name="Tabs">
-            <TabItem Header="Orders" Style="{DynamicResource TopMenu}">
+            <TabControl.ItemContainerStyle>
+                <Style BasedOn="{StaticResource MetroTabItem}" TargetType="TabItem">
+                    <Setter Property="Controls:ControlsHelper.HeaderFontSize" Value="20"></Setter>
+                </Style>
+            </TabControl.ItemContainerStyle>
+            <TabItem Header="Orders">
                 <uc:OrderTabControl DataContext="{Binding OrderTab}" />
             </TabItem>
-            <TabItem Header="Inventory" Style="{DynamicResource TopMenu}">
+            <TabItem Header="Inventory">
                 <uc:ChangeableTabControl DataContext="{Binding InventoryTab}" />
             </TabItem>
-            <TabItem Header="Vendors" Style="{DynamicResource TopMenu}">
+            <TabItem Header="Vendors">
                 <uc:VendorTabControl DataContext="{Binding VendorTab}" />
             </TabItem>
-            <TabItem Header="Bread" Style="{DynamicResource TopMenu}">
+            <TabItem Header="Bread">
                 <uc:BreadGuideControl DataContext="{Binding BreadTab}" />
             </TabItem>
-            <TabItem Header="Recipes" Style="{DynamicResource TopMenu}">
+            <TabItem Header="Recipes">
                 <uc:ChangeableTabControl DataContext="{Binding RecipeTab}" />
             </TabItem>
-            <TabItem Header="Settings" Style="{DynamicResource TopMenu}">
+            <TabItem Header="Reports">
+                <uc:CogsControl DataContext="{Binding ReportTab}" />
+            </TabItem>
+            <TabItem Header="Settings">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />

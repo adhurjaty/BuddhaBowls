@@ -137,6 +137,19 @@ namespace BuddhaBowls
             }
         }
 
+        private CogsVM _reportTab;
+        public CogsVM ReportTab
+        {
+            get
+            {
+                return _reportTab;
+            }
+            set
+            {
+                _reportTab = value;
+                NotifyPropertyChanged("ReportTab");
+            }
+        }
         private Visibility _modalVisibility = Visibility.Hidden;
         public Visibility ModalVisibility
         {
@@ -295,6 +308,7 @@ namespace BuddhaBowls
             VendorTab = new VendorTabVM();
             BreadTab = new BreadGuideVM();
             RecipeTab = new RecipeTabVM();
+            ReportTab = new CogsVM();
         }
 
         #endregion

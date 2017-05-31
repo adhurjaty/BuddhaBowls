@@ -197,6 +197,9 @@
     <Compile Include="UserControls\ChangeRecOrderContol.xaml.cs">
       <DependentUpon>ChangeRecOrderContol.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\CogsControl.xaml.cs">
+      <DependentUpon>CogsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\CompareInventoriesControl.xaml.cs">
       <DependentUpon>CompareInventoriesControl.xaml</DependentUpon>
     </Compile>
@@ -257,6 +260,7 @@
     </Compile>
     <Compile Include="ViewModels\BreadGuideVM.cs" />
     <Compile Include="ViewModels\ChangeableTabVM.cs" />
+    <Compile Include="ViewModels\CogsVM.cs" />
     <Compile Include="ViewModels\ReOrderVM.cs" />
     <Compile Include="ViewModels\ChangeRecListOrderVM.cs" />
     <Compile Include="ViewModels\CompareInvVM.cs" />
@@ -312,6 +316,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\ChangeRecOrderContol.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CogsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

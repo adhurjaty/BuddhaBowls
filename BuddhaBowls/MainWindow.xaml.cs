@@ -51,7 +51,7 @@ namespace BuddhaBowls
         public void AppendTempTab(UserControl tabControl)
         {
             _lastTabIdx = Tabs.SelectedIndex;
-            TabItem newTab = new TabItem() { Header = (string)tabControl.Tag, Content = tabControl, Style = (Style)FindResource("TopMenu") };
+            TabItem newTab = new TabItem() { Header = (string)tabControl.Tag, Content = tabControl };
             Tabs.Items.Add(newTab);
             Tabs.SelectedIndex = Tabs.Items.Count - 1;
         }
@@ -65,7 +65,7 @@ namespace BuddhaBowls
         public void ReplaceTempTab(UserControl tabControl)
         {
             _lastTabIdx = Tabs.SelectedIndex;
-            TabItem newTab = new TabItem() { Header = (string)tabControl.Tag, Content = tabControl, Style = (Style)FindResource("TopMenu") };
+            TabItem newTab = new TabItem() { Header = (string)tabControl.Tag, Content = tabControl };
             Tabs.Items[Tabs.Items.Count - 1] = newTab;
             Tabs.SelectedIndex = Tabs.Items.Count - 1;
         }
