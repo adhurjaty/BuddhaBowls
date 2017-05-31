@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BuddhaBowls.UserControls"
+             xmlns:helper="clr-namespace:BuddhaBowls.Helpers"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -27,12 +28,18 @@
         <Border Grid.Row="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding Background}" />
         <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Stretch" Text="{Binding Category}"
                    Background="{Binding Background}" FontWeight="Bold"/>
+        
         <DataGrid x:Name="BreakdownGrid" Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" HeadersVisibility="None"
                   CanUserAddRows="False" AutoGenerateColumns="False" BeginningEdit="DataGrid_BeginningEdit" RowEditEnding="BreakdownGrid_RowEditEnding">
+            <DataGrid.Resources>
+                <helper:BindingProxy x:Key="proxy" Data="{Binding}" />
+            </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=Name, Mode=OneWay}" Width="2*" />
-                <DataGridTextColumn Binding="{Binding Path=LastOrderAmount}" Width="1*" IsReadOnly="True" />
-                <DataGridTextColumn x:Name="PriceColumn" Binding="{Binding Path=PurchaseExtension, StringFormat=c}" Width="1*" IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding Path=LastOrderAmount}" Width="1*"
+                                    IsReadOnly="{Binding Path=Data.IsReadOnly, Source={StaticResource proxy}}"/>
+                <DataGridTextColumn x:Name="PriceColumn" Binding="{Binding Path=PurchaseExtension, StringFormat=c}" Width="1*"
+                                    IsReadOnly="{Binding Path=Data.IsReadOnly, Source={StaticResource proxy}}"/>
             </DataGrid.Columns>
         </DataGrid>
         <Border Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{Binding Background}" />

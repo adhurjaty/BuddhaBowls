@@ -38,7 +38,7 @@ namespace BuddhaBowls.UserControls
                 ((DataGrid)sender).RowEditEnding += BreakdownGrid_RowEditEnding;
                 ((BreakdownCategoryItem)DataContext).Update();
             }
-            PriceColumn.Binding = new Binding("PriceExtension") { StringFormat = "c" };
+            PriceColumn.Binding = new Binding("PurchaseExtension") { StringFormat = "c" };
         }
     }
 }

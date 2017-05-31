@@ -14,6 +14,7 @@ namespace BuddhaBowls.Models
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string Contact { get; set; }
+        public float ShippingCost { get; set; }
 
         public List<InventoryItem> ItemList { get; set; }
 

@@ -17,6 +17,7 @@
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Button Content="Delete Vendor" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Height="25"
@@ -36,5 +37,8 @@
         <Label Grid.Column="0" Grid.Row="3" Content="Contact:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
         <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Vend.Contact}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="200"
                     Height="25" Margin="10, 0" />
+        <Label Grid.Column="0" Grid.Row="4" Content="Shipping Cost:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Path=Vend.ShippingCost, StringFormat=c}" HorizontalAlignment="Left"
+                 VerticalAlignment="Center" Width="200" Height="25" Margin="10, 0" />
     </Grid>
 </UserControl>

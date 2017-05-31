@@ -261,7 +261,7 @@ namespace BuddhaBowls
             BreakdownContext = new OrderBreakdownVM()
             {
                 BreakdownList = GetOrderBreakdown(_shownInvItems, out oTotal),
-                OrderTotal = oTotal,
+                OrderTotal = oTotal + OrderVendor.ShippingCost,
                 Header = "Price Breakdown"
             };
         }

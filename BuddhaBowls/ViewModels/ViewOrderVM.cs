@@ -189,7 +189,7 @@ namespace BuddhaBowls
                     IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
                     if (items.Count() > 0)
                     {
-                        BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
+                        BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items, false);
                         bdItem.Background = _models.GetCategoryColorHex(category);
                         breakdown.Add(bdItem);
 

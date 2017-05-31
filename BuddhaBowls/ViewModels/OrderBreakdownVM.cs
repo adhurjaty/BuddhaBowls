@@ -95,7 +95,7 @@ namespace BuddhaBowls
             return outItems;
         }
 
-        internal void ClearSelectedItems()
+        public void ClearSelectedItems()
         {
             foreach(BreakdownCategoryItem bci in _breakdownList)
             {
@@ -143,12 +143,31 @@ namespace BuddhaBowls
             }
         }
 
+        private bool _isReadOnly = true;
+        public bool IsReadOnly
+        {
+            get
+            {
+                return _isReadOnly;
+            }
+            set
+            {
+                _isReadOnly = value;
+                NotifyPropertyChanged("IsReadOnly");
+            }
+        }
+
         public BreakdownSelectionChanged ClearSelected;
 
         public BreakdownCategoryItem(IEnumerable<InventoryItem> items)
         {
             Items = new ObservableCollection<InventoryItem>(items);
             Category = Items.First().Category;
+        }
+
+        public BreakdownCategoryItem(IEnumerable<InventoryItem> items, bool readOnly) : this(items)
+        {
+            IsReadOnly = readOnly;
         }
 
         public void Update()

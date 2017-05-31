@@ -469,7 +469,7 @@ namespace BuddhaBowls
             sheet.Columns[4].ColumnWidth = 15;
             sheet.Columns[6].ColumnWidth = 12;
 
-            sheet.Name = vendor.Name + " Purchase Order";
+            sheet.Name = GetOrderSheetName(vendor.Name);
 
             int row = 1;
             Excel.Range range = sheet.Range[sheet.Cells[row, 1], sheet.Cells[row, 6]];
@@ -514,14 +514,26 @@ namespace BuddhaBowls
                 range.Font.Bold = true;
                 sheet.Cells[row, 4] = kvp.Key + " Total";
                 sheet.Cells[row, 6] = kvp.Value.ToString("c");
+                ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 6]]).Interior.Color = _models.GetColorFromCategory(kvp.Key);
                 row++;
             }
+
+            if(vendor.ShippingCost > 0)
+            {
+                range = ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 5]]);
+                range.Merge();
+                range.Font.Bold = true;
+                sheet.Cells[row, 4] = "Shipping Cost:";
+                sheet.Cells[row, 6] = vendor.ShippingCost.ToString("c");
+                row++;
+            }
+
             ((Excel.Range)sheet.Range[sheet.Cells[row, 1], sheet.Cells[row, 3]]).Merge();
             range = ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 5]]);
             range.Merge();
             range.Font.Bold = true;
             sheet.Cells[row, 4] = "Total";
-            sheet.Cells[row, 6] = categoryCosts.Keys.Sum(x => categoryCosts[x]).ToString("c");
+            sheet.Cells[row, 6] = (categoryCosts.Keys.Sum(x => categoryCosts[x]) + vendor.ShippingCost).ToString("c");
 
             range = (Excel.Range)sheet.Range[sheet.Cells[startRow, 4], sheet.Cells[row, 6]];
             range.Borders.Weight = Excel.XlBorderWeight.xlMedium;
@@ -613,7 +625,7 @@ namespace BuddhaBowls
             sheet.Columns[4].ColumnWidth = 15;
             sheet.Columns[6].ColumnWidth = 12;
 
-            sheet.Name = vendor.Name + " Receiving List";
+            sheet.Name = GetRecSheetName(vendor.Name);
 
             int row = 1;
             Excel.Range range = sheet.Range[sheet.Cells[row, 1], sheet.Cells[row, 6]];
@@ -779,6 +791,23 @@ namespace BuddhaBowls
             {
                 return true;
             }
+        }
+
+        private string GetSheetName(string name, string type)
+        {
+            if (name.Length + type.Length > 30)
+                return name.Substring(0, 30 - type.Length) + type;
+            return name + type;
+        }
+
+        private string GetOrderSheetName(string name)
+        {
+            return GetSheetName(name, " Purchase Order");
+        }
+
+        private string GetRecSheetName(string name)
+        {
+            return GetSheetName(name, " Receiving List");
         }
 
         //public string GenerateReceivingList(PurchaseOrder po, Vendor vendor)
