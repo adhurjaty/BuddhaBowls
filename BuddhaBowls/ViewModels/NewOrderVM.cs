@@ -245,6 +245,7 @@ namespace BuddhaBowls
                     {
                         BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
                         bdItem.Background = _models.GetCategoryColorHex(category);
+                        bdItem.OrderVendor = OrderVendor;
                         breakdown.Add(bdItem);
 
                         total += bdItem.TotalAmount;
@@ -261,7 +262,7 @@ namespace BuddhaBowls
             BreakdownContext = new OrderBreakdownVM()
             {
                 BreakdownList = GetOrderBreakdown(_shownInvItems, out oTotal),
-                OrderTotal = oTotal + OrderVendor.ShippingCost,
+                OrderTotal = oTotal + (OrderVendor != null ? OrderVendor.ShippingCost : 0),
                 Header = "Price Breakdown"
             };
         }

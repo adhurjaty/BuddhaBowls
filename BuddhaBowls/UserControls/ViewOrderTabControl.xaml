@@ -16,21 +16,21 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5*" />
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="5*" />
+                <!--<ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="5*" />-->
             </Grid.ColumnDefinitions>
-            <local:BreakdownDisplay Grid.Column="0" DataContext="{Binding OpenBreakdownContext}" />
+            <local:BreakdownDisplay Grid.Column="0" DataContext="{Binding BreakdownContext}" />
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
-                <Button Content="&gt;" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="50" Height="50" Margin="0, 20"
+                <!--<Button Content="&gt;" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="50" Height="50" Margin="0, 20"
                         FontSize="24" Command="{Binding MoveToReceivedCommand}" />
                 <Button Content="&lt;" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Width="50" Height="50" Margin="0, 20"
-                        FontSize="24" Command="{Binding MoveToOpenCommand}" />
+                        FontSize="24" Command="{Binding MoveToOpenCommand}" />-->
             </Grid>
-            <local:BreakdownDisplay Grid.Column="2" DataContext="{Binding ReceivedBreakdownContext}" />
+            <!--<local:BreakdownDisplay Grid.Column="2" DataContext="{Binding ReceivedBreakdownContext}" />-->
         </Grid>
         <Button Content="Save" Grid.Row="2" Height="25" Width="60" HorizontalAlignment="Right" Margin="5" Command="{Binding SaveCommand}" />
         <Button Content="Cancel" Grid.Row="2" Height="25" Width="60" HorizontalAlignment="Right" Margin="65, 0" Command="{Binding CancelCommand}" />

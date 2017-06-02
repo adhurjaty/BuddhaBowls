@@ -69,6 +69,8 @@ namespace BuddhaBowls
             }
         }
 
+        public Vendor OrderVendor { get; set; }
+
         public InventoryItem SelectedItem
         {
             get
@@ -104,15 +106,15 @@ namespace BuddhaBowls
         }
     }
 
-    public class BreakdownCategoryItem : INotifyPropertyChanged
+    public class BreakdownCategoryItem : TabVM
     {
         // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        //protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        //{
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //}
 
         public string Background { get; set; }
         public string Category { get; set; }
@@ -157,9 +159,11 @@ namespace BuddhaBowls
             }
         }
 
+        public Vendor OrderVendor { get; internal set; }
+
         public BreakdownSelectionChanged ClearSelected;
 
-        public BreakdownCategoryItem(IEnumerable<InventoryItem> items)
+        public BreakdownCategoryItem(IEnumerable<InventoryItem> items) : base()
         {
             Items = new ObservableCollection<InventoryItem>(items);
             Category = Items.First().Category;
@@ -170,10 +174,25 @@ namespace BuddhaBowls
             IsReadOnly = readOnly;
         }
 
-        public void Update()
+        public void UpdateOrderItem(InventoryItem item)
         {
             NotifyPropertyChanged("TotalAmount");
             NotifyPropertyChanged("Items");
+
+            _models.AddUpdateInventoryItem(ref item);
+            if (OrderVendor != null)
+            {
+                OrderVendor.Update(item);
+                VendorInventoryItem vItem = _models.VendorInvItems.FirstOrDefault(x => x.Id == item.Id);
+                if (vItem == null)
+                {
+                    // I guess do nothing
+                }
+                else
+                {
+                    vItem.SetVendorItem(OrderVendor, item);
+                }
+            }
         }
     }
 }

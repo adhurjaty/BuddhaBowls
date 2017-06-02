@@ -375,7 +375,7 @@ namespace BuddhaBowls
 
         private void OrdersNotFound()
         {
-            OpenOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { VendorName = "Orders not found" } };
+            OpenOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { VendorName = "Orders not found"  } };
             ReceivedOrders = new ObservableCollection<PurchaseOrder>() { new PurchaseOrder() { VendorName = "Orders not found" } };
         }
         #endregion

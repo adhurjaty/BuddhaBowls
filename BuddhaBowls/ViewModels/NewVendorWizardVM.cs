@@ -225,7 +225,6 @@ namespace BuddhaBowls
             if (ValidateInputs())
             {
                 Vendor vendor = Vend;
-                //List<InventoryItem> vendItems = 
                 _models.AddUpdateVendor(ref vendor, InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList());
 
                 Close();

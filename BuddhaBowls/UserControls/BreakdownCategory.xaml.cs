@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using BuddhaBowls.Models;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -36,7 +37,7 @@ namespace BuddhaBowls.UserControls
                 ((DataGrid)sender).CommitEdit();
                 ((DataGrid)sender).Items.Refresh();
                 ((DataGrid)sender).RowEditEnding += BreakdownGrid_RowEditEnding;
-                ((BreakdownCategoryItem)DataContext).Update();
+                ((BreakdownCategoryItem)DataContext).UpdateOrderItem((InventoryItem)e.Row.Item);
             }
             PriceColumn.Binding = new Binding("PurchaseExtension") { StringFormat = "c" };
         }

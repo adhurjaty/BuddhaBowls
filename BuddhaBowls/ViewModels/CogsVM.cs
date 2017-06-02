@@ -101,20 +101,25 @@ namespace BuddhaBowls
                 if (startInv == null)
                     startInv = inventoryList.Last();
 
-                IEnumerable<IGrouping<string, InventoryItem>> startItems = MainHelper.CategoryGrouping(startInv.GetInventoryHistory());
-                IEnumerable <IGrouping <string, InventoryItem>> endItems = MainHelper.CategoryGrouping(endInv.GetInventoryHistory());
-                Dictionary<string, List<InventoryItem>> purchaseDict = GetPurchasedByCategory(StartDate, EndDate);
-                foreach (string category in _models.GetInventoryCategories())
+                List<InventoryItem> startList = startInv.GetInventoryHistory();
+                List<InventoryItem> endList = endInv.GetInventoryHistory();
+                if (startList != null && endList != null)
                 {
-                    IGrouping<string, InventoryItem> startGroup = startItems.FirstOrDefault(x => x.Key == category);
-                    IGrouping<string, InventoryItem> endGroup = endItems.FirstOrDefault(x => x.Key == category);
-
-                    if(startGroup != null && endGroup != null)
+                    IEnumerable<IGrouping<string, InventoryItem>> startItems = MainHelper.CategoryGrouping(startList);
+                    IEnumerable<IGrouping<string, InventoryItem>> endItems = MainHelper.CategoryGrouping(endList);
+                    Dictionary<string, List<InventoryItem>> purchaseDict = GetPurchasedByCategory(StartDate, EndDate);
+                    foreach (string category in _models.GetInventoryCategories())
                     {
-                        List<InventoryItem> purchasedItems;
-                        purchaseDict.TryGetValue(category, out purchasedItems);
-                        CategoryList.Add(new CogsCategory(category, startGroup.ToList(), endGroup.ToList(),
-                                            purchasedItems ?? new List<InventoryItem>()));
+                        IGrouping<string, InventoryItem> startGroup = startItems.FirstOrDefault(x => x.Key == category);
+                        IGrouping<string, InventoryItem> endGroup = endItems.FirstOrDefault(x => x.Key == category);
+
+                        if (startGroup != null && endGroup != null)
+                        {
+                            List<InventoryItem> purchasedItems;
+                            purchaseDict.TryGetValue(category, out purchasedItems);
+                            CategoryList.Add(new CogsCategory(category, startGroup.ToList(), endGroup.ToList(),
+                                                purchasedItems ?? new List<InventoryItem>()));
+                        }
                     }
                 }
             }

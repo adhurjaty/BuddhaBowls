@@ -22,33 +22,33 @@ namespace BuddhaBowls
         private RefreshDel RefreshOrders;
 
         #region Content Binders
-        private OrderBreakdownVM _openBreakdownContext;
-        public OrderBreakdownVM OpenBreakdownContext
+        private OrderBreakdownVM _breakdownContext;
+        public OrderBreakdownVM BreakdownContext
         {
             get
             {
-                return _openBreakdownContext;
+                return _breakdownContext;
             }
             set
             {
-                _openBreakdownContext = value;
-                NotifyPropertyChanged("OpenBreakdownContext");
+                _breakdownContext = value;
+                NotifyPropertyChanged("BreakdownContext");
             }
         }
 
-        private OrderBreakdownVM _receivedBreakdownContext;
-        public OrderBreakdownVM ReceivedBreakdownContext
-        {
-            get
-            {
-                return _receivedBreakdownContext;
-            }
-            set
-            {
-                _receivedBreakdownContext = value;
-                NotifyPropertyChanged("ReceivedBreakdownContext");
-            }
-        }
+        //private OrderBreakdownVM _receivedBreakdownContext;
+        //public OrderBreakdownVM ReceivedBreakdownContext
+        //{
+        //    get
+        //    {
+        //        return _receivedBreakdownContext;
+        //    }
+        //    set
+        //    {
+        //        _receivedBreakdownContext = value;
+        //        NotifyPropertyChanged("ReceivedBreakdownContext");
+        //    }
+        //}
         #endregion
 
         #region ICommand and CanExecute Properties 
@@ -65,7 +65,7 @@ namespace BuddhaBowls
         {
             get
             {
-                return OpenBreakdownContext.SelectedItem != null;
+                return BreakdownContext.SelectedItem != null;
             }
         }
 
@@ -73,7 +73,7 @@ namespace BuddhaBowls
         {
             get
             {
-                return ReceivedBreakdownContext.SelectedItem != null;
+                return true; //ReceivedBreakdownContext.SelectedItem != null;
             }
         }
 
@@ -103,12 +103,12 @@ namespace BuddhaBowls
         #region ICommand Helpers
         private void MoveToReceived(object obj)
         {
-            MoveItem(OpenBreakdownContext, ReceivedBreakdownContext);
+            //MoveItem(BreakdownContext, ReceivedBreakdownContext);
         }
 
         private void MoveToOpen(object obj)
         {
-            MoveItem(ReceivedBreakdownContext, OpenBreakdownContext);
+            //MoveItem(ReceivedBreakdownContext, BreakdownContext);
         }
 
         private void MoveItem(OrderBreakdownVM fromContext, OrderBreakdownVM toContext)
@@ -135,8 +135,9 @@ namespace BuddhaBowls
 
         private void SavePartialOrder(object obj)
         {
-            List<InventoryItem> openItems = OpenBreakdownContext.GetInventoryItems();
-            List<InventoryItem> receivedItems = ReceivedBreakdownContext.GetInventoryItems();
+            List<InventoryItem> openItems = BreakdownContext.GetInventoryItems();
+            List<InventoryItem> receivedItems = BreakdownContext.GetInventoryItems();
+            //List<InventoryItem> receivedItems = ReceivedBreakdownContext.GetInventoryItems();
 
             if (receivedItems.Count == 0)
             {
@@ -159,21 +160,30 @@ namespace BuddhaBowls
             List<InventoryItem>[] poItems = po.GetPOItems();
             List<InventoryItem> openItems = poItems[0];
             List<InventoryItem> receivedItems = poItems[1];
+            List<InventoryItem> items = openItems != null ? openItems : receivedItems;
+            string header = openItems != null ? "Open Ordered Items" : "Received Ordered Items";
 
             float oTotal = 0;
-            OpenBreakdownContext = new OrderBreakdownVM()
+            BreakdownContext = new OrderBreakdownVM()
             {
-                BreakdownList = GetOrderBreakdown(openItems, out oTotal),
+                BreakdownList = GetOrderBreakdown(items, out oTotal),
                 OrderTotal = oTotal,
-                Header = "Open Ordered Items"
+                Header = header
             };
 
-            ReceivedBreakdownContext = new OrderBreakdownVM()
-            {
-                BreakdownList = GetOrderBreakdown(receivedItems, out oTotal),
-                OrderTotal = oTotal,
-                Header = "Received Ordered Items"
-            };
+            //BreakdownContext = new OrderBreakdownVM()
+            //{
+            //    BreakdownList = GetOrderBreakdown(openItems, out oTotal),
+            //    OrderTotal = oTotal,
+            //    Header = "Open Ordered Items"
+            //};
+
+            //ReceivedBreakdownContext = new OrderBreakdownVM()
+            //{
+            //    BreakdownList = GetOrderBreakdown(receivedItems, out oTotal),
+            //    OrderTotal = oTotal,
+            //    Header = "Received Ordered Items"
+            //};
         }
         #endregion
 
@@ -191,8 +201,8 @@ namespace BuddhaBowls
                     {
                         BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items, false);
                         bdItem.Background = _models.GetCategoryColorHex(category);
+                        bdItem.OrderVendor = _models.Vendors.FirstOrDefault(x => x.Name == _order.VendorName);
                         breakdown.Add(bdItem);
-
                         total += bdItem.TotalAmount;
                     }
                 }

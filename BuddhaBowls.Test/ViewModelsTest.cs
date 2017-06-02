@@ -528,7 +528,7 @@ namespace BuddhaBowls.Test
             {
                 orderTab.ViewOpenOrderCommand.Execute(null);
                 ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
-                OrderBreakdownVM breakdownContext = viewOrderTab.OpenBreakdownContext;
+                OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
                 List<InventoryItem> openItems = breakdownContext.GetInventoryItems();
 
                 foreach (InventoryItem item in openItems)
@@ -554,7 +554,7 @@ namespace BuddhaBowls.Test
             {
                 orderTab.ViewOpenOrderCommand.Execute(null);
                 ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
-                OrderBreakdownVM breakdownContext = viewOrderTab.ReceivedBreakdownContext;
+                OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
                 List<InventoryItem> receivedItems = breakdownContext.GetInventoryItems();
 
                 foreach (InventoryItem item in receivedItems)
@@ -580,7 +580,7 @@ namespace BuddhaBowls.Test
             {
                 orderTab.ViewOpenOrderCommand.Execute(null);
                 ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
-                OrderBreakdownVM breakdownContext = viewOrderTab.OpenBreakdownContext;
+                OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
 
                 SelectInBreakdown("Artichoke Hearts", ref breakdownContext);
                 viewOrderTab.MoveToReceivedCommand.Execute(null);
@@ -613,7 +613,7 @@ namespace BuddhaBowls.Test
             {
                 orderTab.ViewOpenOrderCommand.Execute(null);
                 ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
-                OrderBreakdownVM breakdownContext = viewOrderTab.OpenBreakdownContext;
+                OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
 
                 SelectInBreakdown("Artichoke Hearts", ref breakdownContext);
                 viewOrderTab.MoveToReceivedCommand.Execute(null);
@@ -624,12 +624,12 @@ namespace BuddhaBowls.Test
                 orderTab.SelectedOpenOrder = newOrder;
                 orderTab.ViewOpenOrderCommand.Execute(null);
 
-                breakdownContext = viewOrderTab.OpenBreakdownContext;
+                breakdownContext = viewOrderTab.BreakdownContext;
                 List<InventoryItem> openItems = breakdownContext.GetInventoryItems();
                 Assert.AreEqual(1, openItems.Count);
                 Assert.AreEqual("Vanilla", openItems[0].Name);
 
-                breakdownContext = viewOrderTab.ReceivedBreakdownContext;
+                breakdownContext = viewOrderTab.BreakdownContext;
                 List<InventoryItem> receivedItems = breakdownContext.GetInventoryItems();
                 Assert.AreEqual(2, receivedItems.Count);
                 Assert.AreEqual("Artichoke Hearts", receivedItems[0].Name);
