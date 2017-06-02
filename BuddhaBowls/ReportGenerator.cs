@@ -545,7 +545,8 @@ namespace BuddhaBowls
                 if (!Directory.Exists(outDir))
                     Directory.CreateDirectory(outDir);
 
-                filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + po.Id.ToString() + ".xlsx");
+                filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", vendor.Name + " " +
+                                        po.OrderDate.ToString("MM-dd-yyyy") + ".xlsx");
             }
 
             try
@@ -677,6 +678,7 @@ namespace BuddhaBowls
             row++;
 
             startRow = row;
+            float totalExtension = 0;
             foreach (InventoryItem item in items.OrderBy(x => itemOrder.IndexOf(x.Name)))
             {
                 sheet.Cells[row, 1] = item.Conversion.ToString();
@@ -685,11 +687,29 @@ namespace BuddhaBowls
                 sheet.Cells[row, 4] = item.LastOrderAmount;
                 sheet.Cells[row, 5] = item.LastPurchasedPrice.ToString("c");
                 sheet.Cells[row, 6] = item.PurchaseExtension.ToString("c");
+                totalExtension += item.PurchaseExtension;
                 row++;
             }
+            totalExtension += vendor.ShippingCost;
 
-            ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row-1, 7]]).BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
-            ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row-1, 7]]).Borders.Weight = Excel.XlBorderWeight.xlMedium;
+            ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row - 1, 7]]).BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
+            ((Excel.Range)sheet.Range[sheet.Cells[startRow, 1], sheet.Cells[row - 1, 7]]).Borders.Weight = Excel.XlBorderWeight.xlMedium;
+
+            range = ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 5]]);
+            range.Merge();
+            range.Font.Bold = true;
+            sheet.Cells[row, 4] = "Shipping Cost";
+            sheet.Cells[row, 6] = vendor.ShippingCost.ToString("c");
+            row++;
+
+            range = ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 5]]);
+            range.Merge();
+            range.Font.Bold = true;
+            sheet.Cells[row, 4] = "Total";
+            sheet.Cells[row, 6] = totalExtension.ToString("c");
+
+            ((Excel.Range)sheet.Range[sheet.Cells[row-2, 4], sheet.Cells[row, 6]]).BorderAround2(Weight: Excel.XlBorderWeight.xlThick);
+            ((Excel.Range)sheet.Range[sheet.Cells[row-2, 4], sheet.Cells[row, 6]]).Borders.Weight = Excel.XlBorderWeight.xlMedium;
 
             string outDir = Path.Combine(Properties.Settings.Default.DBLocation, "Receiving Lists");
             if (!Directory.Exists(outDir))

@@ -487,7 +487,7 @@ namespace BuddhaBowls.Test
                 po.Receive();
                 List<InventoryItem> receivedItems = po.GetPOItems()[1];
                 CollectionAssert.AreEquivalent(updateOrderDict.Keys, receivedItems.Select(x => x.Name).ToList());
-                Assert.AreEqual(DateTime.Today, po.ReceivedDate);
+                Assert.AreEqual(DateTime.Today, ((DateTime)po.ReceivedDate).Date);
             }
             finally
             {
@@ -638,7 +638,7 @@ namespace BuddhaBowls.Test
                 List<InventoryItem> receivedItems = po.GetPOItems()[1];
 
                 CollectionAssert.AreEquivalent(updateOrderDict.Keys, receivedItems.Select(x => x.Name).ToList());
-                Assert.AreEqual(DateTime.Today, po.ReceivedDate);
+                Assert.AreEqual(DateTime.Today, ((DateTime)po.ReceivedDate).Date);
             }
             finally
             {

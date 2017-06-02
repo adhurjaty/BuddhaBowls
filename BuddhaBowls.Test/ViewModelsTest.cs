@@ -476,7 +476,7 @@ namespace BuddhaBowls.Test
                 {
                     Assert.AreEqual(_updateOrderDict[item.Name], item.LastOrderAmount);
                 }
-                Assert.AreEqual(DateTime.Today, newOrder.ReceivedDate);
+                Assert.AreEqual(DateTime.Today, ((DateTime)newOrder.ReceivedDate).Date);
             }
             finally
             {

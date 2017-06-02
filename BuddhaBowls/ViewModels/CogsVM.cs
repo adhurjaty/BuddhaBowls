@@ -39,6 +39,8 @@ namespace BuddhaBowls
             {
                 _startDate = value;
                 NotifyPropertyChanged("StartDate");
+                if (DBConnection && StartDate < EndDate)
+                    CalculateCogs();
             }
         }
 
@@ -53,6 +55,8 @@ namespace BuddhaBowls
             {
                 _endDate = value;
                 NotifyPropertyChanged("EndDate");
+                if (DBConnection && StartDate < EndDate)
+                    CalculateCogs();
             }
         }
 
@@ -73,8 +77,6 @@ namespace BuddhaBowls
 
         #region ICommand and CanExecute
 
-        public ICommand CalculateCommand { get; set; }
-
         #endregion
 
         public CogsVM() : base()
@@ -83,12 +85,11 @@ namespace BuddhaBowls
 
             if(DBConnection)
                 SetInitCogs();
-            CalculateCommand = new RelayCommand(CalculateCogs, x => StartDate != null && EndDate != null && EndDate > StartDate && DBConnection);
         }
 
         #region ICommand Helpers
 
-        private void CalculateCogs(object obj)
+        private void CalculateCogs()
         {
             List<Inventory> inventoryList = _models.Inventories.OrderByDescending(x => x.Date).ToList();
             Inventory endInv = inventoryList.FirstOrDefault(x => x.Date <= EndDate);
@@ -130,7 +131,7 @@ namespace BuddhaBowls
             {
                 EndDate = inventoryList[0].Date;
                 StartDate = inventoryList[1].Date;
-                CalculateCogs(null);
+                CalculateCogs();
             }
         }
 
@@ -142,8 +143,9 @@ namespace BuddhaBowls
 
         private Dictionary<string, List<InventoryItem>> GetPurchasedByCategory(DateTime start, DateTime end)
         {
+            // AddDays to include the end date as opposed to all received times up to and not including end date
             List<PurchaseOrder> orders = _models.PurchaseOrders.Where(x => x.ReceivedDate >= start &&
-                                                                           x.ReceivedDate <= end.Date).ToList();
+                                                                           x.ReceivedDate <= end.Date.AddDays(1)).ToList();
             Dictionary<string, List<InventoryItem>> purchaseDict = new Dictionary<string, List<InventoryItem>>();
 
             foreach (PurchaseOrder order in orders)
@@ -167,22 +169,20 @@ namespace BuddhaBowls
         public float StartInv { get; set; }
         public float EndInv { get; set; }
         public float Purchases { get; set; }
-        public float GoodsSold
+        public float CogsCost
         {
             get
             {
                 return StartInv + Purchases - EndInv;
             }
         }
-        public float CogsCost { get; set; }
 
         public CogsCategory(string category, List<InventoryItem> startInv, List<InventoryItem> endInv, List<InventoryItem> purchased)
         {
             Name = category;
-            StartInv = startInv.Sum(x => x.Count);
-            EndInv = endInv.Sum(x => x.Count);
-            Purchases = purchased.Sum(x => x.Count);
-            CogsCost = startInv.Sum(x => x.PriceExtension) + purchased.Sum(x => x.PriceExtension) - endInv.Sum(x => x.PriceExtension);
+            StartInv = startInv.Sum(x => x.PriceExtension);
+            EndInv = endInv.Sum(x => x.PriceExtension);
+            Purchases = purchased.Sum(x => x.PurchaseExtension);
         }
     }
 }

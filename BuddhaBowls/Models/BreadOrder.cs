@@ -51,6 +51,36 @@ namespace BuddhaBowls.Models
             if (record != null)
             {
                 InitializeObject(record);
+
+                SetNextBreadOrder();
+                InitDescriptor();
+            }
+        }
+
+        private void InitDescriptor()
+        {
+            if (BreadDescDict != null && NextBreadOrder != null)
+            {
+                // put this stuff in the BreadOrder class
+                foreach (KeyValuePair<string, BreadDescriptor> kvp in BreadDescDict)
+                {
+                    BreadDescriptor desc = kvp.Value;
+                    int nextPar = 0;
+                    int nextBuffer = 0;
+                    int nextBegin = 0;
+                    int nextFreeze = 0;
+                    if (NextBreadOrder.BreadDescDict != null && NextBreadOrder.BreadDescDict.ContainsKey(kvp.Key))
+                    {
+                        BreadDescriptor nextDesc = NextBreadOrder.BreadDescDict[kvp.Key];
+                        nextPar = nextDesc.Par;
+                        nextBuffer = nextDesc.Buffer;
+                        nextBegin = nextDesc.BeginInventory;
+                        nextFreeze = nextDesc.FreezerCount;
+                    }
+                    desc.ProjectedOrder = (int)Math.Round((desc.Par + nextPar + nextBuffer + desc.Backup + desc.FreezerCount -
+                                                            desc.BeginInventory - desc.Delivery) / 8.0f) * 8;
+                    desc.Usage = desc.BeginInventory + desc.Delivery + desc.FreezerCount - nextBegin - nextFreeze;
+                }
             }
         }
 
@@ -70,6 +100,38 @@ namespace BuddhaBowls.Models
             if (string.IsNullOrWhiteSpace(BreadDescDBString))
                 return null;
             return BreadDescDBString.Trim().Split('|').Select(x => new BreadDescriptor(this, x)).ToDictionary(x => x.Name, x => x);
+        }
+
+        private void SetNextBreadOrder()
+        {
+            NextBreadOrder = GetOtherBreadOrder(1);
+            if(NextBreadOrder == null)
+            {
+                NextBreadOrder = GetOtherBreadOrder(-6);
+                if (NextBreadOrder == null)
+                {
+                    NextBreadOrder = new BreadOrder();
+
+                }
+                else
+                {
+                    foreach (KeyValuePair<string, BreadDescriptor> kvp in NextBreadOrder.BreadDescDict)
+                    {
+                        BreadDescriptor desc = kvp.Value;
+                        desc.Clear();
+                        desc.Par = BreadDescDict[kvp.Key].Par;
+                    }
+                }
+            }
+        }
+
+        private BreadOrder GetOtherBreadOrder(int dayDiff)
+        {
+            BreadOrder order = new BreadOrder(new Dictionary<string, string>() { { "Date", Date.AddDays(dayDiff).ToString() } });
+            if (order.Date == default(DateTime))
+                return null;
+
+            return order;
         }
     }
 
@@ -95,12 +157,12 @@ namespace BuddhaBowls.Models
         public int Backup { get; set; }
         public int FreezerCount { get; set; }
 
-        // not set by user, but must be set in BreadOrderWeek
+        // not set by user, but must be set in BreadOrder
         public int ProjectedOrder { get; set; }
         public int Usage { get; set; }
 
         // not set by user but must be set in constructor
-        public int Par { get; private set; }
+        public int Par { get; set; }
 
         public int Buffer
         {
@@ -141,6 +203,14 @@ namespace BuddhaBowls.Models
         public string PropsToStr()
         {
             return string.Join(";", GetPropertiesDB().Select(x => x + "=" + GetPropertyValue(x).ToString()));
+        }
+
+        public void Clear()
+        {
+            BeginInventory = 0;
+            Delivery = 0;
+            Backup = 0;
+            FreezerCount = 0;
         }
 
         public override string[] GetPropertiesDB(string[] omit = null)

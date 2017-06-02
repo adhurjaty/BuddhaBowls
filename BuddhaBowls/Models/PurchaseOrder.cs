@@ -57,7 +57,7 @@ namespace BuddhaBowls.Models
             {
                 CombinePartial();
             }
-            ReceivedDate = DateTime.Today;
+            ReceivedDate = DateTime.Now;
             Update();
         }
 

@@ -108,8 +108,9 @@ namespace BuddhaBowls
             List<InventoryItem> endInvList = _endInv.GetInventoryHistory();
             MatchInvLists(ref beginInvList, ref endInvList);
 
+            // AddDays to include the end date as opposed to all received times up to and not including end date
             List<PurchaseOrder> orders = _models.PurchaseOrders.Where(x => x.ReceivedDate >= _beginInv.Date &&
-                                                                           x.ReceivedDate <= _endInv.Date).ToList();
+                                                                           x.ReceivedDate <= _endInv.Date.AddDays(1)).ToList();
             Dictionary<int, float> amountOrdered = new Dictionary<int, float>();
             Dictionary<int, float> totalItemPrice = new Dictionary<int, float>();
 

@@ -46,14 +46,21 @@
                             Margin="310, 0" Command="{Binding OpenRecListCommand}" />
         <Label Content="Received Orders" Grid.Row="2" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="-80, 0, 0, 0" />
         <DataGrid x:Name="dataGrid2" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}"
-                                SelectedItem="{Binding SelectedReceivedOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
+                  ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}" SelectedItem="{Binding SelectedReceivedOrder}"
+                  AutoGenerateColumns="False" CanUserAddRows="False" CellEditEnding="dataGrid2_CellEditEnding" BeginningEdit="dataGrid2_BeginningEdit">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Vendor" Binding="{Binding VendorName}" Width="2*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Order Date" Binding="{Binding Path=OrderDate, StringFormat={}{0:MM/dd/yy}}"
                                                 Width="2*" IsReadOnly="True" />
-                <DataGridTextColumn Header="Received Date" Binding="{Binding ReceivedDate}" Width="1*" IsReadOnly="True" />
+                <DataGridTemplateColumn x:Name="ReceivedColumn" Header="Received Date" Width="1*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ReceivedDate}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <!--<DataGridTextColumn x:Name="ReceivedColumn" Header="Received Date" Binding="{Binding ReceivedDate}" Width="1*" />-->
             </DataGrid.Columns>
         </DataGrid>
         <Button Grid.Row="2" Width="25" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" VerticalAlignment="Center"
