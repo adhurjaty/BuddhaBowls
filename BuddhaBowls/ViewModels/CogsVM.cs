@@ -145,7 +145,7 @@ namespace BuddhaBowls
         {
             // AddDays to include the end date as opposed to all received times up to and not including end date
             List<PurchaseOrder> orders = _models.PurchaseOrders.Where(x => x.ReceivedDate >= start &&
-                                                                           x.ReceivedDate <= end.Date.AddDays(1)).ToList();
+                                                                           x.ReceivedDate < end.Date.AddDays(1)).ToList();
             Dictionary<string, List<InventoryItem>> purchaseDict = new Dictionary<string, List<InventoryItem>>();
 
             foreach (PurchaseOrder order in orders)

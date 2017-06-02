@@ -47,7 +47,7 @@
         <Label Content="Received Orders" Grid.Row="2" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="-80, 0, 0, 0" />
         <DataGrid x:Name="dataGrid2" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                   ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}" SelectedItem="{Binding SelectedReceivedOrder}"
-                  AutoGenerateColumns="False" CanUserAddRows="False" CellEditEnding="dataGrid2_CellEditEnding" BeginningEdit="dataGrid2_BeginningEdit">
+                  AutoGenerateColumns="False" CanUserAddRows="False" RowEditEnding="dataGrid2_RowEditEnding" BeginningEdit="dataGrid2_BeginningEdit">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Vendor" Binding="{Binding VendorName}" Width="2*" IsReadOnly="True"/>

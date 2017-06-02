@@ -392,6 +392,12 @@ namespace BuddhaBowls
             LoadPreviousOrders();
         }
 
+        public void UpdateRecDate(PurchaseOrder order)
+        {
+            order.Update();
+            ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received)
+                                                                        .OrderByDescending(x => x.ReceivedDate));
+        }
         #endregion
     }
 }
