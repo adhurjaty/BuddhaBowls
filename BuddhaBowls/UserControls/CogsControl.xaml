@@ -26,9 +26,9 @@
                               AutoGenerateColumns="False" CanUserSortColumns="False" CanUserAddRows="False" Panel.ZIndex="0" >
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Category" Binding="{Binding Name}" Width="2*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Start Inv" Binding="{Binding Path=StartInv, Mode=OneWay}" Width="1*" />
-                <DataGridTextColumn Header="Rec Purchases" Binding="{Binding Path=Purchases, Mode=OneWay}" Width="1*" />
-                <DataGridTextColumn Header="End Inv" Binding="{Binding Path=EndInv, Mode=OneWay}" Width="1*" />
+                <DataGridTextColumn Header="Start Inv" Binding="{Binding Path=StartInv, Mode=OneWay, StringFormat=c}" Width="1*" />
+                <DataGridTextColumn Header="Rec Purchases" Binding="{Binding Path=Purchases, Mode=OneWay, StringFormat=c}" Width="1*" />
+                <DataGridTextColumn Header="End Inv" Binding="{Binding Path=EndInv, Mode=OneWay, StringFormat=c}" Width="1*" />
                 <DataGridTextColumn Header="COGS Cost" Binding="{Binding Path=CogsCost, StringFormat=c}" IsReadOnly="True" Width="2*" />
             </DataGrid.Columns>
         </DataGrid>

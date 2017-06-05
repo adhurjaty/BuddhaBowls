@@ -61,7 +61,6 @@ namespace BuddhaBowls.Models
         {
             if (BreadDescDict != null && NextBreadOrder != null)
             {
-                // put this stuff in the BreadOrder class
                 foreach (KeyValuePair<string, BreadDescriptor> kvp in BreadDescDict)
                 {
                     BreadDescriptor desc = kvp.Value;

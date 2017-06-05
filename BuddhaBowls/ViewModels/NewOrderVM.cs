@@ -263,6 +263,7 @@ namespace BuddhaBowls
             {
                 BreakdownList = GetOrderBreakdown(_shownInvItems, out oTotal),
                 OrderTotal = oTotal + (OrderVendor != null ? OrderVendor.ShippingCost : 0),
+                OrderVendor = OrderVendor,
                 Header = "Price Breakdown"
             };
         }

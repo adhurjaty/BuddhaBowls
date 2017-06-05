@@ -41,6 +41,29 @@ namespace BuddhaBowls
             }
         }
 
+        public int HasShipping
+        {
+            get
+            {
+                return VendorShippingCost > 0 ? 20 : 0;
+            }
+        }
+
+        private float _vendorShippingCost;
+        public float VendorShippingCost
+        {
+            get
+            {
+                return _vendorShippingCost;
+            }
+            set
+            {
+                _vendorShippingCost = value;
+                NotifyPropertyChanged("VendorShippingCost");
+                NotifyPropertyChanged("HasShipping");
+            }
+        }
+
         private float _orderCost;
         public float OrderTotal
         {
@@ -69,7 +92,19 @@ namespace BuddhaBowls
             }
         }
 
-        public Vendor OrderVendor { get; set; }
+        private Vendor _orderVendor;
+        public Vendor OrderVendor
+        {
+            get
+            {
+                return _orderVendor;
+            }
+            set
+            {
+                _orderVendor = value;
+                VendorShippingCost = _orderVendor.ShippingCost;
+            }
+        }
 
         public InventoryItem SelectedItem
         {

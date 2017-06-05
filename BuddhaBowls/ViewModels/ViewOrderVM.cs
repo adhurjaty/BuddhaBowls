@@ -168,6 +168,7 @@ namespace BuddhaBowls
             {
                 BreakdownList = GetOrderBreakdown(items, out oTotal),
                 OrderTotal = oTotal,
+                OrderVendor = _models.Vendors.First(x => x.Name == _order.VendorName),
                 Header = header
             };
 
