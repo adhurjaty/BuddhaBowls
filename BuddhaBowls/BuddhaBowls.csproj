@@ -162,7 +162,6 @@
     </ApplicationDefinition>
     <Compile Include="Helpers\ErrorHandler.cs" />
     <Compile Include="Models\BreadOrder.cs" />
-    <Compile Include="Models\BreadOrderWeek.cs" />
     <Compile Include="Models\IItem.cs" />
     <Compile Include="Models\Inventory.cs" />
     <Compile Include="Models\PrepItem.cs" />

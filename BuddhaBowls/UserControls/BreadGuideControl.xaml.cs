@@ -93,7 +93,7 @@ namespace BuddhaBowls.UserControls
         {
             for (int i = 0; i < breadWeek.Length; i++)
             {
-                TextBlock t = new TextBlock() { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch,
+                TextBlock t = new TextBlock() { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Center,
                                                 TextAlignment = TextAlignment.Center };
                 Binding b = new Binding(string.Format("BreadOrderList[{0}].GrossSales", i));
                 b.Source = DataContext;
@@ -147,7 +147,7 @@ namespace BuddhaBowls.UserControls
                     TextBlock t = new TextBlock()
                     {
                         HorizontalAlignment = HorizontalAlignment.Stretch,
-                        VerticalAlignment = VerticalAlignment.Stretch,
+                        VerticalAlignment = VerticalAlignment.Center,
                         TextAlignment = TextAlignment.Center
                     };
 
@@ -218,6 +218,24 @@ namespace BuddhaBowls.UserControls
             grid.Children.Add(_editingTextBlock);
 
             ((BreadGuideVM)DataContext).UpdateValue(Grid.GetColumn(box) - 1);
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox box = (TextBox)sender;
+            int outInt = 0;
+            if (int.TryParse(box.Text, out outInt))
+            {
+                box.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+                for (int i = 0; i < 8; i++)
+                {
+                    ((BreadGuideVM)DataContext).UpdateValue(i);
+                }
+            }
+            else if(box.Text.Length > 0)
+            {
+                box.Text = box.Text.Substring(0, box.Text.Length - 1);
+            }
         }
     }
 }

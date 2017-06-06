@@ -481,24 +481,33 @@ namespace BuddhaBowls.Services
         /// <summary>
         /// Initialize the bread orders for the week
         /// </summary>
-        private void SetBreadWeek()
+        public BreadOrder[] GetBreadWeek(DateTime date, bool insert = false)
         {
-            BreadWeek = new BreadOrder[8];
+            BreadOrder[] breadWeek = new BreadOrder[8];
             List<BreadOrder> breadOrders = ModelHelper.InstantiateList<BreadOrder>("BreadOrder");
-            int dayOfWeek = (int)DateTime.Today.DayOfWeek;
-            DateTime monday = DateTime.Today.AddDays(-((dayOfWeek - 1) % 7));
+            int dayOfWeek = (int)date.DayOfWeek;
+            DateTime monday = date.AddDays(-((dayOfWeek - 1) % 7));
             for (int i = 0; i < 8; i++)
             {
                 BreadOrder bo = null;
                 if (breadOrders != null)
                     bo = breadOrders.FirstOrDefault(x => x.Date.Date == monday.AddDays(i));
-                if (bo == null)
+                if (bo == null && insert)
                 {
                     bo = new BreadOrder(monday.AddDays(i));
                     bo.Insert();
                 }
-                BreadWeek[i] = bo;
+                breadWeek[i] = bo;
+                if(i > 0 && breadWeek[i - 1] != null)
+                    breadWeek[i - 1].NextBreadOrder = bo;
             }
+
+            return breadWeek;
+        }
+
+        private void SetBreadWeek()
+        {
+            BreadWeek = GetBreadWeek(DateTime.Today, true);
         }
     }
 }

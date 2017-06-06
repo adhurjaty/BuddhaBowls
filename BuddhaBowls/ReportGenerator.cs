@@ -116,6 +116,11 @@ namespace BuddhaBowls
             return null;
         }
 
+        internal void BreadOrderGuide()
+        {
+            throw new NotImplementedException();
+        }
+
         public string BatchRecipeReport(List<string[]> contents, string filename)
         {
             int numCols = contents.Max(x => x.Length);

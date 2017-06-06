@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using BuddhaBowls.UserControls;
+using System.Windows.Input;
 
 namespace BuddhaBowls
 {
@@ -31,18 +32,65 @@ namespace BuddhaBowls
             }
         }
 
+        private DateTime _breadOrderDate;
+        public DateTime BreadOrderDate
+        {
+            get
+            {
+                return _breadOrderDate;
+            }
+            set
+            {
+                int dayDiff = -(((int)value.DayOfWeek - 1) & 7);
+                BreadOrder[] bWeek = _models.GetBreadWeek(value);
+                if (bWeek.Contains(null))
+                {
+                    DateErrorMessage = "No records exist for that week";
+                }
+                else
+                {
+                    DateErrorMessage = "";
+                    _breadOrderDate = value.AddDays(dayDiff);
+                    BreadOrderList = new ObservableCollection<BreadOrder>(bWeek);
+                    NotifyPropertyChanged("BreadOrderDate");
+                }
+            }
+        }
+
+        private string _dateErrorMessage;
+        public string DateErrorMessage
+        {
+            get
+            {
+                return _dateErrorMessage;
+            }
+            set
+            {
+                _dateErrorMessage = value;
+                NotifyPropertyChanged("DateErrorMessage");
+            }
+        }
         #endregion
 
         #region ICommand and CanExecute
+
+        public ICommand GetReportCommand { get; set; }
 
         #endregion
 
         public BreadGuideVM() : base()
         {
-            BreadOrderList = new ObservableCollection<BreadOrder>(_models.BreadWeek);
+            BreadOrderDate = DateTime.Today;
+            GetReportCommand = new RelayCommand(CreateReport);
         }
 
         #region ICommand Helpers
+
+        private void CreateReport(object obj)
+        {
+            ReportGenerator generator = new ReportGenerator(_models);
+            generator.BreadOrderGuide();
+        }
 
         #endregion
 
@@ -83,6 +131,9 @@ namespace BuddhaBowls
         public void UpdateValue(int idx)
         {
             BreadOrderList[idx].Update();
+            BreadOrderList[idx].UpdateProperties();
+            if (idx > 0)
+                BreadOrderList[idx - 1].UpdateProperties();
         }
 
         #endregion

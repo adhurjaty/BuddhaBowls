@@ -48,13 +48,7 @@ namespace BuddhaBowls.Models
                 _salesForecast = value;
                 NotifyPropertyChanged("SalesForecast");
 
-                if(BreadDescDict != null && BreadDescDict.Keys.Count > 0)
-                {
-                    foreach (KeyValuePair<string, BreadDescriptor> kvp in BreadDescDict)
-                    {
-                        kvp.Value.Par = _salesForecast / 10;
-                    }
-                }
+                UpdateProperties();
             }
         }
 
@@ -112,32 +106,26 @@ namespace BuddhaBowls.Models
         {
             if (BreadDescDict != null && NextBreadOrder != null)
             {
-                foreach (KeyValuePair<string, BreadDescriptor> kvp in BreadDescDict)
-                {
-                    BreadDescriptor desc = kvp.Value;
-                    int nextPar = 0;
-                    int nextBuffer = 0;
-                    int nextBegin = 0;
-                    int nextFreeze = 0;
-                    if (NextBreadOrder.BreadDescDict != null && NextBreadOrder.BreadDescDict.ContainsKey(kvp.Key))
-                    {
-                        BreadDescriptor nextDesc = NextBreadOrder.BreadDescDict[kvp.Key];
-                        nextPar = nextDesc.Par;
-                        nextBuffer = nextDesc.Buffer;
-                        nextBegin = nextDesc.BeginInventory;
-                        nextFreeze = nextDesc.FreezerCount;
-                    }
-                    desc.ProjectedOrder = (int)Math.Round((desc.Par + nextPar + nextBuffer + desc.Backup + desc.FreezerCount -
-                                                            desc.BeginInventory - desc.Delivery) / 8.0f) * 8;
-                    desc.Useage = desc.BeginInventory + desc.Delivery + desc.FreezerCount - nextBegin - nextFreeze;
-                }
+                //foreach (KeyValuePair<string, BreadDescriptor> kvp in BreadDescDict)
+                //{
+                //    BreadDescriptor desc = kvp.Value;
+                //    int nextPar = 0;
+                //    int nextBuffer = 0;
+                //    int nextBegin = 0;
+                //    int nextFreeze = 0;
+                //    if (NextBreadOrder.BreadDescDict != null && NextBreadOrder.BreadDescDict.ContainsKey(kvp.Key))
+                //    {
+                //        BreadDescriptor nextDesc = NextBreadOrder.BreadDescDict[kvp.Key];
+                //        nextPar = nextDesc.Par;
+                //        nextBuffer = nextDesc.Buffer;
+                //        nextBegin = nextDesc.BeginInventory;
+                //        nextFreeze = nextDesc.FreezerCount;
+                //    }
+                //    desc.ProjectedOrder = (int)Math.Round((desc.Par + nextPar + nextBuffer + desc.Backup + desc.FreezerCount -
+                //                                            desc.BeginInventory - desc.Delivery) / 8.0f) * 8;
+                //    desc.Useage = desc.BeginInventory + desc.Delivery + desc.FreezerCount - nextBegin - nextFreeze;
+                //}
             }
-        }
-
-        public override string[] GetPropertiesDB(string[] omit = null)
-        {
-            string[] theseOmissions = new string[] { "BreadDescDict" };
-            return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
 
         public string BreadDescToStr()
@@ -152,6 +140,17 @@ namespace BuddhaBowls.Models
             if (!BreadDescDict.ContainsKey(breadType))
                 BreadDescDict[breadType] = new BreadDescriptor(this) { Name = breadType };
             return BreadDescDict[breadType];
+        }
+
+        public void UpdateProperties()
+        {
+            if (BreadDescDict != null)
+            {
+                foreach (KeyValuePair<string, BreadDescriptor> kvp in BreadDescDict)
+                {
+                    kvp.Value.UpdateProperties();
+                }
+            }
         }
 
         private Dictionary<string, BreadDescriptor> ReadDbDescriptors()
@@ -178,7 +177,7 @@ namespace BuddhaBowls.Models
                     {
                         BreadDescriptor desc = kvp.Value;
                         desc.Clear();
-                        desc.Par = BreadDescDict[kvp.Key].Par;
+                        //desc.Par = BreadDescDict[kvp.Key].Par;
                     }
                 }
             }
@@ -192,10 +191,36 @@ namespace BuddhaBowls.Models
 
             return order;
         }
+
+        #region Overrides
+
+        public override string[] GetPropertiesDB(string[] omit = null)
+        {
+            string[] theseOmissions = new string[] { "BreadDescDict", "NextBreadOrder" };
+            return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
+        }
+
+        public override void Update()
+        {
+            if (BreadDescDict != null)
+                BreadDescDBString = BreadDescToStr();
+            base.Update();
+        }
+
+        public override int Insert()
+        {
+            if (BreadDescDict != null)
+                BreadDescDBString = BreadDescToStr();
+            return base.Insert();
+        }
+        
+        #endregion
     }
 
     public class BreadDescriptor : Model, INotifyPropertyChanged
     {
+        private BreadOrder _order;
+
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -278,24 +303,62 @@ namespace BuddhaBowls.Models
             }
         }
 
-        // not set by user, but must be set in BreadOrder
-        public int ProjectedOrder { get; set; }
-        public int Useage { get; set; }
+        private int _parFactor;
+        public int ParFactor
+        {
+            get
+            {
+                if(_parFactor > 0)
+                    return _parFactor;
+                return 1;
+            }
+            set
+            {
+                _parFactor = value;
+                if (_order.NextBreadOrder != null && _order.NextBreadOrder.BreadDescDict != null &&
+                    _order.NextBreadOrder.BreadDescDict.ContainsKey(Name))
+                {
+                    _order.NextBreadOrder.BreadDescDict[Name].ParFactor = _parFactor;
+                }
 
-        // not set by user but must be set in constructor
-        private int _par;
+                NotifyPropertyChanged("ParFactor");
+            }
+        }
+
+        // not set by user, but must be set in BreadOrder
+        public int ProjectedOrder
+        {
+            get
+            {
+                if (_order != null && _order.NextBreadOrder != null && _order.NextBreadOrder.BreadDescDict != null)
+                {
+                    return (int)Math.Round((Par + _order.NextBreadOrder.BreadDescDict[Name].Par + _order.NextBreadOrder.BreadDescDict[Name].Buffer +
+                                            Backup + FreezerCount - BeginInventory - Delivery) / 8.0f) * 8;
+                }
+                return 0;
+            }
+        }
+
+        public int Useage
+        {
+            get
+            {
+                if (_order != null && _order.NextBreadOrder != null && _order.NextBreadOrder.BreadDescDict != null)
+                {
+                    return BeginInventory + Delivery + FreezerCount - _order.NextBreadOrder.BreadDescDict[Name].BeginInventory -
+                            _order.NextBreadOrder.BreadDescDict[Name].FreezerCount;
+                }
+                return 0;
+            }
+        }
+
         public int Par
         {
             get
             {
-                return _par;
-            }
-            set
-            {
-                _par = value;
-                NotifyPropertyChanged("Par");
-                NotifyPropertyChanged("Buffer");
-                NotifyPropertyChanged("WalkIn");
+                if(_order != null)
+                    return _order.SalesForecast / ParFactor;
+                return 1;
             }
         }
 
@@ -316,7 +379,7 @@ namespace BuddhaBowls.Models
 
         public BreadDescriptor(BreadOrder order)
         {
-            Par = order.SalesForecast / 10;
+            _order = order;
         }
 
         /// <summary>
@@ -346,6 +409,15 @@ namespace BuddhaBowls.Models
             Delivery = 0;
             Backup = 0;
             FreezerCount = 0;
+        }
+
+        public void UpdateProperties()
+        {
+            NotifyPropertyChanged("ProjectedOrder");
+            NotifyPropertyChanged("Useage");
+            NotifyPropertyChanged("Par");
+            NotifyPropertyChanged("Buffer");
+            NotifyPropertyChanged("WalkIn");
         }
 
         public override string[] GetPropertiesDB(string[] omit = null)

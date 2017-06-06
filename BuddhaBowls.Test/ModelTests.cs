@@ -968,22 +968,6 @@ namespace BuddhaBowls.Test
             Assert.AreEqual(breadDescStr, bo.BreadDescToStr());
         }
 
-        [TestMethod]
-        public void BreadOrderSetPrevWeekTest()
-        {
-            BreadOrderWeek bow = new BreadOrderWeek();
-            DateTime date = new DateTime(2017, 5, 19); // Friday
-            DateTime startDate = new DateTime(2017, 5, 15); // Monday
-
-            bow.SetPrevWeek(date);
-
-            for (int i = 0; i < bow.BreadOrderDays.Length; i++)
-            {
-                BreadOrder order = bow.BreadOrderDays[i];
-                Assert.AreEqual(startDate.AddDays(i), order.Date);
-            }
-        }
-
         #endregion
 
         private List<IItem> CreateComplexRecipe()
