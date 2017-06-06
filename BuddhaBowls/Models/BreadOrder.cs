@@ -1,17 +1,63 @@
 ﻿using BuddhaBowls.Helpers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class BreadOrder : Model
+    public class BreadOrder : Model, INotifyPropertyChanged
     {
+
+        // INotifyPropertyChanged event and method
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public DateTime Date { get; set; }
-        public int GrossSales { get; set; }
-        public int SalesForecast { get; set; }
+
+        private int _grossSales;
+        public int GrossSales
+        {
+            get
+            {
+                return _grossSales;
+            }
+            set
+            {
+                _grossSales = value;
+                NotifyPropertyChanged("GrossSales");
+            }
+        }
+
+        private int _salesForecast;
+        public int SalesForecast
+        {
+            get
+            {
+                return _salesForecast;
+            }
+            set
+            {
+                _salesForecast = value;
+                NotifyPropertyChanged("SalesForecast");
+
+                if(BreadDescDict != null && BreadDescDict.Keys.Count > 0)
+                {
+                    foreach (KeyValuePair<string, BreadDescriptor> kvp in BreadDescDict)
+                    {
+                        kvp.Value.Par = _salesForecast / 10;
+                    }
+                }
+            }
+        }
+
         public string BreadDescDBString { get; set; }
 
         public BreadOrder NextBreadOrder { get; set; }
@@ -83,7 +129,7 @@ namespace BuddhaBowls.Models
                     }
                     desc.ProjectedOrder = (int)Math.Round((desc.Par + nextPar + nextBuffer + desc.Backup + desc.FreezerCount -
                                                             desc.BeginInventory - desc.Delivery) / 8.0f) * 8;
-                    desc.Usage = desc.BeginInventory + desc.Delivery + desc.FreezerCount - nextBegin - nextFreeze;
+                    desc.Useage = desc.BeginInventory + desc.Delivery + desc.FreezerCount - nextBegin - nextFreeze;
                 }
             }
         }
@@ -97,6 +143,15 @@ namespace BuddhaBowls.Models
         public string BreadDescToStr()
         {
             return string.Join("|", BreadDescDict.Select(x => x.Value.PropsToStr()));
+        }
+
+        public BreadDescriptor GetBreadDescriptor(string breadType)
+        {
+            if (BreadDescDict == null)
+                BreadDescDict = new Dictionary<string, BreadDescriptor>();
+            if (!BreadDescDict.ContainsKey(breadType))
+                BreadDescDict[breadType] = new BreadDescriptor(this) { Name = breadType };
+            return BreadDescDict[breadType];
         }
 
         private Dictionary<string, BreadDescriptor> ReadDbDescriptors()
@@ -139,8 +194,16 @@ namespace BuddhaBowls.Models
         }
     }
 
-    public class BreadDescriptor : Model
+    public class BreadDescriptor : Model, INotifyPropertyChanged
     {
+        // INotifyPropertyChanged event and method
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         private string _name;
         public string Name
         {
@@ -156,17 +219,85 @@ namespace BuddhaBowls.Models
                     _name = null;
             }
         }
-        public int BeginInventory { get; set; }
-        public int Delivery { get; set; }
-        public int Backup { get; set; }
-        public int FreezerCount { get; set; }
+
+        private int _beginInventory;
+        public int BeginInventory
+        {
+            get
+            {
+                return _beginInventory;
+            }
+            set
+            {
+                _beginInventory = value;
+                NotifyPropertyChanged("BeginInventory");
+                NotifyPropertyChanged("WalkIn");
+            }
+        }
+
+        public int _delivery;
+        public int Delivery
+        {
+            get
+            {
+                return _delivery;
+            }
+            set
+            {
+                _delivery = value;
+                NotifyPropertyChanged("Delivery");
+                NotifyPropertyChanged("WalkIn");
+            }
+        }
+
+        private int _backup;
+        public int Backup
+        {
+            get
+            {
+                return _backup;
+            }
+            set
+            {
+                _backup = value;
+                NotifyPropertyChanged("Backup");
+            }
+        }
+
+        private int _freezerCount;
+        public int FreezerCount
+        {
+            get
+            {
+                return _freezerCount;
+            }
+            set
+            {
+                _freezerCount = value;
+                NotifyPropertyChanged("FreezerCount");
+            }
+        }
 
         // not set by user, but must be set in BreadOrder
         public int ProjectedOrder { get; set; }
-        public int Usage { get; set; }
+        public int Useage { get; set; }
 
         // not set by user but must be set in constructor
-        public int Par { get; set; }
+        private int _par;
+        public int Par
+        {
+            get
+            {
+                return _par;
+            }
+            set
+            {
+                _par = value;
+                NotifyPropertyChanged("Par");
+                NotifyPropertyChanged("Buffer");
+                NotifyPropertyChanged("WalkIn");
+            }
+        }
 
         public int Buffer
         {

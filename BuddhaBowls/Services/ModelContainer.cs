@@ -493,7 +493,10 @@ namespace BuddhaBowls.Services
                 if (breadOrders != null)
                     bo = breadOrders.FirstOrDefault(x => x.Date.Date == monday.AddDays(i));
                 if (bo == null)
+                {
                     bo = new BreadOrder(monday.AddDays(i));
+                    bo.Insert();
+                }
                 BreadWeek[i] = bo;
             }
         }

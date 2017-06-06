@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuddhaBowls.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,14 @@ namespace BuddhaBowls.UserControls
     /// </summary>
     public partial class BreadGuideControl : UserControl
     {
+        private string[] _typeHeaders = new string[] { "{0}-Par", "Buffer", "Beginning Inv", "Delivery", "Projected Order", "Walk In",
+                                                       "Freezer Count", "Useage" };
+        private string[] _breadDescProps = new string[] { "Par", "Buffer", "BeginInventory", "Delivery", "ProjectedOrder", "WalkIn",
+                                                       "FreezerCount", "Useage" };
+        private string[] _editableFields = new string[] { "BeginInventory", "Delivery", "FreezerCount" };
+
+        private TextBlock _editingTextBlock;
+
         public BreadGuideControl()
         {
             InitializeComponent();
@@ -30,74 +39,185 @@ namespace BuddhaBowls.UserControls
             DataContext = context;
         }
 
-        private void c_dataGridScrollViewer_Loaded(object sender, RoutedEventArgs e)
+        public void SetBreadGrid(BreadOrder[] breadWeek, List<string> breadTypes)
         {
-            // Add MouseWheel support for the datagrid scrollviewer.
-            c_stackPanel.AddHandler(MouseWheelEvent, new RoutedEventHandler(DataGridMouseWheelHorizontal), true);
-        }
-
-        private void DataGridMouseWheelHorizontal(object sender, RoutedEventArgs e)
-        {
-            MouseWheelEventArgs eargs = (MouseWheelEventArgs)e;
-            double x = (double)eargs.Delta;
-            double y = c_dataGridScrollViewer.VerticalOffset;
-            c_dataGridScrollViewer.ScrollToVerticalOffset(y - x);
-        }
-
-        private void c_dataGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            RotateDataGridValues(ref c_dataGrid);
-        }
-
-        private void type_dataGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            DataGrid grid = (DataGrid)sender;
-            RotateDataGridValues(ref grid);
-        }
-        //private void ItemsControl_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    for (int i = 0; i < bread_ItemsControl.Items.Count; i++)
-        //    {
-        //        var item = bread_ItemsControl.ItemContainerGenerator.ContainerFromIndex(i);
-        //        //RotateDataGridValues(ref grid);
-        //    }
-        //}
-
-        private void RotateDataGridValues(ref DataGrid grid)
-        {
-            TransformGroup transformGroup = new TransformGroup();
-            transformGroup.Children.Add(new RotateTransform(90));
-            foreach (DataGridColumn dataGridColumn in grid.Columns)
+            SetDateGrid(breadWeek);
+            SetOrderDetails(breadWeek);
+            foreach (string breadType in breadTypes)
             {
-                if (dataGridColumn is DataGridTextColumn)
+                SetBreadType(breadType, breadWeek.Select(x => x.GetBreadDescriptor(breadType)).ToList());
+            }
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            ((BreadGuideVM)DataContext).InitializeDataGrid(this);
+        }
+
+        private void SetDateGrid(BreadOrder[] breadWeek)
+        {
+            for (int i = 0; i < breadWeek.Length; i++)
+            {
+                TextBlock t = new TextBlock()
                 {
-                    DataGridTextColumn dataGridTextColumn = dataGridColumn as DataGridTextColumn;
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    TextAlignment = TextAlignment.Center
+                };
 
-                    Style style = new Style(dataGridTextColumn.ElementStyle.TargetType, dataGridTextColumn.ElementStyle.BasedOn);
-                    style.Setters.Add(new Setter(TextBlock.MarginProperty, new Thickness(0, 2, 0, 2)));
-                    style.Setters.Add(new Setter(TextBlock.LayoutTransformProperty, transformGroup));
-                    style.Setters.Add(new Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center));
+                Binding b = new Binding(string.Format("BreadOrderList[{0}].Date", i));
+                b.Source = DataContext;
+                b.StringFormat = "dd-MMM";
+                BindingOperations.SetBinding(t, TextBlock.TextProperty, b);
+                Grid.SetRow(t, 0);
+                Grid.SetColumn(t, i + 1);
+                date_grid.Children.Add(t);
 
-                    Style editingStyle = new Style(dataGridTextColumn.EditingElementStyle.TargetType, dataGridTextColumn.EditingElementStyle.BasedOn);
-                    editingStyle.Setters.Add(new Setter(TextBox.MarginProperty, new Thickness(0, 2, 0, 2)));
-                    editingStyle.Setters.Add(new Setter(TextBox.LayoutTransformProperty, transformGroup));
-                    editingStyle.Setters.Add(new Setter(TextBox.HorizontalAlignmentProperty, HorizontalAlignment.Center));
+                t = new TextBlock()
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    TextAlignment = TextAlignment.Center
+                };
 
-                    dataGridTextColumn.ElementStyle = style;
-                    dataGridTextColumn.EditingElementStyle = editingStyle;
+                b = new Binding(string.Format("BreadOrderList[{0}].Day", i));
+                b.Source = DataContext;
+                BindingOperations.SetBinding(t, TextBlock.TextProperty, b);
+                Grid.SetRow(t, 1);
+                Grid.SetColumn(t, i + 1);
+                date_grid.Children.Add(t);
+            }
+        }
+
+        private void SetOrderDetails(BreadOrder[] breadWeek)
+        {
+            for (int i = 0; i < breadWeek.Length; i++)
+            {
+                TextBlock t = new TextBlock() { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch,
+                                                TextAlignment = TextAlignment.Center };
+                Binding b = new Binding(string.Format("BreadOrderList[{0}].GrossSales", i));
+                b.Source = DataContext;
+                BindingOperations.SetBinding(t, TextBlock.TextProperty, b);
+                Grid.SetRow(t, 0);
+                Grid.SetColumn(t, i + 1);
+                t.MouseLeftButtonUp += T_EditValue;
+                bread_grid.Children.Add(t);
+
+                t = new TextBlock() { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch,
+                                      TextAlignment = TextAlignment.Center };
+                b = new Binding(string.Format("BreadOrderList[{0}].SalesForecast", i));
+                b.Source = DataContext;
+                BindingOperations.SetBinding(t, TextBlock.TextProperty, b);
+                Grid.SetRow(t, 1);
+                Grid.SetColumn(t, i + 1);
+                t.MouseLeftButtonUp += T_EditValue;
+                bread_grid.Children.Add(t);
+            }
+        }
+
+        private void SetBreadType(string name, List<BreadDescriptor> breadTypesWeek)
+        {
+            bread_grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(10) });
+            int startRow = bread_grid.RowDefinitions.Count;
+
+            Border spacer = new Border() { Background = Brushes.Gray };
+            Grid.SetRow(spacer, startRow - 1);
+            Grid.SetColumnSpan(spacer, 9);
+            bread_grid.Children.Add(spacer);
+
+            for (int i = 0; i < _typeHeaders.Length; i++)
+            {
+                string header = _typeHeaders[i];
+                if (i == 0)
+                    header = string.Format(header, name);
+                bread_grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(28) });
+                Label headerLabel = new Label()
+                {
+                    Content = header,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                Grid.SetRow(headerLabel, startRow + i);
+                Grid.SetColumn(headerLabel, 0);
+                bread_grid.Children.Add(headerLabel);
+
+                for (int col = 0; col < breadTypesWeek.Count; col++)
+                {
+                    TextBlock t = new TextBlock()
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                        TextAlignment = TextAlignment.Center
+                    };
+
+                    Binding binding = new Binding(string.Format("BreadOrderList[{0}].BreadDescDict[{1}].{2}", col, name, _breadDescProps[i]));
+                    binding.Source = DataContext;
+                    BindingOperations.SetBinding(t, TextBlock.TextProperty, binding);
+                    Grid.SetRow(t, startRow + i);
+                    Grid.SetColumn(t, col + 1);
+
+                    if(_editableFields.Contains(_breadDescProps[i]))
+                    {
+                        t.MouseLeftButtonUp += T_EditValue;
+                    }
+                    bread_grid.Children.Add(t);
                 }
             }
-            List<DataGridColumn> dataGridColumns = new List<DataGridColumn>();
-            foreach (DataGridColumn dataGridColumn in grid.Columns)
+        }
+
+        private void T_EditValue(object sender, MouseButtonEventArgs e)
+        {
+            TextBlock t = (TextBlock)sender;
+            _editingTextBlock = t;
+
+            Grid thisGrid = (Grid)t.Parent;
+            thisGrid.Children.Remove(t);
+
+            int row = Grid.GetRow(t);
+            int col = Grid.GetColumn(t);
+            Binding b = t.GetBindingExpression(TextBlock.TextProperty).ParentBinding;
+
+            TextBox box = new TextBox()
             {
-                dataGridColumns.Add(dataGridColumn);
-            }
-            grid.Columns.Clear();
-            dataGridColumns.Reverse();
-            foreach (DataGridColumn dataGridColumn in dataGridColumns)
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                TextAlignment = TextAlignment.Right
+            };
+            box.LostFocus += EditBox_LostFocus;
+            box.KeyUp += EditBox_KeyUp;
+            BindingOperations.SetBinding(box, TextBox.TextProperty, b);
+            Grid.SetRow(box, row);
+            Grid.SetColumn(box, col);
+
+            thisGrid.Children.Add(box);
+            box.Focus();
+            box.SelectAll();
+        }
+
+        private void EditBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            TextBox box = (TextBox)sender;
+
+            if (e.Key == Key.Enter || e.Key == Key.Escape)
             {
-                grid.Columns.Add(dataGridColumn);
+                box.LostFocus -= EditBox_LostFocus;
+                ExitEdit(box, (Grid)box.Parent);
             }
+        }
+
+        private void EditBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ExitEdit((TextBox)sender, (Grid)((TextBox)sender).Parent);
+        }
+
+        private void ExitEdit(TextBox box, Grid grid)
+        {
+            box.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+            grid.Children.Remove(box);
+            grid.Children.Add(_editingTextBlock);
+
+            ((BreadGuideVM)DataContext).UpdateValue(Grid.GetColumn(box) - 1);
         }
     }
 }

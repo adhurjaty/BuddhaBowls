@@ -81,7 +81,7 @@ namespace BuddhaBowls.Models
                         }
                         desc.ProjectedOrder = (int)Math.Round((desc.Par + nextPar + nextBuffer + desc.Backup + desc.FreezerCount -
                                                                 desc.BeginInventory - desc.Delivery) / 8.0f) * 8;
-                        desc.Usage = desc.BeginInventory + desc.Delivery + desc.FreezerCount - nextBegin - nextFreeze;
+                        desc.Useage = desc.BeginInventory + desc.Delivery + desc.FreezerCount - nextBegin - nextFreeze;
                     }
                 }
             }

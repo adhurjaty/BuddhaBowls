@@ -6,81 +6,60 @@
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:BuddhaBowls.UserControls"
              mc:Ignorable="d" 
-             VirtualizingPanel.IsVirtualizing="False"
+             Loaded="UserControl_Loaded"
              d:DesignHeight="500" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60" />
             <RowDefinition Height="60" />
+            <RowDefinition Height="56" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="Bread Order Guide" VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="30"/>
 
-        <ScrollViewer Name="c_dataGridScrollViewer" Loaded="c_dataGridScrollViewer_Loaded" Grid.Row="2" VerticalScrollBarVisibility="Auto"
+        <Border BorderBrush="Black" BorderThickness="1" Grid.Row="2">
+            <Grid x:Name="date_grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="28" />
+                    <RowDefinition Height="28" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Label Content="Date" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Label Content="Day of Week" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+        <ScrollViewer Name="c_dataGridScrollViewer" Grid.Row="3" VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <StackPanel Name="c_stackPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <DataGrid x:Name="c_dataGrid" HorizontalAlignment="Stretch" VerticalAlignment="Top" HorizontalScrollBarVisibility="Hidden" 
-                          VerticalScrollBarVisibility="Hidden" ItemsSource="{Binding BreadOrderList}" AutoGenerateColumns="False" CanUserAddRows="False"
-                          Loaded="c_dataGrid_Loaded" CanUserResizeColumns="False" CanUserSortColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Sales Forecast" Binding="{Binding SalesForecast}" />
-                        <DataGridTextColumn Header="Gross Sales" Binding="{Binding GrossSales}" />
-                        <DataGridTextColumn Header="Day of the Week" Binding="{Binding Path=Day}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Date" Binding="{Binding Path=Date, StringFormat=\{0:dd-MMM\}}" IsReadOnly="True"/>
-                    </DataGrid.Columns>
-                    <DataGrid.ColumnHeaderStyle>
-                        <Style TargetType="{x:Type DataGridColumnHeader}">
-                            <Setter Property="LayoutTransform">
-                                <Setter.Value>
-                                    <TransformGroup>
-                                        <RotateTransform Angle="90"/>
-                                    </TransformGroup>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </DataGrid.ColumnHeaderStyle>
-                    <DataGrid.LayoutTransform>
-                        <TransformGroup>
-                            <RotateTransform Angle="-90"/>
-                        </TransformGroup>
-                    </DataGrid.LayoutTransform>
-                </DataGrid>
-                <ItemsControl x:Name="bread_ItemsControl" ItemsSource="{Binding BreadDescriptors}" > <!--Loaded="ItemsControl_Loaded"> -->
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <DataGrid HorizontalAlignment="Stretch" VerticalAlignment="Top" HorizontalScrollBarVisibility="Hidden" 
-                                      VerticalScrollBarVisibility="Hidden" ItemsSource="{Binding BreadTypeList}" AutoGenerateColumns="False"
-                                      CanUserAddRows="False" Loaded="type_dataGrid_Loaded" CanUserResizeColumns="False" CanUserSortColumns="False">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="{Binding Path=Name, StringFormat={}{0}-Par}" Binding="{Binding Par}" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="Buffer" Binding="{Binding Buffer}" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="Beginning Inv" Binding="{Binding BeginInventory}" />
-                                    <DataGridTextColumn Header="Delivery" Binding="{Binding Delivery}" />
-                                    <DataGridTextColumn Header="Projected Order" Binding="{Binding ProjectedOrder}" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="Walk-In" Binding="{Binding WalkIn}" IsReadOnly="True"/>
-                                </DataGrid.Columns>
-                                <DataGrid.ColumnHeaderStyle>
-                                    <Style TargetType="{x:Type DataGridColumnHeader}">
-                                        <Setter Property="LayoutTransform">
-                                            <Setter.Value>
-                                                <TransformGroup>
-                                                    <RotateTransform Angle="90"/>
-                                                </TransformGroup>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </DataGrid.ColumnHeaderStyle>
-                                <DataGrid.LayoutTransform>
-                                    <TransformGroup>
-                                        <RotateTransform Angle="-90"/>
-                                    </TransformGroup>
-                                </DataGrid.LayoutTransform>
-                            </DataGrid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+            <Grid x:Name="bread_grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="28" />
+                    <RowDefinition Height="28" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Label Content="Gross Sales + Online" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <Label Content="Sales Forecast" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
         </ScrollViewer>
     </Grid>
 </UserControl>
