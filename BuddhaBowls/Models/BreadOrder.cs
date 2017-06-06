@@ -44,6 +44,11 @@ namespace BuddhaBowls.Models
             _tableName = "BreadOrder";
         }
 
+        public BreadOrder(DateTime date) : this()
+        {
+            Date = date;
+        }
+
         public BreadOrder(Dictionary<string, string> searchParams) : this()
         {
             string[] record = _dbInt.GetRecord(_tableName, searchParams);

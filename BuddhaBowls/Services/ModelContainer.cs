@@ -39,7 +39,7 @@ namespace BuddhaBowls.Services
         public List<Inventory> Inventories { get; set; }
         public List<PrepItem> PrepItems { get; set; }
         public List<VendorInventoryItem> VendorInvItems { get; private set; }
-        public BreadOrderWeek BreadWeek { get; set; }
+        public BreadOrder[] BreadWeek { get; set; }
 
         public ModelContainer()
         {
@@ -61,7 +61,7 @@ namespace BuddhaBowls.Services
             PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder") ?? new List<PurchaseOrder>();
             Inventories = ModelHelper.InstantiateList<Inventory>("Inventory") ?? new List<Inventory>();
             PrepItems = ModelHelper.InstantiateList<PrepItem>("PrepItem") ?? new List<PrepItem>();
-            BreadWeek = new BreadOrderWeek();
+            SetBreadWeek();
         }
 
         private void AddVendorItems()
@@ -475,6 +475,26 @@ namespace BuddhaBowls.Services
                     }
                     VendorInvItems.Insert(i, vItem);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Initialize the bread orders for the week
+        /// </summary>
+        private void SetBreadWeek()
+        {
+            BreadWeek = new BreadOrder[8];
+            List<BreadOrder> breadOrders = ModelHelper.InstantiateList<BreadOrder>("BreadOrder");
+            int dayOfWeek = (int)DateTime.Today.DayOfWeek;
+            DateTime monday = DateTime.Today.AddDays(-((dayOfWeek - 1) % 7));
+            for (int i = 0; i < 8; i++)
+            {
+                BreadOrder bo = null;
+                if (breadOrders != null)
+                    bo = breadOrders.FirstOrDefault(x => x.Date.Date == monday.AddDays(i));
+                if (bo == null)
+                    bo = new BreadOrder(monday.AddDays(i));
+                BreadWeek[i] = bo;
             }
         }
     }
