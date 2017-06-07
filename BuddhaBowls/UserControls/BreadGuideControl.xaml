@@ -40,8 +40,6 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Button Content="Excel Sheet" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0, 0, 205, 5" Width="80"
-                Command="{Binding GetReportCommand}" />
 
         <Border BorderBrush="Black" BorderThickness="1" Grid.Row="2">
             <Grid x:Name="date_grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

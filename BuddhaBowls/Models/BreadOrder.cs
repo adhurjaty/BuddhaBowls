@@ -285,6 +285,10 @@ namespace BuddhaBowls.Models
             set
             {
                 _backup = value;
+                if (_order != null && _order.NextBreadOrder != null && _order.NextBreadOrder.BreadDescDict != null)
+                {
+                    _order.NextBreadOrder.BreadDescDict[Name].Backup = _backup;
+                }
                 NotifyPropertyChanged("Backup");
             }
         }
@@ -325,7 +329,6 @@ namespace BuddhaBowls.Models
             }
         }
 
-        // not set by user, but must be set in BreadOrder
         public int ProjectedOrder
         {
             get
@@ -333,7 +336,7 @@ namespace BuddhaBowls.Models
                 if (_order != null && _order.NextBreadOrder != null && _order.NextBreadOrder.BreadDescDict != null)
                 {
                     return (int)Math.Round((Par + _order.NextBreadOrder.BreadDescDict[Name].Par + _order.NextBreadOrder.BreadDescDict[Name].Buffer +
-                                            Backup + FreezerCount - BeginInventory - Delivery) / 8.0f) * 8;
+                                            Backup - FreezerCount - BeginInventory - Delivery) / 8.0f) * 8;
                 }
                 return 0;
             }

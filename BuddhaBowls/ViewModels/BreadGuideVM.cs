@@ -9,6 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using BuddhaBowls.UserControls;
 using System.Windows.Input;
+using System.Threading;
+using BuddhaBowls.Helpers;
+using System.Windows;
+using System.IO;
 
 namespace BuddhaBowls
 {
@@ -74,23 +78,14 @@ namespace BuddhaBowls
 
         #region ICommand and CanExecute
 
-        public ICommand GetReportCommand { get; set; }
-
         #endregion
 
         public BreadGuideVM() : base()
         {
             BreadOrderDate = DateTime.Today;
-            GetReportCommand = new RelayCommand(CreateReport);
         }
 
         #region ICommand Helpers
-
-        private void CreateReport(object obj)
-        {
-            ReportGenerator generator = new ReportGenerator(_models);
-            generator.BreadOrderGuide();
-        }
 
         #endregion
 

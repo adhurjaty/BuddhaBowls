@@ -22,10 +22,10 @@ namespace BuddhaBowls.UserControls
     public partial class BreadGuideControl : UserControl
     {
         private string[] _typeHeaders = new string[] { "{0}-Par", "Buffer", "Beginning Inv", "Delivery", "Projected Order", "Walk In",
-                                                       "Freezer Count", "Useage" };
+                                                       "Backup", "Freezer Count", "Useage" };
         private string[] _breadDescProps = new string[] { "Par", "Buffer", "BeginInventory", "Delivery", "ProjectedOrder", "WalkIn",
-                                                       "FreezerCount", "Useage" };
-        private string[] _editableFields = new string[] { "BeginInventory", "Delivery", "FreezerCount" };
+                                                          "Backup", "FreezerCount", "Useage" };
+        private string[] _editableFields = new string[] { "BeginInventory", "Delivery", "Backup", "FreezerCount" };
 
         private TextBlock _editingTextBlock;
 
