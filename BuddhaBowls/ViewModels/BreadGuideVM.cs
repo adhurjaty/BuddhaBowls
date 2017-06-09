@@ -46,17 +46,24 @@ namespace BuddhaBowls
             set
             {
                 int dayDiff = -(((int)value.DayOfWeek - 1) & 7);
-                BreadOrder[] bWeek = _models.GetBreadWeek(value);
-                if (bWeek.Contains(null))
+                DateTime breadDate = value.AddDays(dayDiff);
+                DateErrorMessage = "";
+                if (DBConnection && breadDate != _breadOrderDate)
                 {
-                    DateErrorMessage = "No records exist for that week";
-                }
-                else
-                {
-                    DateErrorMessage = "";
-                    _breadOrderDate = value.AddDays(dayDiff);
-                    BreadOrderList = new ObservableCollection<BreadOrder>(bWeek);
-                    NotifyPropertyChanged("BreadOrderDate");
+                    BreadOrder[] bWeek = _models.GetBreadWeek(value);
+                    if (bWeek.Contains(null))
+                    {
+                        DateErrorMessage = "No records exist for that week";
+                    }
+                    else
+                    {
+                        _breadOrderDate = breadDate;
+                        BreadOrderList = new ObservableCollection<BreadOrder>(bWeek);
+                        if (_control != null)
+                            _control.SetBreadGrid(BreadOrderList.ToArray(), _models.GetBreadTypes());
+                        NotifyPropertyChanged("BreadOrderDate");
+                        NotifyPropertyChanged("BreadOrderList");
+                    }
                 }
             }
         }
@@ -97,10 +104,10 @@ namespace BuddhaBowls
         /// <param name="breadGuideControl"></param>
         public void InitializeDataGrid(BreadGuideControl breadGuideControl)
         {
-            if (_control == null)
+            if (_control == null && DBConnection)
             {
-                breadGuideControl.SetBreadGrid(BreadOrderList.ToArray(),
-                    _models.InventoryItems.Where(x => x.Category == "Bread").Select(x => x.Name).ToList());
+                breadGuideControl.SetBreadGrid(BreadOrderList.ToArray(), _models.GetBreadTypes());
+                NotifyPropertyChanged("BreadOrderList");
             }
             _control = breadGuideControl;
         }

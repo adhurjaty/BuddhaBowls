@@ -102,7 +102,8 @@ namespace BuddhaBowls
             set
             {
                 _orderVendor = value;
-                VendorShippingCost = _orderVendor.ShippingCost;
+                if(_orderVendor != null)
+                    VendorShippingCost = _orderVendor.ShippingCost;
             }
         }
 

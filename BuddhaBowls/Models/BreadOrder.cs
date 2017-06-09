@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -153,6 +154,11 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public string GetTableLocation()
+        {
+            return Path.Combine(Properties.Settings.Default.DBLocation, _tableName + ".csv");
+        }
+
         private Dictionary<string, BreadDescriptor> ReadDbDescriptors()
         {
             if (string.IsNullOrWhiteSpace(BreadDescDBString))
@@ -211,7 +217,9 @@ namespace BuddhaBowls.Models
         {
             if (BreadDescDict != null)
                 BreadDescDBString = BreadDescToStr();
-            return base.Insert();
+            if(File.Exists(GetTableLocation()))
+                return base.Insert();
+            return -1;
         }
         
         #endregion
@@ -403,7 +411,11 @@ namespace BuddhaBowls.Models
 
         public string PropsToStr()
         {
-            return string.Join(";", GetPropertiesDB().Select(x => x + "=" + GetPropertyValue(x).ToString()));
+            // make sure that Name is first
+            List<string> props = GetPropertiesDB().ToList();
+            props.Remove("Name");
+            props.Insert(0, "Name");
+            return string.Join(";", props.Select(x => x + "=" + GetPropertyValue(x).ToString()));
         }
 
         public void Clear()

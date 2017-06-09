@@ -505,6 +505,11 @@ namespace BuddhaBowls.Services
             return breadWeek;
         }
 
+        public List<string> GetBreadTypes()
+        {
+            return InventoryItems.Where(x => x.Category.ToUpper() == "BREAD").Select(x => x.Name).ToList();
+        }
+
         private void SetBreadWeek()
         {
             BreadWeek = GetBreadWeek(DateTime.Today, true);

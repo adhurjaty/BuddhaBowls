@@ -41,8 +41,12 @@ namespace BuddhaBowls.UserControls
 
         public void SetBreadGrid(BreadOrder[] breadWeek, List<string> breadTypes)
         {
+            ClearDateGrid();
+            ClearBreadGrid();
+
             SetDateGrid(breadWeek);
             SetOrderDetails(breadWeek);
+
             foreach (string breadType in breadTypes)
             {
                 SetBreadType(breadType, breadWeek.Select(x => x.GetBreadDescriptor(breadType)).ToList());
@@ -164,6 +168,28 @@ namespace BuddhaBowls.UserControls
                     bread_grid.Children.Add(t);
                 }
             }
+        }
+
+        private void ClearDateGrid()
+        {
+            for (int i = date_grid.Children.Count - 1; i >= 0; i--)
+            {
+                if (Grid.GetColumn(date_grid.Children[i]) > 0)
+                    date_grid.Children.RemoveAt(i);
+            }
+        }
+
+        private void ClearBreadGrid()
+        {
+            int startIdx = bread_grid.RowDefinitions.IndexOf(bread_grid.RowDefinitions.First(x => x.Name == "bottom_fixed"));
+            for (int i = bread_grid.Children.Count - 1; i >= 0; i--)
+            {
+                if (Grid.GetColumn(bread_grid.Children[i]) > 0 || Grid.GetRow(bread_grid.Children[i]) > startIdx)
+                    bread_grid.Children.RemoveAt(i);
+            }
+
+            if (startIdx + 1 < bread_grid.RowDefinitions.Count)
+                bread_grid.RowDefinitions.RemoveRange(startIdx + 1, bread_grid.RowDefinitions.Count - (startIdx + 1));
         }
 
         private void T_EditValue(object sender, MouseButtonEventArgs e)

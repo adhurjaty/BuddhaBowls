@@ -67,7 +67,7 @@
             <Grid x:Name="bread_grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="28" />
-                    <RowDefinition Height="28" />
+                    <RowDefinition Height="28" Name="bottom_fixed" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="120" />
