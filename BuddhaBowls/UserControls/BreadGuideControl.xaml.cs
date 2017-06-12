@@ -21,10 +21,10 @@ namespace BuddhaBowls.UserControls
     /// </summary>
     public partial class BreadGuideControl : UserControl
     {
-        private string[] _typeHeaders = new string[] { "{0}-Par", "Buffer", "Beginning Inv", "Delivery", "Projected Order", "Walk In",
-                                                       "Backup", "Freezer Count", "Useage" };
-        private string[] _breadDescProps = new string[] { "Par", "Buffer", "BeginInventory", "Delivery", "ProjectedOrder", "WalkIn",
-                                                          "Backup", "FreezerCount", "Useage" };
+        private string[] _typeHeaders = new string[] { "Kitchen Rack", "Freezer Count", "Delivery", "Backup", "{0}-Par", "Buffer",
+                                                       "Projected Order", "Freezer Adj", "Useage" };
+        private string[] _breadDescProps = new string[] { "BeginInventory", "FreezerCount", "Delivery", "Backup", "Par", "Buffer",
+                                                          "ProjectedOrder", "WalkIn", "Useage" };
         private string[] _editableFields = new string[] { "BeginInventory", "Delivery", "Backup", "FreezerCount" };
 
         private TextBlock _editingTextBlock;
@@ -121,19 +121,35 @@ namespace BuddhaBowls.UserControls
 
         private void SetBreadType(string name, List<BreadDescriptor> breadTypesWeek)
         {
-            bread_grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(10) });
+            bread_grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(28) });
             int startRow = bread_grid.RowDefinitions.Count;
 
-            Border spacer = new Border() { Background = Brushes.Gray };
-            Grid.SetRow(spacer, startRow - 1);
-            Grid.SetColumnSpan(spacer, 9);
-            bread_grid.Children.Add(spacer);
+            Label typeLabel = new Label()
+            {
+                Content = name,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Background = Brushes.Gray,
+                Foreground = Brushes.White,
+                FontWeight = FontWeights.Bold
+            };
+
+            Grid.SetRow(typeLabel, startRow - 1);
+            Grid.SetColumnSpan(typeLabel, 9);
+            bread_grid.Children.Add(typeLabel);
 
             for (int i = 0; i < _typeHeaders.Length; i++)
             {
                 string header = _typeHeaders[i];
-                if (i == 0)
+                if (_typeHeaders[i].Contains("{0}"))
                     header = string.Format(header, name);
+
+                bool projected = _typeHeaders[i].Contains("Projected");
+                bool editable = _editableFields.Contains(_breadDescProps[i]);
+                bool freezerAdj = _breadDescProps[i] == "WalkIn";
+
                 bread_grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(28) });
                 Label headerLabel = new Label()
                 {
@@ -142,6 +158,8 @@ namespace BuddhaBowls.UserControls
                     VerticalAlignment = VerticalAlignment.Stretch,
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
+                if (projected)
+                    headerLabel.FontWeight = FontWeights.Bold;
                 Grid.SetRow(headerLabel, startRow + i);
                 Grid.SetColumn(headerLabel, 0);
                 bread_grid.Children.Add(headerLabel);
@@ -155,14 +173,43 @@ namespace BuddhaBowls.UserControls
                         TextAlignment = TextAlignment.Center
                     };
 
+                    if (projected)
+                        t.FontWeight = FontWeights.Bold;
+
                     Binding binding = new Binding(string.Format("BreadOrderList[{0}].BreadDescDict[{1}].{2}", col, name, _breadDescProps[i]));
                     binding.Source = DataContext;
                     BindingOperations.SetBinding(t, TextBlock.TextProperty, binding);
+
+                    if(freezerAdj)
+                    {
+                        Border colorBord = new Border()
+                        {
+                            HorizontalAlignment = HorizontalAlignment.Stretch,
+                            VerticalAlignment = VerticalAlignment.Stretch
+                        };
+                        Grid.SetRow(colorBord, startRow + i);
+                        Grid.SetColumn(colorBord, col + 1);
+                        Binding colorBind = new Binding(string.Format("BreadOrderList[{0}].BreadDescDict[{1}].WalkInColor", col, name));
+                        colorBind.Source = DataContext;
+                        BindingOperations.SetBinding(colorBord, Border.BackgroundProperty, colorBind);
+                        bread_grid.Children.Add(colorBord);
+                    }
+
                     Grid.SetRow(t, startRow + i);
                     Grid.SetColumn(t, col + 1);
 
-                    if(_editableFields.Contains(_breadDescProps[i]))
+                    if(editable)
                     {
+                        Border bord = new Border()
+                        {
+                            Background = Brushes.LightGray,
+                            VerticalAlignment = VerticalAlignment.Stretch,
+                            HorizontalAlignment = HorizontalAlignment.Stretch
+                        };
+
+                        Grid.SetRow(bord, startRow + i);
+                        Grid.SetColumn(bord, col + 1);
+                        bread_grid.Children.Add(bord);
                         t.MouseLeftButtonUp += T_EditValue;
                     }
                     bread_grid.Children.Add(t);

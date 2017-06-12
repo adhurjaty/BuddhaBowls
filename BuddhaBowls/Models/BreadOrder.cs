@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace BuddhaBowls.Models
 {
@@ -99,33 +100,6 @@ namespace BuddhaBowls.Models
                 InitializeObject(record);
 
                 SetNextBreadOrder();
-                InitDescriptor();
-            }
-        }
-
-        private void InitDescriptor()
-        {
-            if (BreadDescDict != null && NextBreadOrder != null)
-            {
-                //foreach (KeyValuePair<string, BreadDescriptor> kvp in BreadDescDict)
-                //{
-                //    BreadDescriptor desc = kvp.Value;
-                //    int nextPar = 0;
-                //    int nextBuffer = 0;
-                //    int nextBegin = 0;
-                //    int nextFreeze = 0;
-                //    if (NextBreadOrder.BreadDescDict != null && NextBreadOrder.BreadDescDict.ContainsKey(kvp.Key))
-                //    {
-                //        BreadDescriptor nextDesc = NextBreadOrder.BreadDescDict[kvp.Key];
-                //        nextPar = nextDesc.Par;
-                //        nextBuffer = nextDesc.Buffer;
-                //        nextBegin = nextDesc.BeginInventory;
-                //        nextFreeze = nextDesc.FreezerCount;
-                //    }
-                //    desc.ProjectedOrder = (int)Math.Round((desc.Par + nextPar + nextBuffer + desc.Backup + desc.FreezerCount -
-                //                                            desc.BeginInventory - desc.Delivery) / 8.0f) * 8;
-                //    desc.Useage = desc.BeginInventory + desc.Delivery + desc.FreezerCount - nextBegin - nextFreeze;
-                //}
             }
         }
 
@@ -265,6 +239,7 @@ namespace BuddhaBowls.Models
                 _beginInventory = value;
                 NotifyPropertyChanged("BeginInventory");
                 NotifyPropertyChanged("WalkIn");
+                NotifyPropertyChanged("WalkInColor");
             }
         }
 
@@ -280,6 +255,7 @@ namespace BuddhaBowls.Models
                 _delivery = value;
                 NotifyPropertyChanged("Delivery");
                 NotifyPropertyChanged("WalkIn");
+                NotifyPropertyChanged("WalkInColor");
             }
         }
 
@@ -380,11 +356,20 @@ namespace BuddhaBowls.Models
                 return Par / 5;
             }
         }
+
         public int WalkIn
         {
             get
             {
                 return (BeginInventory + Delivery - (Par + Buffer)) / 8;
+            }
+        }
+
+        public Brush WalkInColor
+        {
+            get
+            {
+                return WalkIn >= 0 ? Brushes.White : Brushes.Red;
             }
         }
 
@@ -433,6 +418,7 @@ namespace BuddhaBowls.Models
             NotifyPropertyChanged("Par");
             NotifyPropertyChanged("Buffer");
             NotifyPropertyChanged("WalkIn");
+            NotifyPropertyChanged("WalkInColor");
         }
 
         public override string[] GetPropertiesDB(string[] omit = null)

@@ -56,5 +56,41 @@ namespace BuddhaBowls.Properties {
                 this["CategoryOrder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("sq0idp-7qQkCGQQ6wxwsB__K37ATA")]
+        public string SquareId {
+            get {
+                return ((string)(this["SquareId"]));
+            }
+            set {
+                this["SquareId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("sq0atp-kdATMXFL8eaKeN7ShEZgXA")]
+        public string SquareToken {
+            get {
+                return ((string)(this["SquareToken"]));
+            }
+            set {
+                this["SquareToken"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("69VJ030ANYAGV")]
+        public string SquareLocationId {
+            get {
+                return ((string)(this["SquareLocationId"]));
+            }
+            set {
+                this["SquareLocationId"] = value;
+            }
+        }
     }
 }

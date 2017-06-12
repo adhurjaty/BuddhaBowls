@@ -13,6 +13,7 @@ using System.Threading;
 using BuddhaBowls.Helpers;
 using System.Windows;
 using System.IO;
+using BuddhaBowls.Square;
 
 namespace BuddhaBowls
 {
@@ -85,14 +86,23 @@ namespace BuddhaBowls
 
         #region ICommand and CanExecute
 
+        public ICommand SquareCommand { get; set; }
+
         #endregion
 
         public BreadGuideVM() : base()
         {
             BreadOrderDate = DateTime.Today;
+            SquareCommand = new RelayCommand(TrySquare);
         }
 
         #region ICommand Helpers
+
+        private void TrySquare(object obj)
+        {
+            SquareService service = new SquareService();
+            service.ListTransactions(DateTime.Now.AddDays(-1), DateTime.Now);
+        }
 
         #endregion
 
