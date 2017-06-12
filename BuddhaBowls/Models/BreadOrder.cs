@@ -24,8 +24,8 @@ namespace BuddhaBowls.Models
 
         public DateTime Date { get; set; }
 
-        private int _grossSales;
-        public int GrossSales
+        private float _grossSales;
+        public float GrossSales
         {
             get
             {

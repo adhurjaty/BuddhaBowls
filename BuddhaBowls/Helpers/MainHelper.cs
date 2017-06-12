@@ -147,12 +147,10 @@ namespace BuddhaBowls.Helpers
             return orderedList;
         }
 
-        //public static List<VendorItem> GetVendorPrices(string vendorName)
-        //{
-        //    string tableName = Path.Combine(Properties.Resources.VendorFolder, vendorName);
-
-        //    return ModelHelper.InstantiateList<VendorItem>(tableName, false);
-        //}
+        public static int Mod(int x, int m)
+        {
+            return (x % m + m) % m;
+        }
     }
 
     public class BindingProxy : Freezable

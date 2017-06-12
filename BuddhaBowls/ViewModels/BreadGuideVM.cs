@@ -20,6 +20,7 @@ namespace BuddhaBowls
     public class BreadGuideVM : TabVM
     {
         private BreadGuideControl _control;
+        private BackgroundWorker _worker;
 
         #region Content Binders
 
@@ -46,7 +47,7 @@ namespace BuddhaBowls
             }
             set
             {
-                int dayDiff = -(((int)value.DayOfWeek - 1) & 7);
+                int dayDiff = -MainHelper.Mod((int)value.DayOfWeek - 1, 7);
                 DateTime breadDate = value.AddDays(dayDiff);
                 DateErrorMessage = "";
                 if (DBConnection && breadDate != _breadOrderDate)
@@ -82,6 +83,21 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("DateErrorMessage");
             }
         }
+
+        private string _squareProgMessage;
+        public string SquareProgMessage
+        {
+            get
+            {
+                return _squareProgMessage;
+            }
+            set
+            {
+                _squareProgMessage = value;
+                NotifyPropertyChanged("SquareProgMessage");
+            }
+        }
+
         #endregion
 
         #region ICommand and CanExecute
@@ -93,15 +109,17 @@ namespace BuddhaBowls
         public BreadGuideVM() : base()
         {
             BreadOrderDate = DateTime.Today;
-            SquareCommand = new RelayCommand(TrySquare);
+            SquareCommand = new RelayCommand(UpdateSquare);
+            InitSquareSales();
         }
 
         #region ICommand Helpers
 
-        private void TrySquare(object obj)
+        private void UpdateSquare(object obj)
         {
-            SquareService service = new SquareService();
-            service.ListTransactions(DateTime.Now.AddDays(-1), DateTime.Now);
+            InitSquareSales();
+            //SquareService service = new SquareService();
+            //service.ListTransactions(DateTime.Now.AddDays(-1), DateTime.Now);
         }
 
         #endregion
@@ -122,19 +140,16 @@ namespace BuddhaBowls
             _control = breadGuideControl;
         }
 
-        //private void InitBreadDescriptors()
-        //{
-        //    _breadDescriptors = new ObservableCollection<BreadDescType>();
-        //    foreach (string breadType in _models.InventoryItems.Where(x => x.Category == "Bread").Select(x => x.Name))
-        //    {
-        //        List<BreadDescriptor> descList = BreadOrderList.Where(x => x.BreadDescDict != null).Select(x => x.BreadDescDict[breadType]).ToList();
-        //        for (int i = 0; i < 8 - descList.Count; i++)
-        //        {
-        //            descList.Add(new BreadDescriptor(BreadOrderList[i]));
-        //        }
-        //        _breadDescriptors.Add(new BreadDescType(breadType, descList));
-        //    }
-        //}
+        private void InitSquareSales()
+        {
+            _worker = new BackgroundWorker();
+            _worker.DoWork += _worker_DoWork;
+            _worker.RunWorkerCompleted += _worker_RunWorkerCompleted;
+            _worker.WorkerSupportsCancellation = true;
+
+            SquareProgMessage = "Updating from Square...";
+            _worker.RunWorkerAsync();
+        }
 
         #endregion
 
@@ -149,5 +164,27 @@ namespace BuddhaBowls
         }
 
         #endregion
+
+        private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            SquareProgMessage = "";
+        }
+
+        private void _worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            SquareService ss = new SquareService();
+            Parallel.ForEach(BreadOrderList.Where(x => x.Date < DateTime.Now), order =>
+            {
+                try
+                {
+                    order.GrossSales = ss.ListTransactions(order.Date, order.Date.AddDays(1)).Sum(x => x.TotalCollected);
+                    order.Update();
+                }
+                catch (Exception ex)
+                {
+                    order.GrossSales = 0;
+                }
+            });
+        }
     }
 }

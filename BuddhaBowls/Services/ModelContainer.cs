@@ -486,7 +486,7 @@ namespace BuddhaBowls.Services
             BreadOrder[] breadWeek = new BreadOrder[8];
             List<BreadOrder> breadOrders = ModelHelper.InstantiateList<BreadOrder>("BreadOrder");
             int dayOfWeek = (int)date.DayOfWeek;
-            DateTime monday = date.AddDays(-((dayOfWeek - 1) % 7));
+            DateTime monday = date.AddDays(-MainHelper.Mod(dayOfWeek - 1, 7));
             for (int i = 0; i < 8; i++)
             {
                 BreadOrder bo = null;

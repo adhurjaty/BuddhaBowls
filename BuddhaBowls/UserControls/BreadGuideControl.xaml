@@ -24,6 +24,7 @@
                     Width="120"/>
         <TextBlock Text="{Binding DateErrorMessage}" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="260, 0, 0, 5" 
                    Foreground="Red"/>
+        <TextBlock Text="{Binding SquareProgMessage}" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="260, 0, 0, 5" />
         <ItemsControl Grid.Row="1" ItemsSource="{Binding BreadOrderList[0].BreadDescDict.Values}" HorizontalAlignment="Right"
                       VerticalAlignment="Stretch" Width="200">
             <ItemsControl.ItemTemplate>
@@ -40,7 +41,7 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Button Content="Try Square" Grid.Row="1" Width="100" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0, 0, 205, 5"
+        <Button Content="Update From Square" Grid.Row="1" Width="130" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0, 0, 205, 5"
                 Command="{Binding SquareCommand}" />
 
         <Border BorderBrush="Black" BorderThickness="1" Grid.Row="2">

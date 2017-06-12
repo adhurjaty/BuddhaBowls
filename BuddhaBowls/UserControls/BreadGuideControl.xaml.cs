@@ -211,6 +211,7 @@ namespace BuddhaBowls.UserControls
                         Grid.SetColumn(bord, col + 1);
                         bread_grid.Children.Add(bord);
                         t.MouseLeftButtonUp += T_EditValue;
+                        t.Tag = "CanEdit";
                     }
                     bread_grid.Children.Add(t);
                 }
@@ -258,7 +259,7 @@ namespace BuddhaBowls.UserControls
                 TextAlignment = TextAlignment.Right
             };
             box.LostFocus += EditBox_LostFocus;
-            box.KeyUp += EditBox_KeyUp;
+            box.KeyDown += EditBox_KeyDown;
             BindingOperations.SetBinding(box, TextBox.TextProperty, b);
             Grid.SetRow(box, row);
             Grid.SetColumn(box, col);
@@ -268,14 +269,36 @@ namespace BuddhaBowls.UserControls
             box.SelectAll();
         }
 
-        private void EditBox_KeyUp(object sender, KeyEventArgs e)
+        private void EditBox_KeyDown(object sender, KeyEventArgs e)
         {
             TextBox box = (TextBox)sender;
+            Grid thisGrid = (Grid)box.Parent;
+            TextBlock tb;
 
-            if (e.Key == Key.Enter || e.Key == Key.Escape)
+            switch (e.Key)
             {
-                box.LostFocus -= EditBox_LostFocus;
-                ExitEdit(box, (Grid)box.Parent);
+                case Key.Tab:
+                    box.LostFocus -= EditBox_LostFocus;
+                    ExitEdit(box, thisGrid);
+                    tb = (TextBlock)thisGrid.Children.Cast<UIElement>().FirstOrDefault(x => x.GetType() == typeof(TextBlock) &&
+                                                                                       Grid.GetRow(x) == Grid.GetRow(box) &&
+                                                                                       Grid.GetColumn(x) == Grid.GetColumn(box) + 1);
+                    if(tb != null && (string)tb.Tag == "CanEdit")
+                        T_EditValue(tb, null);
+                    break;
+                case Key.Enter:
+                    box.LostFocus -= EditBox_LostFocus;
+                    ExitEdit(box, thisGrid);
+                    tb = (TextBlock)thisGrid.Children.Cast<UIElement>().FirstOrDefault(x => x.GetType() == typeof(TextBlock) &&
+                                                                                       Grid.GetRow(x) == Grid.GetRow(box) + 1 &&
+                                                                                       Grid.GetColumn(x) == Grid.GetColumn(box));
+                    if(tb != null && (string)tb.Tag == "CanEdit")
+                        T_EditValue(tb, null);
+                    break;
+                case Key.Escape:
+                    box.LostFocus -= EditBox_LostFocus;
+                    ExitEdit(box, thisGrid);
+                    break;
             }
         }
 
