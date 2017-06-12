@@ -507,7 +507,13 @@ namespace BuddhaBowls
             row++;
 
             int startRow = row;
-            foreach(KeyValuePair<string, float> kvp in categoryCosts)
+            range = ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 5]]);
+            range.Merge();
+            range.Font.Bold = true;
+            sheet.Cells[row, 4] = "Total Cases";
+            sheet.Cells[row, 6] = items.Sum(x => x.LastOrderAmount).ToString();
+            row++;
+            foreach (KeyValuePair<string, float> kvp in categoryCosts)
             {
                 range = ((Excel.Range)sheet.Range[sheet.Cells[row, 4], sheet.Cells[row, 5]]);
                 range.Merge();
@@ -545,8 +551,7 @@ namespace BuddhaBowls
                 if (!Directory.Exists(outDir))
                     Directory.CreateDirectory(outDir);
 
-                filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", vendor.Name + " " +
-                                        po.OrderDate.ToString("MM-dd-yyyy") + ".xlsx");
+                filepath = po.GetPOPath();
             }
 
             try

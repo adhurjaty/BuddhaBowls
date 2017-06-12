@@ -127,7 +127,8 @@ namespace BuddhaBowls.Models
 
         public string GetPOPath()
         {
-            return Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", "PO_" + Id.ToString());
+            return Path.Combine(Properties.Settings.Default.DBLocation, "Purchase Orders", VendorName + " " + OrderDate.ToString("MM-dd-yyyy")
+                                + ".xlsx");
         }
 
         public string GetOrderPath()
