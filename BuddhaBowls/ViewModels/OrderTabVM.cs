@@ -90,6 +90,21 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("SelectedReceivedOrder");
             }
         }
+
+        private PeriodSelectorVM _periodSelector;
+        public PeriodSelectorVM PeriodSelector
+        {
+            get
+            {
+                return _periodSelector;
+            }
+            set
+            {
+                _periodSelector = value;
+                NotifyPropertyChanged("PeriodSelector");
+            }
+        }
+
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -167,7 +182,11 @@ namespace BuddhaBowls
             OpenRecListCommand = new RelayCommand(ShowOpenRecList, x => ViewOpenOrderCanExecute && DBConnection);
             ReceivedRecListCommand = new RelayCommand(ShowReceivedRecList, x => ViewReceivedOrderCanExecute && DBConnection);
 
-            InitOrders(DBConnection);
+            if (DBConnection)
+                PeriodSelector = new PeriodSelectorVM(_models, LoadPreviousOrders);
+            else
+                OrdersNotFound();
+            //InitOrders(DBConnection);
         }
 
         #region ICommand Helpers
@@ -347,30 +366,22 @@ namespace BuddhaBowls
         #endregion
 
         #region Initializers
-        private void InitOrders(bool connection)
-        {
-            if(connection)
-                LoadPreviousOrders();
-            else
-                OrdersNotFound();
-        }
 
         /// <summary>
         /// Populate the 2 dataGrids in the Orders overview
         /// </summary>
         /// <returns></returns>
-        public bool LoadPreviousOrders()
+        public void LoadPreviousOrders(WeekMarker week)
         {
             if (_models != null && _models.PurchaseOrders != null)
             {
                 OpenOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => !x.Received || x.IsPartial)
                                                                         .OrderBy(x => x.OrderDate));
-                ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received)
+                ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received &&
+                                                                                                      week.StartDate < x.ReceivedDate &&
+                                                                                                      x.ReceivedDate <= week.EndDate)
                                                                         .OrderByDescending(x => x.ReceivedDate));
-                return true;
             }
-
-            return false;
         }
 
         private void OrdersNotFound()
@@ -389,7 +400,7 @@ namespace BuddhaBowls
 
         public void RefreshOrderList()
         {
-            LoadPreviousOrders();
+            LoadPreviousOrders(PeriodSelector.SelectedWeek);
         }
 
         public void UpdateRecDate(PurchaseOrder order)

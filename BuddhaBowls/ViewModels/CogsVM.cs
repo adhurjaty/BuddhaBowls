@@ -74,15 +74,15 @@ namespace BuddhaBowls
 
         #region ICommand Helpers
 
-        private void CalculateCogs(DateTime startDate, DateTime endDate)
+        private void CalculateCogs(WeekMarker week)
         {
             List<Inventory> inventoryList = _models.Inventories.OrderByDescending(x => x.Date).ToList();
-            Inventory endInv = inventoryList.FirstOrDefault(x => x.Date <= endDate);
+            Inventory endInv = inventoryList.FirstOrDefault(x => x.Date <= week.EndDate);
 
             CategoryList = new ObservableCollection<CogsCategory>();
             if(endInv != null)
             {
-                Inventory startInv = inventoryList.FirstOrDefault(x => x.Date <= startDate);
+                Inventory startInv = inventoryList.FirstOrDefault(x => x.Date <= week.StartDate);
                 if (startInv == null)
                     startInv = inventoryList.Last();
 
@@ -92,7 +92,7 @@ namespace BuddhaBowls
                 {
                     IEnumerable<IGrouping<string, InventoryItem>> startItems = MainHelper.CategoryGrouping(startList);
                     IEnumerable<IGrouping<string, InventoryItem>> endItems = MainHelper.CategoryGrouping(endList);
-                    Dictionary<string, List<InventoryItem>> purchaseDict = GetPurchasedByCategory(startDate, endDate);
+                    Dictionary<string, List<InventoryItem>> purchaseDict = GetPurchasedByCategory(week.StartDate, week.EndDate);
                     foreach (string category in _models.GetInventoryCategories())
                     {
                         IGrouping<string, InventoryItem> startGroup = startItems.FirstOrDefault(x => x.Key == category);

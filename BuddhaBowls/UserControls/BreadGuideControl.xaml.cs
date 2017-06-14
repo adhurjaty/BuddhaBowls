@@ -21,10 +21,11 @@ namespace BuddhaBowls.UserControls
     /// </summary>
     public partial class BreadGuideControl : UserControl
     {
-        private string[] _typeHeaders = new string[] { "Kitchen Rack", "Freezer Count", "Delivery", "Backup", "{0}-Par", "Buffer",
-                                                       "Projected Order", "Freezer Adj", "Useage" };
-        private string[] _breadDescProps = new string[] { "BeginInventory", "FreezerCount", "Delivery", "Backup", "Par", "Buffer",
-                                                          "ProjectedOrder", "WalkIn", "Useage" };
+        private string[] _topHeaders = new string[] { "GrossSales", "SalesForecast" };
+        private string[] _typeHeaders = new string[] { "Kitchen Rack", "Freezer Count", "Delivery", "{0}-Par", "Buffer",
+                                                       "Projected Order", "Freezer Adj", "Useage", "Backup" };
+        private string[] _breadDescProps = new string[] { "BeginInventory", "FreezerCount", "Delivery", "Par", "Buffer",
+                                                          "ProjectedOrder", "WalkIn", "Useage", "Backup" };
         private string[] _editableFields = new string[] { "BeginInventory", "Delivery", "Backup", "FreezerCount" };
 
         private TextBlock _editingTextBlock;
@@ -97,25 +98,19 @@ namespace BuddhaBowls.UserControls
         {
             for (int i = 0; i < breadWeek.Length; i++)
             {
-                TextBlock t = new TextBlock() { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center };
-                Binding b = new Binding(string.Format("BreadOrderList[{0}].GrossSales", i));
-                b.Source = DataContext;
-                BindingOperations.SetBinding(t, TextBlock.TextProperty, b);
-                Grid.SetRow(t, 0);
-                Grid.SetColumn(t, i + 1);
-                t.MouseLeftButtonUp += T_EditValue;
-                bread_grid.Children.Add(t);
-
-                t = new TextBlock() { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch,
-                                      TextAlignment = TextAlignment.Center };
-                b = new Binding(string.Format("BreadOrderList[{0}].SalesForecast", i));
-                b.Source = DataContext;
-                BindingOperations.SetBinding(t, TextBlock.TextProperty, b);
-                Grid.SetRow(t, 1);
-                Grid.SetColumn(t, i + 1);
-                t.MouseLeftButtonUp += T_EditValue;
-                bread_grid.Children.Add(t);
+                for (int j = 0; j < _topHeaders.Length; j++)
+                {
+                    TextBlock t = new TextBlock() { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Center,
+                                                    TextAlignment = TextAlignment.Center };
+                    Binding b = new Binding(string.Format("BreadOrderList[{0}]." + _topHeaders[j], i));
+                    b.Source = DataContext;
+                    BindingOperations.SetBinding(t, TextBlock.TextProperty, b);
+                    Grid.SetRow(t, j);
+                    Grid.SetColumn(t, i + 1);
+                    t.MouseLeftButtonUp += T_EditValue;
+                    t.Tag = "CanEdit";
+                    bread_grid.Children.Add(t);
+                }
             }
         }
 

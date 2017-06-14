@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls
 {
-    public delegate void WeekChange(DateTime start, DateTime end);
+    public delegate void WeekChange(WeekMarker week);
 
     public class PeriodSelectorVM : INotifyPropertyChanged
     {
@@ -85,10 +85,10 @@ namespace BuddhaBowls
             }
             set
             {
+                if (value != null && value != _selectedWeek)
+                    OnChangeWeek(value);
                 _selectedWeek = value;
                 NotifyPropertyChanged("SelectedWeek");
-                if (_selectedWeek != null)
-                    OnChangeWeek(_selectedWeek.StartDate, _selectedWeek.EndDate);
             }
         }
 

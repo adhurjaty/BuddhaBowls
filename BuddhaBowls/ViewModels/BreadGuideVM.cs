@@ -14,6 +14,7 @@ using BuddhaBowls.Helpers;
 using System.Windows;
 using System.IO;
 using BuddhaBowls.Square;
+using BuddhaBowls.Services;
 
 namespace BuddhaBowls
 {
@@ -38,49 +39,17 @@ namespace BuddhaBowls
             }
         }
 
-        private DateTime _breadOrderDate;
-        public DateTime BreadOrderDate
+        private PeriodSelectorVM _periodSelector;
+        public PeriodSelectorVM PeriodSelector
         {
             get
             {
-                return _breadOrderDate;
+                return _periodSelector;
             }
             set
             {
-                int dayDiff = -MainHelper.Mod((int)value.DayOfWeek - 1, 7);
-                DateTime breadDate = value.AddDays(dayDiff);
-                DateErrorMessage = "";
-                if (DBConnection && breadDate != _breadOrderDate)
-                {
-                    BreadOrder[] bWeek = _models.GetBreadWeek(value);
-                    if (bWeek.Contains(null))
-                    {
-                        DateErrorMessage = "No records exist for that week";
-                    }
-                    else
-                    {
-                        _breadOrderDate = breadDate;
-                        BreadOrderList = new ObservableCollection<BreadOrder>(bWeek);
-                        if (_control != null)
-                            _control.SetBreadGrid(BreadOrderList.ToArray(), _models.GetBreadTypes());
-                        NotifyPropertyChanged("BreadOrderDate");
-                        NotifyPropertyChanged("BreadOrderList");
-                    }
-                }
-            }
-        }
-
-        private string _dateErrorMessage;
-        public string DateErrorMessage
-        {
-            get
-            {
-                return _dateErrorMessage;
-            }
-            set
-            {
-                _dateErrorMessage = value;
-                NotifyPropertyChanged("DateErrorMessage");
+                _periodSelector = value;
+                NotifyPropertyChanged("PeriodSelector");
             }
         }
 
@@ -108,9 +77,12 @@ namespace BuddhaBowls
 
         public BreadGuideVM() : base()
         {
-            BreadOrderDate = DateTime.Today;
-            SquareCommand = new RelayCommand(UpdateSquare);
-            InitSquareSales();
+            if(DBConnection)
+            {
+                PeriodSelector = new PeriodSelectorVM(_models, ChangeBreadWeek);
+                InitSquareSales();
+                SquareCommand = new RelayCommand(UpdateSquare);
+            }
         }
 
         #region ICommand Helpers
@@ -118,8 +90,6 @@ namespace BuddhaBowls
         private void UpdateSquare(object obj)
         {
             InitSquareSales();
-            //SquareService service = new SquareService();
-            //service.ListTransactions(DateTime.Now.AddDays(-1), DateTime.Now);
         }
 
         #endregion
@@ -163,6 +133,14 @@ namespace BuddhaBowls
                 BreadOrderList[idx - 1].UpdateProperties();
         }
 
+        public void ChangeBreadWeek(WeekMarker week)
+        {
+            BreadOrder[] bWeek = _models.GetBreadWeek(week);
+            BreadOrderList = new ObservableCollection<BreadOrder>(bWeek);
+            if (_control != null)
+                _control.SetBreadGrid(BreadOrderList.ToArray(), _models.GetBreadTypes());
+            NotifyPropertyChanged("BreadOrderList");
+        }
         #endregion
 
         private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

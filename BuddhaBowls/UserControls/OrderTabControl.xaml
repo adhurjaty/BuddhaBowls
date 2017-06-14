@@ -44,7 +44,8 @@
                             Margin="250, 0" Command="{Binding OpenOpenPOCommand}" />
         <Button Content="Open Rec" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
                             Margin="310, 0" Command="{Binding OpenRecListCommand}" />
-        <Label Content="Received Orders" Grid.Row="2" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="-80, 0, 0, 0" />
+        <local:PeriodSelectorControl DataContext="{Binding PeriodSelector}" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
+        <Label Content="Received" Grid.Row="2" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="110, 0, 0, 0" />
         <DataGrid x:Name="dataGrid2" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                   ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}" SelectedItem="{Binding SelectedReceivedOrder}"
                   AutoGenerateColumns="False" CanUserAddRows="False" RowEditEnding="dataGrid2_RowEditEnding" BeginningEdit="dataGrid2_BeginningEdit">

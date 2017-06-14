@@ -481,20 +481,18 @@ namespace BuddhaBowls.Services
         /// <summary>
         /// Initialize the bread orders for the week
         /// </summary>
-        public BreadOrder[] GetBreadWeek(DateTime date, bool insert = false)
+        public BreadOrder[] GetBreadWeek(WeekMarker week)
         {
             BreadOrder[] breadWeek = new BreadOrder[8];
             List<BreadOrder> breadOrders = ModelHelper.InstantiateList<BreadOrder>("BreadOrder");
-            int dayOfWeek = (int)date.DayOfWeek;
-            DateTime monday = date.AddDays(-MainHelper.Mod(dayOfWeek - 1, 7));
             for (int i = 0; i < 8; i++)
             {
                 BreadOrder bo = null;
                 if (breadOrders != null)
-                    bo = breadOrders.FirstOrDefault(x => x.Date.Date == monday.AddDays(i));
-                if (bo == null && insert)
+                    bo = breadOrders.FirstOrDefault(x => x.Date.Date == week.StartDate.AddDays(i));
+                if (bo == null)
                 {
-                    bo = new BreadOrder(monday.AddDays(i));
+                    bo = new BreadOrder(week.StartDate.AddDays(i));
                     bo.Insert();
                 }
                 breadWeek[i] = bo;
@@ -512,7 +510,7 @@ namespace BuddhaBowls.Services
 
         private void SetBreadWeek()
         {
-            BreadWeek = GetBreadWeek(DateTime.Today, true);
+            BreadWeek = GetBreadWeek(GetThisWeek());
         }
 
         public IEnumerable<WeekMarker> GetWeekLabels(int period)
@@ -544,6 +542,17 @@ namespace BuddhaBowls.Services
                 if(!(i == 0 && theFirst == firstMonday))
                     yield return new PeriodMarker(firstMonday.AddDays(28 * (i - 1)), i);
             }
+        }
+
+        public WeekMarker GetThisWeek()
+        {
+            List<PeriodMarker> periods = GetPeriodLabels().ToList();
+            if(periods != null && periods.Count > 0)
+            {
+                return GetWeekLabels(periods.First(x => x.StartDate < DateTime.Now && DateTime.Now <= x.EndDate).Period)
+                                            .First(x => x.StartDate < DateTime.Now && DateTime.Now <= x.EndDate);
+            }
+            return null;
         }
     }
 }
