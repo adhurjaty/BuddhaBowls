@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>44</ApplicationRevision>
+    <ApplicationRevision>45</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -176,6 +176,8 @@
     <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\Vendor.cs" />
     <Compile Include="Models\VendorInventoryItem.cs" />
+    <Compile Include="Services\PeriodMarker.cs" />
+    <Compile Include="Services\WeekMarker.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Square\SquareSale.cs" />
     <Compile Include="Square\SquareService.cs" />
@@ -252,6 +254,9 @@
     <Compile Include="UserControls\BreakdownCategory.xaml.cs">
       <DependentUpon>BreakdownCategory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\PeriodSelectorControl.xaml.cs">
+      <DependentUpon>PeriodSelectorControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PrepListControl.xaml.cs">
       <DependentUpon>PrepListControl.xaml</DependentUpon>
     </Compile>
@@ -270,6 +275,7 @@
     <Compile Include="ViewModels\BreadGuideVM.cs" />
     <Compile Include="ViewModels\ChangeableTabVM.cs" />
     <Compile Include="ViewModels\CogsVM.cs" />
+    <Compile Include="ViewModels\PeriodSelectorVM.cs" />
     <Compile Include="ViewModels\ReOrderVM.cs" />
     <Compile Include="ViewModels\ChangeRecListOrderVM.cs" />
     <Compile Include="ViewModels\CompareInvVM.cs" />
@@ -385,6 +391,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\OrderTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\PeriodSelectorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

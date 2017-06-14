@@ -306,7 +306,7 @@ namespace BuddhaBowls
             }
             catch (Exception e)
             {
-                MessageBox.Show("Purchase order is open. Close it if you wish to overwrite");
+                MessageBox.Show("Purchase order is open. Close and delete it if you wish to overwrite");
             }
         }
 
@@ -340,7 +340,7 @@ namespace BuddhaBowls
             }
             catch(Exception e)
             {
-                MessageBox.Show("Receiving list is open. Close it if you wish to overwrite");
+                MessageBox.Show("Receiving list is open. Close and delete it if you wish to overwrite");
             }
         }
 

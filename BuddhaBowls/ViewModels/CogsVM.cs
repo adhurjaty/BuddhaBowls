@@ -1,5 +1,6 @@
 ﻿using BuddhaBowls.Helpers;
 using BuddhaBowls.Models;
+using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,35 +29,17 @@ namespace BuddhaBowls
             }
         }
 
-        private DateTime _startDate;
-        public DateTime StartDate
+        private PeriodSelectorVM _periodSelector;
+        public PeriodSelectorVM PeriodSelector
         {
             get
             {
-                return _startDate;
+                return _periodSelector;
             }
             set
             {
-                _startDate = value;
-                NotifyPropertyChanged("StartDate");
-                if (DBConnection && StartDate < EndDate)
-                    CalculateCogs();
-            }
-        }
-
-        private DateTime _endDate;
-        public DateTime EndDate
-        {
-            get
-            {
-                return _endDate;
-            }
-            set
-            {
-                _endDate = value;
-                NotifyPropertyChanged("EndDate");
-                if (DBConnection && StartDate < EndDate)
-                    CalculateCogs();
+                _periodSelector = value;
+                NotifyPropertyChanged("PeriodSelector");
             }
         }
 
@@ -84,20 +67,22 @@ namespace BuddhaBowls
             Header = "Cost of Goods Sold";
 
             if(DBConnection)
-                SetInitCogs();
+            {
+                PeriodSelector = new PeriodSelectorVM(_models, CalculateCogs);
+            }
         }
 
         #region ICommand Helpers
 
-        private void CalculateCogs()
+        private void CalculateCogs(DateTime startDate, DateTime endDate)
         {
             List<Inventory> inventoryList = _models.Inventories.OrderByDescending(x => x.Date).ToList();
-            Inventory endInv = inventoryList.FirstOrDefault(x => x.Date <= EndDate);
+            Inventory endInv = inventoryList.FirstOrDefault(x => x.Date <= endDate);
 
             CategoryList = new ObservableCollection<CogsCategory>();
             if(endInv != null)
             {
-                Inventory startInv = inventoryList.FirstOrDefault(x => x.Date <= StartDate);
+                Inventory startInv = inventoryList.FirstOrDefault(x => x.Date <= startDate);
                 if (startInv == null)
                     startInv = inventoryList.Last();
 
@@ -107,7 +92,7 @@ namespace BuddhaBowls
                 {
                     IEnumerable<IGrouping<string, InventoryItem>> startItems = MainHelper.CategoryGrouping(startList);
                     IEnumerable<IGrouping<string, InventoryItem>> endItems = MainHelper.CategoryGrouping(endList);
-                    Dictionary<string, List<InventoryItem>> purchaseDict = GetPurchasedByCategory(StartDate, EndDate);
+                    Dictionary<string, List<InventoryItem>> purchaseDict = GetPurchasedByCategory(startDate, endDate);
                     foreach (string category in _models.GetInventoryCategories())
                     {
                         IGrouping<string, InventoryItem> startGroup = startItems.FirstOrDefault(x => x.Key == category);
@@ -128,17 +113,6 @@ namespace BuddhaBowls
         #endregion
 
         #region Initializers
-
-        private void SetInitCogs()
-        {
-            List<Inventory> inventoryList = _models.Inventories.OrderByDescending(x => x.Date).ToList();
-            if(inventoryList.Count >= 2)
-            {
-                EndDate = inventoryList[0].Date;
-                StartDate = inventoryList[1].Date;
-                CalculateCogs();
-            }
-        }
 
         #endregion
 

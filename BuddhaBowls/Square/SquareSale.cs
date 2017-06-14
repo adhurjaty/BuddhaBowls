@@ -39,7 +39,14 @@ namespace BuddhaBowls.Square
             Itemizations = new List<SquareItemization>();
             foreach (dynamic item in sale.itemizations)
             {
-                Itemizations.Add(new SquareItemization(item));
+                try
+                {
+                    Itemizations.Add(new SquareItemization(item));
+                }
+                catch(Exception e)
+                {
+                    int debug = 1;
+                }
             }
         }
     }
@@ -82,9 +89,17 @@ namespace BuddhaBowls.Square
             int itemPrice;
             int.TryParse(itemization.single_quantity_money.amount.ToString(), out itemPrice);
             SingleItemPrice = itemPrice / 100f;
-            int taxFloat;
-            int.TryParse(itemization.taxes[0].applied_money.amount.ToString(), out taxFloat);
-            Tax = taxFloat / 100f;
+
+            if (itemization.taxes != null && itemization.taxes.Count > 0)
+            {
+                int taxFloat;
+                int.TryParse(itemization.taxes[0].applied_money.amount.ToString(), out taxFloat);
+                Tax = taxFloat / 100f;
+            }
+            else
+            {
+                Tax = 0;
+            }
 
             Modifiers = new List<ItemizationModifier>();
             foreach (dynamic mod in itemization.modifiers)

@@ -12,14 +12,9 @@
             <RowDefinition Height="30" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock Text="{Binding Header}" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <TextBlock Text="{Binding Header}" FontSize="24" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
-        <Label Content="Start Date:" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5, 0, 0, 0" />
-        <DatePicker Grid.Row="1" SelectedDate="{Binding StartDate}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="70, 0, 0, 0"
-                    Width="120"/>
-        <Label Content="End Date:" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="200, 0, 0, 0" />
-        <DatePicker Grid.Row="1" SelectedDate="{Binding EndDate}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="260, 0, 0, 0"
-                    Width="120"/>
+        <local:PeriodSelectorControl DataContext="{Binding PeriodSelector}" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
 
         <DataGrid x:Name="dataGrid" Grid.Row="2" ItemsSource="{Binding CategoryList}" HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" CanUserReorderColumns="False"

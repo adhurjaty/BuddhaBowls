@@ -514,5 +514,36 @@ namespace BuddhaBowls.Services
         {
             BreadWeek = GetBreadWeek(DateTime.Today, true);
         }
+
+        public IEnumerable<WeekMarker> GetWeekLabels(int period)
+        {
+            DateTime theFirst = new DateTime(DateTime.Today.Year, 1, 1);
+            DateTime firstMonday = theFirst.AddDays(MainHelper.Mod(8 - (int)theFirst.DayOfWeek, 7));
+
+            if (period == 0 && firstMonday != theFirst)
+            {
+                yield return new WeekMarker(theFirst, 0);
+            }
+            else
+            {
+                DateTime startDate = firstMonday.AddDays(28 * (period - 1));
+                for (int i = 0; i < 4; i++)
+                {
+                    yield return new WeekMarker(startDate.AddDays(7 * i), (i + 1));
+                }
+            }
+        }
+
+        public IEnumerable<PeriodMarker> GetPeriodLabels()
+        {
+            DateTime theFirst = new DateTime(DateTime.Today.Year, 1, 1);
+            DateTime firstMonday = theFirst.AddDays(MainHelper.Mod(8 - (int)theFirst.DayOfWeek, 7));
+
+            for (int i = 0; i < 14; i++)
+            {
+                if(!(i == 0 && theFirst == firstMonday))
+                    yield return new PeriodMarker(firstMonday.AddDays(28 * (i - 1)), i);
+            }
+        }
     }
 }

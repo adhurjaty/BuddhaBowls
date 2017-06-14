@@ -322,5 +322,60 @@ namespace BuddhaBowls.Test
             //    MockObjects.SaveRecipe(rec);
             //}
         }
+
+        [TestMethod]
+        public void WeekLabelsTest()
+        {
+            List<string> labels = _models.GetWeekLabels(13).Select(x => x.ToString()).ToList();
+
+            List<string> refLabels = new List<string>()
+            {
+                "WK1 12/4-12/10",
+                "WK2 12/11-12/17",
+                "WK3 12/18-12/24",
+                "WK4 12/25-12/31"
+            };
+
+            CollectionAssert.AreEqual(refLabels, labels);
+        }
+
+        [TestMethod]
+        public void WeekLabelsGet0Test()
+        {
+            List<string> labels = _models.GetWeekLabels(0).Select(x => x.ToString()).ToList();
+
+            List<string> refLabels = new List<string>()
+            {
+                "WK0 1/1-1/1"
+            };
+
+            CollectionAssert.AreEqual(refLabels, labels);
+        }
+
+        [TestMethod]
+        public void PeriodLabelsTest()
+        {
+            List<string> labels = _models.GetPeriodLabels().Select(x => x.ToString()).ToList();
+
+            List<string> refLabels = new List<string>()
+            {
+                "P0 1/1-1/1",
+                "P1 1/2-1/29",
+                "P2 1/30-2/26",
+                "P3 2/27-3/26",
+                "P4 3/27-4/23",
+                "P5 4/24-5/21",
+                "P6 5/22-6/18",
+                "P7 6/19-7/16",
+                "P8 7/17-8/13",
+                "P9 8/14-9/10",
+                "P10 9/11-10/8",
+                "P11 10/9-11/5",
+                "P12 11/6-12/3",
+                "P13 12/4-12/31"
+            };
+
+            CollectionAssert.AreEqual(refLabels, labels);
+        }
     }
 }
