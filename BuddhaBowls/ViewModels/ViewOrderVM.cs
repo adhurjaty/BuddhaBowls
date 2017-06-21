@@ -92,41 +92,38 @@ namespace BuddhaBowls
             _tabControl = new ViewOrderTabControl(this);
             RefreshOrders = refresh;
 
-            MoveToReceivedCommand = new RelayCommand(MoveToReceived, x => MoveToReceivedCanExecute);
-            MoveToOpenCommand = new RelayCommand(MoveToOpen, x => MoveToOpenCanExecute);
             SaveCommand = new RelayCommand(SavePartialOrder, x => SaveButtonCanExecute);
             CancelCommand = new RelayCommand(CancelView);
-
             InitBreakdown(po);
         }
 
         #region ICommand Helpers
-        private void MoveToReceived(object obj)
-        {
-            //MoveItem(BreakdownContext, ReceivedBreakdownContext);
-        }
+        //private void MoveToReceived(object obj)
+        //{
+        //    //MoveItem(BreakdownContext, ReceivedBreakdownContext);
+        //}
 
-        private void MoveToOpen(object obj)
-        {
-            //MoveItem(ReceivedBreakdownContext, BreakdownContext);
-        }
+        //private void MoveToOpen(object obj)
+        //{
+        //    //MoveItem(ReceivedBreakdownContext, BreakdownContext);
+        //}
 
-        private void MoveItem(OrderBreakdownVM fromContext, OrderBreakdownVM toContext)
-        {
-            List<InventoryItem> fromList = fromContext.GetInventoryItems();
-            List<InventoryItem> toList = toContext.GetInventoryItems();
+        //private void MoveItem(OrderBreakdownVM fromContext, OrderBreakdownVM toContext)
+        //{
+        //    List<InventoryItem> fromList = fromContext.GetInventoryItems();
+        //    List<InventoryItem> toList = toContext.GetInventoryItems();
 
-            InventoryItem selected = fromContext.SelectedItem;
-            fromList.Remove(selected);
-            toList.Add(selected);
+        //    InventoryItem selected = fromContext.SelectedItem;
+        //    fromList.Remove(selected);
+        //    toList.Add(selected);
 
-            float oTotal = 0;
-            fromContext.BreakdownList = GetOrderBreakdown(fromList, out oTotal);
-            fromContext.OrderTotal = oTotal;
+        //    float oTotal = 0;
+        //    fromContext.BreakdownList = GetOrderBreakdown(fromList, out oTotal);
+        //    fromContext.OrderTotal = oTotal;
 
-            toContext.BreakdownList = GetOrderBreakdown(toList, out oTotal);
-            toContext.OrderTotal = oTotal;
-        }
+        //    toContext.BreakdownList = GetOrderBreakdown(toList, out oTotal);
+        //    toContext.OrderTotal = oTotal;
+        //}
 
         private void CancelView(object obj)
         {

@@ -28,6 +28,7 @@ namespace BuddhaBowls.UserControls
 
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            e.Handled = true;
             if(((DataGrid)sender).SelectedItem != null)
                 ((CogsSubReportVM)DataContext).ItemDoubleClicked((IInvEvent)((DataGrid)sender).SelectedItem);
         }

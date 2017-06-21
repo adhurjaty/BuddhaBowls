@@ -16,7 +16,7 @@ namespace BuddhaBowls
     {
         private const int GRID_COLLAPSED_HEIGHT = 30;
 
-        private string[] _subHeaders = new string[] { "Start Inventory", "Received Purchases", "Ending Inventory" };
+        private string[] _subHeaders = new string[] { "Inventories", "Received Purchases" };
 
         #region Content Binders
 
@@ -91,47 +91,6 @@ namespace BuddhaBowls
             }
         }
 
-        //private CogsSubReportVM _startInvSub;
-        //public CogsSubReportVM StartInvSub
-        //{
-        //    get
-        //    {
-        //        return _startInvSub;
-        //    }
-        //    set
-        //    {
-        //        _startInvSub = value;
-        //        NotifyPropertyChanged("StartInvSub");
-        //    }
-        //}
-
-        //private CogsSubReportVM _recPurchasesSub;
-        //public CogsSubReportVM RecPurchasesSub
-        //{
-        //    get
-        //    {
-        //        return _recPurchasesSub;
-        //    }
-        //    set
-        //    {
-        //        _recPurchasesSub = value;
-        //        NotifyPropertyChanged("RecPurchasesSub");
-        //    }
-        //}
-
-        //private CogsSubReportVM _endInvSub;
-        //public CogsSubReportVM EndInvSub
-        //{
-        //    get
-        //    {
-        //        return _endInvSub;
-        //    }
-        //    set
-        //    {
-        //        _endInvSub = value;
-        //        NotifyPropertyChanged("EndInvSub");
-        //    }
-        //}
         #endregion
 
         #region ICommand and CanExecute
@@ -144,9 +103,9 @@ namespace BuddhaBowls
 
             if(DBConnection)
             {
-                PeriodSelector = new PeriodSelectorVM(_models, CalculateCogs, hasShowAll: false);
                 InitRowHeights();
                 InitSubContexts();
+                PeriodSelector = new PeriodSelectorVM(_models, CalculateCogs, hasShowAll: false);
             }
         }
 
@@ -155,7 +114,12 @@ namespace BuddhaBowls
         private void CalculateCogs(WeekMarker week)
         {
             List<Inventory> inventoryList = _models.Inventories.OrderByDescending(x => x.Date).ToList();
+            List<Inventory> periodInvList = inventoryList.Where(x => week.StartDate <= x.Date && x.Date <= week.EndDate).ToList();
             Inventory endInv = inventoryList.FirstOrDefault(x => x.Date <= week.EndDate);
+
+            if (periodInvList.Count == 0)
+                periodInvList.Add(endInv);
+            SubReports[0].SetInvEnvents(periodInvList);
 
             CategoryList = new ObservableCollection<CogsCategory>();
             if(endInv != null)
@@ -194,7 +158,7 @@ namespace BuddhaBowls
 
         private void InitRowHeights()
         {
-            RowHeights = new GridLength[3];
+            RowHeights = new GridLength[2];
             for (int i = 0; i < RowHeights.Length; i++)
             {
                 RowHeights[i] = new GridLength(GRID_COLLAPSED_HEIGHT);
@@ -203,7 +167,7 @@ namespace BuddhaBowls
 
         private void InitSubContexts()
         {
-            SubReports = new CogsSubReportVM[3];
+            SubReports = new CogsSubReportVM[2];
 
             for (int i = 0; i < SubReports.Length; i++)
             {
@@ -234,7 +198,18 @@ namespace BuddhaBowls
 
         public void SubItemDoubleClicked(IInvEvent invEvent)
         {
+            if(invEvent.GetType() == typeof(PurchaseOrder))
+            {
+                ViewOrderVM tabVM = new ViewOrderVM((PurchaseOrder)invEvent, ParentContext.OrderTab.RefreshOrderList);
+                tabVM.Add("PO#: " + ((PurchaseOrder)invEvent).Id);
+            }
+            else if(invEvent.GetType() == typeof(Inventory))
+            {
+                NewInventoryVM tabVM = new NewInventoryVM(ParentContext.InventoryTab.Refresh, (Inventory)invEvent);
+                tabVM.Add("View Inventory");
+            }
 
+            
         }
 
         #endregion
@@ -244,6 +219,7 @@ namespace BuddhaBowls
             // AddDays to include the end date as opposed to all received times up to and not including end date
             List<PurchaseOrder> orders = _models.PurchaseOrders.Where(x => x.ReceivedDate >= start &&
                                                                            x.ReceivedDate < end.Date.AddDays(1)).ToList();
+            SubReports[1].SetInvEnvents(orders);
             Dictionary<string, List<InventoryItem>> purchaseDict = new Dictionary<string, List<InventoryItem>>();
 
             foreach (PurchaseOrder order in orders)

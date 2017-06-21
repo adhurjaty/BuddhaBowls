@@ -105,6 +105,11 @@ namespace BuddhaBowls
             OnDoubleClick(item);
         }
 
+        public void SetInvEnvents<T>(List<T> invEvents) where T : IInvEvent
+        {
+            EventList = new ObservableCollection<IInvEvent>(invEvents.Select(x => (IInvEvent)x).ToList());
+        }
+
         public void Expanded()
         {
             ExpandChevron = "ChevronDown";
