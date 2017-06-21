@@ -25,6 +25,11 @@ namespace BuddhaBowls.UserControls
             InitializeComponent();
         }
 
+        public CogsControl(ReportsTabVM context) : this()
+        {
+            DataContext = context;
+        }
+
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             DataGrid grid = (DataGrid)sender;

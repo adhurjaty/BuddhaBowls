@@ -36,7 +36,7 @@
                 <uc:ChangeableTabControl DataContext="{Binding RecipeTab}" />
             </TabItem>
             <TabItem Header="Reports">
-                <uc:CogsControl DataContext="{Binding ReportTab}" />
+                <uc:ChangeableTabControl DataContext="{Binding ReportTab}" />
             </TabItem>
             <TabItem Header="Settings">
                 <Grid>

@@ -8,17 +8,13 @@
              d:DesignHeight="400" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60" />
             <RowDefinition Height="30" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="{Binding RowHeights[0]}" />
             <RowDefinition Height="{Binding RowHeights[1]}" />
         </Grid.RowDefinitions>
-        <TextBlock Text="{Binding Header}" FontSize="24" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
-
-        <local:PeriodSelectorControl DataContext="{Binding PeriodSelector}" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
-
-        <DataGrid x:Name="dataGrid" Grid.Row="2" ItemsSource="{Binding CategoryList}" HorizontalAlignment="Stretch"
+        <local:PeriodSelectorControl Grid.Row="0" DataContext="{Binding PeriodSelector}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <DataGrid x:Name="dataGrid" Grid.Row="1" ItemsSource="{Binding CategoryList}" HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" CanUserReorderColumns="False"
                   AutoGenerateColumns="False" CanUserSortColumns="False" CanUserAddRows="False" Panel.ZIndex="0" >
             <DataGrid.Columns>
@@ -29,10 +25,10 @@
                 <DataGridTextColumn Header="COGS Cost" Binding="{Binding Path=CogsCost, StringFormat=c}" IsReadOnly="True" Width="2*" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="2">
             <local:CogsSubReportControl DataContext="{Binding SubReports[0]}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Grid>
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="3">
             <local:CogsSubReportControl DataContext="{Binding SubReports[1]}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Grid>
     </Grid>

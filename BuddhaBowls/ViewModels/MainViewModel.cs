@@ -137,8 +137,8 @@ namespace BuddhaBowls
             }
         }
 
-        private CogsVM _reportTab;
-        public CogsVM ReportTab
+        private ReportsTabVM _reportTab;
+        public ReportsTabVM ReportTab
         {
             get
             {
@@ -308,7 +308,7 @@ namespace BuddhaBowls
             VendorTab = new VendorTabVM();
             BreadTab = new BreadGuideVM();
             RecipeTab = new RecipeTabVM();
-            ReportTab = new CogsVM();
+            ReportTab = new ReportsTabVM();
         }
 
         #endregion

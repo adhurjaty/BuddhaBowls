@@ -155,7 +155,7 @@ namespace BuddhaBowls
             {
                 try
                 {
-                    order.GrossSales = ss.ListTransactions(order.Date, order.Date.AddDays(1)).Sum(x => x.TotalCollected);
+                    order.GrossSales = ss.ListTransactions(order.Date, order.Date.AddDays(1)).Sum(x => x.GrossSales);
                     order.Update();
                 }
                 catch (Exception ex)

@@ -98,20 +98,6 @@ namespace BuddhaBowls
             }
         }
 
-        private PeriodSelectorVM _periodSelector;
-        public PeriodSelectorVM PeriodSelector
-        {
-            get
-            {
-                return _periodSelector;
-            }
-            set
-            {
-                _periodSelector = value;
-                NotifyPropertyChanged("PeriodSelector");
-            }
-        }
-
         #endregion
 
         #region ICommand Bindings and Can Execute

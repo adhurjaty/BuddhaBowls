@@ -1,6 +1,7 @@
 ﻿using BuddhaBowls.Helpers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
+using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,41 +13,13 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public class CogsVM : TabVM
+    public class ReportsTabVM : ChangeableTabVM
     {
         private const int GRID_COLLAPSED_HEIGHT = 30;
 
         private string[] _subHeaders = new string[] { "Inventories", "Received Purchases" };
 
         #region Content Binders
-
-        private string _header;
-        public string Header
-        {
-            get
-            {
-                return _header;
-            }
-            set
-            {
-                _header = value;
-                NotifyPropertyChanged("Header");
-            }
-        }
-
-        private PeriodSelectorVM _periodSelector;
-        public PeriodSelectorVM PeriodSelector
-        {
-            get
-            {
-                return _periodSelector;
-            }
-            set
-            {
-                _periodSelector = value;
-                NotifyPropertyChanged("PeriodSelector");
-            }
-        }
 
         private ObservableCollection<CogsCategory> _categoryList;
         public ObservableCollection<CogsCategory> CategoryList
@@ -97,19 +70,25 @@ namespace BuddhaBowls
 
         #endregion
 
-        public CogsVM() : base()
+        public ReportsTabVM() : base()
         {
             Header = "Cost of Goods Sold";
+            InitSwitchButtons(new string[] { "COGS", "P & L" });
 
-            if(DBConnection)
+            if (DBConnection)
             {
                 InitRowHeights();
                 InitSubContexts();
-                PeriodSelector = new PeriodSelectorVM(_models, CalculateCogs, hasShowAll: false);
+                PeriodSelector = new PeriodSelectorVM(_models, SwitchedPeriod, hasShowAll: false);
             }
         }
 
         #region ICommand Helpers
+
+        private void SwitchedPeriod(WeekMarker week)
+        {
+            CalculateCogs(week);
+        }
 
         private void CalculateCogs(WeekMarker week)
         {
@@ -208,8 +187,6 @@ namespace BuddhaBowls
                 NewInventoryVM tabVM = new NewInventoryVM(ParentContext.InventoryTab.Refresh, (Inventory)invEvent);
                 tabVM.Add("View Inventory");
             }
-
-            
         }
 
         #endregion
@@ -234,6 +211,26 @@ namespace BuddhaBowls
             }
 
             return purchaseDict;
+        }
+
+        protected override void ChangePageState(int pageIdx)
+        {
+            base.ChangePageState(pageIdx);
+
+            switch (pageIdx)
+            {
+                case 0:
+                    TabControl = _tabCache[0] ?? new CogsControl(this);
+                    break;
+                case 1:
+                    //if (PrepItemList == null)
+                    //    PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderBy(x => x.Name));
+                    //TabControl = _tabCache[1] ?? new PrepListControl(this);
+                    break;
+                case -1:
+                    //DisplayItemsNotFound();
+                    break;
+            }
         }
     }
 

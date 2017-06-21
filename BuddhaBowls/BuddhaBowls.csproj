@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>46</ApplicationRevision>
+    <ApplicationRevision>47</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -280,7 +280,7 @@
     <Compile Include="ViewModels\BreadGuideVM.cs" />
     <Compile Include="ViewModels\ChangeableTabVM.cs" />
     <Compile Include="ViewModels\CogsSubReportVM.cs" />
-    <Compile Include="ViewModels\CogsVM.cs" />
+    <Compile Include="ViewModels\ReportsTabVM.cs" />
     <Compile Include="ViewModels\PeriodSelectorVM.cs" />
     <Compile Include="ViewModels\ReOrderVM.cs" />
     <Compile Include="ViewModels\ChangeRecListOrderVM.cs" />

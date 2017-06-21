@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -62,6 +63,21 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("TabControl");
             }
         }
+
+        private PeriodSelectorVM _periodSelector;
+        public PeriodSelectorVM PeriodSelector
+        {
+            get
+            {
+                return _periodSelector;
+            }
+            set
+            {
+                _periodSelector = value;
+                NotifyPropertyChanged("PeriodSelector");
+            }
+        }
+
         #endregion
 
         #region ICommand and CanExecute
