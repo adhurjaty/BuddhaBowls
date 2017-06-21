@@ -53,11 +53,13 @@ namespace BuddhaBowls
                 _selectedPeriod = value;
                 NotifyPropertyChanged("SelectedPeriod");
 
-                if (_selectedPeriod != null)
+                if (_selectedPeriod != null && !(oldPeriod != null && oldPeriod.Period == _selectedPeriod.Period))
                 {
-                    WeekList = _models.GetWeekLabels(SelectedPeriod.Period).ToList();
-                    if (!(oldPeriod != null && oldPeriod.Period == _selectedPeriod.Period))
-                        SelectedWeek = WeekList[0];
+                    if (_selectedPeriod.Period == -1)
+                        WeekList = new List<WeekMarker>() { (WeekMarker)_selectedPeriod };
+                    else
+                        WeekList = _models.GetWeekLabels(SelectedPeriod.Period).ToList();
+                    SelectedWeek = WeekList[0];
                 }
             }
         }
@@ -94,12 +96,14 @@ namespace BuddhaBowls
 
         #endregion
 
-        public PeriodSelectorVM(ModelContainer models, WeekChange onChangeWeek)
+        public PeriodSelectorVM(ModelContainer models, WeekChange onChangeWeek, bool hasShowAll = true)
         {
             _models = models;
             OnChangeWeek = onChangeWeek;
 
             PeriodList = _models.GetPeriodLabels().ToList();
+            if(hasShowAll)
+                PeriodList.Add(new ShowAllMarker());
             SelectedPeriod = PeriodList.FirstOrDefault(x => x.StartDate < DateTime.Now && DateTime.Now <= x.EndDate);
             SelectedWeek = WeekList.FirstOrDefault(x => x.StartDate < DateTime.Now && DateTime.Now <= x.EndDate);
         }

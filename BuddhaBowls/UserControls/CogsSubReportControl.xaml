@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="BuddhaBowls.UserControls.CogsSubReportControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BuddhaBowls.UserControls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Grid.RowSpan="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="1" />
+        <Button Grid.Row="0" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Left"
+                VerticalAlignment="Center" Margin="0, 0" Command="{Binding ExpandCollapseCommand}">
+            <iconPacks:PackIconFontAwesome Kind="{Binding ExpandChevron}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </Button>
+        
+        <TextBlock Text="{Binding DetailHeader}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" Margin="35, 0, 0, 0" />
+
+        <DataGrid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseDoubleClick="DataGrid_MouseDoubleClick"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding EventList}"
+                      SelectedItem="{Binding SelectedEvent}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="-1,0,1,0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Binding="{Binding Path=Date, StringFormat={}{0:MM/dd/yy}}" Width="2*" IsReadOnly="True" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

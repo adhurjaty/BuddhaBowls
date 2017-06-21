@@ -6,12 +6,20 @@ using System.Linq;
 
 namespace BuddhaBowls.Models
 {
-    public class PurchaseOrder : Model
+    public class PurchaseOrder : Model, IInvEvent
     {
         public string VendorName { get; set; }
         public DateTime OrderDate { get; set; }
         public bool IsPartial { get; set; }
         public DateTime? ReceivedDate { get; set; }
+
+        public DateTime Date
+        {
+            get
+            {
+                return ReceivedDate ?? default(DateTime);
+            }
+        }
 
         public bool ReceivedCheck { get; set; }
         public bool Received

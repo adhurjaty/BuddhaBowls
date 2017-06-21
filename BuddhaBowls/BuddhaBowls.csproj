@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>45</ApplicationRevision>
+    <ApplicationRevision>46</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -170,6 +170,7 @@
     </ApplicationDefinition>
     <Compile Include="Helpers\ErrorHandler.cs" />
     <Compile Include="Models\BreadOrder.cs" />
+    <Compile Include="Models\IInvEvent.cs" />
     <Compile Include="Models\IItem.cs" />
     <Compile Include="Models\Inventory.cs" />
     <Compile Include="Models\PrepItem.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Models\Vendor.cs" />
     <Compile Include="Models\VendorInventoryItem.cs" />
     <Compile Include="Services\PeriodMarker.cs" />
+    <Compile Include="Services\ShowAllMarker.cs" />
     <Compile Include="Services\WeekMarker.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Square\SquareSale.cs" />
@@ -210,6 +212,9 @@
     </Compile>
     <Compile Include="UserControls\CogsControl.xaml.cs">
       <DependentUpon>CogsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\CogsSubReportControl.xaml.cs">
+      <DependentUpon>CogsSubReportControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\CompareInventoriesControl.xaml.cs">
       <DependentUpon>CompareInventoriesControl.xaml</DependentUpon>
@@ -274,6 +279,7 @@
     </Compile>
     <Compile Include="ViewModels\BreadGuideVM.cs" />
     <Compile Include="ViewModels\ChangeableTabVM.cs" />
+    <Compile Include="ViewModels\CogsSubReportVM.cs" />
     <Compile Include="ViewModels\CogsVM.cs" />
     <Compile Include="ViewModels\PeriodSelectorVM.cs" />
     <Compile Include="ViewModels\ReOrderVM.cs" />
@@ -335,6 +341,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\CogsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CogsSubReportControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

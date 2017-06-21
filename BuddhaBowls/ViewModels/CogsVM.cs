@@ -7,12 +7,17 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace BuddhaBowls
 {
     public class CogsVM : TabVM
     {
+        private const int GRID_COLLAPSED_HEIGHT = 30;
+
+        private string[] _subHeaders = new string[] { "Start Inventory", "Received Purchases", "Ending Inventory" };
+
         #region Content Binders
 
         private string _header;
@@ -56,6 +61,77 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("CategoryList");
             }
         }
+
+        private GridLength[] _rowHeights;
+        public GridLength[] RowHeights
+        {
+            get
+            {
+                return _rowHeights;
+            }
+            set
+            {
+                _rowHeights = value;
+                NotifyPropertyChanged("RowHeights");
+            }
+        }
+
+
+        private CogsSubReportVM[] _subReports;
+        public CogsSubReportVM[] SubReports
+        {
+            get
+            {
+                return _subReports;
+            }
+            set
+            {
+                _subReports = value;
+                NotifyPropertyChanged("SubReports");
+            }
+        }
+
+        //private CogsSubReportVM _startInvSub;
+        //public CogsSubReportVM StartInvSub
+        //{
+        //    get
+        //    {
+        //        return _startInvSub;
+        //    }
+        //    set
+        //    {
+        //        _startInvSub = value;
+        //        NotifyPropertyChanged("StartInvSub");
+        //    }
+        //}
+
+        //private CogsSubReportVM _recPurchasesSub;
+        //public CogsSubReportVM RecPurchasesSub
+        //{
+        //    get
+        //    {
+        //        return _recPurchasesSub;
+        //    }
+        //    set
+        //    {
+        //        _recPurchasesSub = value;
+        //        NotifyPropertyChanged("RecPurchasesSub");
+        //    }
+        //}
+
+        //private CogsSubReportVM _endInvSub;
+        //public CogsSubReportVM EndInvSub
+        //{
+        //    get
+        //    {
+        //        return _endInvSub;
+        //    }
+        //    set
+        //    {
+        //        _endInvSub = value;
+        //        NotifyPropertyChanged("EndInvSub");
+        //    }
+        //}
         #endregion
 
         #region ICommand and CanExecute
@@ -68,7 +144,9 @@ namespace BuddhaBowls
 
             if(DBConnection)
             {
-                PeriodSelector = new PeriodSelectorVM(_models, CalculateCogs);
+                PeriodSelector = new PeriodSelectorVM(_models, CalculateCogs, hasShowAll: false);
+                InitRowHeights();
+                InitSubContexts();
             }
         }
 
@@ -114,9 +192,50 @@ namespace BuddhaBowls
 
         #region Initializers
 
+        private void InitRowHeights()
+        {
+            RowHeights = new GridLength[3];
+            for (int i = 0; i < RowHeights.Length; i++)
+            {
+                RowHeights[i] = new GridLength(GRID_COLLAPSED_HEIGHT);
+            }
+        }
+
+        private void InitSubContexts()
+        {
+            SubReports = new CogsSubReportVM[3];
+
+            for (int i = 0; i < SubReports.Length; i++)
+            {
+                SubReports[i] = new CogsSubReportVM(_subHeaders[i], SubItemDoubleClicked, ControlClicked);
+            }
+        }
         #endregion
 
         #region UI Updaters
+
+        public void ControlClicked(CogsSubReportVM subReport)
+        {
+            for (int i = 0; i < RowHeights.Length; i++)
+            {
+                if (subReport.DetailHeader == _subHeaders[i] && RowHeights[i].Value == GRID_COLLAPSED_HEIGHT)
+                {
+                    RowHeights[i] = new GridLength(1, GridUnitType.Star);
+                    SubReports[i].Expanded();
+                }
+                else
+                {
+                    RowHeights[i] = new GridLength(GRID_COLLAPSED_HEIGHT);
+                    SubReports[i].Collapsed();
+                }
+                NotifyPropertyChanged("RowHeights");
+            }
+        }
+
+        public void SubItemDoubleClicked(IInvEvent invEvent)
+        {
+
+        }
 
         #endregion
 

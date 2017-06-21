@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuddhaBowls.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,20 +17,19 @@ using System.Windows.Shapes;
 namespace BuddhaBowls.UserControls
 {
     /// <summary>
-    /// Interaction logic for CogsControl.xaml
+    /// Interaction logic for CogsSubReportControl.xaml
     /// </summary>
-    public partial class CogsControl : UserControl
+    public partial class CogsSubReportControl : UserControl
     {
-        public CogsControl()
+        public CogsSubReportControl()
         {
             InitializeComponent();
         }
 
-        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            DataGrid grid = (DataGrid)sender;
-            int debug = 0;
+            if(((DataGrid)sender).SelectedItem != null)
+                ((CogsSubReportVM)DataContext).ItemDoubleClicked((IInvEvent)((DataGrid)sender).SelectedItem);
         }
-
     }
 }

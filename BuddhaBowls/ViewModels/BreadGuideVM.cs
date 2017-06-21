@@ -79,7 +79,7 @@ namespace BuddhaBowls
         {
             if(DBConnection)
             {
-                PeriodSelector = new PeriodSelectorVM(_models, ChangeBreadWeek);
+                PeriodSelector = new PeriodSelectorVM(_models, ChangeBreadWeek, hasShowAll: false);
                 InitSquareSales();
                 SquareCommand = new RelayCommand(UpdateSquare);
             }

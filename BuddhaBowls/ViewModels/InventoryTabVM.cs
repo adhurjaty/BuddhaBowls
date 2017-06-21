@@ -98,6 +98,20 @@ namespace BuddhaBowls
             }
         }
 
+        private PeriodSelectorVM _periodSelector;
+        public PeriodSelectorVM PeriodSelector
+        {
+            get
+            {
+                return _periodSelector;
+            }
+            set
+            {
+                _periodSelector = value;
+                NotifyPropertyChanged("PeriodSelector");
+            }
+        }
+
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -142,6 +156,9 @@ namespace BuddhaBowls
             AddPrepCommand = new RelayCommand(NewPrepItem);
             DeletePrepCommand = new RelayCommand(DeletePrepItem, x => SelectedPrepItem != null);
             EditPrepCommand = new RelayCommand(EditPrepItem, x => SelectedPrepItem != null);
+
+            if (DBConnection)
+                PeriodSelector = new PeriodSelectorVM(_models, ShowSelectedWeek);
             // rest of initialization in ChangePageState called from base()
         }
 
@@ -294,7 +311,7 @@ namespace BuddhaBowls
             InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
             if(InvListVM != null)
                 InvListVM.Refresh();
-            PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderBy(x => x.Name));
+            PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderByDescending(x => x.Name));
         }
 
         public void AddedInvItem()
@@ -311,6 +328,13 @@ namespace BuddhaBowls
         public void AddPrepItem(PrepItem item)
         {
             PrepItemList.Add(item);
+        }
+
+        private void ShowSelectedWeek(WeekMarker week)
+        {
+            InventoryList = new ObservableCollection<Inventory> (_models.Inventories.Where(x => week.StartDate <= x.Date &&
+                                                                                                         x.Date <= week.EndDate)
+                                                                                               .OrderByDescending(x => x.Date));
         }
 
         #endregion

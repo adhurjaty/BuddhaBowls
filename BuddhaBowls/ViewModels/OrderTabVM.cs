@@ -186,7 +186,6 @@ namespace BuddhaBowls
                 PeriodSelector = new PeriodSelectorVM(_models, LoadPreviousOrders);
             else
                 OrdersNotFound();
-            //InitOrders(DBConnection);
         }
 
         #region ICommand Helpers
@@ -378,8 +377,8 @@ namespace BuddhaBowls
                 OpenOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => !x.Received || x.IsPartial)
                                                                         .OrderBy(x => x.OrderDate));
                 ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received &&
-                                                                                                      week.StartDate < x.ReceivedDate &&
-                                                                                                      x.ReceivedDate <= week.EndDate)
+                                                                                                      week.StartDate <= x.ReceivedDate &&
+                                                                                                      x.ReceivedDate < week.EndDate)
                                                                         .OrderByDescending(x => x.ReceivedDate));
             }
         }
@@ -406,8 +405,9 @@ namespace BuddhaBowls
         public void UpdateRecDate(PurchaseOrder order)
         {
             order.Update();
-            ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received)
-                                                                        .OrderByDescending(x => x.ReceivedDate));
+            //ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received)
+            //                                                            .OrderByDescending(x => x.ReceivedDate));
+            LoadPreviousOrders(PeriodSelector.SelectedWeek);
         }
         #endregion
     }

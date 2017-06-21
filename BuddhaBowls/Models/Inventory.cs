@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class Inventory : Model
+    public class Inventory : Model, IInvEvent
     {
         public DateTime Date { get; set; }
 
