@@ -45,17 +45,50 @@
                             Margin="250, 0" Command="{Binding OpenOpenPOCommand}" />
         <Button Content="Open Rec" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
                             Margin="310, 0" Command="{Binding OpenRecListCommand}" />
+
+        <Border Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black" />
+        <Grid Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="180" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            <local:LabelValueControl DataContext="{Binding TotalOrders}" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"
+                                     HorizontalAlignment="Center" />
+            <local:LabelCostValueControl DataContext="{Binding WeekCostTotal}" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"
+                                         HorizontalAlignment="Center" />
+            <local:LabelCostValueControl DataContext="{Binding PeriodCostTotal}" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"
+                                         HorizontalAlignment="Center" />
+            <ItemsControl Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding OrderStats}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:LabelCostValueControl DataContext="{Binding}" Height="30" Width="180" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+
         <local:PeriodSelectorControl DataContext="{Binding PeriodSelector}" Grid.Row="3" VerticalAlignment="Stretch" Margin="0, 0, 380, 0"/>
-        <Label Content="Received" Grid.Row="3" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="110, 0, 0, 0" />
+        <Label Content="Invoice Log" Grid.Row="3" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="120, 0, 0, 0" />
         <DataGrid x:Name="dataGrid2" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                   ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}" SelectedItem="{Binding SelectedReceivedOrder}"
                   AutoGenerateColumns="False" CanUserAddRows="False" RowEditEnding="dataGrid2_RowEditEnding" BeginningEdit="dataGrid2_BeginningEdit">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Vendor" Binding="{Binding VendorName}" Width="2*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Total Cost" Binding="{Binding Path=TotalCost, StringFormat=c}" Width="2*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Order Date" Binding="{Binding Path=OrderDate, StringFormat={}{0:MM/dd/yy}}"
                                                 Width="2*" IsReadOnly="True" />
-                <DataGridTemplateColumn x:Name="ReceivedColumn" Header="Received Date" Width="1*">
+                <DataGridTemplateColumn x:Name="ReceivedColumn" Header="Received Date" Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding ReceivedDate}" />

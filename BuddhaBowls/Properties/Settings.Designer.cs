@@ -92,5 +92,16 @@ namespace BuddhaBowls.Properties {
                 this["SquareLocationId"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Generic.List<System.String> FoodCategories {
+            get {
+                return ((global::System.Collections.Generic.List<System.String>)(this["FoodCategories"]));
+            }
+            set {
+                this["FoodCategories"] = value;
+            }
+        }
     }
 }

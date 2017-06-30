@@ -316,7 +316,7 @@ namespace BuddhaBowls
             PrepItemList.Add(item);
         }
 
-        private void ShowSelectedWeek(WeekMarker week)
+        private void ShowSelectedWeek(PeriodMarker period, WeekMarker week)
         {
             InventoryList = new ObservableCollection<Inventory> (_models.Inventories.Where(x => week.StartDate <= x.Date &&
                                                                                                          x.Date <= week.EndDate)

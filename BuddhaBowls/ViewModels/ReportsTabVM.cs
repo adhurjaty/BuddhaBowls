@@ -85,7 +85,7 @@ namespace BuddhaBowls
 
         #region ICommand Helpers
 
-        private void SwitchedPeriod(WeekMarker week)
+        private void SwitchedPeriod(PeriodMarker period, WeekMarker week)
         {
             CalculateCogs(week);
         }

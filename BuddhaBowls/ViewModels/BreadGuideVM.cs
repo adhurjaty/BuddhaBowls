@@ -133,7 +133,7 @@ namespace BuddhaBowls
                 BreadOrderList[idx - 1].UpdateProperties();
         }
 
-        public void ChangeBreadWeek(WeekMarker week)
+        public void ChangeBreadWeek(PeriodMarker period, WeekMarker week)
         {
             BreadOrder[] bWeek = _models.GetBreadWeek(week);
             BreadOrderList = new ObservableCollection<BreadOrder>(bWeek);

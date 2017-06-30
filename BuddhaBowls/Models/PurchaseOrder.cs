@@ -30,6 +30,15 @@ namespace BuddhaBowls.Models
             }
         }
 
+        // only use for datagrid
+        public float TotalCost
+        {
+            get
+            {
+                return GetTotalCost();
+            }
+        }
+
         public PurchaseOrder() : base()
         {
             _tableName = "PurchaseOrder";
@@ -46,7 +55,7 @@ namespace BuddhaBowls.Models
             VendorName = vendor.Name;
             OrderDate = orderDate;
 
-            // need to insert here to get the ID
+            // need to insert here to get the ID, though I don't like it
             Insert();
 
             foreach (InventoryItem item in inventoryItems)
@@ -111,6 +120,16 @@ namespace BuddhaBowls.Models
         public List<InventoryItem> GetReceivedPOItems()
         {
             return GetPOItems()[1];
+        }
+
+        public float GetTotalCost()
+        {
+            return GetReceivedPOItems().Sum(x => x.PurchaseExtension);
+        }
+
+        public Dictionary<string, float> GetCategoryCosts()
+        {
+            return GetReceivedPOItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.Sum(y => y.PurchaseExtension));
         }
 
         public void SplitToPartials(List<InventoryItem> openItems, List<InventoryItem> receivedItems)
@@ -184,7 +203,7 @@ namespace BuddhaBowls.Models
         #region Overrides
         public override string[] GetPropertiesDB(string[] omit = null)
         {
-            string[] theseOmissions = new string[] { "Received", "ReceivedCheck" };
+            string[] theseOmissions = new string[] { "Received", "ReceivedCheck", "TotalCost" };
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
 

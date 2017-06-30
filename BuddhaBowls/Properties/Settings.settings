@@ -20,5 +20,8 @@
     <Setting Name="SquareLocationId" Type="System.String" Scope="User">
       <Value Profile="(Default)">69VJ030ANYAGV</Value>
     </Setting>
+    <Setting Name="FoodCategories" Type="System.Collections.Generic.List&lt;System.String&gt;" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

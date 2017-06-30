@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace BuddhaBowls
 {
@@ -88,6 +89,8 @@ namespace BuddhaBowls
 
                 NotifyPropertyChanged("SelectedOpenOrder");
                 NotifyPropertyChanged("SelectedReceivedOrder");
+
+                ChangeOrderStats();
             }
         }
 
@@ -105,6 +108,61 @@ namespace BuddhaBowls
             }
         }
 
+        private ObservableCollection<OrderStat> _orderStats;
+        public ObservableCollection<OrderStat> OrderStats
+        {
+            get
+            {
+                return _orderStats;
+            }
+            set
+            {
+                _orderStats = value;
+                NotifyPropertyChanged("OrderStats");
+            }
+        }
+
+        private OrderStat _totalOrders;
+        public OrderStat TotalOrders
+        {
+            get
+            {
+                return _totalOrders;
+            }
+            set
+            {
+                _totalOrders = value;
+                NotifyPropertyChanged("TotalOrders");
+            }
+        }
+
+        private OrderStat _weekCostTotal;
+        public OrderStat WeekCostTotal
+        {
+            get
+            {
+                return _weekCostTotal;
+            }
+            set
+            {
+                _weekCostTotal = value;
+                NotifyPropertyChanged("WeekCostTotal");
+            }
+        }
+
+        private OrderStat _periodCostTotal;
+        public OrderStat PeriodCostTotal
+        {
+            get
+            {
+                return _periodCostTotal;
+            }
+            set
+            {
+                _periodCostTotal = value;
+                NotifyPropertyChanged("PeriodCostTotal");
+            }
+        }
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -183,9 +241,18 @@ namespace BuddhaBowls
             ReceivedRecListCommand = new RelayCommand(ShowReceivedRecList, x => ViewReceivedOrderCanExecute && DBConnection);
 
             if (DBConnection)
+            {
+                TotalOrders = new OrderStat() { Label = "Total Orders" };
+                PeriodCostTotal = new OrderStat() { Label = "Total Cost for Period" };
+                WeekCostTotal = new OrderStat() { Label = "Total Cost for Week" };
+                OrderStats = new ObservableCollection<OrderStat>();
+
                 PeriodSelector = new PeriodSelectorVM(_models, LoadPreviousOrders);
+            }
             else
+            {
                 OrdersNotFound();
+            }
         }
 
         #region ICommand Helpers
@@ -362,6 +429,23 @@ namespace BuddhaBowls
             }
         }
 
+        private void ChangeOrderStats()
+        {
+            if (OrderStats == null || SelectedReceivedOrder == null)
+                OrderStats = new ObservableCollection<OrderStat>();
+            else
+            {
+                OrderStats = new ObservableCollection<OrderStat>(SelectedReceivedOrder.GetCategoryCosts()
+                                                                    .Select(x => new OrderStat() { Label = x.Key, Value = x.Value }));
+                OrderStats.Add(new OrderStat()
+                {
+                    Label = "Total Food Amount",
+                    Value = OrderStats.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Label.Substring(0, x.Label.Length - 1)))
+                                      .Sum(x => x.Value)
+                });
+            }
+        }
+
         #endregion
 
         #region Initializers
@@ -370,7 +454,7 @@ namespace BuddhaBowls
         /// Populate the 2 dataGrids in the Orders overview
         /// </summary>
         /// <returns></returns>
-        public void LoadPreviousOrders(WeekMarker week)
+        public void LoadPreviousOrders(PeriodMarker period, WeekMarker week)
         {
             if (_models != null && _models.PurchaseOrders != null)
             {
@@ -380,7 +464,16 @@ namespace BuddhaBowls
                                                                                                       week.StartDate <= x.ReceivedDate &&
                                                                                                       x.ReceivedDate < week.EndDate)
                                                                         .OrderByDescending(x => x.ReceivedDate));
+                TotalOrders.Value = ReceivedOrders.Count;
+                SetPeriodWeekTotals(period);
             }
+        }
+
+        private void SetPeriodWeekTotals(PeriodMarker period)
+        {
+            WeekCostTotal.Value = ReceivedOrders.Sum(x => x.GetTotalCost());
+            PeriodCostTotal.Value = _models.PurchaseOrders.Where(x => x.Received && period.StartDate <= x.ReceivedDate &&
+                                                                 x.ReceivedDate < period.EndDate).Sum(x => x.GetTotalCost());
         }
 
         private void OrdersNotFound()
@@ -399,7 +492,7 @@ namespace BuddhaBowls
 
         public void RefreshOrderList()
         {
-            LoadPreviousOrders(PeriodSelector.SelectedWeek);
+            LoadPreviousOrders(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
         }
 
         public void UpdateRecDate(PurchaseOrder order)
@@ -407,8 +500,48 @@ namespace BuddhaBowls
             order.Update();
             //ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received)
             //                                                            .OrderByDescending(x => x.ReceivedDate));
-            LoadPreviousOrders(PeriodSelector.SelectedWeek);
+            LoadPreviousOrders(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
         }
         #endregion
+    }
+
+    public class OrderStat : INotifyPropertyChanged
+    {
+        // INotifyPropertyChanged event and method
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        private string _label;
+        public string Label
+        {
+            get
+            {
+                return _label + ":";
+            }
+            set
+            {
+                _label = value;
+                NotifyPropertyChanged("Label");
+            }
+        }
+
+        private float _value;
+        public float Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                _value = value;
+                NotifyPropertyChanged("Value");
+            }
+        }
     }
 }

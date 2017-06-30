@@ -45,6 +45,7 @@ namespace BuddhaBowls.Services
         {
             InitializeModels();
             InitializeInventoryOrder();
+            InitializeFoodCategories();
             if (InventoryItems != null)
             {
                 SetCategoryColors();
@@ -87,6 +88,27 @@ namespace BuddhaBowls.Services
                 Properties.Settings.Default.InventoryOrder = new List<string>(File.ReadAllLines(orderPath));
             else
                 Properties.Settings.Default.InventoryOrder = new List<string>(InventoryItems.Select(x => x.Name).OrderBy(x => x));
+            Properties.Settings.Default.Save();
+        }
+
+        private void InitializeFoodCategories()
+        {
+            string filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Settings", GlobalVar.FOOD_CAT_FILE);
+            if (File.Exists(filepath))
+                Properties.Settings.Default.FoodCategories = new List<string>(File.ReadAllLines(filepath));
+            else
+            {
+                Properties.Settings.Default.FoodCategories = new List<string>()
+                {
+                    "Bread",
+                    "Dairy",
+                    "Grocery",
+                    "Herbs",
+                    "Produce",
+                    "Poultry",
+                    "Meats"
+                };
+            }
             Properties.Settings.Default.Save();
         }
 

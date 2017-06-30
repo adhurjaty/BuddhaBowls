@@ -235,6 +235,12 @@
     <Compile Include="UserControls\InventoryHistoryControl.xaml.cs">
       <DependentUpon>InventoryHistoryControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\LabelCostValueControl.xaml.cs">
+      <DependentUpon>LabelCostValueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\LabelValueControl.xaml.cs">
+      <DependentUpon>LabelValueControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\MasterInventoryControl.xaml.cs">
       <DependentUpon>MasterInventoryControl.xaml</DependentUpon>
     </Compile>
@@ -375,6 +381,14 @@
     <Page Include="UserControls\InventoryHistoryControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\LabelCostValueControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\LabelValueControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\MasterInventoryControl.xaml">
       <SubType>Designer</SubType>

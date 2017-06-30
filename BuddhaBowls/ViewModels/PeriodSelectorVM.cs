@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public delegate void WeekChange(WeekMarker week);
+    public delegate void WeekChange(PeriodMarker period, WeekMarker week);
 
     public class PeriodSelectorVM : INotifyPropertyChanged
     {
@@ -90,7 +90,7 @@ namespace BuddhaBowls
             set
             {
                 if (value != null && value != _selectedWeek)
-                    OnChangeWeek(value);
+                    OnChangeWeek(SelectedPeriod, value);
                 _selectedWeek = value;
                 NotifyPropertyChanged("SelectedWeek");
             }
