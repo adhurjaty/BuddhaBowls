@@ -24,5 +24,16 @@ namespace BuddhaBowls.UserControls
         {
             InitializeComponent();
         }
+
+        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (DataContext != null)
+            {
+                if (e.NewSize.Width > 640)
+                    ((PeriodSelectorVM)DataContext).CurWeekVisibility = Visibility.Visible;
+                else
+                    ((PeriodSelectorVM)DataContext).CurWeekVisibility = Visibility.Hidden;
+            }
+        }
     }
 }

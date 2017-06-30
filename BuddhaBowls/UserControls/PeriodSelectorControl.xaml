@@ -5,13 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BuddhaBowls.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="30" d:DesignWidth="415">
-    <Grid>
+             d:DesignHeight="30" d:DesignWidth="535">
+    <Grid SizeChanged="Grid_SizeChanged">
         <Label Content="Period:" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5, 0, 0, 0" />
         <ComboBox Grid.Row="1" ItemsSource="{Binding PeriodList}" SelectedItem="{Binding SelectedPeriod}" HorizontalAlignment="Left"
                   VerticalAlignment="Center" Margin="55, 0, 0, 0" Width="150"/>
         <Label Content="Week:" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="215, 0, 0, 0" />
         <ComboBox Grid.Row="1" ItemsSource="{Binding WeekList}" SelectedItem="{Binding SelectedWeek}" HorizontalAlignment="Left"
                   VerticalAlignment="Center" Margin="260, 0, 0, 0" Width="150"/>
+        <Button Content="Current Week" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="420, 0, 0, 0" Visibility="{Binding CurWeekVisibility}"
+                Command="{Binding CurWeekCommand}"/>
     </Grid>
 </UserControl>

@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
 namespace BuddhaBowls
 {
@@ -94,7 +96,22 @@ namespace BuddhaBowls
             }
         }
 
+        private Visibility _curWeekVisibility = Visibility.Visible;
+        public Visibility CurWeekVisibility
+        {
+            get
+            {
+                return _curWeekVisibility;
+            }
+            set
+            {
+                _curWeekVisibility = value;
+                NotifyPropertyChanged("CurWeekVisibility");
+            }
+        }
         #endregion
+
+        public ICommand CurWeekCommand { get; set; }
 
         public PeriodSelectorVM(ModelContainer models, WeekChange onChangeWeek, bool hasShowAll = true)
         {
@@ -104,10 +121,16 @@ namespace BuddhaBowls
             PeriodList = _models.GetPeriodLabels().ToList();
             if(hasShowAll)
                 PeriodList.Add(new ShowAllMarker());
+
+            GoToCurWeek(null);
+
+            CurWeekCommand = new RelayCommand(GoToCurWeek);
+        }
+
+        private void GoToCurWeek(object obj)
+        {
             SelectedPeriod = PeriodList.FirstOrDefault(x => x.StartDate < DateTime.Now && DateTime.Now <= x.EndDate);
             SelectedWeek = WeekList.FirstOrDefault(x => x.StartDate < DateTime.Now && DateTime.Now <= x.EndDate);
         }
-
-
     }
 }

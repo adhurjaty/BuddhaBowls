@@ -13,7 +13,7 @@
             <RowDefinition Height="{Binding RowHeights[0]}" />
             <RowDefinition Height="{Binding RowHeights[1]}" />
         </Grid.RowDefinitions>
-        <local:PeriodSelectorControl Grid.Row="0" DataContext="{Binding PeriodSelector}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <local:PeriodSelectorControl Grid.Row="0" DataContext="{Binding PeriodSelector}" VerticalAlignment="Center" Margin="0,2,0,2"/>
         <DataGrid x:Name="dataGrid" Grid.Row="1" ItemsSource="{Binding CategoryList}" HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Auto" CanUserReorderColumns="False"
                   AutoGenerateColumns="False" CanUserSortColumns="False" CanUserAddRows="False" Panel.ZIndex="0" >

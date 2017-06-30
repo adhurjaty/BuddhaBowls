@@ -10,7 +10,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="120" />
+            <RowDefinition Height="100" />
             <RowDefinition Height="30" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
@@ -44,9 +45,9 @@
                             Margin="250, 0" Command="{Binding OpenOpenPOCommand}" />
         <Button Content="Open Rec" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
                             Margin="310, 0" Command="{Binding OpenRecListCommand}" />
-        <local:PeriodSelectorControl DataContext="{Binding PeriodSelector}" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
-        <Label Content="Received" Grid.Row="2" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="110, 0, 0, 0" />
-        <DataGrid x:Name="dataGrid2" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        <local:PeriodSelectorControl DataContext="{Binding PeriodSelector}" Grid.Row="3" VerticalAlignment="Stretch" Margin="0, 0, 380, 0"/>
+        <Label Content="Received" Grid.Row="3" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="110, 0, 0, 0" />
+        <DataGrid x:Name="dataGrid2" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                   ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}" SelectedItem="{Binding SelectedReceivedOrder}"
                   AutoGenerateColumns="False" CanUserAddRows="False" RowEditEnding="dataGrid2_RowEditEnding" BeginningEdit="dataGrid2_BeginningEdit">
             <DataGrid.Columns>
@@ -64,17 +65,17 @@
                 <!--<DataGridTextColumn x:Name="ReceivedColumn" Header="Received Date" Binding="{Binding ReceivedDate}" Width="1*" />-->
             </DataGrid.Columns>
         </DataGrid>
-        <Button Grid.Row="2" Width="25" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" VerticalAlignment="Center"
+        <Button Grid.Row="3" Width="25" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Margin="5, 0" Command="{Binding DeleteReceivedOrderCommand}">
             <iconPacks:PackIconFontAwesome Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
-        <Button Content="Re-Open" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
+        <Button Content="Re-Open" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
                             Margin="35, 0" Command="{Binding ReOpenOrderCommand}" />
-        <Button Content="View" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
+        <Button Content="View" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
                             Margin="95, 0" Command="{Binding ViewReceivedOrderCommand}" />
-        <Button Content="Open PO" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
+        <Button Content="Open PO" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
                             Margin="155, 0" Command="{Binding OpenReceivedPOCommand}" />
-        <Button Content="Open Rec" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
+        <Button Content="Open Rec" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Height="15" Width="60"
                             Margin="215, 0" Command="{Binding ReceivedRecListCommand}" />
     </Grid>
 </UserControl>
