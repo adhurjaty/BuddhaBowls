@@ -11,12 +11,9 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public delegate void DoubleClickEvent(IInvEvent invEvent);
-    public delegate void ExpandCollapseEvent(CogsSubReportVM context);
 
     public class CogsSubReportVM : INotifyPropertyChanged
     {
-        private DoubleClickEvent OnDoubleClick;
         private ExpandCollapseEvent OnExpandCollapse;
         
 

@@ -170,7 +170,6 @@
     </ApplicationDefinition>
     <Compile Include="Helpers\ErrorHandler.cs" />
     <Compile Include="Models\BreadOrder.cs" />
-    <Compile Include="Models\IInvEvent.cs" />
     <Compile Include="Models\IItem.cs" />
     <Compile Include="Models\Inventory.cs" />
     <Compile Include="Models\PrepItem.cs" />
@@ -212,9 +211,6 @@
     </Compile>
     <Compile Include="UserControls\CogsControl.xaml.cs">
       <DependentUpon>CogsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\CogsSubReportControl.xaml.cs">
-      <DependentUpon>CogsSubReportControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\CompareInventoriesControl.xaml.cs">
       <DependentUpon>CompareInventoriesControl.xaml</DependentUpon>
@@ -285,7 +281,6 @@
     </Compile>
     <Compile Include="ViewModels\BreadGuideVM.cs" />
     <Compile Include="ViewModels\ChangeableTabVM.cs" />
-    <Compile Include="ViewModels\CogsSubReportVM.cs" />
     <Compile Include="ViewModels\ReportsTabVM.cs" />
     <Compile Include="ViewModels\PeriodSelectorVM.cs" />
     <Compile Include="ViewModels\ReOrderVM.cs" />
@@ -347,10 +342,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\CogsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\CogsSubReportControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

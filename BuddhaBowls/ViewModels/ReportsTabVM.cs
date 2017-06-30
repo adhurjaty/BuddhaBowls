@@ -35,35 +35,47 @@ namespace BuddhaBowls
             }
         }
 
-        private GridLength[] _rowHeights;
-        public GridLength[] RowHeights
+        private Visibility _cogInfoVisibility;
+        public Visibility CogInfoVisibility
         {
             get
             {
-                return _rowHeights;
+                return _cogInfoVisibility;
             }
             set
             {
-                _rowHeights = value;
-                NotifyPropertyChanged("RowHeights");
+                _cogInfoVisibility = value;
+                NotifyPropertyChanged("CogInfoVisibility");
             }
         }
 
-
-        private CogsSubReportVM[] _subReports;
-        public CogsSubReportVM[] SubReports
+        private ObservableCollection<InventoryItem> _startInv;
+        public ObservableCollection<InventoryItem> StartInv
         {
             get
             {
-                return _subReports;
+                return _startInv;
             }
             set
             {
-                _subReports = value;
-                NotifyPropertyChanged("SubReports");
+                _startInv = value;
+                NotifyPropertyChanged("StartInv");
             }
         }
 
+        private ObservableCollection<InventoryItem> _endingInv;
+        public ObservableCollection<InventoryItem> EndingInv
+        {
+            get
+            {
+                return _endingInv;
+            }
+            set
+            {
+                _endingInv = value;
+                NotifyPropertyChanged("EndingInv");
+            }
+        }
         #endregion
 
         #region ICommand and CanExecute
@@ -77,8 +89,6 @@ namespace BuddhaBowls
 
             if (DBConnection)
             {
-                InitRowHeights();
-                InitSubContexts();
                 PeriodSelector = new PeriodSelectorVM(_models, SwitchedPeriod, hasShowAll: false);
             }
         }
@@ -98,7 +108,6 @@ namespace BuddhaBowls
 
             if (periodInvList.Count == 0)
                 periodInvList.Add(endInv);
-            SubReports[0].SetInvEnvents(periodInvList);
 
             CategoryList = new ObservableCollection<CogsCategory>();
             if(endInv != null)
@@ -135,45 +144,9 @@ namespace BuddhaBowls
 
         #region Initializers
 
-        private void InitRowHeights()
-        {
-            RowHeights = new GridLength[2];
-            for (int i = 0; i < RowHeights.Length; i++)
-            {
-                RowHeights[i] = new GridLength(GRID_COLLAPSED_HEIGHT);
-            }
-        }
-
-        private void InitSubContexts()
-        {
-            SubReports = new CogsSubReportVM[2];
-
-            for (int i = 0; i < SubReports.Length; i++)
-            {
-                SubReports[i] = new CogsSubReportVM(_subHeaders[i], SubItemDoubleClicked, ControlClicked);
-            }
-        }
         #endregion
 
         #region UI Updaters
-
-        public void ControlClicked(CogsSubReportVM subReport)
-        {
-            for (int i = 0; i < RowHeights.Length; i++)
-            {
-                if (subReport.DetailHeader == _subHeaders[i] && RowHeights[i].Value == GRID_COLLAPSED_HEIGHT)
-                {
-                    RowHeights[i] = new GridLength(1, GridUnitType.Star);
-                    SubReports[i].Expanded();
-                }
-                else
-                {
-                    RowHeights[i] = new GridLength(GRID_COLLAPSED_HEIGHT);
-                    SubReports[i].Collapsed();
-                }
-                NotifyPropertyChanged("RowHeights");
-            }
-        }
 
         public void SubItemDoubleClicked(IInvEvent invEvent)
         {
@@ -196,7 +169,6 @@ namespace BuddhaBowls
             // AddDays to include the end date as opposed to all received times up to and not including end date
             List<PurchaseOrder> orders = _models.PurchaseOrders.Where(x => x.ReceivedDate >= start &&
                                                                            x.ReceivedDate < end.Date.AddDays(1)).ToList();
-            SubReports[1].SetInvEnvents(orders);
             Dictionary<string, List<InventoryItem>> purchaseDict = new Dictionary<string, List<InventoryItem>>();
 
             foreach (PurchaseOrder order in orders)

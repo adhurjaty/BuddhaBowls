@@ -9,9 +9,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="{Binding RowHeights[0]}" />
-            <RowDefinition Height="{Binding RowHeights[1]}" />
+            <RowDefinition Height="180" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <local:PeriodSelectorControl Grid.Row="0" DataContext="{Binding PeriodSelector}" VerticalAlignment="Center" Margin="0,2,0,2"/>
         <DataGrid x:Name="dataGrid" Grid.Row="1" ItemsSource="{Binding CategoryList}" HorizontalAlignment="Stretch"
@@ -25,11 +24,81 @@
                 <DataGridTextColumn Header="COGS Cost" Binding="{Binding Path=CogsCost, StringFormat=c}" IsReadOnly="True" Width="2*" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="2">
-            <local:CogsSubReportControl DataContext="{Binding SubReports[0]}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        </Grid>
-        <Grid Grid.Row="3">
-            <local:CogsSubReportControl DataContext="{Binding SubReports[1]}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <Grid Grid.Row="2" Visibility="{Binding CogInfoVisibility}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Start Inventory" Grid.Column="0" Grid.Row="0" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="18" />
+            <DataGrid Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding StartInv}"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False" Margin="-1,0,1,0"
+                      IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+                    <DataGridTextColumn Header="Count" Binding="{Binding Count}" Width="50" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock Text="Ending Inventory" Grid.Column="1" Grid.Row="0" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="18" />
+            <DataGrid Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding EndingInv}"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False" Margin="-1,0,1,0"
+                      IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+                    <DataGridTextColumn Header="Count" Binding="{Binding Count}" Width="50" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock Text="Received Purchases" Grid.Column="2" Grid.Row="0" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="18" />
+            <DataGrid Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding RecOrders}"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False" Margin="-1,0,1,0"
+                      IsReadOnly="True" SelectedItem="{Binding SelectedOrder}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="PO #" Width="50" />
+                    <DataGridTextColumn Header="Rec Date" Width="2*" />
+                    <DataGridTextColumn Header="Cost" Width="1*" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <ScrollViewer Grid.Column="3" Grid.RowSpan="2" ScrollViewer.VerticalScrollBarVisibility="Auto" Visibility="{Binding OrderDetailsVisibility}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="30" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="125" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Total Cost:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"
+                           Margin="0, 0, 5, 0" />
+                    <TextBlock Text="{Binding Path=SelectedTotalCost, StringFormat=c}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"
+                               VerticalAlignment="Center" />
+                    <Label Content="Total Food Cost:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                           Margin="0, 0, 5, 0" />
+                    <TextBlock Text="{Binding Path=SelectedTotalFoodCost, StringFormat=c}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"
+                               VerticalAlignment="Center" />
+                    <Label Content="Total Category Cost:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                           Margin="0, 0, 5, 0" />
+                    <TextBlock Text="{Binding Path=SelectedTotalCategoryCost, StringFormat=c}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left"
+                               VerticalAlignment="Center" />
+                    <Label Content="Ordered Date:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                           Margin="0, 0, 5, 0" />
+                    <TextBlock Text="{Binding Path=SelectedOrderedDate, StringFormat='{}{0:dd/MM/yyyy}'}" Grid.Column="1" Grid.Row="3"
+                               HorizontalAlignment="Left" VerticalAlignment="Center" />
+
+                </Grid>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </UserControl>

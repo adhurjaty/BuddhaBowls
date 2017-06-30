@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace BuddhaBowls.Models
 {
-    public class PurchaseOrder : Model, IInvEvent
+    public class PurchaseOrder : Model
     {
         public string VendorName { get; set; }
         public DateTime OrderDate { get; set; }
