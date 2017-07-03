@@ -151,6 +151,11 @@ namespace BuddhaBowls.Helpers
         {
             return (x % m + m) % m;
         }
+
+        public static float GetFoodCost(Dictionary<string, float> catCosts)
+        {
+            return catCosts.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key)).Sum(x => x.Value);
+        }
     }
 
     public class BindingProxy : Freezable

@@ -8,7 +8,7 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 6,Whipped Cream,Dairy,CS 3 each,CAN,0,OZ-wt,32,5,1,0,0,,5
 7,Eggs,Dairy,15 DOZEN,TRAY,6,EA,180,6,0.95,19.91,0,1/31/2017 6:10:00 PM,2
 8,Whole Milk,Dairy,2 GALLON,GALLON,2,CUP,32,7,1,18.5,0,2/27/2017 2:33:00 PM,0
-9,Yogurt,Dairy,2 GALLON,QUART,0,OZ-wt,18,1,1,0,0,,5
+9,Yogurt,Dairy,2 GALLON,QUART,5,OZ-wt,18,1,1,55.56,0,,5
 10,Pesto,Dairy,4/33.5,BUCKET,4,OZ-wt,4,5,0.97,126,0,2/27/2017 2:33:00 PM,0
 11,Cookie Dough,Dairy,BUCKET,BUCKET,0,OZ-wt,4,4,1,0,0,12/28/2016 11:52:00 AM,5
 12,Pizza Sauce,Dry Goods,6# CANS,CAN,6,EA,6,9,1,20.03,0,1/31/2017 6:10:00 PM,2

@@ -129,7 +129,10 @@ namespace BuddhaBowls.Models
 
         public Dictionary<string, float> GetCategoryCosts()
         {
-            return GetReceivedPOItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.Sum(y => y.PurchaseExtension));
+            Dictionary<string, float> catCosts = GetReceivedPOItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.Sum(y => y.PurchaseExtension));
+            catCosts["Food Total"] = catCosts.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key)).Sum(x => x.Value);
+            catCosts["Total"] = catCosts.Sum(x => x.Value);
+            return catCosts;
         }
 
         public void SplitToPartials(List<InventoryItem> openItems, List<InventoryItem> receivedItems)

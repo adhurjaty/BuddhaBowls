@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuddhaBowls.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,10 +31,11 @@ namespace BuddhaBowls.UserControls
             DataContext = context;
         }
 
-        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void recOrders_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            DataGrid grid = (DataGrid)sender;
-            int debug = 0;
+            e.Handled = true;
+            PurchaseOrder order = (PurchaseOrder)((DataGrid)sender).SelectedItem;
+            ((ReportsTabVM)DataContext).RecOrderDouleClicked(order);
         }
 
     }

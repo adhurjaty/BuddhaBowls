@@ -98,6 +98,7 @@ namespace BuddhaBowls.Test
 
             _vm.InventoryTab.SwitchButtonList.First(x => x.PageName == "History").SwitchCommand.Execute(2);
 
+            _vm.InventoryTab.PeriodSelector.SelectedPeriod = _vm.InventoryTab.PeriodSelector.PeriodList.First(x => x.ToString().Contains("All"));
             Assert.AreEqual(DateTime.Parse("3/22/2017  8:28:00 PM"), new List<Inventory>(_vm.InventoryTab.InventoryList)[0].Date);
             Assert.AreEqual("Another guy", _vm.VendorTab.FilteredVendorList[0].Name);
         }
@@ -124,6 +125,7 @@ namespace BuddhaBowls.Test
             InventoryTabVM tabVM = _vm.InventoryTab;
             DateTime invDate = DateTime.Today;
             tabVM.SwitchButtonList.First(x => x.PageName == "History").SwitchCommand.Execute(2);
+            tabVM.PeriodSelector.SelectedPeriod = tabVM.PeriodSelector.PeriodList.First(x => x.ToString().Contains("All"));
             int initInvCount = tabVM.InventoryList.Count;
 
             tabVM.AddCommand.Execute(null);
