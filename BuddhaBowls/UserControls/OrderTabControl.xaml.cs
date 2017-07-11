@@ -61,5 +61,24 @@ namespace BuddhaBowls.UserControls
             cellTemplate.VisualTree = factory;
             ReceivedColumn.CellTemplate = cellTemplate;
         }
+
+        private void Expander_Clicked(object sender, RoutedEventArgs e)
+        {
+            for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
+                if (vis is DataGridRow)
+                {
+                    var row = (DataGridRow)vis;
+                    row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                    break;
+                }
+        }
+
+        private void dataGrid2_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            int debug = 1;
+            //ScrollViewer scv = ((DataGrid)sender).;
+            //scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+            //e.Handled = true;
+        }
     }
 }

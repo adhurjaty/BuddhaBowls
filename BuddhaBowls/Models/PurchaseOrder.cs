@@ -39,6 +39,16 @@ namespace BuddhaBowls.Models
             }
         }
 
+        // only use for datagrid
+        public List<OrderStat> OrderStats
+        {
+            get
+            {
+                return new List<OrderStat>(GetCategoryCosts().Select(x => new OrderStat() { Label = x.Key, Value = x.Value })); ;
+            }
+        }
+
+
         public PurchaseOrder() : base()
         {
             _tableName = "PurchaseOrder";
@@ -130,8 +140,9 @@ namespace BuddhaBowls.Models
         public Dictionary<string, float> GetCategoryCosts()
         {
             Dictionary<string, float> catCosts = GetReceivedPOItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.Sum(y => y.PurchaseExtension));
+            float total = catCosts.Sum(x => x.Value);
             catCosts["Food Total"] = catCosts.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key)).Sum(x => x.Value);
-            catCosts["Total"] = catCosts.Sum(x => x.Value);
+            catCosts["Total"] = total;
             return catCosts;
         }
 
@@ -206,7 +217,7 @@ namespace BuddhaBowls.Models
         #region Overrides
         public override string[] GetPropertiesDB(string[] omit = null)
         {
-            string[] theseOmissions = new string[] { "Received", "ReceivedCheck", "TotalCost" };
+            string[] theseOmissions = new string[] { "Received", "ReceivedCheck", "TotalCost", "OrderStats" };
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
 

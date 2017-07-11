@@ -240,8 +240,22 @@ namespace BuddhaBowls.UserControls
             TextBlock t = (TextBlock)sender;
             _editingTextBlock = t;
 
+            if(t == null)
+            {
+                MessageBox.Show("TextBlock is null");
+                return;
+            }
+
             Grid thisGrid = (Grid)t.Parent;
-            thisGrid.Children.Remove(t);
+
+            if(thisGrid == null)
+            {
+                MessageBox.Show("Parent Grid is null");
+                return;
+            }
+
+            if(thisGrid.Children != null)
+                thisGrid.Children.Remove(t);
 
             int row = Grid.GetRow(t);
             int col = Grid.GetColumn(t);

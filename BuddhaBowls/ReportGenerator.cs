@@ -621,6 +621,8 @@ namespace BuddhaBowls
         public string GenerateReceivingList(PurchaseOrder po, Vendor vendor)
         {
             List<InventoryItem> items = po.GetOpenPOItems();
+            if (items == null)
+                items = po.GetReceivedPOItems();
             List<string> itemOrder = vendor.GetRecListOrder();
 
             Excel.Worksheet sheet = _sheets.Add();

@@ -90,7 +90,7 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("SelectedOpenOrder");
                 NotifyPropertyChanged("SelectedReceivedOrder");
 
-                ChangeOrderStats();
+                //ChangeOrderStats();
             }
         }
 
@@ -105,20 +105,6 @@ namespace BuddhaBowls
             {
                 _periodSelector = value;
                 NotifyPropertyChanged("PeriodSelector");
-            }
-        }
-
-        private ObservableCollection<OrderStat> _orderStats;
-        public ObservableCollection<OrderStat> OrderStats
-        {
-            get
-            {
-                return _orderStats;
-            }
-            set
-            {
-                _orderStats = value;
-                NotifyPropertyChanged("OrderStats");
             }
         }
 
@@ -245,7 +231,6 @@ namespace BuddhaBowls
                 TotalOrders = new OrderStat() { Label = "Total Orders" };
                 PeriodCostTotal = new OrderStat() { Label = "Total Cost for Period" };
                 WeekCostTotal = new OrderStat() { Label = "Total Cost for Week" };
-                OrderStats = new ObservableCollection<OrderStat>();
 
                 PeriodSelector = new PeriodSelectorVM(_models, LoadPreviousOrders);
             }
@@ -429,22 +414,14 @@ namespace BuddhaBowls
             }
         }
 
-        private void ChangeOrderStats()
-        {
-            if (OrderStats == null || SelectedReceivedOrder == null)
-                OrderStats = new ObservableCollection<OrderStat>();
-            else
-            {
-                OrderStats = new ObservableCollection<OrderStat>(SelectedReceivedOrder.GetCategoryCosts()
-                                                                    .Select(x => new OrderStat() { Label = x.Key, Value = x.Value }));
-                OrderStats.Add(new OrderStat()
-                {
-                    Label = "Total Food Amount",
-                    Value = OrderStats.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Label.Substring(0, x.Label.Length - 1)))
-                                      .Sum(x => x.Value)
-                });
-            }
-        }
+        //private void ChangeOrderStats()
+        //{
+        //    if(SelectedReceivedOrder != null && !OrderStatsDict.ContainsKey(SelectedReceivedOrder.Id))
+        //    {
+        //        OrderStatsDict[SelectedReceivedOrder.Id] = new List<OrderStat>(SelectedReceivedOrder.GetCategoryCosts()
+        //                                                            .Select(x => new OrderStat() { Label = x.Key, Value = x.Value }));
+        //    }
+        //}
 
         #endregion
 
@@ -505,43 +482,4 @@ namespace BuddhaBowls
         #endregion
     }
 
-    public class OrderStat : INotifyPropertyChanged
-    {
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-
-        private string _label;
-        public string Label
-        {
-            get
-            {
-                return _label + ":";
-            }
-            set
-            {
-                _label = value;
-                NotifyPropertyChanged("Label");
-            }
-        }
-
-        private float _value;
-        public float Value
-        {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                _value = value;
-                NotifyPropertyChanged("Value");
-            }
-        }
-    }
 }
