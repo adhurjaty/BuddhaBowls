@@ -528,159 +528,159 @@ namespace BuddhaBowls.Test
             }
         }
 
-        [TestMethod]
-        public void SplitPurchaseOrderTest()
-        {
-            Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
-            Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
-            {
-                { "Artichoke Hearts", 44f },
-                { "Avocado", 22f },
-                { "Vanilla", 11f }
-            };
+        //[TestMethod]
+        //public void SplitPurchaseOrderTest()
+        //{
+        //    Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
+        //    Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
+        //    {
+        //        { "Artichoke Hearts", 44f },
+        //        { "Avocado", 22f },
+        //        { "Vanilla", 11f }
+        //    };
 
-            List<InventoryItem> orderItems = new List<InventoryItem>();
-            foreach (KeyValuePair<string, float> kvp in updateOrderDict)
-            {
-                orderItems.Add(new InventoryItem(new Dictionary<string, string>() { { "Name", kvp.Key } }) { LastOrderAmount = kvp.Value });
-            }
+        //    List<InventoryItem> orderItems = new List<InventoryItem>();
+        //    foreach (KeyValuePair<string, float> kvp in updateOrderDict)
+        //    {
+        //        orderItems.Add(new InventoryItem(new Dictionary<string, string>() { { "Name", kvp.Key } }) { LastOrderAmount = kvp.Value });
+        //    }
 
-            PurchaseOrder po = new PurchaseOrder(berryMan, orderItems, DateTime.Today);
+        //    PurchaseOrder po = new PurchaseOrder(berryMan, orderItems, DateTime.Today);
 
-            try
-            {
-                po.SplitToPartials(orderItems.Take(2).ToList(), orderItems.Skip(2).ToList());
+        //    try
+        //    {
+        //        po.SplitToPartials(orderItems.Take(2).ToList(), orderItems.Skip(2).ToList());
 
-                Assert.IsTrue(po.IsPartial);
-                List<InventoryItem>[] openReceivedItems = po.GetPOItems();
+        //        Assert.IsTrue(po.IsPartial);
+        //        List<InventoryItem>[] openReceivedItems = po.GetPOItems();
 
-                CollectionAssert.AreEqual(new string[] { "Artichoke Hearts", "Avocado" }, openReceivedItems[0].Select(x => x.Name).ToArray());
-                CollectionAssert.AreEqual(new string[] { "Vanilla" }, openReceivedItems[1].Select(x => x.Name).ToArray());
-                Assert.IsFalse(File.Exists(po.GetOrderPath()));
+        //        CollectionAssert.AreEqual(new string[] { "Artichoke Hearts", "Avocado" }, openReceivedItems[0].Select(x => x.Name).ToArray());
+        //        CollectionAssert.AreEqual(new string[] { "Vanilla" }, openReceivedItems[1].Select(x => x.Name).ToArray());
+        //        Assert.IsFalse(File.Exists(po.GetOrderPath()));
 
-                string[] paths = po.GetPartialOrderPaths();
-                foreach (string path in paths)
-                {
-                    Assert.IsTrue(File.Exists(path));
-                }
-            }
-            finally
-            {
-                po.Destroy();
-            }
+        //        string[] paths = po.GetPartialOrderPaths();
+        //        foreach (string path in paths)
+        //        {
+        //            Assert.IsTrue(File.Exists(path));
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        po.Destroy();
+        //    }
 
-            string[] missingPaths = po.GetPartialOrderPaths();
-            foreach (string path in missingPaths)
-            {
-                Assert.IsFalse(File.Exists(path));
-            }
-        }
+        //    string[] missingPaths = po.GetPartialOrderPaths();
+        //    foreach (string path in missingPaths)
+        //    {
+        //        Assert.IsFalse(File.Exists(path));
+        //    }
+        //}
 
-        [TestMethod]
-        public void DeleteOpenPartialOrderTest()
-        {
-            Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
-            Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
-            {
-                { "Artichoke Hearts", 44f },
-                { "Avocado", 22f },
-                { "Vanilla", 11f }
-            };
+        //[TestMethod]
+        //public void DeleteOpenPartialOrderTest()
+        //{
+        //    Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
+        //    Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
+        //    {
+        //        { "Artichoke Hearts", 44f },
+        //        { "Avocado", 22f },
+        //        { "Vanilla", 11f }
+        //    };
 
-            List<InventoryItem> orderItems = new List<InventoryItem>();
-            foreach (KeyValuePair<string, float> kvp in updateOrderDict)
-            {
-                orderItems.Add(new InventoryItem(new Dictionary<string, string>() { { "Name", kvp.Key } }) { LastOrderAmount = kvp.Value });
-            }
+        //    List<InventoryItem> orderItems = new List<InventoryItem>();
+        //    foreach (KeyValuePair<string, float> kvp in updateOrderDict)
+        //    {
+        //        orderItems.Add(new InventoryItem(new Dictionary<string, string>() { { "Name", kvp.Key } }) { LastOrderAmount = kvp.Value });
+        //    }
 
-            PurchaseOrder po = new PurchaseOrder(berryMan, orderItems, DateTime.Today);
+        //    PurchaseOrder po = new PurchaseOrder(berryMan, orderItems, DateTime.Today);
 
-            try
-            {
-                po.SplitToPartials(orderItems.Take(2).ToList(), orderItems.Skip(2).ToList());
-                po.DeleteOpenPartial();
+        //    try
+        //    {
+        //        po.SplitToPartials(orderItems.Take(2).ToList(), orderItems.Skip(2).ToList());
+        //        po.DeleteOpenPartial();
 
-                Assert.IsTrue(File.Exists(po.GetOrderPath()));
-                Assert.IsFalse(po.GetPartialOrderPaths().Select(x => File.Exists(x)).Any(x => x));
-                CollectionAssert.AreEqual(orderItems.Skip(2).Select(x => x.Name).ToList(), po.GetPOItems()[1].Select(x => x.Name).ToList());
-            }
-            finally
-            {
-                po.Destroy();
-            }
-        }
+        //        Assert.IsTrue(File.Exists(po.GetOrderPath()));
+        //        Assert.IsFalse(po.GetPartialOrderPaths().Select(x => File.Exists(x)).Any(x => x));
+        //        CollectionAssert.AreEqual(orderItems.Skip(2).Select(x => x.Name).ToList(), po.GetPOItems()[1].Select(x => x.Name).ToList());
+        //    }
+        //    finally
+        //    {
+        //        po.Destroy();
+        //    }
+        //}
 
-        [TestMethod]
-        public void ReceivePartialOrderTest()
-        {
-            Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
-            Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
-            {
-                { "Artichoke Hearts", 44f },
-                { "Avocado", 22f },
-                { "Vanilla", 11f }
-            };
+        //[TestMethod]
+        //public void ReceivePartialOrderTest()
+        //{
+        //    Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
+        //    Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
+        //    {
+        //        { "Artichoke Hearts", 44f },
+        //        { "Avocado", 22f },
+        //        { "Vanilla", 11f }
+        //    };
 
-            List<InventoryItem> orderItems = new List<InventoryItem>();
-            foreach (KeyValuePair<string, float> kvp in updateOrderDict)
-            {
-                orderItems.Add(new InventoryItem(new Dictionary<string, string>() { { "Name", kvp.Key } }) { LastOrderAmount = kvp.Value });
-            }
+        //    List<InventoryItem> orderItems = new List<InventoryItem>();
+        //    foreach (KeyValuePair<string, float> kvp in updateOrderDict)
+        //    {
+        //        orderItems.Add(new InventoryItem(new Dictionary<string, string>() { { "Name", kvp.Key } }) { LastOrderAmount = kvp.Value });
+        //    }
 
-            PurchaseOrder po = new PurchaseOrder(berryMan, orderItems, DateTime.Today);
+        //    PurchaseOrder po = new PurchaseOrder(berryMan, orderItems, DateTime.Today);
 
-            try
-            {
-                po.SplitToPartials(orderItems.Take(2).ToList(), orderItems.Skip(2).ToList());
-                po.Receive();
+        //    try
+        //    {
+        //        po.SplitToPartials(orderItems.Take(2).ToList(), orderItems.Skip(2).ToList());
+        //        po.Receive();
 
-                Assert.IsFalse(po.IsPartial);
-                List<InventoryItem> receivedItems = po.GetPOItems()[1];
+        //        Assert.IsFalse(po.IsPartial);
+        //        List<InventoryItem> receivedItems = po.GetPOItems()[1];
 
-                CollectionAssert.AreEquivalent(updateOrderDict.Keys, receivedItems.Select(x => x.Name).ToList());
-                Assert.AreEqual(DateTime.Today, ((DateTime)po.ReceivedDate).Date);
-            }
-            finally
-            {
-                po.Destroy();
-            }
-        }
+        //        CollectionAssert.AreEquivalent(updateOrderDict.Keys, receivedItems.Select(x => x.Name).ToList());
+        //        Assert.AreEqual(DateTime.Today, ((DateTime)po.ReceivedDate).Date);
+        //    }
+        //    finally
+        //    {
+        //        po.Destroy();
+        //    }
+        //}
 
-        [TestMethod]
-        public void ReopenPartialOrderTest()
-        {
-            Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
-            Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
-            {
-                { "Artichoke Hearts", 44f },
-                { "Avocado", 22f },
-                { "Vanilla", 11f }
-            };
+        //[TestMethod]
+        //public void ReopenPartialOrderTest()
+        //{
+        //    Vendor berryMan = new Vendor(new Dictionary<string, string>() { { "Name", "Berry Man" } });
+        //    Dictionary<string, float> updateOrderDict = new Dictionary<string, float>()
+        //    {
+        //        { "Artichoke Hearts", 44f },
+        //        { "Avocado", 22f },
+        //        { "Vanilla", 11f }
+        //    };
 
-            List<InventoryItem> orderItems = new List<InventoryItem>();
-            foreach (KeyValuePair<string, float> kvp in updateOrderDict)
-            {
-                orderItems.Add(new InventoryItem(new Dictionary<string, string>() { { "Name", kvp.Key } }) { LastOrderAmount = kvp.Value });
-            }
+        //    List<InventoryItem> orderItems = new List<InventoryItem>();
+        //    foreach (KeyValuePair<string, float> kvp in updateOrderDict)
+        //    {
+        //        orderItems.Add(new InventoryItem(new Dictionary<string, string>() { { "Name", kvp.Key } }) { LastOrderAmount = kvp.Value });
+        //    }
 
-            PurchaseOrder po = new PurchaseOrder(berryMan, orderItems, DateTime.Today);
+        //    PurchaseOrder po = new PurchaseOrder(berryMan, orderItems, DateTime.Today);
 
-            try
-            {
-                po.SplitToPartials(orderItems.Take(2).ToList(), orderItems.Skip(2).ToList());
-                po.ReOpen();
+        //    try
+        //    {
+        //        po.SplitToPartials(orderItems.Take(2).ToList(), orderItems.Skip(2).ToList());
+        //        po.ReOpen();
 
-                Assert.IsFalse(po.IsPartial);
-                List<InventoryItem> reopened = po.GetPOItems()[0];
+        //        Assert.IsFalse(po.IsPartial);
+        //        List<InventoryItem> reopened = po.GetPOItems()[0];
 
-                CollectionAssert.AreEquivalent(updateOrderDict.Keys, reopened.Select(x => x.Name).ToList());
-                Assert.IsNull(po.ReceivedDate);
-            }
-            finally
-            {
-                po.Destroy();
-            }
-        }
+        //        CollectionAssert.AreEquivalent(updateOrderDict.Keys, reopened.Select(x => x.Name).ToList());
+        //        Assert.IsNull(po.ReceivedDate);
+        //    }
+        //    finally
+        //    {
+        //        po.Destroy();
+        //    }
+        //}
 
         #endregion
 

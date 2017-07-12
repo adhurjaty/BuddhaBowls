@@ -570,78 +570,78 @@ namespace BuddhaBowls.Test
             }
         }
 
-        [TestMethod]
-        public void PartialReceiveOrderTest()
-        {
-            OrderTabVM orderTab = CreateTestOrder();
+        //[TestMethod]
+        //public void PartialReceiveOrderTest()
+        //{
+        //    OrderTabVM orderTab = CreateTestOrder();
 
-            orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
-            PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
+        //    orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
+        //    PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
 
-            try
-            {
-                orderTab.ViewOpenOrderCommand.Execute(null);
-                ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
-                OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
+        //    try
+        //    {
+        //        orderTab.ViewOpenOrderCommand.Execute(null);
+        //        ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
+        //        OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
 
-                SelectInBreakdown("Artichoke Hearts", ref breakdownContext);
-                viewOrderTab.MoveToReceivedCommand.Execute(null);
-                SelectInBreakdown("Avocado", ref breakdownContext);
-                viewOrderTab.MoveToReceivedCommand.Execute(null);
-                viewOrderTab.SaveCommand.Execute(null);
+        //        SelectInBreakdown("Artichoke Hearts", ref breakdownContext);
+        //        viewOrderTab.MoveToReceivedCommand.Execute(null);
+        //        SelectInBreakdown("Avocado", ref breakdownContext);
+        //        viewOrderTab.MoveToReceivedCommand.Execute(null);
+        //        viewOrderTab.SaveCommand.Execute(null);
 
-                Assert.IsTrue(newOrder.IsPartial);
-                CollectionAssert.Contains(orderTab.OpenOrders, newOrder);
-                CollectionAssert.Contains(orderTab.ReceivedOrders, newOrder);
+        //        Assert.IsTrue(newOrder.IsPartial);
+        //        CollectionAssert.Contains(orderTab.OpenOrders, newOrder);
+        //        CollectionAssert.Contains(orderTab.ReceivedOrders, newOrder);
 
-                orderTab.SelectedOpenOrder = newOrder;
-                Assert.AreEqual(newOrder, orderTab.SelectedReceivedOrder);
-            }
-            finally
-            {
-                newOrder.Destroy();
-            }
-        }
+        //        orderTab.SelectedOpenOrder = newOrder;
+        //        Assert.AreEqual(newOrder, orderTab.SelectedReceivedOrder);
+        //    }
+        //    finally
+        //    {
+        //        newOrder.Destroy();
+        //    }
+        //}
 
-        [TestMethod]
-        public void ViewPartialReceiveOrderTest()
-        {
-            OrderTabVM orderTab = CreateTestOrder();
+        //[TestMethod]
+        //public void ViewPartialReceiveOrderTest()
+        //{
+        //    OrderTabVM orderTab = CreateTestOrder();
 
-            orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
-            PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
+        //    orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
+        //    PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
 
-            try
-            {
-                orderTab.ViewOpenOrderCommand.Execute(null);
-                ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
-                OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
+        //    try
+        //    {
+        //        orderTab.ViewOpenOrderCommand.Execute(null);
+        //        ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
+        //        OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
 
-                SelectInBreakdown("Artichoke Hearts", ref breakdownContext);
-                viewOrderTab.MoveToReceivedCommand.Execute(null);
-                SelectInBreakdown("Avocado", ref breakdownContext);
-                viewOrderTab.MoveToReceivedCommand.Execute(null);
-                viewOrderTab.SaveCommand.Execute(null);
+        //        SelectInBreakdown("Artichoke Hearts", ref breakdownContext);
+        //        viewOrderTab.MoveToReceivedCommand.Execute(null);
+        //        SelectInBreakdown("Avocado", ref breakdownContext);
+        //        viewOrderTab.MoveToReceivedCommand.Execute(null);
+        //        viewOrderTab.SaveCommand.Execute(null);
 
-                orderTab.SelectedOpenOrder = newOrder;
-                orderTab.ViewOpenOrderCommand.Execute(null);
+        //        orderTab.SelectedOpenOrder = newOrder;
+        //        orderTab.ViewOpenOrderCommand.Execute(null);
 
-                breakdownContext = viewOrderTab.BreakdownContext;
-                List<InventoryItem> openItems = breakdownContext.GetInventoryItems();
-                Assert.AreEqual(1, openItems.Count);
-                Assert.AreEqual("Vanilla", openItems[0].Name);
+        //        breakdownContext = viewOrderTab.BreakdownContext;
+        //        List<InventoryItem> openItems = breakdownContext.GetInventoryItems();
+        //        Assert.AreEqual(1, openItems.Count);
+        //        Assert.AreEqual("Vanilla", openItems[0].Name);
 
-                breakdownContext = viewOrderTab.BreakdownContext;
-                List<InventoryItem> receivedItems = breakdownContext.GetInventoryItems();
-                Assert.AreEqual(2, receivedItems.Count);
-                Assert.AreEqual("Artichoke Hearts", receivedItems[0].Name);
-                Assert.AreEqual("Avocado", receivedItems[1].Name);
-            }
-            finally
-            {
-                newOrder.Destroy();
-            }
-        }
+        //        breakdownContext = viewOrderTab.BreakdownContext;
+        //        List<InventoryItem> receivedItems = breakdownContext.GetInventoryItems();
+        //        Assert.AreEqual(2, receivedItems.Count);
+        //        Assert.AreEqual("Artichoke Hearts", receivedItems[0].Name);
+        //        Assert.AreEqual("Avocado", receivedItems[1].Name);
+        //    }
+        //    finally
+        //    {
+        //        newOrder.Destroy();
+        //    }
+        //}
 
         #endregion
 

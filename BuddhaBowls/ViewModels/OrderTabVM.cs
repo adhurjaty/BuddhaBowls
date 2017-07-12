@@ -60,14 +60,9 @@ namespace BuddhaBowls
             set
             {
                 _selectedOpenOrder = value;
-
-                if (value != null && value.IsPartial)
-                    _selectedReceivedOrder = value;
-                else
-                    _selectedReceivedOrder = null;
+                SelectedReceivedOrder = null;
 
                 NotifyPropertyChanged("SelectedOpenOrder");
-                NotifyPropertyChanged("SelectedReceivedOrder");
             }
         }
 
@@ -82,10 +77,7 @@ namespace BuddhaBowls
             {
                 _selectedReceivedOrder = value;
 
-                if (value != null && value.IsPartial)
-                    _selectedOpenOrder = value;
-                else
-                    _selectedOpenOrder = null;
+                SelectedOpenOrder = null;
 
                 NotifyPropertyChanged("SelectedOpenOrder");
                 NotifyPropertyChanged("SelectedReceivedOrder");
@@ -375,20 +367,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void RemoveOpenOrder(object obj)
         {
-            if (SelectedOpenOrder.IsPartial)
-            {
-                MessageBoxResult result = MessageBox.Show("Are you sure you want to delete partial order PO# " + SelectedOpenOrder.Id.ToString(),
-                                                          "Delete PO# " + SelectedOpenOrder.Id.ToString() + "?", MessageBoxButton.YesNo);
-                if (result == MessageBoxResult.Yes)
-                {
-                    SelectedOpenOrder.DeleteOpenPartial();
-                    RefreshOrderList();
-                }
-            }
-            else
-            {
-                DeleteOrder(SelectedOpenOrder);
-            }
+            DeleteOrder(SelectedOpenOrder);
         }
 
         private void DeleteOrder(PurchaseOrder order)
@@ -501,7 +480,7 @@ namespace BuddhaBowls
         {
             if (_models != null && _models.PurchaseOrders != null)
             {
-                OpenOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => !x.Received || x.IsPartial)
+                OpenOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => !x.Received)
                                                                         .OrderBy(x => x.OrderDate));
                 ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received &&
                                                                                                       week.StartDate <= x.ReceivedDate &&

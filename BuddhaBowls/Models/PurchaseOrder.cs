@@ -11,7 +11,6 @@ namespace BuddhaBowls.Models
     {
         public string VendorName { get; set; }
         public DateTime OrderDate { get; set; }
-        public bool IsPartial { get; set; }
         public DateTime? ReceivedDate { get; set; }
 
         public DateTime Date
@@ -85,20 +84,12 @@ namespace BuddhaBowls.Models
 
         public void Receive()
         {
-            if (IsPartial)
-            {
-                CombinePartial();
-            }
             ReceivedDate = DateTime.Now;
             Update();
         }
 
         public void ReOpen()
         {
-            if (IsPartial)
-            {
-                CombinePartial();
-            }
             ReceivedDate = null;
             Update();
         }
@@ -112,18 +103,10 @@ namespace BuddhaBowls.Models
             List<InventoryItem> openItems = null;
             List<InventoryItem> receivedItems = null;
 
-            if(IsPartial)
-            {
-                openItems = ModelHelper.InstantiateList<InventoryItem>(GetOpenPartialOrderTableName(), isModel: false);
-                receivedItems = ModelHelper.InstantiateList<InventoryItem>(GetReceivedPartialOrderTableName(), isModel: false);
-            }
+            if(Received)
+                receivedItems = ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), isModel: false);
             else
-            {
-                if(Received)
-                    receivedItems = ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), isModel: false);
-                else
-                    openItems = ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), isModel: false);
-            }
+                openItems = ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), isModel: false);
             return new List<InventoryItem>[] { openItems, receivedItems };
         }
 
@@ -149,26 +132,6 @@ namespace BuddhaBowls.Models
             catCosts["Food Total"] = catCosts.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key)).Sum(x => x.Value);
             catCosts["Total"] = total;
             return catCosts;
-        }
-
-        public void SplitToPartials(List<InventoryItem> openItems, List<InventoryItem> receivedItems)
-        {
-            IsPartial = true;
-            ReceivedDate = DateTime.Now;
-            Update();
-
-            _dbInt.DestroyTable(GetOrderTableName());
-            ModelHelper.CreateTable(openItems, GetOpenPartialOrderTableName());
-            ModelHelper.CreateTable(receivedItems, GetReceivedPartialOrderTableName());
-        }
-
-        public void DeleteOpenPartial()
-        {
-            IsPartial = false;
-            Update();
-
-            _dbInt.DestroyTable(GetOpenPartialOrderTableName());
-            _dbInt.RenameTable(GetReceivedPartialOrderTableName(), GetOrderTableName());
         }
 
         public string GetPOPath()
@@ -209,16 +172,6 @@ namespace BuddhaBowls.Models
             return @"Orders\Partial_Open_" + VendorName + "_" + Id.ToString();
         }
 
-        private void CombinePartial()
-        {
-            List<InventoryItem>[] bothItems = GetPOItems();
-            List<InventoryItem> items = bothItems[0].Concat(bothItems[1]).ToList();
-            _dbInt.DestroyTable(GetOpenPartialOrderTableName());
-            _dbInt.DestroyTable(GetReceivedPartialOrderTableName());
-            ModelHelper.CreateTable(items, GetOrderTableName());
-            IsPartial = false;
-        }
-
         #region Overrides
         public override string[] GetPropertiesDB(string[] omit = null)
         {
@@ -228,15 +181,7 @@ namespace BuddhaBowls.Models
 
         public override void Destroy()
         {
-            if (IsPartial)
-            {
-                _dbInt.DestroyTable(GetOpenPartialOrderTableName());
-                _dbInt.DestroyTable(GetReceivedPartialOrderTableName());
-            }
-            else
-            {
-                _dbInt.DestroyTable(GetOrderTableName());
-            }
+            _dbInt.DestroyTable(GetOrderTableName());
             base.Destroy();
         }
         #endregion
