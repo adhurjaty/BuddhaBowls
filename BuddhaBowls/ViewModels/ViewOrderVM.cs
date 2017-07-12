@@ -36,19 +36,6 @@ namespace BuddhaBowls
             }
         }
 
-        //private OrderBreakdownVM _receivedBreakdownContext;
-        //public OrderBreakdownVM ReceivedBreakdownContext
-        //{
-        //    get
-        //    {
-        //        return _receivedBreakdownContext;
-        //    }
-        //    set
-        //    {
-        //        _receivedBreakdownContext = value;
-        //        NotifyPropertyChanged("ReceivedBreakdownContext");
-        //    }
-        //}
         #endregion
 
         #region ICommand and CanExecute Properties 
@@ -92,60 +79,20 @@ namespace BuddhaBowls
             _tabControl = new ViewOrderTabControl(this);
             RefreshOrders = refresh;
 
-            SaveCommand = new RelayCommand(SavePartialOrder, x => SaveButtonCanExecute);
+            SaveCommand = new RelayCommand(SaveEdits, x => SaveButtonCanExecute);
             CancelCommand = new RelayCommand(CancelView);
             InitBreakdown(po);
         }
 
         #region ICommand Helpers
-        //private void MoveToReceived(object obj)
-        //{
-        //    //MoveItem(BreakdownContext, ReceivedBreakdownContext);
-        //}
-
-        //private void MoveToOpen(object obj)
-        //{
-        //    //MoveItem(ReceivedBreakdownContext, BreakdownContext);
-        //}
-
-        //private void MoveItem(OrderBreakdownVM fromContext, OrderBreakdownVM toContext)
-        //{
-        //    List<InventoryItem> fromList = fromContext.GetInventoryItems();
-        //    List<InventoryItem> toList = toContext.GetInventoryItems();
-
-        //    InventoryItem selected = fromContext.SelectedItem;
-        //    fromList.Remove(selected);
-        //    toList.Add(selected);
-
-        //    float oTotal = 0;
-        //    fromContext.BreakdownList = GetOrderBreakdown(fromList, out oTotal);
-        //    fromContext.OrderTotal = oTotal;
-
-        //    toContext.BreakdownList = GetOrderBreakdown(toList, out oTotal);
-        //    toContext.OrderTotal = oTotal;
-        //}
 
         private void CancelView(object obj)
         {
             Close();
         }
 
-        private void SavePartialOrder(object obj)
+        private void SaveEdits(object obj)
         {
-            List<InventoryItem> openItems = BreakdownContext.GetInventoryItems();
-            List<InventoryItem> receivedItems = BreakdownContext.GetInventoryItems();
-            //List<InventoryItem> receivedItems = ReceivedBreakdownContext.GetInventoryItems();
-
-            if (receivedItems.Count == 0)
-            {
-                _order.ReceivedDate = null;
-                _order.Update();
-            }
-            else if (openItems.Count != 0)
-            {
-                _order.SplitToPartials(openItems, receivedItems);
-            }
-
             RefreshOrders();
             Close();
         }
@@ -158,6 +105,10 @@ namespace BuddhaBowls
             List<InventoryItem> openItems = poItems[0];
             List<InventoryItem> receivedItems = poItems[1];
             List<InventoryItem> items = openItems != null ? openItems : receivedItems;
+
+            // check where duplicates are being formed. Remove this if I find the source
+            items = po.RemoveViewingDuplicates(items);
+
             string header = openItems != null ? "Open Ordered Items" : "Received Ordered Items";
 
             float oTotal = 0;
@@ -168,20 +119,7 @@ namespace BuddhaBowls
                 OrderVendor = _models.Vendors.First(x => x.Name == _order.VendorName),
                 Header = header
             };
-
-            //BreakdownContext = new OrderBreakdownVM()
-            //{
-            //    BreakdownList = GetOrderBreakdown(openItems, out oTotal),
-            //    OrderTotal = oTotal,
-            //    Header = "Open Ordered Items"
-            //};
-
-            //ReceivedBreakdownContext = new OrderBreakdownVM()
-            //{
-            //    BreakdownList = GetOrderBreakdown(receivedItems, out oTotal),
-            //    OrderTotal = oTotal,
-            //    Header = "Received Ordered Items"
-            //};
+            
         }
         #endregion
 

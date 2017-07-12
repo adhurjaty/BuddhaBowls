@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace BuddhaBowls.Models
 {
@@ -67,6 +68,10 @@ namespace BuddhaBowls.Models
 
             // need to insert here to get the ID, though I don't like it
             Insert();
+
+            // double check that there are no duplicates in the inventory items. Correct this and notify user that there has been a problem if so
+            // Remove this when I find the cause of the problem
+            inventoryItems = RemoveDuplicates(inventoryItems);
 
             foreach (InventoryItem item in inventoryItems)
             {
@@ -235,5 +240,42 @@ namespace BuddhaBowls.Models
             base.Destroy();
         }
         #endregion
+
+        private List<InventoryItem> RemoveDuplicates(List<InventoryItem> inventoryItems, bool showMessage = true)
+        {
+            List<InventoryItem> outList = new List<InventoryItem>();
+            HashSet<int> uniqueIds = new HashSet<int>(inventoryItems.Select(x => x.Id));
+            if (inventoryItems.Count != uniqueIds.Count)
+            {
+                foreach (int id in uniqueIds)
+                {
+                    outList.Add(inventoryItems.First(x => x.Id == id));
+                }
+
+                if (showMessage)
+                {
+                    MessageBox.Show("Duplicates found when SAVING order. This has been corrected (hopefully). Screenshot this notification." +
+                                    " Please contact Anil");
+                }
+            }
+            else
+                return inventoryItems;
+
+            return outList;
+        }
+
+        public List<InventoryItem> RemoveViewingDuplicates(List<InventoryItem> inventoryItems)
+        {
+            List<InventoryItem> outList = RemoveDuplicates(inventoryItems, false);
+
+            if(outList != inventoryItems)
+            {
+                MessageBox.Show("Duplicates found when VIEWING order. This has been corrected (hopefully). Screenshot this notification." +
+                                    " Please contact Anil");
+                ModelHelper.CreateTable(outList, GetOrderTableName());
+            }
+
+            return outList;
+        }
     }
 }

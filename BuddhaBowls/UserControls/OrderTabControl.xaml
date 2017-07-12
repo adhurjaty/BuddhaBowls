@@ -16,6 +16,7 @@
             <RowDefinition Height="30" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
+
         <Label Content="Open Orders" Grid.Row="0" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="-80, 0, 0, 0" />
         <DataGrid x:Name="dataGrid1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding OpenOrders}"
@@ -51,15 +52,23 @@
         <Grid Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200" />
-                <ColumnDefinition Width="200" />
-                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="300" />
             </Grid.ColumnDefinitions>
-            <local:LabelValueControl DataContext="{Binding TotalOrders}" Grid.Column="0" VerticalAlignment="Center"
-                                     HorizontalAlignment="Center" />
-            <local:LabelCostValueControl DataContext="{Binding WeekCostTotal}" Grid.Column="1" VerticalAlignment="Center"
-                                         HorizontalAlignment="Center" />
-            <local:LabelCostValueControl DataContext="{Binding PeriodCostTotal}" Grid.Column="2" VerticalAlignment="Center"
-                                         HorizontalAlignment="Center" />
+            <local:LabelValueControl DataContext="{Binding TotalOrders}" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"
+                                        Margin="5, 0, 0, 0" />
+            <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5, 0, 0, 0">
+                <local:LabelCostValueControl DataContext="{Binding WeekCostTotal}"/>
+                <iconPacks:PackIconFontAwesome Kind="{Binding WeekUpDownIcon}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                               Margin="5, 0, 0, 0" />
+                <TextBlock Text="{Binding WeekTrend, StringFormat=p}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5, 0, 0, 0" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5, 0, 0, 0">
+                <local:LabelCostValueControl DataContext="{Binding PeriodCostTotal}" />
+                <iconPacks:PackIconFontAwesome Kind="{Binding PeriodUpDownIcon}" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                               Margin="5, 0, 0, 0" />
+                <TextBlock Text="{Binding PeriodTrend, StringFormat=p}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5, 0, 0, 0" />
+            </StackPanel>
         </Grid>
 
         <local:PeriodSelectorControl DataContext="{Binding PeriodSelector}" Grid.Row="3" VerticalAlignment="Stretch" Margin="0, 0, 380, 0"/>
@@ -92,13 +101,8 @@
 
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <ListBox HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                ItemsSource="{Binding Path=OrderStats}">
-                        <!--<ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel IsItemsHost="True" Orientation="Vertical" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>-->
+                    <ListBox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Path=OrderStats}"
+                             ScrollViewer.CanContentScroll="False" IsEnabled="False">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <local:LabelCostValueControl DataContext="{Binding}" Height="30" Width="180" HorizontalAlignment="Left"

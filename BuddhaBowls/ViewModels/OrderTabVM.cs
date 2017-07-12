@@ -136,6 +136,39 @@ namespace BuddhaBowls
             }
         }
 
+        private string _weekUpDownIcon;
+        public string WeekUpDownIcon
+        {
+            get
+            {
+                return _weekUpDownIcon;
+            }
+            set
+            {
+                _weekUpDownIcon = value;
+                NotifyPropertyChanged("WeekUpDownIcon");
+            }
+        }
+
+        private float _weekTrend;
+        public float WeekTrend
+        {
+            get
+            {
+                return Math.Abs(_weekTrend);
+            }
+            set
+            {
+                _weekTrend = value;
+                NotifyPropertyChanged("WeekTrend");
+
+                if (_weekTrend < 0)
+                    WeekUpDownIcon = "ArrowDown";
+                else
+                    WeekUpDownIcon = "ArrowUp";
+            }
+        }
+
         private OrderStat _periodCostTotal;
         public OrderStat PeriodCostTotal
         {
@@ -147,6 +180,39 @@ namespace BuddhaBowls
             {
                 _periodCostTotal = value;
                 NotifyPropertyChanged("PeriodCostTotal");
+            }
+        }
+
+        private string _periodUpDownIcon;
+        public string PeriodUpDownIcon
+        {
+            get
+            {
+                return _periodUpDownIcon;
+            }
+            set
+            {
+                _periodUpDownIcon = value;
+                NotifyPropertyChanged("PeriodUpDownIcon");
+            }
+        }
+
+        private float _periodTrend;
+        public float PeriodTrend
+        {
+            get
+            {
+                return Math.Abs(_periodTrend);
+            }
+            set
+            {
+                _periodTrend = value;
+                NotifyPropertyChanged("PeriodTrend");
+
+                if (_periodTrend < 0)
+                    PeriodUpDownIcon = "ArrowDown";
+                else
+                    PeriodUpDownIcon = "ArrowUp";
             }
         }
         #endregion
@@ -442,15 +508,18 @@ namespace BuddhaBowls
                                                                                                       x.ReceivedDate < week.EndDate)
                                                                         .OrderByDescending(x => x.ReceivedDate));
                 TotalOrders.Value = ReceivedOrders.Count;
-                SetPeriodWeekTotals(period);
+                SetPeriodWeekTotals(week, period);
             }
         }
 
-        private void SetPeriodWeekTotals(PeriodMarker period)
+        private void SetPeriodWeekTotals(WeekMarker week, PeriodMarker period)
         {
             WeekCostTotal.Value = ReceivedOrders.Sum(x => x.GetTotalCost());
-            PeriodCostTotal.Value = _models.PurchaseOrders.Where(x => x.Received && period.StartDate <= x.ReceivedDate &&
-                                                                 x.ReceivedDate < period.EndDate).Sum(x => x.GetTotalCost());
+            float lastWeekTotal = GetWeekTotal(week.GetPrevWeek());
+            WeekTrend = (WeekCostTotal.Value - lastWeekTotal) / lastWeekTotal;
+            PeriodCostTotal.Value = GetPeriodTotal(period);
+            float lastPeriodTotal = GetPeriodTotal(period.GetPrevPeriod());
+            PeriodTrend = (PeriodCostTotal.Value - lastPeriodTotal) / lastPeriodTotal;
         }
 
         private void OrdersNotFound()
@@ -480,6 +549,22 @@ namespace BuddhaBowls
             LoadPreviousOrders(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
         }
         #endregion
+
+        private float GetPeriodTotal(PeriodMarker period)
+        {
+            if (period == null)
+                return PeriodCostTotal != null ? PeriodCostTotal.Value : 0;
+            return _models.PurchaseOrders.Where(x => x.Received && period.StartDate <= x.ReceivedDate &&
+                                                x.ReceivedDate < period.EndDate).Sum(x => x.GetTotalCost());
+        }
+
+        private float GetWeekTotal(WeekMarker week)
+        {
+            if (week == null)
+                return WeekCostTotal != null ? WeekCostTotal.Value : 0;
+            return _models.PurchaseOrders.Where(x => x.Received && week.StartDate <= x.ReceivedDate &&
+                                                x.ReceivedDate < week.EndDate).Sum(x => x.GetTotalCost());
+        }
     }
 
 }
