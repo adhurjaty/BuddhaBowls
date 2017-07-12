@@ -76,7 +76,7 @@
         <DataGrid x:Name="dataGrid2" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}" SelectedItem="{Binding SelectedReceivedOrder}"
                     AutoGenerateColumns="False" CanUserAddRows="False" RowEditEnding="dataGrid2_RowEditEnding" BeginningEdit="dataGrid2_BeginningEdit"
-                    ScrollViewer.CanContentScroll="False" RowDetailsVisibilityMode="Collapsed" PreviewMouseWheel="dataGrid2_PreviewMouseWheel">
+                    ScrollViewer.CanContentScroll="False" RowDetailsVisibilityMode="Collapsed">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Width="35">
                     <DataGridTemplateColumn.CellTemplate>

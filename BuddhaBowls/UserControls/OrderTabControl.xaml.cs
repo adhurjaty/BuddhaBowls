@@ -72,13 +72,5 @@ namespace BuddhaBowls.UserControls
                     break;
                 }
         }
-
-        private void dataGrid2_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            int debug = 1;
-            //ScrollViewer scv = ((DataGrid)sender).;
-            //scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
-            //e.Handled = true;
-        }
     }
 }

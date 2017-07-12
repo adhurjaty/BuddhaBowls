@@ -22,7 +22,7 @@ namespace BuddhaBowls
         private List<InventoryItem> _startInvList;
         private Inventory _endInventory;
         private List<InventoryItem> _endingInvList;
-        Dictionary<string, Tuple<List<PurchaseOrder>, List<InventoryItem>>> _purchaseItemsCatDict;
+        List<CatPO> _catPoList;
 
         #region Content Binders
 
@@ -98,8 +98,8 @@ namespace BuddhaBowls
             }
         }
 
-        private ObservableCollection<PurchaseOrder> _recOrders;
-        public ObservableCollection<PurchaseOrder> RecOrders
+        private ObservableCollection<CatPO> _recOrders;
+        public ObservableCollection<CatPO> RecOrders
         {
             get
             {
@@ -112,91 +112,22 @@ namespace BuddhaBowls
             }
         }
 
-        private PurchaseOrder _selectedOrder;
-        public PurchaseOrder SelectedOrder
-        {
-            get
-            {
-                return _selectedOrder;
-            }
-            set
-            {
-                _selectedOrder = value;
-                NotifyPropertyChanged("SelectedOrder");
+        //private PurchaseOrder _selectedOrder;
+        //public PurchaseOrder SelectedOrder
+        //{
+        //    get
+        //    {
+        //        return _selectedOrder;
+        //    }
+        //    set
+        //    {
+        //        _selectedOrder = value;
+        //        NotifyPropertyChanged("SelectedOrder");
 
-                SetReceivedDetails();
-            }
-        }
+        //        SetReceivedDetails();
+        //    }
+        //}
 
-        private float _selectedTotalCost;
-        public float SelectedTotalCost
-        {
-            get
-            {
-                return _selectedTotalCost;
-            }
-            set
-            {
-                _selectedTotalCost = value;
-                NotifyPropertyChanged("SelectedTotalCost");
-            }
-        }
-
-        private float _selectedTotalFoodCost;
-        public float SelectedTotalFoodCost
-        {
-            get
-            {
-                return _selectedTotalFoodCost;
-            }
-            set
-            {
-                _selectedTotalFoodCost = value;
-                NotifyPropertyChanged("SelectedTotalFoodCost");
-            }
-        }
-
-        private float _selectedTotalCategoryCost;
-        public float SelectedTotalCategoryCost
-        {
-            get
-            {
-                return _selectedTotalCategoryCost;
-            }
-            set
-            {
-                _selectedTotalCategoryCost = value;
-                NotifyPropertyChanged("SelectedTotalCategoryCost");
-            }
-        }
-
-        private DateTime _selectedOrderedDate;
-        public DateTime SelectedOrderedDate
-        {
-            get
-            {
-                return _selectedOrderedDate;
-            }
-            set
-            {
-                _selectedOrderedDate = value;
-                NotifyPropertyChanged("SelectedOrderedDate");
-            }
-        }
-
-        private Visibility _orderDetailsVisibility = Visibility.Hidden;
-        public Visibility OrderDetailsVisibility
-        {
-            get
-            {
-                return _orderDetailsVisibility;
-            }
-            set
-            {
-                _orderDetailsVisibility = value;
-                NotifyPropertyChanged("OrderDetailsVisibility");
-            }
-        }
         #endregion
 
         #region ICommand and CanExecute
@@ -232,6 +163,7 @@ namespace BuddhaBowls
             List<Inventory> inventoryList = _models.Inventories.OrderByDescending(x => x.Date).ToList();
             List<Inventory> periodInvList = inventoryList.Where(x => week.StartDate <= x.Date && x.Date <= week.EndDate).ToList();
             _endInventory = inventoryList.FirstOrDefault(x => x.Date <= week.EndDate);
+            _catPoList = new List<CatPO>();
 
             if (periodInvList.Count == 0)
                 periodInvList.Add(_endInventory);
@@ -252,25 +184,32 @@ namespace BuddhaBowls
 
                     List<PurchaseOrder> recOrdersList = _models.PurchaseOrders.Where(x => x.ReceivedDate >= week.StartDate && 
                                                                     x.ReceivedDate <= week.EndDate.Date.AddDays(1)).ToList();
-                    _purchaseItemsCatDict = GetPurchasedByCategory(recOrdersList);
-                    foreach (string category in _models.GetInventoryCategories())
+                    //_purchaseItemsCatDict = GetPurchasedByCategory(recOrdersList);
+                    foreach (string category in _models.GetInventoryCategories().Concat(new List<string>() { "Food Total", "Total" }))
                     {
                         IGrouping<string, InventoryItem> startGroup = startItems.FirstOrDefault(x => x.Key == category);
                         IGrouping<string, InventoryItem> endGroup = endItems.FirstOrDefault(x => x.Key == category);
 
+                        foreach (PurchaseOrder po in recOrdersList)
+                        {
+                            CatPO c = new CatPO(po, category);
+                            if (c.InvItems.Count > 0)
+                                _catPoList.Add(c);
+                        }
+
                         if (startGroup != null && endGroup != null)
                         {
-                            List<InventoryItem> orderList = new List<InventoryItem>();
-                            if(_purchaseItemsCatDict.ContainsKey(category))
-                            {
-                                orderList = _purchaseItemsCatDict[category].Item2;
-                            }
-                            CategoryList.Add(new CogsCategory(category, startGroup.ToList(), endGroup.ToList(), orderList));
+                            CategoryList.Add(new CogsCategory(category, startGroup.ToList(), endGroup.ToList(),
+                                                _catPoList.Where(x => x.Category == category).SelectMany(x => x.InvItems).ToList()));
                         }
-                    }
 
-                    CategoryList.Add(new CogsCategory("Food Total", GetFoodInv(_startInvList), GetFoodInv(_endingInvList), _purchaseItemsCatDict["Food Total"].Item2));
-                    CategoryList.Add(new CogsCategory("Total", _startInvList, _endingInvList, _purchaseItemsCatDict["Total"].Item2));
+                        if(category == "Food Total")
+                            CategoryList.Add(new CogsCategory(category, GetFoodInv(_startInvList), GetFoodInv(_endingInvList),
+                                                              _catPoList.Where(x => x.Category == category).SelectMany(x => x.InvItems).ToList()));
+                        if (category == "Total")
+                            CategoryList.Add(new CogsCategory(category, _startInvList, _endingInvList,
+                                                              _catPoList.Where(x => x.Category == category).SelectMany(x => x.InvItems).ToList()));
+                    }
                 }
             }
         }
@@ -301,23 +240,6 @@ namespace BuddhaBowls
             tabVM.Add("View Inventory");
         }
 
-        public void SetReceivedDetails()
-        {
-            if(SelectedOrder == null)
-            {
-                OrderDetailsVisibility = Visibility.Hidden;
-            }
-            else
-            {
-                OrderDetailsVisibility = Visibility.Visible;
-                SelectedTotalCost = SelectedOrder.GetTotalCost();
-                Dictionary<string, float> catCosts = SelectedOrder.GetCategoryCosts();
-                SelectedTotalFoodCost = MainHelper.GetFoodCost(catCosts);
-                SelectedTotalCategoryCost = catCosts[SelectedCogs.Name];
-                SelectedOrderedDate = SelectedOrder.OrderDate;
-            }
-        }
-
         private void SetCogsDetails()
         {
             if(SelectedCogs == null)
@@ -342,44 +264,12 @@ namespace BuddhaBowls
                     StartInv = new ObservableCollection<InventoryItem>(_startInvList.Where(x => x.Category == SelectedCogs.Name));
                     EndingInv = new ObservableCollection<InventoryItem>(_endingInvList.Where(x => x.Category == SelectedCogs.Name));
                 }
-                if (_purchaseItemsCatDict.ContainsKey(SelectedCogs.Name))
-                    RecOrders = new ObservableCollection<PurchaseOrder>(_purchaseItemsCatDict[SelectedCogs.Name].Item1);
-                else
-                    RecOrders = new ObservableCollection<PurchaseOrder>();
+
+                RecOrders = new ObservableCollection<CatPO>(_catPoList.Where(x => x.Category == SelectedCogs.Name));
             }
         }
 
         #endregion
-
-        private Dictionary<string, Tuple<List<PurchaseOrder>, List<InventoryItem>>> GetPurchasedByCategory(List<PurchaseOrder> orders)
-        {
-            Dictionary<string, Tuple<List<PurchaseOrder>, List<InventoryItem>>> purchaseDict = new Dictionary<string, Tuple<List<PurchaseOrder>, List<InventoryItem>>>();
-
-            purchaseDict["Total"] = new Tuple<List<PurchaseOrder>, List<InventoryItem>>(orders, new List<InventoryItem>());
-            purchaseDict["Food Total"] = new Tuple<List<PurchaseOrder>, List<InventoryItem>>(new List<PurchaseOrder>(), new List<InventoryItem>());
-            foreach (PurchaseOrder order in orders)
-            {
-                foreach (InventoryItem item in order.GetReceivedPOItems())
-                {
-                    if (!purchaseDict.ContainsKey(item.Category))
-                        purchaseDict[item.Category] = new Tuple<List<PurchaseOrder>, List<InventoryItem>>(new List<PurchaseOrder>() { order }, new List<InventoryItem>());
-                    if (!purchaseDict[item.Category].Item1.Contains(order))
-                        purchaseDict[item.Category].Item1.Add(order);
-
-                    if(Properties.Settings.Default.FoodCategories.Contains(item.Category))
-                    {
-                        if (!purchaseDict["Food Total"].Item1.Contains(order))
-                            purchaseDict["Food Total"].Item1.Add(order);
-                        purchaseDict["Food Total"].Item2.Add(item);
-                    }
-
-                    purchaseDict["Total"].Item2.Add(item);
-                    purchaseDict[item.Category].Item2.Add(item);
-                }
-            }
-
-            return purchaseDict;
-        }
 
         private List<InventoryItem> GetFoodInv(List<InventoryItem> invList)
         {
@@ -413,6 +303,7 @@ namespace BuddhaBowls
         public float StartInv { get; set; }
         public float EndInv { get; set; }
         public float Purchases { get; set; }
+        public float Useage { get; set; }
         public float CogsCost
         {
             get
@@ -427,6 +318,69 @@ namespace BuddhaBowls
             StartInv = startInv.Sum(x => x.PriceExtension);
             EndInv = endInv.Sum(x => x.PriceExtension);
             Purchases = purchased.Sum(x => x.PurchaseExtension);
+            Useage = startInv.Sum(x => x.Count) + purchased.Sum(x => x.LastOrderAmount * x.Conversion) - endInv.Sum(x => x.Count);
+        }
+    }
+
+    public class CatPO
+    {
+        private PurchaseOrder _po;
+
+        public int Id
+        {
+            get
+            {
+                return _po.Id;
+            }
+        }
+
+        public DateTime? ReceivedDate
+        {
+            get
+            {
+                return _po.ReceivedDate;
+            }
+        }
+
+        public float TotalCost
+        {
+            get
+            {
+                return _po.TotalCost;
+            }
+        }
+
+        public List<InventoryItem> InvItems
+        {
+            get
+            {
+                return GetCategoryItems().ToList();
+            }
+        }
+
+        public string Category { get; set; }
+
+        public CatPO(PurchaseOrder po, string categoryName)
+        {
+            _po = po;
+            Category = categoryName;
+        }
+
+        private IEnumerable<InventoryItem> GetCategoryItems()
+        {
+            foreach (InventoryItem item in _po.GetReceivedPOItems())
+            {
+                if (Category == item.Category || Category == "Total" ||
+                    (Category == "Food Total" && Properties.Settings.Default.FoodCategories.Contains(item.Category)))
+                {
+                    yield return item;
+                }
+            }
+        }
+
+        public PurchaseOrder GetPO()
+        {
+            return _po;
         }
     }
 }

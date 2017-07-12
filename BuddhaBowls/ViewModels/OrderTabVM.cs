@@ -60,9 +60,10 @@ namespace BuddhaBowls
             set
             {
                 _selectedOpenOrder = value;
-                SelectedReceivedOrder = null;
+                _selectedReceivedOrder = null;
 
                 NotifyPropertyChanged("SelectedOpenOrder");
+                NotifyPropertyChanged("SelectedReceivedOrder");
             }
         }
 
@@ -77,12 +78,10 @@ namespace BuddhaBowls
             {
                 _selectedReceivedOrder = value;
 
-                SelectedOpenOrder = null;
+                _selectedOpenOrder = null;
 
                 NotifyPropertyChanged("SelectedOpenOrder");
                 NotifyPropertyChanged("SelectedReceivedOrder");
-
-                //ChangeOrderStats();
             }
         }
 
