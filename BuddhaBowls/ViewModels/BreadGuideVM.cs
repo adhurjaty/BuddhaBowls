@@ -131,6 +131,15 @@ namespace BuddhaBowls
             BreadOrderList[idx].UpdateProperties();
             if (idx > 0)
                 BreadOrderList[idx - 1].UpdateProperties();
+
+            List<InventoryItem> breads = _models.InventoryItems.Where(x => x.Category == "Bread").ToList();
+            foreach (InventoryItem item in breads)
+            {
+                BreadDescriptor bread = BreadOrderList.First(x => x.Date.Date == DateTime.Today).BreadDescDict[item.Name];
+                InventoryItem newItem = item;
+                newItem.Count = bread.BeginInventory + bread.FreezerCount;
+                _models.AddUpdateInventoryItem(ref newItem);
+            }
         }
 
         public void ChangeBreadWeek(PeriodMarker period, WeekMarker week)
