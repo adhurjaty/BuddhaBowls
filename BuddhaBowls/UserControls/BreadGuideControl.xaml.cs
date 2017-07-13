@@ -104,15 +104,11 @@ namespace BuddhaBowls.UserControls
                                                     TextAlignment = TextAlignment.Center };
                     Binding b = new Binding(string.Format("BreadOrderList[{0}]." + _topHeaders[j], i));
                     b.Source = DataContext;
-                    b.StringFormat = "c";
                     BindingOperations.SetBinding(t, TextBlock.TextProperty, b);
                     Grid.SetRow(t, j);
                     Grid.SetColumn(t, i + 1);
-                    if (_topHeaders[j] != "GrossSales")
-                    {
-                        t.MouseLeftButtonUp += T_EditValue;
-                        t.Tag = "CanEdit";
-                    }
+                    t.MouseLeftButtonUp += T_EditValue;
+                    t.Tag = "CanEdit";
                     bread_grid.Children.Add(t);
                 }
             }
