@@ -9,8 +9,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
-            <RowDefinition Height="210" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="1*" MaxHeight="210" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <local:PeriodSelectorControl Grid.Row="0" DataContext="{Binding PeriodSelector}" VerticalAlignment="Center" Margin="0,2,0,2"/>
         <Border Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Black" BorderThickness="1" />
@@ -23,7 +23,7 @@
                 <DataGridTextColumn Header="Start Inv" Binding="{Binding Path=StartInv, Mode=OneWay, StringFormat=c}" Width="1*" />
                 <DataGridTextColumn Header="Rec Purchases" Binding="{Binding Path=Purchases, Mode=OneWay, StringFormat=c}" Width="1*" />
                 <DataGridTextColumn Header="End Inv" Binding="{Binding Path=EndInv, Mode=OneWay, StringFormat=c}" Width="1*" />
-                <DataGridTextColumn Header="Useage" Binding="{Binding Path=Useage, Mode=OneWay}" Width="60" />
+                <DataGridTextColumn Header="Useage" Binding="{Binding Path=Useage, Mode=OneWay, StringFormat=0.##}" Width="70" />
                 <DataGridTextColumn Header="COGS Cost" Binding="{Binding Path=CogsCost, StringFormat=c}" IsReadOnly="True" Width="2*" />
             </DataGrid.Columns>
         </DataGrid>

@@ -183,6 +183,18 @@ namespace BuddhaBowls.Services
                                                                            .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
+        public IEnumerable<InventoryItem> GetBreadWeekOrders(WeekMarker week)
+        {
+            foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeek(week).Where(x => x.BreadDescDict != null)
+                                                                                        .SelectMany(x => x.BreadDescDict.ToList()))
+            {
+                InventoryItem item = InventoryItems.First(x => x.Name == descKvp.Key).Copy<InventoryItem>();
+                item.LastOrderAmount = descKvp.Value.Delivery;
+                yield return item;
+            }
+            //return GetBreadWeek(week).Sum(x => x.BreadDescDict.Sum(y => y.Value.Delivery * InventoryItems.First(z => z.Name == y.Key).LastPurchasedPrice));
+        }
+
         /// <summary>
         /// Add or update an inventory item - adds or updates db and the item within the model container
         /// </summary>
@@ -571,8 +583,19 @@ namespace BuddhaBowls.Services
             List<PeriodMarker> periods = GetPeriodLabels().ToList();
             if(periods != null && periods.Count > 0)
             {
-                return GetWeekLabels(periods.First(x => x.StartDate < DateTime.Now && DateTime.Now <= x.EndDate).Period)
-                                            .First(x => x.StartDate < DateTime.Now && DateTime.Now <= x.EndDate);
+                return GetWeekLabels(periods.First(x => x.StartDate <= DateTime.Now && DateTime.Now <= x.EndDate).Period)
+                                            .First(x => x.StartDate <= DateTime.Now && DateTime.Now <= x.EndDate);
+            }
+            return null;
+        }
+
+        public WeekMarker GetWeek(DateTime date)
+        {
+            List<PeriodMarker> periods = GetPeriodLabels().ToList();
+            if (periods != null && periods.Count > 0)
+            {
+                return GetWeekLabels(periods.First(x => x.StartDate <= date && date <= x.EndDate).Period)
+                                            .First(x => x.StartDate <= date && date <= x.EndDate);
             }
             return null;
         }

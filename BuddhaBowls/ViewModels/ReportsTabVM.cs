@@ -158,7 +158,7 @@ namespace BuddhaBowls
             CalculateCogs(week);
         }
 
-        private void CalculateCogs(WeekMarker week)
+        public void CalculateCogs(WeekMarker week)
         {
             List<Inventory> inventoryList = _models.Inventories.OrderByDescending(x => x.Date).ToList();
             List<Inventory> periodInvList = inventoryList.Where(x => week.StartDate <= x.Date && x.Date <= week.EndDate).ToList();
@@ -199,8 +199,15 @@ namespace BuddhaBowls
 
                         if (startGroup != null && endGroup != null)
                         {
-                            CategoryList.Add(new CogsCategory(category, startGroup.ToList(), endGroup.ToList(),
-                                                _catPoList.Where(x => x.Category == category).SelectMany(x => x.InvItems).ToList()));
+                            if (category == "Bread")
+                            {
+                                CategoryList.Add(new CogsCategory(category, startGroup.ToList(), endGroup.ToList(), _models.GetBreadWeekOrders(week).ToList()));
+                            }
+                            else
+                            {
+                                CategoryList.Add(new CogsCategory(category, startGroup.ToList(), endGroup.ToList(),
+                                                    _catPoList.Where(x => x.Category == category).SelectMany(x => x.InvItems).ToList()));
+                            }
                         }
 
                         if(category == "Food Total")

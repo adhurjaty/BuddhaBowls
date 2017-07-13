@@ -177,6 +177,27 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("ModalContext");
             }
         }
+
+        private bool _reportsSelected;
+        public bool ReportsSelected
+        {
+            get
+            {
+                return _reportsSelected;
+            }
+            set
+            {
+                _reportsSelected = value;
+                NotifyPropertyChanged("ReportsSelected");
+
+                if (_reportsSelected)
+                {
+                    // re-calculate COGS when report tab is selected
+                    ReportTab.CalculateCogs(ReportTab.PeriodSelector.SelectedWeek);
+                }
+            }
+        }
+
         #endregion
 
         #region ICommand Bindings and Can Execute
