@@ -9,6 +9,7 @@ using System;
 namespace BuddhaBowls
 {
     public delegate void BreakdownSelectionChanged();
+    public delegate void BreakdownUpdate(InventoryItem item);
 
     /// <summary>
     /// VM for a part of the View Order tab. Handles all of the things that an individual order breakdown needs
@@ -151,6 +152,7 @@ namespace BuddhaBowls
         //{
         //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         //}
+        private BreakdownUpdate OnValueChanged;
 
         public string Background { get; set; }
         public string Category { get; set; }
@@ -203,11 +205,14 @@ namespace BuddhaBowls
         {
             Items = new ObservableCollection<InventoryItem>(items);
             Category = Items.First().Category;
+
         }
 
-        public BreakdownCategoryItem(IEnumerable<InventoryItem> items, bool readOnly) : this(items)
+        public BreakdownCategoryItem(IEnumerable<InventoryItem> items, BreakdownUpdate valueChanged, bool readOnly) : this(items)
         {
             IsReadOnly = readOnly;
+            if(!readOnly)
+                OnValueChanged = valueChanged;
         }
 
         public void UpdateOrderItem(InventoryItem item)
@@ -215,20 +220,10 @@ namespace BuddhaBowls
             NotifyPropertyChanged("TotalAmount");
             NotifyPropertyChanged("Items");
 
-            _models.AddUpdateInventoryItem(ref item);
-            if (OrderVendor != null)
-            {
-                OrderVendor.Update(item);
-                VendorInventoryItem vItem = _models.VendorInvItems.FirstOrDefault(x => x.Id == item.Id);
-                if (vItem == null)
-                {
-                    // I guess do nothing
-                }
-                else
-                {
-                    vItem.SetVendorItem(OrderVendor, item);
-                }
-            }
+            if (OnValueChanged == null)
+                throw new Exception("Value was able to be edited when BreakdownCategoryItem was read-only");
+
+            OnValueChanged(item);
         }
     }
 }

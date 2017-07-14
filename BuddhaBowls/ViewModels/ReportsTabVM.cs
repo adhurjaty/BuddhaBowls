@@ -22,7 +22,6 @@ namespace BuddhaBowls
         private List<InventoryItem> _startInvList;
         private Inventory _endInventory;
         private List<InventoryItem> _endingInvList;
-        List<CatPO> _catPoList;
 
         #region Content Binders
 
@@ -70,63 +69,19 @@ namespace BuddhaBowls
             }
         }
 
-        private ObservableCollection<InventoryItem> _startInv;
-        public ObservableCollection<InventoryItem> StartInv
+        private ObservableCollection<CatItem> _catItems;
+        public ObservableCollection<CatItem> CatItems
         {
             get
             {
-                return _startInv;
+                return _catItems;
             }
             set
             {
-                _startInv = value;
-                NotifyPropertyChanged("StartInv");
+                _catItems = value;
+                NotifyPropertyChanged("CatItems");
             }
         }
-
-        private ObservableCollection<InventoryItem> _endingInv;
-        public ObservableCollection<InventoryItem> EndingInv
-        {
-            get
-            {
-                return _endingInv;
-            }
-            set
-            {
-                _endingInv = value;
-                NotifyPropertyChanged("EndingInv");
-            }
-        }
-
-        private ObservableCollection<CatPO> _recOrders;
-        public ObservableCollection<CatPO> RecOrders
-        {
-            get
-            {
-                return _recOrders;
-            }
-            set
-            {
-                _recOrders = value;
-                NotifyPropertyChanged("RecOrders");
-            }
-        }
-
-        //private PurchaseOrder _selectedOrder;
-        //public PurchaseOrder SelectedOrder
-        //{
-        //    get
-        //    {
-        //        return _selectedOrder;
-        //    }
-        //    set
-        //    {
-        //        _selectedOrder = value;
-        //        NotifyPropertyChanged("SelectedOrder");
-
-        //        SetReceivedDetails();
-        //    }
-        //}
 
         #endregion
 
@@ -163,7 +118,6 @@ namespace BuddhaBowls
             List<Inventory> inventoryList = _models.Inventories.OrderByDescending(x => x.Date).ToList();
             List<Inventory> periodInvList = inventoryList.Where(x => week.StartDate <= x.Date && x.Date <= week.EndDate).ToList();
             _endInventory = inventoryList.FirstOrDefault(x => x.Date <= week.EndDate);
-            _catPoList = new List<CatPO>();
 
             if (periodInvList.Count == 0)
                 periodInvList.Add(_endInventory);
@@ -184,39 +138,35 @@ namespace BuddhaBowls
 
                     List<PurchaseOrder> recOrdersList = _models.PurchaseOrders.Where(x => x.ReceivedDate >= week.StartDate && 
                                                                     x.ReceivedDate <= week.EndDate.Date.AddDays(1)).ToList();
-                    //_purchaseItemsCatDict = GetPurchasedByCategory(recOrdersList);
-                    foreach (string category in _models.GetInventoryCategories().Concat(new List<string>() { "Food Total", "Total" }))
+                    List<InventoryItem> recPurchasedItems = GetItemsFromPurchases(recOrdersList);
+
+                    CogsCategory totalCogs = new CogsCategory("Total", _startInvList, _endingInvList, recPurchasedItems);
+                    foreach (string category in _models.GetInventoryCategories().Concat(new List<string> { "Food Total" }))
                     {
                         IGrouping<string, InventoryItem> startGroup = startItems.FirstOrDefault(x => x.Key == category);
                         IGrouping<string, InventoryItem> endGroup = endItems.FirstOrDefault(x => x.Key == category);
-
-                        foreach (PurchaseOrder po in recOrdersList)
-                        {
-                            CatPO c = new CatPO(po, category);
-                            if (c.InvItems.Count > 0)
-                                _catPoList.Add(c);
-                        }
 
                         if (startGroup != null && endGroup != null)
                         {
                             if (category == "Bread")
                             {
-                                CategoryList.Add(new CogsCategory(category, startGroup.ToList(), endGroup.ToList(), _models.GetBreadWeekOrders(week).ToList()));
+                                CategoryList.Add(new CogsCategory(category, startGroup.ToList(), endGroup.ToList(),
+                                                    _models.GetBreadWeekOrders(week).ToList(), totalCogs.CogsCost));
                             }
                             else
                             {
                                 CategoryList.Add(new CogsCategory(category, startGroup.ToList(), endGroup.ToList(),
-                                                    _catPoList.Where(x => x.Category == category).SelectMany(x => x.InvItems).ToList()));
+                                                                  recPurchasedItems.Where(x => x.Category == category).ToList(),
+                                                                  totalCogs.CogsCost));
                             }
                         }
 
                         if(category == "Food Total")
                             CategoryList.Add(new CogsCategory(category, GetFoodInv(_startInvList), GetFoodInv(_endingInvList),
-                                                              _catPoList.Where(x => x.Category == category).SelectMany(x => x.InvItems).ToList()));
-                        if (category == "Total")
-                            CategoryList.Add(new CogsCategory(category, _startInvList, _endingInvList,
-                                                              _catPoList.Where(x => x.Category == category).SelectMany(x => x.InvItems).ToList()));
+                                                              recPurchasedItems.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Category)).ToList(),
+                                                              totalCogs.CogsCost));
                     }
+                    CategoryList.Add(totalCogs);
                 }
             }
         }
@@ -256,23 +206,24 @@ namespace BuddhaBowls
             else
             {
                 CogInfoVisibility = Visibility.Visible;
-                if (SelectedCogs.Name == "Total")
-                {
-                    StartInv = new ObservableCollection<InventoryItem>(_startInvList);
-                    EndingInv = new ObservableCollection<InventoryItem>(_endingInvList);
-                }
-                else if(SelectedCogs.Name == "Food Total")
-                {
-                    StartInv = new ObservableCollection<InventoryItem>(_startInvList.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Category)));
-                    EndingInv = new ObservableCollection<InventoryItem>(_endingInvList.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Category)));
-                }
-                else
-                { 
-                    StartInv = new ObservableCollection<InventoryItem>(_startInvList.Where(x => x.Category == SelectedCogs.Name));
-                    EndingInv = new ObservableCollection<InventoryItem>(_endingInvList.Where(x => x.Category == SelectedCogs.Name));
-                }
+                CatItems = new ObservableCollection<CatItem>(SelectedCogs.CatItems);
+                //if (SelectedCogs.Name == "Total")
+                //{
+                //    StartInv = new ObservableCollection<InventoryItem>(_startInvList);
+                //    EndingInv = new ObservableCollection<InventoryItem>(_endingInvList);
+                //}
+                //else if(SelectedCogs.Name == "Food Total")
+                //{
+                //    StartInv = new ObservableCollection<InventoryItem>(_startInvList.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Category)));
+                //    EndingInv = new ObservableCollection<InventoryItem>(_endingInvList.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Category)));
+                //}
+                //else
+                //{ 
+                //    StartInv = new ObservableCollection<InventoryItem>(_startInvList.Where(x => x.Category == SelectedCogs.Name));
+                //    EndingInv = new ObservableCollection<InventoryItem>(_endingInvList.Where(x => x.Category == SelectedCogs.Name));
+                //}
 
-                RecOrders = new ObservableCollection<CatPO>(_catPoList.Where(x => x.Category == SelectedCogs.Name));
+                //RecOrders = new ObservableCollection<CatPO>(_catPoList.Where(x => x.Category == SelectedCogs.Name));
             }
         }
 
@@ -302,6 +253,28 @@ namespace BuddhaBowls
                     break;
             }
         }
+
+        private List<InventoryItem> GetItemsFromPurchases(List<PurchaseOrder> orders)
+        {
+            Dictionary<int, InventoryItem> invDict = new Dictionary<int, InventoryItem>();
+
+            foreach (PurchaseOrder order in orders)
+            {
+                foreach (InventoryItem item in order.GetReceivedPOItems())
+                {
+                    if(invDict.ContainsKey(item.Id))
+                    {
+                        invDict[item.Id].LastOrderAmount += item.LastOrderAmount;
+                    }
+                    else
+                    {
+                        invDict[item.Id] = item;
+                    }
+                }
+            }
+
+            return invDict.Values.ToList();
+        }
     }
 
     public class CogsCategory
@@ -310,7 +283,7 @@ namespace BuddhaBowls
         public float StartInv { get; set; }
         public float EndInv { get; set; }
         public float Purchases { get; set; }
-        public float Useage { get; set; }
+        public float CatPercent { get; set; } = 1;
         public float CogsCost
         {
             get
@@ -318,6 +291,7 @@ namespace BuddhaBowls
                 return StartInv + Purchases - EndInv;
             }
         }
+        public List<CatItem> CatItems { get; set; }
 
         public CogsCategory(string category, List<InventoryItem> startInv, List<InventoryItem> endInv, List<InventoryItem> purchased)
         {
@@ -325,69 +299,46 @@ namespace BuddhaBowls
             StartInv = startInv.Sum(x => x.PriceExtension);
             EndInv = endInv.Sum(x => x.PriceExtension);
             Purchases = purchased.Sum(x => x.PurchaseExtension);
-            Useage = startInv.Sum(x => x.Count) + purchased.Sum(x => x.LastOrderAmount * x.Conversion) - endInv.Sum(x => x.Count);
+            CatItems = startInv.Select(x => new CatItem(x.Name, x, endInv.FirstOrDefault(y => y.Name == x.Name),
+                                                        purchased.FirstOrDefault(y => y.Name == x.Name))).ToList();
+            //Useage = startInv.Sum(x => x.Count) + purchased.Sum(x => x.LastOrderAmount * x.Conversion) - endInv.Sum(x => x.Count);
+        }
+
+        public CogsCategory(string category, List<InventoryItem> startInv, List<InventoryItem> endInv, List<InventoryItem> purchased,
+                            float totalCogs) : this(category, startInv, endInv, purchased)
+        {
+            if (totalCogs == 0)
+                throw new ArgumentException("Cannto have 0 total COGS cost");
+            CatPercent = CogsCost / totalCogs;
         }
     }
 
-    public class CatPO
+    public class CatItem
     {
-        private PurchaseOrder _po;
+        public string Name { get; set; }
+        public float StartCount { get; set; }
+        public float StartValue { get; set; }
+        public float RecCount { get; set; }
+        public float RecValue { get; set; }
+        public float EndCount { get; set; }
+        public float EndValue { get; set; }
 
-        public int Id
+        public CatItem(string name, InventoryItem startItem, InventoryItem endItem, InventoryItem purchasedItem)
         {
-            get
+            Name = name;
+            StartCount = startItem.Count;
+            StartValue = startItem.PriceExtension;
+
+            if (endItem != null)
             {
-                return _po.Id;
+                EndCount = endItem.Count;
+                EndValue = endItem.PriceExtension;
             }
-        }
-
-        public DateTime? ReceivedDate
-        {
-            get
+            if (purchasedItem != null)
             {
-                return _po.ReceivedDate;
+                RecCount = purchasedItem.LastOrderAmount * purchasedItem.Conversion;
+                RecValue = purchasedItem.PurchaseExtension;
             }
-        }
-
-        public float TotalCost
-        {
-            get
-            {
-                return _po.TotalCost;
-            }
-        }
-
-        public List<InventoryItem> InvItems
-        {
-            get
-            {
-                return GetCategoryItems().ToList();
-            }
-        }
-
-        public string Category { get; set; }
-
-        public CatPO(PurchaseOrder po, string categoryName)
-        {
-            _po = po;
-            Category = categoryName;
-        }
-
-        private IEnumerable<InventoryItem> GetCategoryItems()
-        {
-            foreach (InventoryItem item in _po.GetReceivedPOItems())
-            {
-                if (Category == item.Category || Category == "Total" ||
-                    (Category == "Food Total" && Properties.Settings.Default.FoodCategories.Contains(item.Category)))
-                {
-                    yield return item;
-                }
-            }
-        }
-
-        public PurchaseOrder GetPO()
-        {
-            return _po;
         }
     }
 }

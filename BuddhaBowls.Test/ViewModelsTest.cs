@@ -551,10 +551,15 @@ namespace BuddhaBowls.Test
 
             orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
             PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
-
+            
             try
             {
-                orderTab.ViewOpenOrderCommand.Execute(null);
+                newOrder.ReceivedCheck = true;
+                orderTab.ReceivedOrdersCommand.Execute(null);
+
+                orderTab.SelectedReceivedOrder = newOrder;
+
+                orderTab.ViewReceivedOrderCommand.Execute(null);
                 ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
                 OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
                 List<InventoryItem> receivedItems = breakdownContext.GetInventoryItems();
@@ -570,78 +575,46 @@ namespace BuddhaBowls.Test
             }
         }
 
-        //[TestMethod]
-        //public void PartialReceiveOrderTest()
-        //{
-        //    OrderTabVM orderTab = CreateTestOrder();
+        [TestMethod]
+        public void EditReceivedOrderTest()
+        {
+            OrderTabVM orderTab = CreateTestOrder();
 
-        //    orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
-        //    PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
+            orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
+            PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
 
-        //    try
-        //    {
-        //        orderTab.ViewOpenOrderCommand.Execute(null);
-        //        ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
-        //        OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
+            try
+            {
+                newOrder.ReceivedCheck = true;
+                orderTab.ReceivedOrdersCommand.Execute(null);
 
-        //        SelectInBreakdown("Artichoke Hearts", ref breakdownContext);
-        //        viewOrderTab.MoveToReceivedCommand.Execute(null);
-        //        SelectInBreakdown("Avocado", ref breakdownContext);
-        //        viewOrderTab.MoveToReceivedCommand.Execute(null);
-        //        viewOrderTab.SaveCommand.Execute(null);
+                orderTab.SelectedReceivedOrder = newOrder;
 
-        //        Assert.IsTrue(newOrder.IsPartial);
-        //        CollectionAssert.Contains(orderTab.OpenOrders, newOrder);
-        //        CollectionAssert.Contains(orderTab.ReceivedOrders, newOrder);
+                orderTab.ViewReceivedOrderCommand.Execute(null);
+                ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
+                OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
 
-        //        orderTab.SelectedOpenOrder = newOrder;
-        //        Assert.AreEqual(newOrder, orderTab.SelectedReceivedOrder);
-        //    }
-        //    finally
-        //    {
-        //        newOrder.Destroy();
-        //    }
-        //}
+                BreakdownCategoryItem bdItem = breakdownContext.BreakdownList.First(x => x.Items.Select(y => y.Name).Contains("Vanilla"));
+                InventoryItem item = bdItem.Items.First(x => x.Name == "Vanilla");
+                item.LastOrderAmount = 69f;
+                bdItem.UpdateOrderItem(item);
+                
+                viewOrderTab.SaveCommand.Execute(null);
 
-        //[TestMethod]
-        //public void ViewPartialReceiveOrderTest()
-        //{
-        //    OrderTabVM orderTab = CreateTestOrder();
+                orderTab.SelectedReceivedOrder = newOrder;
+                orderTab.ViewReceivedOrderCommand.Execute(null);
+                viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
 
-        //    orderTab.SelectedOpenOrder = orderTab.OpenOrders.FirstOrDefault(x => x.OrderDate == DateTime.Today);
-        //    PurchaseOrder newOrder = orderTab.SelectedOpenOrder;
+                InventoryItem editedItem = viewOrderTab.BreakdownContext.BreakdownList.Select(x => x.Items.FirstOrDefault(y => y.Name == "Vanilla"))
+                                                                                                    .Where(x => x != null).First();
 
-        //    try
-        //    {
-        //        orderTab.ViewOpenOrderCommand.Execute(null);
-        //        ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
-        //        OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
-
-        //        SelectInBreakdown("Artichoke Hearts", ref breakdownContext);
-        //        viewOrderTab.MoveToReceivedCommand.Execute(null);
-        //        SelectInBreakdown("Avocado", ref breakdownContext);
-        //        viewOrderTab.MoveToReceivedCommand.Execute(null);
-        //        viewOrderTab.SaveCommand.Execute(null);
-
-        //        orderTab.SelectedOpenOrder = newOrder;
-        //        orderTab.ViewOpenOrderCommand.Execute(null);
-
-        //        breakdownContext = viewOrderTab.BreakdownContext;
-        //        List<InventoryItem> openItems = breakdownContext.GetInventoryItems();
-        //        Assert.AreEqual(1, openItems.Count);
-        //        Assert.AreEqual("Vanilla", openItems[0].Name);
-
-        //        breakdownContext = viewOrderTab.BreakdownContext;
-        //        List<InventoryItem> receivedItems = breakdownContext.GetInventoryItems();
-        //        Assert.AreEqual(2, receivedItems.Count);
-        //        Assert.AreEqual("Artichoke Hearts", receivedItems[0].Name);
-        //        Assert.AreEqual("Avocado", receivedItems[1].Name);
-        //    }
-        //    finally
-        //    {
-        //        newOrder.Destroy();
-        //    }
-        //}
+                Assert.AreEqual(69f, editedItem.LastOrderAmount);
+            }
+            finally
+            {
+                newOrder.Destroy();
+            }
+        }
 
         #endregion
 

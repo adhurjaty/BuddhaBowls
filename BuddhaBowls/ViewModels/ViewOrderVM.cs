@@ -135,7 +135,7 @@ namespace BuddhaBowls
                     IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
                     if (items.Count() > 0)
                     {
-                        BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items, false);
+                        BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items, OrderEdited, false);
                         bdItem.Background = _models.GetCategoryColorHex(category);
                         bdItem.OrderVendor = _models.Vendors.FirstOrDefault(x => x.Name == _order.VendorName);
                         breakdown.Add(bdItem);
@@ -145,6 +145,28 @@ namespace BuddhaBowls
             }
 
             return breakdown;
+        }
+
+        private void OrderEdited(InventoryItem item)
+        {
+            _order.UpdateItem(item);
+
+            // check whether the item being edited is the latest order from this vendor. If so, then change the properties of the current
+            // inventory item (last order price, last order qty...)
+            PurchaseOrder latestOrderFromVendor = _models.PurchaseOrders.Where(x => x.VendorName == _order.VendorName)
+                                                                        .OrderByDescending(x => x.OrderDate).First();
+            if (latestOrderFromVendor.Id == _order.Id)
+            {
+                Vendor vend = _models.Vendors.First(x => x.Name == _order.VendorName);
+                _models.AddUpdateInventoryItem(ref item);
+                
+                vend.Update(item);
+                VendorInventoryItem vItem = _models.VendorInvItems.FirstOrDefault(x => x.Id == item.Id);
+                if (vItem != null)
+                {
+                    vItem.SetVendorItem(vend, item);
+                }
+            }
         }
     }
 }

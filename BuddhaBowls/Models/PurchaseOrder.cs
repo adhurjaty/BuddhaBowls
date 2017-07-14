@@ -125,6 +125,8 @@ namespace BuddhaBowls.Models
             return GetReceivedPOItems().Sum(x => x.PurchaseExtension);
         }
 
+
+
         public Dictionary<string, float> GetCategoryCosts()
         {
             Dictionary<string, float> catCosts = GetReceivedPOItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.Sum(y => y.PurchaseExtension));
@@ -132,6 +134,15 @@ namespace BuddhaBowls.Models
             catCosts["Food Total"] = catCosts.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key)).Sum(x => x.Value);
             catCosts["Total"] = total;
             return catCosts;
+        }
+
+        public void UpdateItem(InventoryItem item)
+        {
+            List<InventoryItem> invItems = Received ? GetReceivedPOItems() : GetOpenPOItems();
+            int idx = invItems.FindIndex(x => x.Id == item.Id);
+            invItems[idx] = item;
+
+            ModelHelper.CreateTable(invItems, GetOrderTableName());
         }
 
         public string GetPOPath()
@@ -143,18 +154,6 @@ namespace BuddhaBowls.Models
         public string GetOrderPath()
         {
             return Path.Combine(Properties.Settings.Default.DBLocation, GetOrderTableName() + ".csv");
-        }
-
-        public string[] GetPartialOrderPaths()
-        {
-            List<string> paths = new List<string>();
-            string[] tables = new string[] { GetOpenPartialOrderTableName(), GetReceivedPartialOrderTableName() };
-            foreach (string table in tables)
-            {
-                paths.Add(Path.Combine(Properties.Settings.Default.DBLocation, table + ".csv"));
-            }
-
-            return paths.ToArray();
         }
 
         private string GetOrderTableName()

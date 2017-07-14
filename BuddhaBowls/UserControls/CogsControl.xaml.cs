@@ -31,22 +31,22 @@ namespace BuddhaBowls.UserControls
             DataContext = context;
         }
 
-        private void recOrders_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            e.Handled = true;
-            PurchaseOrder order = ((CatPO)((DataGrid)sender).SelectedItem).GetPO();
-            ((ReportsTabVM)DataContext).RecOrderDouleClicked(order);
-        }
+        //private void recOrders_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        //{
+        //    e.Handled = true;
+        //    PurchaseOrder order = ((CatPO)((DataGrid)sender).SelectedItem).GetPO();
+        //    ((ReportsTabVM)DataContext).RecOrderDouleClicked(order);
+        //}
 
-        private void Expander_Clicked(object sender, RoutedEventArgs e)
-        {
-            for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
-                if (vis is DataGridRow)
-                {
-                    var row = (DataGridRow)vis;
-                    row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-                    break;
-                }
-        }
+        //private void Expander_Clicked(object sender, RoutedEventArgs e)
+        //{
+        //    for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
+        //        if (vis is DataGridRow)
+        //        {
+        //            var row = (DataGridRow)vis;
+        //            row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+        //            break;
+        //        }
+        //}
     }
 }
