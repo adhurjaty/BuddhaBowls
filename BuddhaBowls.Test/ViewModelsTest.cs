@@ -175,9 +175,7 @@ namespace BuddhaBowls.Test
                 editInvVM.InventoryDate = invDate.AddDays(-1);
                 editInvVM.SaveCountCommand.Execute(null);
 
-                // this assert fails and I'm not sure how I want to handle if a user wants to change the date on edit
-                // should I create a new inventory or edit the existing one?
-                //Assert.AreEqual(invDate.AddDays(-1), tabVM.InventoryList[0].Date);
+                Assert.AreEqual(invDate.AddDays(-1), tabVM.InventoryList[0].Date);
                 Assert.AreEqual(0, TempTabVM.TabStack.Count);
                 Assert.AreEqual(initInvCount, tabVM.InventoryList.Count);
             }

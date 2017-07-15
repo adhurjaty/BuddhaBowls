@@ -112,16 +112,22 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void SaveNewInventory(object obj)
         {
-            InvListVM.SaveNew(InventoryDate);
+            if (CheckUniqueInvDate())
+            {
+                InvListVM.SaveNew(InventoryDate);
 
-            ParentContext.Refresh();
-            Close();
+                ParentContext.Refresh();
+                Close();
+            }
         }
 
         private void SaveOldInventory(object obj)
         {
-            InvListVM.SaveOld();
-            Close();
+            if (CheckUniqueInvDate())
+            {
+                InvListVM.SaveOld(InventoryDate);
+                Close();
+            }
         }
 
         private void CancelInventory(object obj)
@@ -129,6 +135,19 @@ namespace BuddhaBowls
             Close();
         }
 
+        private bool CheckUniqueInvDate()
+        {
+            Inventory existingInv = _models.Inventories.FirstOrDefault(x => x.Date == InventoryDate);
+            if(existingInv != null)
+            {
+                if (MessageBox.Show("Inventory with that date already exists. Do you wish to replace it?", "Replace Inventory", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                    return false;
+                _models.Inventories.Remove(existingInv);
+                existingInv.Destroy();
+            }
+
+            return true;
+        }
         #endregion
 
         #region Initializers

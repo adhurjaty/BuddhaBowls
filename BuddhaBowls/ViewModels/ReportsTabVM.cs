@@ -308,8 +308,9 @@ namespace BuddhaBowls
                             float totalCogs) : this(category, startInv, endInv, purchased)
         {
             if (totalCogs == 0)
-                throw new ArgumentException("Cannto have 0 total COGS cost");
-            CatPercent = CogsCost / totalCogs;
+                CatPercent = 0;
+            else
+                CatPercent = CogsCost / totalCogs;
         }
     }
 

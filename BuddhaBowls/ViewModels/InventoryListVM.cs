@@ -586,8 +586,9 @@ namespace BuddhaBowls
             ParentContext.InventoryTab.InvListVM.UpdateInvValue();
         }
 
-        public void SaveOld()
+        public void SaveOld(DateTime invDate)
         {
+            _inventory.Date = invDate;
             _inventory.Update(_inventoryItems.Select(x => x.ToInventoryItem()).ToList());
         }
 
