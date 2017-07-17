@@ -129,16 +129,23 @@ namespace BuddhaBowls
         {
             BreadOrderList[idx].Update();
             BreadOrderList[idx].UpdateProperties();
+
+            ((BreadOrderTotal)BreadOrderList[7]).UpdateDetails();
+            BreadOrderList[7].UpdateProperties();
+
             if (idx > 0)
                 BreadOrderList[idx - 1].UpdateProperties();
 
             List<InventoryItem> breads = _models.InventoryItems.Where(x => x.Category == "Bread").ToList();
             foreach (InventoryItem item in breads)
             {
-                BreadDescriptor bread = BreadOrderList.First(x => x.Date.Date == DateTime.Today).BreadDescDict[item.Name];
-                InventoryItem newItem = item;
-                newItem.Count = bread.BeginInventory + bread.FreezerCount;
-                _models.AddUpdateInventoryItem(ref newItem);
+                BreadDescriptor bread = BreadOrderList.FirstOrDefault(x => x.Date == DateTime.Today).BreadDescDict[item.Name];
+                if (bread != null)
+                {
+                    InventoryItem newItem = item;
+                    newItem.Count = bread.BeginInventory + bread.FreezerCount;
+                    _models.AddUpdateInventoryItem(ref newItem);
+                }
             }
         }
 
@@ -160,7 +167,7 @@ namespace BuddhaBowls
         private void _worker_DoWork(object sender, DoWorkEventArgs e)
         {
             SquareService ss = new SquareService();
-            Parallel.ForEach(BreadOrderList.Where(x => x.Date < DateTime.Now), order =>
+            Parallel.ForEach(BreadOrderList.Take(7).Where(x => x.Date < DateTime.Now), order =>
             {
                 try
                 {
@@ -172,6 +179,7 @@ namespace BuddhaBowls
                     order.GrossSales = 0;
                 }
             });
+            ((BreadOrderTotal)BreadOrderList[7]).UpdateDetails();
         }
     }
 }

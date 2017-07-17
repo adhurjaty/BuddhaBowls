@@ -19,11 +19,11 @@
                   AutoGenerateColumns="False" CanUserSortColumns="False" CanUserAddRows="False" SelectedItem="{Binding SelectedCogs}"
                   Margin="1, 1, 1, 1">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Category" Binding="{Binding Name}" Width="2*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Category" Binding="{Binding Name}" Width="1*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Start Inv" Binding="{Binding Path=StartInv, Mode=OneWay, StringFormat=c}" Width="1*" />
                 <DataGridTextColumn Header="Rec Purchases" Binding="{Binding Path=Purchases, Mode=OneWay, StringFormat=c}" Width="1*" />
                 <DataGridTextColumn Header="End Inv" Binding="{Binding Path=EndInv, Mode=OneWay, StringFormat=c}" Width="1*" />
-                <DataGridTextColumn Header="COGS Cost" Binding="{Binding Path=CogsCost, StringFormat=c}" IsReadOnly="True" Width="2*" />
+                <DataGridTextColumn Header="COGS Cost" Binding="{Binding Path=CogsCost, StringFormat=c}" IsReadOnly="True" Width="1*" />
                 <DataGridTextColumn Header="Category %" Binding="{Binding Path=CatPercent, StringFormat=p}" IsReadOnly="True" Width="1*" />
             </DataGrid.Columns>
         </DataGrid>

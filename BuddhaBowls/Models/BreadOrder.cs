@@ -25,7 +25,7 @@ namespace BuddhaBowls.Models
         public DateTime Date { get; set; }
 
         private float _grossSales;
-        public float GrossSales
+        public virtual float GrossSales
         {
             get
             {
@@ -39,7 +39,7 @@ namespace BuddhaBowls.Models
         }
 
         private int _salesForecast;
-        public int SalesForecast
+        public virtual int SalesForecast
         {
             get
             {
@@ -67,7 +67,7 @@ namespace BuddhaBowls.Models
         }
 
         private Dictionary<string, BreadDescriptor> _breadDescDict;
-        public Dictionary<string, BreadDescriptor> BreadDescDict
+        public virtual Dictionary<string, BreadDescriptor> BreadDescDict
         {
             get
             {
@@ -228,7 +228,7 @@ namespace BuddhaBowls.Models
         }
 
         private int _beginInventory;
-        public int BeginInventory
+        public virtual int BeginInventory
         {
             get
             {
@@ -244,7 +244,7 @@ namespace BuddhaBowls.Models
         }
 
         public int _delivery;
-        public int Delivery
+        public virtual int Delivery
         {
             get
             {
@@ -260,7 +260,7 @@ namespace BuddhaBowls.Models
         }
 
         private int _backup;
-        public int Backup
+        public virtual int Backup
         {
             get
             {
@@ -278,7 +278,7 @@ namespace BuddhaBowls.Models
         }
 
         private int _freezerCount;
-        public int FreezerCount
+        public virtual int FreezerCount
         {
             get
             {
@@ -373,6 +373,8 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public BreadDescriptor() { }
+
         public BreadDescriptor(BreadOrder order)
         {
             _order = order;
@@ -419,6 +421,9 @@ namespace BuddhaBowls.Models
             NotifyPropertyChanged("Buffer");
             NotifyPropertyChanged("WalkIn");
             NotifyPropertyChanged("WalkInColor");
+            NotifyPropertyChanged("Delivery");
+            NotifyPropertyChanged("FreezerCount");
+            NotifyPropertyChanged("BeginInventory");
         }
 
         public override string[] GetPropertiesDB(string[] omit = null)

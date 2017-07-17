@@ -519,7 +519,7 @@ namespace BuddhaBowls.Services
         {
             BreadOrder[] breadWeek = new BreadOrder[8];
             List<BreadOrder> breadOrders = ModelHelper.InstantiateList<BreadOrder>("BreadOrder");
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 7; i++)
             {
                 BreadOrder bo = null;
                 if (breadOrders != null)
@@ -533,6 +533,10 @@ namespace BuddhaBowls.Services
                 if(i > 0 && breadWeek[i - 1] != null)
                     breadWeek[i - 1].NextBreadOrder = bo;
             }
+
+            BreadOrder[] tempBreadWeek = new BreadOrder[7];
+            Array.Copy(breadWeek, tempBreadWeek, 7);
+            breadWeek[7] = new BreadOrderTotal(ref tempBreadWeek);
 
             return breadWeek;
         }

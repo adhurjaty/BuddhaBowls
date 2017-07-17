@@ -61,7 +61,8 @@ namespace BuddhaBowls.UserControls
 
         private void SetDateGrid(BreadOrder[] breadWeek)
         {
-            for (int i = 0; i < breadWeek.Length; i++)
+            // don't set the date info for the total column
+            for (int i = 0; i < breadWeek.Length - 1; i++)
             {
                 TextBlock t = new TextBlock()
                 {
@@ -108,7 +109,8 @@ namespace BuddhaBowls.UserControls
                     BindingOperations.SetBinding(t, TextBlock.TextProperty, b);
                     Grid.SetRow(t, j);
                     Grid.SetColumn(t, i + 1);
-                    if (_topHeaders[j] != "GrossSales")
+                    // don't allow user to edit last column (total column)
+                    if (_topHeaders[j] != "GrossSales" && i != 7)
                     {
                         t.MouseLeftButtonUp += T_EditValue;
                         t.Tag = "CanEdit";
@@ -197,7 +199,8 @@ namespace BuddhaBowls.UserControls
                     Grid.SetRow(t, startRow + i);
                     Grid.SetColumn(t, col + 1);
 
-                    if(editable)
+                    // none of the 'Total' values from the last column are editable
+                    if(editable && col != 7)
                     {
                         Border bord = new Border()
                         {
@@ -221,7 +224,7 @@ namespace BuddhaBowls.UserControls
         {
             for (int i = date_grid.Children.Count - 1; i >= 0; i--)
             {
-                if (Grid.GetColumn(date_grid.Children[i]) > 0)
+                if (!(date_grid.Children[i].GetType() == typeof(Label) && (string)((Label)date_grid.Children[i]).Tag == "Static"))
                     date_grid.Children.RemoveAt(i);
             }
         }
