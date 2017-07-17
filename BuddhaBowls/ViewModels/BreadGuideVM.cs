@@ -139,9 +139,10 @@ namespace BuddhaBowls
             List<InventoryItem> breads = _models.InventoryItems.Where(x => x.Category == "Bread").ToList();
             foreach (InventoryItem item in breads)
             {
-                BreadDescriptor bread = BreadOrderList.FirstOrDefault(x => x.Date == DateTime.Today).BreadDescDict[item.Name];
-                if (bread != null)
+                BreadOrder bo = BreadOrderList.FirstOrDefault(x => x.Date == DateTime.Today);
+                if (bo != null && bo.BreadDescDict.ContainsKey(item.Name))
                 {
+                    BreadDescriptor bread = bo.BreadDescDict[item.Name];
                     InventoryItem newItem = item;
                     newItem.Count = bread.BeginInventory + bread.FreezerCount;
                     _models.AddUpdateInventoryItem(ref newItem);

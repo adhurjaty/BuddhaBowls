@@ -291,8 +291,8 @@ namespace BuddhaBowls.Models
             }
         }
 
-        private int _parFactor;
-        public int ParFactor
+        private float _parFactor;
+        public float ParFactor
         {
             get
             {
@@ -344,7 +344,7 @@ namespace BuddhaBowls.Models
             get
             {
                 if(_order != null)
-                    return _order.SalesForecast / ParFactor;
+                    return (int)(_order.SalesForecast / ParFactor);
                 return 1;
             }
         }

@@ -519,6 +519,7 @@ namespace BuddhaBowls.Services
         {
             BreadOrder[] breadWeek = new BreadOrder[8];
             List<BreadOrder> breadOrders = ModelHelper.InstantiateList<BreadOrder>("BreadOrder");
+
             for (int i = 0; i < 7; i++)
             {
                 BreadOrder bo = null;
@@ -529,9 +530,21 @@ namespace BuddhaBowls.Services
                     bo = new BreadOrder(week.StartDate.AddDays(i));
                     bo.Insert();
                 }
+
                 breadWeek[i] = bo;
                 if(i > 0 && breadWeek[i - 1] != null)
                     breadWeek[i - 1].NextBreadOrder = bo;
+            }
+
+            Dictionary<string, float> parFactors = GetParFactors(breadOrders);
+
+            for (int i = 0; i < 7; i++)
+            {
+                foreach (string breadType in parFactors.Keys)
+                {
+                    if (breadWeek[i].BreadDescDict != null && breadWeek[i].BreadDescDict.ContainsKey(breadType))
+                        breadWeek[i].BreadDescDict[breadType].ParFactor = parFactors[breadType];
+                }
             }
 
             BreadOrder[] tempBreadWeek = new BreadOrder[7];
@@ -549,6 +562,40 @@ namespace BuddhaBowls.Services
         private void SetBreadWeek()
         {
             BreadWeek = GetBreadWeek(GetThisWeek());
+        }
+
+        private Dictionary<string, float> GetParFactors(List<BreadOrder> breadOrders)
+        {
+            // calculate par using data from a month back
+            DateTime pastDate = DateTime.Today.AddDays(-30);
+            Dictionary<string, float> salesDict = new Dictionary<string, float>();
+            Dictionary<string, int> usageDict = new Dictionary<string, int>();
+
+            BreadOrder[] boArray = breadOrders.Where(x => x.Date >= pastDate).OrderBy(x => x.Date).ToArray();
+            for (int i = 0; i < boArray.Length - 1; i++)
+            {
+                BreadOrder bo = boArray[i];
+                bo.NextBreadOrder = boArray[i + 1];
+                if(bo.BreadDescDict != null && bo.GrossSales > 0)
+                {
+                    foreach (KeyValuePair<string, BreadDescriptor> kvp in bo.BreadDescDict)
+                    {
+                        if (!salesDict.ContainsKey(kvp.Key))
+                        {
+                            salesDict[kvp.Key] = 0;
+                            usageDict[kvp.Key] = 0;
+                        }
+
+                        if (kvp.Value.Useage > 0)
+                        {
+                            salesDict[kvp.Key] += bo.GrossSales;
+                            usageDict[kvp.Key] += kvp.Value.Useage;
+                        }
+                    }
+                }
+            }
+
+            return salesDict.ToDictionary(x => x.Key, x => usageDict[x.Key] > 0 ? x.Value / usageDict[x.Key] : 1);
         }
 
         public IEnumerable<WeekMarker> GetWeekLabels(int period)
