@@ -30,6 +30,8 @@ namespace BuddhaBowls.Models
         {
             get
             {
+                if (_breadWeek == null || _breadWeek[0] == null || _breadWeek[0].BreadDescDict == null)
+                    return null;
                 return _breadWeek[0].BreadDescDict.Keys.ToDictionary(x => x, x =>
                         (BreadDescriptor)new BreadDescriptorTotal(_breadWeek.Where(y => y.BreadDescDict != null && y.BreadDescDict.ContainsKey(x))
                                                                             .Select(y => y.BreadDescDict[x]).ToArray()));

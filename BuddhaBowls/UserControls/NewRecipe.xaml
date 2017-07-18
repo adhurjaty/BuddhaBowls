@@ -12,8 +12,8 @@
              d:DesignHeight="380" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="360" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Grid.ColumnDefinitions>
@@ -37,15 +37,12 @@
             <Label Grid.Column="0" Grid.Row="1" Content="Category:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <ComboBox Grid.Column="1" Grid.Row="1" Text="{Binding Item.Category}" HorizontalAlignment="Left" VerticalAlignment="Center"
                     Width="150" Height="25" Margin="10, 0" ItemsSource="{Binding CategoryList}" IsEditable="True"/>
-            <Label Grid.Column="0" Grid.Row="2" Content="Count Unit:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <Label Grid.Column="0" Grid.Row="2" Content="Recipe Unit:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <ComboBox Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" Height="25" Margin="10, 0"
-                  ItemsSource="{Binding CountUnitsList}" IsEditable="True" Text="{Binding Item.CountUnit}"/>
-            <Label Grid.Column="0" Grid.Row="3" Content="Recipe Unit:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <ComboBox Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Width="150" Height="25" Margin="10, 0"
                   ItemsSource="{Binding RecipeUnitsList}" IsEditable="True" Text="{Binding Item.RecipeUnit}"/>
-            <Label Grid.Column="0" Grid.Row="4" Content="Count-Recipe Unit&#10;Conversion:" HorizontalAlignment="Right" VerticalAlignment="Center"
+            <Label Grid.Column="0" Grid.Row="3" Content="Recipe Yield:" HorizontalAlignment="Right" VerticalAlignment="Center"
                     HorizontalContentAlignment="Right" />
-            <Controls:NumericUpDown Grid.Column="1" Grid.Row="4" Minimum="1" StringFormat="0.##" Value="{Binding Item.RecipeUnitConversion}"
+            <Controls:NumericUpDown Grid.Column="1" Grid.Row="3" Minimum="1" StringFormat="0.##" Value="{Binding Item.RecipeUnitConversion}"
                                 HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Height="25" Margin="10, 0" />
         </Grid>
         <Border BorderThickness="1" BorderBrush="Black" Grid.Column="1" />
@@ -58,15 +55,25 @@
                 Margin="0, 30, 5, 0" Command="{Binding RemoveItemCommand}">
             <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
-        <DataGrid Grid.Column="2" ItemsSource="{Binding Ingredients}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1, 60, 1, 20"
+        <DataGrid Grid.Column="2" ItemsSource="{Binding Ingredients}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1, 60, 1, 30"
                 ScrollViewer.VerticalScrollBarVisibility="Auto" SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False"
                 CanUserAddRows="False" RowEditEnding="Ingredients_RowEditEnding">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="3*"/>
-                <DataGridTextColumn Header="Recipe Unit" Binding="{Binding Path=RecipeUnit, Mode=OneWay}" Width="3*"/>
-                <DataGridTextColumn Header="QTY" Binding="{Binding Path=Count}" Width="2*" />
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
+                <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="2*"/>
+                <DataGridTextColumn Header="Measure" Binding="{Binding Measure}" Width="2*"/>
+                <DataGridTextColumn Header="Recipe Unit" Binding="{Binding RecipeUnit}" Width="2*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="# RU" Binding="{Binding Path=Count}" Width="60" />
+                <DataGridTextColumn Header="RU Cost" Binding="{Binding CostPerRU, StringFormat=c}" Width="1*" IsReadOnly="True" />
+                <DataGridTextColumn Header="Cost" Binding="{Binding RecipeCost, StringFormat=c}" Width="1*" IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock Text="{Binding Path=RecipeCost, StringFormat=Cost: {0:C}}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10, 0, 0, 0" />
+        <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0, 0, 120, 2" FontSize="16" FontWeight="Bold">
+            <Run Text="Recipe Yield:"/>
+            <Run Text="{Binding Path=Item.RecipeUnitConversion}"/>
+            <Run Text="{Binding Item.RecipeUnit}" />
+        </TextBlock>
+        <TextBlock Text="{Binding Path=RecipeCost, StringFormat=Cost: {0:C}}" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                   Margin="0, 0, 10, 2" FontSize="16" FontWeight="Bold"/>
     </Grid>
 </UserControl>

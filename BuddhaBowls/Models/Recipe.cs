@@ -15,10 +15,7 @@ namespace BuddhaBowls.Models
         public float? RecipeUnitConversion { get; set; }
         public string Category { get; set; }
         public float Count { get; set; }
-        public string CountUnit { get; set; }
         public bool IsBatch { get; set; }
-
-        public List<IItem> ItemList { get; set; }
 
         public float RecipeCost
         {
@@ -26,12 +23,22 @@ namespace BuddhaBowls.Models
             {
                 try
                 {
-                    return ItemList.Sum(x => x.GetCost());
+                    return GetItems().Sum(x => x.RecipeCost);
                 }
                 catch (Exception e)
                 {
                     return 0;
                 }
+            }
+        }
+
+        public float CostPerRU
+        {
+            get
+            {
+                if (RecipeUnitConversion == null || RecipeUnitConversion == 0)
+                    return 0;
+                return (float)(RecipeCost / RecipeUnitConversion);
             }
         }
 
@@ -49,7 +56,7 @@ namespace BuddhaBowls.Models
             if (record != null)
             {
                 InitializeObject(record);
-                LoadRecipe();
+                GetRecipeItems();
             }
         }
 
@@ -62,7 +69,7 @@ namespace BuddhaBowls.Models
         {
             Dictionary<string, float> costDict = new Dictionary<string, float>();
 
-            foreach (IItem item in ItemList)
+            foreach (IItem item in GetItems())
             {
                 if (item.GetType() == typeof(Recipe))
                 {
@@ -85,30 +92,23 @@ namespace BuddhaBowls.Models
             return costDict;
         }
 
-        public void Update(List<IItem> items)
+        public void Update(List<RecipeItem> items)
         {
             if (items != null && items.Count > 0)
-            {
-                ModelHelper.CreateTable(ConvToRecipeItems(items), GetRecipeTableName());
-                ItemList = items;
-            }
+                ModelHelper.CreateTable(items, GetRecipeTableName());
             base.Update();
         }
 
-        public int Insert(List<IItem> items)
+        public int Insert(List<RecipeItem> items)
         {
             if (items != null && items.Count > 0)
-            {
-                ModelHelper.CreateTable(ConvToRecipeItems(items), GetRecipeTableName());
-                ItemList = items;
-            }
+                ModelHelper.CreateTable(items, GetRecipeTableName());
             return base.Insert();
         }
 
         public override void Destroy()
         {
             _dbInt.DestroyTable(GetRecipeTableName());
-            ItemList = null;
             base.Destroy();
         }
 
@@ -123,13 +123,17 @@ namespace BuddhaBowls.Models
             return Copy<Recipe>();
         }
 
-        public void LoadRecipe()
+        public List<RecipeItem> GetRecipeItems()
         {
-            List<RecipeItem> items = ModelHelper.InstantiateList<RecipeItem>(GetRecipeTableName(), false);
+            return ModelHelper.InstantiateList<RecipeItem>(GetRecipeTableName(), false);
+        }
+
+        public List<IItem> GetItems()
+        {
+            List<RecipeItem> items = GetRecipeItems();
             if (items != null)
-                ItemList = items.Select(x => x.GetIItem()).ToList();
-            else
-                ItemList = null;
+                return items.Select(x => x.GetIItem()).ToList();
+            return null;
         }
 
         private List<RecipeItem> ConvToRecipeItems(List<IItem> items)

@@ -60,6 +60,24 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public float RecipeCost
+        {
+            get
+            {
+                return CostPerRU * Count;
+            }
+        }
+
+        public float CostPerRU
+        {
+            get
+            {
+                if (RecipeUnitConversion == null || RecipeUnitConversion == 0)
+                    return 0;
+                return (float)(CountPrice / RecipeUnitConversion);
+            }
+        }
+
         // INotifyPropertyChanged event and method
         public event PropertyChangedEventHandler PropertyChanged;
 

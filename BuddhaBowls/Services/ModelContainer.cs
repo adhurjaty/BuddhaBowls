@@ -77,7 +77,7 @@ namespace BuddhaBowls.Services
         {
             foreach (Recipe item in Recipes)
             {
-                item.LoadRecipe();
+                item.GetRecipeItems();
             }
         }
 
@@ -153,7 +153,7 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public List<string> GetCountUnits()
         {
-            return EnsureCaseInsensitive(new HashSet<string>(GetAllIItems().Select(x => x.CountUnit)
+            return EnsureCaseInsensitive(new HashSet<string>(InventoryItems.Select(x => x.CountUnit)
                                                                            .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
@@ -536,14 +536,17 @@ namespace BuddhaBowls.Services
                     breadWeek[i - 1].NextBreadOrder = bo;
             }
 
-            Dictionary<string, float> parFactors = GetParFactors(breadOrders);
+            Dictionary<string, float> parFactors = breadOrders != null ? GetParFactors(breadOrders) : null;
 
-            for (int i = 0; i < 7; i++)
+            if (parFactors != null)
             {
-                foreach (string breadType in parFactors.Keys)
+                for (int i = 0; i < 7; i++)
                 {
-                    if (breadWeek[i].BreadDescDict != null && breadWeek[i].BreadDescDict.ContainsKey(breadType))
-                        breadWeek[i].BreadDescDict[breadType].ParFactor = parFactors[breadType];
+                    foreach (string breadType in parFactors.Keys)
+                    {
+                        if (breadWeek[i].BreadDescDict != null && breadWeek[i].BreadDescDict.ContainsKey(breadType))
+                            breadWeek[i].BreadDescDict[breadType].ParFactor = parFactors[breadType];
+                    }
                 }
             }
 

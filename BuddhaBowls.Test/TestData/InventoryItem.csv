@@ -26,7 +26,7 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 24,Clam Juice,Dry Goods,12x48oz CANS,CAN,12,EA,12,6,1,28.86,0,,2
 25,Nutella,Dry Goods,12x48oz CANS,JAR,0,OZ-wt,53,11,0.9,0,0,,2
 26,Honey,Dry Goods,12x48oz CANS,JUG,0,OZ-wt,80,1,0.95,0,0,,2
-27,Vanilla,Dry Goods,EA,5lb BUCKET,0,Oz-fl,16,0,100,69,69,7/14/2017 12:00:00 AM,1
+27,Vanilla,Dry Goods,EA,5lb BUCKET,0,Oz-fl,16,0,100,69,11,7/14/2017 12:00:00 AM,1
 28,Tapatio,Dry Goods,EA,BOTTLE,0,EA,12,8,1,0,0,,1
 29,Sriracha,Dry Goods,EA,BOTTLE,0,EA,12,12,1,0,0,,1
 30,Chicken Broth,Dry Goods,4 EA,BOTTLE,0,,,4,0,0,0,,

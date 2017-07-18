@@ -22,14 +22,14 @@ namespace BuddhaBowls
     {
         private bool _newItem;
         private AddItemDel<Recipe> SaveItem;
-        protected List<IItem> _ingredientItems;
+        protected List<RecipeItem> _recipeItems;
 
         #region Content Binders
 
         public string Name { get; set; }
 
-        private ObservableCollection<IItem> _ingredients;
-        public ObservableCollection<IItem> Ingredients
+        private ObservableCollection<Ingredient> _ingredients;
+        public ObservableCollection<Ingredient> Ingredients
         {
             get
             {
@@ -45,8 +45,8 @@ namespace BuddhaBowls
 
         public float Price { get; set; }
 
-        private IItem _selectedItem;
-        public IItem SelectedItem
+        private Ingredient _selectedItem;
+        public Ingredient SelectedItem
         {
             get
             {
@@ -156,7 +156,7 @@ namespace BuddhaBowls
             get
             {
                 if (Ingredients != null && Ingredients.Count > 0)
-                    return Ingredients.Sum(x => x.GetCost());
+                    return Ingredients.Sum(x => x.RecipeCost);
                 return 0;
             }
         }
@@ -223,7 +223,7 @@ namespace BuddhaBowls
             IsBatch = isBatch;
 
             Header = "New " + (isBatch ? "Batch Recipe" : "Menu Item");
-            _ingredientItems = new List<IItem>();
+            _recipeItems = new List<RecipeItem>();
 
             Item = new Recipe();
             Item.IsBatch = isBatch;
@@ -241,7 +241,7 @@ namespace BuddhaBowls
             _newItem = false;
             IsBatch = recipe.IsBatch;
             Header = "Edit " + recipe.Name;
-            _ingredientItems = recipe.ItemList;
+            _recipeItems = recipe.GetRecipeItems();
 
             Item = recipe;
             Refresh();
@@ -258,14 +258,13 @@ namespace BuddhaBowls
 
         private void RemoveItem(object obj)
         {
-            _ingredientItems.Remove(SelectedItem);
+            _recipeItems.RemoveAll(x => x.Name == SelectedItem.Name);
             Refresh();
         }
 
         private void ModalOk(object obj)
         {
-            ItemToAdd.Count = 0;
-            _ingredientItems.Add(ItemToAdd);
+            _recipeItems.Add(new Ingredient(ItemToAdd).GetRecipeItem());
             Refresh();
             ModalVisibility = Visibility.Hidden;
         }
@@ -286,16 +285,16 @@ namespace BuddhaBowls
 
         public override void Refresh()
         {
-            if (_ingredientItems == null)
+            if (_recipeItems == null)
             {
-                Ingredients = new ObservableCollection<IItem>();
+                Ingredients = new ObservableCollection<Ingredient>();
                 RemainingItems = new ObservableCollection<IItem>(_models.GetAllIItems().OrderBy(x => x.Name));
             }
             else
             {
-                Ingredients = new ObservableCollection<IItem>(MainHelper.SortItems(_ingredientItems));
+                Ingredients = new ObservableCollection<Ingredient>(MainHelper.SortItems(_recipeItems.Select(x => new Ingredient(x))));
                 RemainingItems = new ObservableCollection<IItem>(_models.GetAllIItems()
-                                                                        .Where(x => !_ingredientItems.Select(y => y.Name).Contains(x.Name))
+                                                                        .Where(x => !_recipeItems.Select(y => y.Name).Contains(x.Name))
                                                                         .OrderBy(x => x.Name));
             }
             if (Item != null)
@@ -314,12 +313,12 @@ namespace BuddhaBowls
             {
                 if (_newItem)
                 {
-                    Item.Insert(Ingredients.ToList());
+                    Item.Insert(Ingredients.Select(x => x.GetRecipeItem()).ToList());
                     _models.Recipes.Add(Item);
                 }
                 else
                 {
-                    Item.Update(Ingredients.ToList());
+                    Item.Update(Ingredients.Select(x => x.GetRecipeItem()).ToList());
                 }
                 SaveItem(Item);
                 Close();
@@ -352,5 +351,103 @@ namespace BuddhaBowls
         }
 
         #endregion
+    }
+
+    public class Ingredient : ISortable, INotifyPropertyChanged
+    {
+        // INotifyPropertyChanged event and method
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private RecipeItem _item;
+
+        public string Name
+        {
+            get
+            {
+                return _item.Name;
+            }
+        }
+        public string Category
+        {
+            get
+            {
+                return _item.GetIItem().Category;
+            }
+        }
+        public string Measure
+        {
+            get
+            {
+                return _item.Measure;
+            }
+            set
+            {
+                _item.Measure = value;
+                NotifyPropertyChanged("Measure");
+            }
+        }
+        public string RecipeUnit
+        {
+            get
+            {
+                return _item.GetIItem().RecipeUnit;
+            }
+        }
+        public float Count
+        {
+            get
+            {
+                return _item.Quantity;
+            }
+            set
+            {
+                _item.Quantity = value;
+                NotifyPropertyChanged("Measure");
+                NotifyPropertyChanged("RecipeCost");
+            }
+        }
+        public float CostPerRU
+        {
+            get
+            {
+                return _item.GetIItem().CostPerRU;
+            }
+        }
+        public float RecipeCost
+        {
+            get
+            {
+                return _item.GetIItem().RecipeCost;
+            }
+        }
+
+        public Ingredient(RecipeItem item)
+        {
+            _item = item;
+        }
+
+        public Ingredient(IItem item)
+        {
+            _item = new RecipeItem()
+            {
+                Name = item.Name,
+                Quantity = 0
+            };
+
+            if (item.GetType() == typeof(InventoryItem))
+                _item.InventoryItemId = item.Id;
+            else
+                _item.InventoryItemId = null;
+        }
+
+        public RecipeItem GetRecipeItem()
+        {
+            return _item;
+        }
     }
 }

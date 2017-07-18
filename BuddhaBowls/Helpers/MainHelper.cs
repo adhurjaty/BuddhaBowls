@@ -63,7 +63,7 @@ namespace BuddhaBowls.Helpers
         /// <typeparam name="T">Return type in IEnumerable - must be an IItem</typeparam>
         /// <param name="items">Items to sort</param>
         /// <returns>Sorted IEnumerable</returns>
-        public static IEnumerable<T> SortItems<T>(IEnumerable<T> items) where T : IItem
+        public static IEnumerable<T> SortItems<T>(IEnumerable<T> items) where T : ISortable
         {
             if (Properties.Settings.Default.InventoryOrder == null)
                 return items.OrderBy(x => x.Name);
@@ -79,7 +79,7 @@ namespace BuddhaBowls.Helpers
                         .ThenBy(x => x.Name);
         }
 
-        private static int SortValue<T>(T item, List<string> itemOrder) where T : IItem
+        private static int SortValue<T>(T item, List<string> itemOrder) where T : ISortable
         {
             int value = itemOrder.IndexOf(item.Name);
             if (value != -1)
@@ -120,7 +120,7 @@ namespace BuddhaBowls.Helpers
         /// Filter list of inventory items based on the string in the filter box above datagrids
         /// </summary>
         /// <param name="filterStr"></param>
-        public static ObservableCollection<T> FilterInventoryItems<T>(string filterStr, IEnumerable<T> items) where T : IItem
+        public static ObservableCollection<T> FilterInventoryItems<T>(string filterStr, IEnumerable<T> items) where T : ISortable
         {
             if (string.IsNullOrWhiteSpace(filterStr))
                 return new ObservableCollection<T>(SortItems(items));

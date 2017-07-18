@@ -137,7 +137,7 @@ namespace BuddhaBowls
             AddCommand = new RelayCommand(StartNewInventory, x => DBConnection);
             DeleteCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute && DBConnection);
             ViewCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute && DBConnection);
-            CompareCommand = new RelayCommand(CompareInventories, x => CompareCanExecute && DBConnection);
+            //CompareCommand = new RelayCommand(CompareInventories, x => CompareCanExecute && DBConnection);
             InvListCommand = new RelayCommand(GenerateInvList, x => DBConnection);
             AddPrepCommand = new RelayCommand(NewPrepItem);
             DeletePrepCommand = new RelayCommand(DeletePrepItem, x => SelectedPrepItem != null);
@@ -189,12 +189,12 @@ namespace BuddhaBowls
         /// Triggered by the Compare Inv button - opens a new temp tab for comparison
         /// </summary>
         /// <param name="obj"></param>
-        private void CompareInventories(object obj)
-        {
-            Inventory[] invs = SelectedMultiInventories.OrderBy(x => x.Date).ToArray();
-            CompareInvVM tabVM = new CompareInvVM(invs[0], invs[1]);
-            tabVM.Add("Compare Invs");
-        }
+        //private void CompareInventories(object obj)
+        //{
+        //    Inventory[] invs = SelectedMultiInventories.OrderBy(x => x.Date).ToArray();
+        //    CompareInvVM tabVM = new CompareInvVM(invs[0], invs[1]);
+        //    tabVM.Add("Compare Invs");
+        //}
 
         /// <summary>
         /// Triggered by pressing the Excel Inventory List button

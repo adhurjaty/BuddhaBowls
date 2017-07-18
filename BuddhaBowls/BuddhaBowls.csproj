@@ -173,6 +173,7 @@
     <Compile Include="Models\BreadOrderTotal.cs" />
     <Compile Include="Models\IItem.cs" />
     <Compile Include="Models\Inventory.cs" />
+    <Compile Include="Models\ISortable.cs" />
     <Compile Include="Models\OrderStat.cs" />
     <Compile Include="Models\PrepItem.cs" />
     <Compile Include="Models\RecipeItem.cs" />
@@ -213,9 +214,6 @@
     </Compile>
     <Compile Include="UserControls\CogsControl.xaml.cs">
       <DependentUpon>CogsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\CompareInventoriesControl.xaml.cs">
-      <DependentUpon>CompareInventoriesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\EditItem.xaml.cs">
       <DependentUpon>EditItem.xaml</DependentUpon>
@@ -287,7 +285,6 @@
     <Compile Include="ViewModels\PeriodSelectorVM.cs" />
     <Compile Include="ViewModels\ReOrderVM.cs" />
     <Compile Include="ViewModels\ChangeRecListOrderVM.cs" />
-    <Compile Include="ViewModels\CompareInvVM.cs" />
     <Compile Include="ViewModels\InventoryListVM.cs" />
     <Compile Include="ViewModels\ModalVM.cs" />
     <Compile Include="ViewModels\NewInventoryVM.cs" />
@@ -344,10 +341,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\CogsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\CompareInventoriesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

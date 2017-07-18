@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BuddhaBowls.UserControls"
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:helper="clr-namespace:BuddhaBowls.Helpers"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="800">
@@ -19,12 +20,25 @@
         <TextBox x:Name="FilterItemBox" Grid.Row="0" Text="{Binding FilterText}" HorizontalAlignment="Center" VerticalAlignment="Bottom"
                  Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
         <DataGrid x:Name="dataGrid1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding FilteredItems}"
-                                SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False" CanUserAddRows="False">
+                  ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding FilteredItems}" SelectedItem="{Binding SelectedItem}"
+                  AutoGenerateColumns="False" CanUserAddRows="False" RowEditEnding="dataGrid1_RowEditEnding">
+            <DataGrid.Resources>
+                <helper:BindingProxy x:Key="proxy" Data="{Binding}" />
+            </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="2*" IsReadOnly="True" />
-                <DataGridTextColumn Header="Cost" Binding="{Binding Path=RecipeCost, StringFormat=c}" Width="1*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="1*" IsReadOnly="True" />
+                <DataGridTextColumn Header="Yield" Binding="{Binding RecipeUnitConversion}" Width="70" />
+                <DataGridTemplateColumn Header="Recipe Unit" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox Text="{Binding RecipeUnit}" IsEditable="True" ItemsSource="{Binding Path=DataContext.RecipeUnitList,
+                                RelativeSource={RelativeSource AncestorType=DataGrid}}" SelectionChanged="ComboBox_Selected"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Cost/RU" Binding="{Binding CostPerRU, StringFormat=c}" Width="1*" IsReadOnly="True" />
+                <DataGridTextColumn Header="Total Cost" Binding="{Binding Path=RecipeCost, StringFormat=c}" Width="1*" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
         <Button Grid.Row="1" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
@@ -37,5 +51,7 @@
         </Button>
         <Button Content="Edit" HorizontalAlignment="Right" Margin="0,0,70,0" Grid.Row="1" VerticalAlignment="Center" Width="60"
                 Command="{Binding EditItemCommand}"/>
+        <!--<Button Content="Fix Recipes" HorizontalAlignment="Right" Margin="0, 0, 135, 0" Grid.Row="1" VerticalAlignment="Center" Width="70"
+                Command="{Binding FixRecipesCommand}" />-->
     </Grid>
 </UserControl>

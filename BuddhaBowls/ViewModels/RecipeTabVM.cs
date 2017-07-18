@@ -20,11 +20,11 @@ namespace BuddhaBowls
     /// </summary>
     public class RecipeTabVM : ChangeableTabVM
     {
-        private List<Recipe> _recipeItems;
+        private List<DisplayRecipe> _recipeItems;
 
         #region Content Binders
-        private ObservableCollection<Recipe> _filteredItems;
-        public ObservableCollection<Recipe> FilteredItems
+        private ObservableCollection<DisplayRecipe> _filteredItems;
+        public ObservableCollection<DisplayRecipe> FilteredItems
         {
             get
             {
@@ -37,7 +37,7 @@ namespace BuddhaBowls
             }
         }
 
-        public Recipe SelectedItem { get; set; }
+        public DisplayRecipe SelectedItem { get; set; }
 
         private string _filterText;
         public string FilterText
@@ -50,6 +50,20 @@ namespace BuddhaBowls
             {
                 _filterText = value;
                 NotifyPropertyChanged("FilterText");
+            }
+        }
+
+        private List<string> _recipeUnitList;
+        public List<string> RecipeUnitList
+        {
+            get
+            {
+                return _recipeUnitList;
+            }
+            set
+            {
+                _recipeUnitList = value;
+                NotifyPropertyChanged("RecipeUnitList");
             }
         }
 
@@ -83,6 +97,8 @@ namespace BuddhaBowls
             AddNewItemCommand = new RelayCommand(AddItem, x => DBConnection);
             DeleteItemCommand = new RelayCommand(DeleteItem, x => SelectedItemCanExecute && DBConnection);
             EditItemCommand = new RelayCommand(EditRecipe, x => SelectedItemCanExecute && DBConnection);
+
+            RecipeUnitList = _models.GetRecipeUnits();
         }
 
         #region ICommand Helpers
@@ -99,8 +115,8 @@ namespace BuddhaBowls
                                                       "Delete " + SelectedItem.Name + "?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                _models.Recipes.Remove(SelectedItem);
-                SelectedItem.Destroy();
+                _models.Recipes.Remove(SelectedItem.GetRecipe());
+                SelectedItem.GetRecipe().Destroy();
                 SelectedItem = null;
                 RefreshList();
             }
@@ -108,7 +124,7 @@ namespace BuddhaBowls
 
         private void EditRecipe(object obj)
         {
-            NewRecipeVM tabVM = new NewRecipeVM(SelectedItem, SaveRecipeHandler);
+            NewRecipeVM tabVM = new NewRecipeVM(SelectedItem.GetRecipe(), SaveRecipeHandler);
             tabVM.Add("Edit Recipe");
         }
 
@@ -138,6 +154,12 @@ namespace BuddhaBowls
         {
             ChangePageState(_pageIndex);
         }
+
+        public void RowEdited(DisplayRecipe item)
+        {
+            int idx = FilteredItems.IndexOf(item);
+            item.GetRecipe().Update();
+        }
         #endregion
 
         protected override void ChangePageState(int pageIdx)
@@ -147,18 +169,110 @@ namespace BuddhaBowls
             switch (pageIdx)
             {
                 case 0:
-                    _recipeItems = _models.Recipes.Where(x => x.IsBatch).ToList();
+                    _recipeItems = _models.Recipes.Where(x => x.IsBatch).Select(x => new DisplayRecipe(x)).ToList();
                     break;
                 case 1:
-                    _recipeItems = _models.Recipes.Where(x => !x.IsBatch).ToList();
+                    _recipeItems = _models.Recipes.Where(x => !x.IsBatch).Select(x => new DisplayRecipe(x)).ToList();
                     break;
                 case -1:
-                    _recipeItems = new List<Recipe>() { new Recipe() { Name = "DB not found" } };
+                    _recipeItems = new List<DisplayRecipe>() { new DisplayRecipe(new Recipe { Name = "DB not found" }) };
                     break;
             }
 
             FilterText = "";
-            FilteredItems = new ObservableCollection<Recipe>(_recipeItems);
+            FilteredItems = new ObservableCollection<DisplayRecipe>(_recipeItems);
+        }
+    }
+
+    public class DisplayRecipe : INotifyPropertyChanged, ISortable
+    {
+        // INotifyPropertyChanged event and method
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private Recipe _recipe;
+
+        public string Name
+        {
+            get
+            {
+                return _recipe.Name;
+            }
+            set
+            {
+                _recipe.Name = value;
+                NotifyPropertyChanged("Name");
+            }
+        }
+
+        public string Category
+        {
+            get
+            {
+                return _recipe.Category;
+            }
+            set
+            {
+                _recipe.Category = value;
+                NotifyPropertyChanged("Category");
+            }
+        }
+
+        public string RecipeUnit
+        {
+            get
+            {
+                return _recipe.RecipeUnit;
+            }
+            set
+            {
+                _recipe.RecipeUnit = value;
+                NotifyPropertyChanged("RecipeUnit");
+            }
+        }
+
+        public float? RecipeUnitConversion
+        {
+            get
+            {
+                return _recipe.RecipeUnitConversion;
+            }
+            set
+            {
+                _recipe.RecipeUnitConversion = value;
+                NotifyPropertyChanged("RecipeUnitConversion");
+                NotifyPropertyChanged("CostPerRU");
+            }
+        }
+
+        public float CostPerRU
+        {
+            get
+            {
+                return _recipe.CostPerRU;
+            }
+        }
+
+        public float RecipeCost
+        {
+            get
+            {
+                return _recipe.RecipeCost;
+            }
+        }
+
+        public DisplayRecipe(Recipe rec)
+        {
+            _recipe = rec;
+        }
+
+        public Recipe GetRecipe()
+        {
+            return _recipe;
         }
     }
 }
