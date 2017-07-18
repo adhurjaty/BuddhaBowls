@@ -50,17 +50,13 @@
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid ItemsSource="{Binding Ingredients}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    <DataGrid ItemsSource="{Binding ProportionDetails}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                               AutoGenerateColumns="False" CanUserAddRows="False" IsEnabled="False" IsReadOnly="True"
                               ScrollViewer.CanContentScroll="False" Margin="20, 0, 0, 0">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
-                            <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="2*"/>
-                            <DataGridTextColumn Header="Measure" Binding="{Binding Measure}" Width="2*"/>
-                            <DataGridTextColumn Header="Recipe Unit" Binding="{Binding RecipeUnit}" Width="2*"/>
-                            <DataGridTextColumn Header="# RU" Binding="{Binding Path=Count}" Width="60" />
-                            <DataGridTextColumn Header="RU Cost" Binding="{Binding CostPerRU, StringFormat=c}" Width="1*" />
-                            <DataGridTextColumn Header="Cost" Binding="{Binding RecipeCost, StringFormat=c}" Width="1*" />
+                            <DataGridTextColumn Header="Category" Binding="{Binding Path=Name, Mode=OneWay}" Width="1*"/>
+                            <DataGridTextColumn Header="Category Cost" Binding="{Binding Cost, StringFormat=c}" Width="1*" />
+                            <DataGridTextColumn Header="Category %" Binding="{Binding CostProportion, StringFormat=p}" Width="1*" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </DataTemplate>
@@ -74,7 +70,7 @@
                 VerticalAlignment="Center" Margin="5, 0" Command="{Binding DeleteItemCommand}">
             <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
-        <Button Content="Edit" HorizontalAlignment="Right" Margin="0,0,70,0" Grid.Row="1" VerticalAlignment="Center" Width="60"
+        <Button Content="View" HorizontalAlignment="Right" Margin="0,0,70,0" Grid.Row="1" VerticalAlignment="Center" Width="60"
                 Command="{Binding EditItemCommand}"/>
         <!--<Button Content="Fix Recipes" HorizontalAlignment="Right" Margin="0, 0, 135, 0" Grid.Row="1" VerticalAlignment="Center" Width="70"
                 Command="{Binding FixRecipesCommand}" />-->

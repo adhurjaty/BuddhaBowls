@@ -265,11 +265,14 @@ namespace BuddhaBowls
             }
         }
 
-        public List<Ingredient> Ingredients
+        public List<CategoryProportion> ProportionDetails
         {
             get
             {
-                return _recipe.GetRecipeItems().Select(x => new Ingredient(x)).ToList();
+                List<IItem> totalItems = _recipe.GetRecipeItems().Select(x => x.GetIItem()).ToList();
+                float total = totalItems.Sum(x => x.RecipeCost);
+                return totalItems.GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x)
+                                 .Select(x => new CategoryProportion(x.Value.ToList(), total)).ToList();
             }
         }
 
@@ -281,6 +284,23 @@ namespace BuddhaBowls
         public Recipe GetRecipe()
         {
             return _recipe;
+        }
+    }
+
+    public class CategoryProportion
+    {
+        public string Name { get; set; }
+        public float Cost { get; set; }
+        public float CostProportion { get; set; }
+
+        public CategoryProportion(List<IItem> items, float total)
+        {
+            Name = items[0].Category;
+            Cost = items.Sum(x => x.RecipeCost);
+            if (total > 0)
+                CostProportion = Cost / total;
+            else
+                CostProportion = 0;
         }
     }
 }
