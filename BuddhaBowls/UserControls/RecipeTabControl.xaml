@@ -21,11 +21,19 @@
                  Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
         <DataGrid x:Name="dataGrid1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                   ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding FilteredItems}" SelectedItem="{Binding SelectedItem}"
-                  AutoGenerateColumns="False" CanUserAddRows="False" RowEditEnding="dataGrid1_RowEditEnding">
+                  AutoGenerateColumns="False" CanUserAddRows="False" RowEditEnding="dataGrid1_RowEditEnding" ScrollViewer.CanContentScroll="False"
+                  RowDetailsVisibilityMode="Collapsed">
             <DataGrid.Resources>
                 <helper:BindingProxy x:Key="proxy" Data="{Binding}" />
             </DataGrid.Resources>
             <DataGrid.Columns>
+                <DataGridTemplateColumn Width="35">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Expander Expanded="Expander_Clicked" Collapsed="Expander_Clicked" IsExpanded="False" Height="30" Background="White"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="1*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="1*" IsReadOnly="True" />
                 <DataGridTextColumn Header="Yield" Binding="{Binding RecipeUnitConversion}" Width="70" />
@@ -40,6 +48,23 @@
                 <DataGridTextColumn Header="Cost/RU" Binding="{Binding CostPerRU, StringFormat=c}" Width="1*" IsReadOnly="True" />
                 <DataGridTextColumn Header="Total Cost" Binding="{Binding Path=RecipeCost, StringFormat=c}" Width="1*" IsReadOnly="True"/>
             </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <DataGrid ItemsSource="{Binding Ingredients}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                              AutoGenerateColumns="False" CanUserAddRows="False" IsEnabled="False" IsReadOnly="True"
+                              ScrollViewer.CanContentScroll="False" Margin="20, 0, 0, 0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Path=Name, Mode=OneWay}" Width="2*"/>
+                            <DataGridTextColumn Header="Category" Binding="{Binding Path=Category, Mode=OneWay}" Width="2*"/>
+                            <DataGridTextColumn Header="Measure" Binding="{Binding Measure}" Width="2*"/>
+                            <DataGridTextColumn Header="Recipe Unit" Binding="{Binding RecipeUnit}" Width="2*"/>
+                            <DataGridTextColumn Header="# RU" Binding="{Binding Path=Count}" Width="60" />
+                            <DataGridTextColumn Header="RU Cost" Binding="{Binding CostPerRU, StringFormat=c}" Width="1*" />
+                            <DataGridTextColumn Header="Cost" Binding="{Binding RecipeCost, StringFormat=c}" Width="1*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
         </DataGrid>
         <Button Grid.Row="1" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Center" Margin="35, 0" Command="{Binding AddNewItemCommand}">

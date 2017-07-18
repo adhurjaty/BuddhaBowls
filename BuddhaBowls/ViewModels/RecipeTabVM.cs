@@ -265,6 +265,14 @@ namespace BuddhaBowls
             }
         }
 
+        public List<Ingredient> Ingredients
+        {
+            get
+            {
+                return _recipe.GetRecipeItems().Select(x => new Ingredient(x)).ToList();
+            }
+        }
+
         public DisplayRecipe(Recipe rec)
         {
             _recipe = rec;

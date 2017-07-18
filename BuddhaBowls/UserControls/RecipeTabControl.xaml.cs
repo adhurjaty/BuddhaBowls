@@ -51,5 +51,18 @@ namespace BuddhaBowls.UserControls
             item.RecipeUnit = (string)((ComboBox)sender).SelectedItem;
             ((RecipeTabVM)DataContext).RowEdited(item);
         }
+
+        private void Expander_Clicked(object sender, RoutedEventArgs e)
+        {
+            for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
+            {
+                if (vis is DataGridRow)
+                {
+                    var row = (DataGridRow)vis;
+                    row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                    break;
+                }
+            }
+        }
     }
 }
