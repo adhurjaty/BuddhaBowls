@@ -25,7 +25,6 @@
                 <RowDefinition Height="40" />
                 <RowDefinition Height="40" />
                 <RowDefinition Height="40" />
-                <RowDefinition Height="40" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Label Grid.Column="0" Grid.Row="0" Content="Name:" Margin="10, 0" HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -44,6 +43,17 @@
                     HorizontalContentAlignment="Right" />
             <Controls:NumericUpDown Grid.Column="1" Grid.Row="3" Minimum="1" StringFormat="0.##" Value="{Binding Item.RecipeUnitConversion}"
                                 HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Height="25" Margin="10, 0" />
+            <Border Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1"
+                    BorderBrush="Black" Margin="0, 4, 0, 0" />
+            <DataGrid ItemsSource="{Binding ProportionDetails}" Grid.Row="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="1, 5, 0, 1">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Category" Binding="{Binding Path=Name, Mode=OneWay}" Width="1*"/>
+                    <DataGridTextColumn Header="Category Cost" Binding="{Binding Cost, StringFormat=c}" Width="1*" />
+                    <DataGridTextColumn Header="Category %" Binding="{Binding CostProportion, StringFormat=p}" Width="1*" />
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
         <Border BorderThickness="1" BorderBrush="Black" Grid.Column="1" />
         <TextBlock Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Center" FontSize="20" Text="Ingredients"/>

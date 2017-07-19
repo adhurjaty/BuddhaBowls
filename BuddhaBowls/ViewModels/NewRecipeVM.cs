@@ -161,6 +161,17 @@ namespace BuddhaBowls
             }
         }
 
+        public List<CategoryProportion> ProportionDetails
+        {
+            get
+            {
+                List<IItem> totalItems = Ingredients.Select(x => x.GetRecipeItem().GetIItem()).ToList();
+                float total = totalItems.Sum(x => x.RecipeCost);
+                return totalItems.GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x)
+                                 .Select(x => new CategoryProportion(x.Value.ToList(), total)).ToList();
+            }
+        }
+
         #endregion
 
         #region ICommand Properties and Can Execute
