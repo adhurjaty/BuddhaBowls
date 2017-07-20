@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>52</ApplicationRevision>
+    <ApplicationRevision>53</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -261,6 +261,9 @@
     <Compile Include="UserControls\BreakdownCategory.xaml.cs">
       <DependentUpon>BreakdownCategory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\PAndLControl.xaml.cs">
+      <DependentUpon>PAndLControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PeriodSelectorControl.xaml.cs">
       <DependentUpon>PeriodSelectorControl.xaml</DependentUpon>
     </Compile>
@@ -281,6 +284,8 @@
     </Compile>
     <Compile Include="ViewModels\BreadGuideVM.cs" />
     <Compile Include="ViewModels\ChangeableTabVM.cs" />
+    <Compile Include="ViewModels\ProfitLossVM.cs" />
+    <Compile Include="ViewModels\CogsVM.cs" />
     <Compile Include="ViewModels\ReportsTabVM.cs" />
     <Compile Include="ViewModels\PeriodSelectorVM.cs" />
     <Compile Include="ViewModels\ReOrderVM.cs" />
@@ -401,6 +406,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\OrderTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\PAndLControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -359,6 +359,7 @@ namespace BuddhaBowls
         public void CountChanged()
         {
             NotifyPropertyChanged("RecipeCost");
+            NotifyPropertyChanged("ProportionDetails");
         }
 
         #endregion

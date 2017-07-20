@@ -26,7 +26,7 @@ namespace BuddhaBowls.UserControls
             InitializeComponent();
         }
 
-        public CogsControl(ReportsTabVM context) : this()
+        public CogsControl(CogsVM context) : this()
         {
             DataContext = context;
         }

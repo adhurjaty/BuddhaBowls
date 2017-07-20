@@ -193,7 +193,7 @@ namespace BuddhaBowls
                 if (_reportsSelected)
                 {
                     // re-calculate COGS when report tab is selected
-                    ReportTab.CalculateCogs(ReportTab.PeriodSelector.SelectedWeek);
+                    ReportTab.CalculateCogs();
                 }
             }
         }
