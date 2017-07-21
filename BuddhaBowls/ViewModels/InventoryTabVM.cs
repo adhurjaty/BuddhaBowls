@@ -181,6 +181,7 @@ namespace BuddhaBowls
                 _models.Inventories.Remove(SelectedInventory);
                 SelectedInventory.Destroy();
                 SelectedInventory = null;
+                ParentContext.ReportTab.Refresh();
                 Refresh();
             }
         }
@@ -258,7 +259,6 @@ namespace BuddhaBowls
         {
             item.NotifyChanges();
             item.Update();
-            
         }
 
         #endregion
@@ -294,7 +294,7 @@ namespace BuddhaBowls
 
         public override void Refresh()
         {
-            InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
+            ShowSelectedWeek(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
             if(InvListVM != null)
                 InvListVM.Refresh();
             PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderByDescending(x => x.Name));

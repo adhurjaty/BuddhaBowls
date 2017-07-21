@@ -556,39 +556,47 @@ namespace BuddhaBowls
         public void SaveNew(DateTime invDate)
         {
             FilterText = "";
-            foreach (VendorInventoryItem item in _inventoryItems)
-            {
-                InventoryItem invItem = item.ToInventoryItem();
-                _models.AddUpdateInventoryItem(ref invItem);
-                VendorInventoryItem origVitem = _models.VendorInvItems.First(x => x.Id == item.Id);
-                origVitem.SetVendorItem(item.SelectedVendor, invItem);
-                origVitem.SelectedVendor = item.SelectedVendor;
-            }
+            if (_models.Inventories == null)
+                _models.Inventories = new List<Inventory>();
 
             Inventory inv = new Inventory(invDate);
             inv.Id = inv.Insert(_inventoryItems.Select(x => x.ToInventoryItem()).ToList());
 
-            if (_models.Inventories == null)
-                _models.Inventories = new List<Inventory>();
-
-            if (_models.Inventories.Count > 0 && _models.Inventories.Select(x => x.Date.Date).Contains(invDate.Date))
+            if (_models.Inventories.Select(x => x.Date.Date).Contains(invDate.Date))
             {
                 int idx = _models.Inventories.FindIndex(x => x.Date.Date == invDate.Date);
                 Inventory oldInv = _models.Inventories[idx];
                 inv.Id = oldInv.Id;
                 _models.Inventories[idx] = inv;
+                inv.Update(_inventoryItems.Select(x => x.ToInventoryItem()).ToList());
             }
             else
             {
                 _models.Inventories.Add(inv);
             }
 
-            ParentContext.InventoryTab.InvListVM.UpdateInvValue();
+            DateTime maxInvDate = _models.Inventories.Max(x => x.Date).Date;
+            if (maxInvDate <= invDate)
+            {
+                foreach (VendorInventoryItem item in _inventoryItems)
+                {
+                    InventoryItem invItem = item.ToInventoryItem();
+                    _models.AddUpdateInventoryItem(ref invItem);
+                    VendorInventoryItem origVitem = _models.VendorInvItems.First(x => x.Id == item.Id);
+                    origVitem.SetVendorItem(item.SelectedVendor, invItem);
+                    origVitem.SelectedVendor = item.SelectedVendor;
+                    origVitem.Count = invItem.Count;
+                }
+
+                ParentContext.InventoryTab.InvListVM.UpdateInvValue();
+            }
         }
 
         public void SaveOld(DateTime invDate)
         {
             _inventory.Date = invDate;
+            int idx = _models.Inventories.FindIndex(x => x.Id == _inventory.Id);
+            _models.Inventories[idx].Date = invDate;
             _inventory.Update(_inventoryItems.Select(x => x.ToInventoryItem()).ToList());
         }
 

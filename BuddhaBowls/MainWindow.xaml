@@ -35,7 +35,7 @@
             <TabItem Header="Recipes">
                 <uc:ChangeableTabControl DataContext="{Binding RecipeTab}" />
             </TabItem>
-            <TabItem Header="Reports" IsSelected="{Binding Path=ReportsSelected, Mode=OneWayToSource}">
+            <TabItem Header="Reports">
                 <uc:ChangeableTabControl DataContext="{Binding ReportTab}" />
             </TabItem>
             <TabItem Header="Settings">

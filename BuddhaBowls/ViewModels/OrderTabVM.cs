@@ -325,6 +325,7 @@ namespace BuddhaBowls
             SelectedOpenOrder = null;
 
             RefreshOrderList();
+            ParentContext.ReportTab.Refresh();
         }
 
         private void ReOpenOrder(object obj)
@@ -347,7 +348,7 @@ namespace BuddhaBowls
 
         private void ViewOrder(PurchaseOrder order)
         {
-            ViewOrderVM tabVM = new ViewOrderVM(order, RefreshOrderList);
+            ViewOrderVM tabVM = new ViewOrderVM(order, OrderEdited);
             tabVM.Add("PO#: " + order.Id);
         }
 
@@ -358,6 +359,7 @@ namespace BuddhaBowls
         private void RemoveReceivedOrder(object obj)
         {
             DeleteOrder(SelectedReceivedOrder);
+            ParentContext.ReportTab.Refresh();
         }
 
         /// <summary>
@@ -512,11 +514,18 @@ namespace BuddhaBowls
         {
             po.ReceivedDate = DateTime.Now;
             RefreshOrderList();
+            ParentContext.ReportTab.Refresh();
         }
 
         public void RefreshOrderList()
         {
             LoadPreviousOrders(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
+        }
+
+        public void OrderEdited()
+        {
+            RefreshOrderList();
+            ParentContext.ReportTab.Refresh();
         }
 
         public void UpdateRecDate(PurchaseOrder order)

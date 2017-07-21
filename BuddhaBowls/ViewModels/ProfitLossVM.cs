@@ -110,6 +110,11 @@ namespace BuddhaBowls
         }
         #endregion
 
+        private void FillSummarySections()
+        {
+            NotifyPropertyChanged("SummarySections");
+        }
+
         private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             PAndLSummarySection section = (PAndLSummarySection)e.Result;
@@ -119,41 +124,73 @@ namespace BuddhaBowls
             SquareProgMessage = "";
         }
 
-        private void FillSummarySections()
-        {
-            NotifyPropertyChanged("SummarySections");
-        }
-
         private void _worker_DoWork(object sender, DoWorkEventArgs e)
         {
+            PeriodMarker period = PeriodSelector.SelectedPeriod;
+            WeekMarker week = PeriodSelector.SelectedWeek;
+            List<DailySale> periodSales = _models.DailySales.Where(x => period.StartDate <= x.Date && x.Date <= period.EndDate).ToList();
+            DateTime lastUpdated;
+            if (periodSales.Count == 0)
+                lastUpdated = period.StartDate;
+            else
+                lastUpdated = periodSales.Max(x => x.LastUpdated).Date;
+
+            DateTime periodEndDate = new DateTime[] { DateTime.Now, period.EndDate }.Min();
+
             SquareService ss = new SquareService();
-            List<SquareSale>[] weeklySales = new List<SquareSale>[PeriodSelector.SelectedWeek.Period];
-            List<WeekMarker> weeksInPTD = PeriodSelector.WeekList.Take(PeriodSelector.SelectedWeek.Period).ToList();
-            Parallel.For(0, weeksInPTD.Count, i =>
+            // only call API for days where we have not already retrieved and saved a full day of sales
+            List<SquareSale>[] dailySales = new List<SquareSale>[(int)Math.Ceiling(periodEndDate.Subtract(lastUpdated).TotalDays)];
+            Parallel.For(0, dailySales.Length, i =>
             {
                 try
                 {
-                    WeekMarker week = weeksInPTD[i];
-                    weeklySales[i] = ss.ListTransactions(week.StartDate, week.EndDate).ToList();
+                    DateTime startTime = lastUpdated.AddDays(i);
+                    DateTime endTime = startTime.AddDays(1).AddSeconds(-1);
+                    dailySales[i] = ss.ListTransactions(startTime, endTime).ToList();
                 }
                 catch (Exception ex)
                 {
-                    weeklySales[i] = null;
+                    dailySales[i] = null;
                 }
             });
 
             Dictionary<string, float> periodRevenueDict = new Dictionary<string, float>();
             Dictionary<string, float> weekRevenueDict = new Dictionary<string, float>();
-
             Dictionary<string, string> itemCategoryCache = new Dictionary<string, string>();
 
-            List<Recipe> soldItems = _models.Recipes.Where(x => !x.IsBatch).ToList();
-
-            for (int i = 0; i < weeklySales.Length; i++)
+            // destroy period sale records that are partial days
+            foreach (DailySale sale in periodSales.Where(x => lastUpdated <= x.Date && x.Date <= period.EndDate))
             {
-                if (weeklySales[i] != null)
+                sale.Destroy();
+            }
+
+            periodSales = periodSales.Where(x => period.StartDate <= x.Date && x.Date <= lastUpdated).ToList();
+            foreach (DailySale sale in periodSales)
+            {
+                if (!itemCategoryCache.ContainsKey(sale.Name))
+                    itemCategoryCache[sale.Name] = sale.Category;
+                if (!periodRevenueDict.ContainsKey(sale.Category))
+                    periodRevenueDict[sale.Category] = 0;
+                periodRevenueDict[sale.Category] += sale.NetTotal;
+
+                if(week.StartDate <= sale.Date && sale.Date <= week.EndDate)
                 {
-                    foreach (SquareSale sale in weeklySales[i])
+                    if (!weekRevenueDict.ContainsKey(sale.Category))
+                        weekRevenueDict[sale.Category] = 0;
+                    weekRevenueDict[sale.Category] += sale.NetTotal;
+                }
+            }
+
+            List<Recipe> soldItems = _models.Recipes.Where(x => !x.IsBatch).ToList();
+            List<DailySale>[] salesToSave = new List<DailySale>[dailySales.Length];
+
+            for (int i = 0; i < dailySales.Length; i++)
+            {
+                salesToSave[i] = new List<DailySale>();
+
+                if (dailySales[i] != null)
+                {
+                    foreach (SquareSale sale in dailySales[i])
                     {
                         foreach (SquareItemization itemization in sale.Itemizations)
                         {
@@ -169,14 +206,42 @@ namespace BuddhaBowls
                                 periodRevenueDict[itemCategoryCache[itemization.Name]] = 0;
                             periodRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
 
-                            if (i == PeriodSelector.SelectedWeek.Period - 1)
+                            if (week.StartDate <= sale.TransactionTime && sale.TransactionTime <= week.EndDate)
                             {
                                 if (!weekRevenueDict.ContainsKey(itemCategoryCache[itemization.Name]))
                                     weekRevenueDict[itemCategoryCache[itemization.Name]] = 0;
                                 weekRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
                             }
+
+                            DailySale existingSale = salesToSave[i].FirstOrDefault(x => x.Name == itemization.Name);
+                            if(existingSale != null)
+                            {
+                                existingSale.Quantity += itemization.Quantity;
+                                existingSale.NetTotal += itemization.NetTotal;
+                                existingSale.Date = sale.TransactionTime;
+                            }
+                            else
+                            {
+                                salesToSave[i].Add(new DailySale()
+                                {
+                                    Name = itemization.Name,
+                                    Category = itemCategoryCache[itemization.Name],
+                                    Quantity = itemization.Quantity,
+                                    NetTotal = itemization.NetTotal,
+                                    Date = sale.TransactionTime
+                                });
+                            }
                         }
                     }
+                }
+            }
+
+            // save the results to disk
+            foreach (List<DailySale> sales in salesToSave)
+            {
+                foreach(DailySale sale in sales)
+                {
+                    sale.Insert();
                 }
             }
 

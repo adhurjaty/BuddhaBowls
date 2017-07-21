@@ -29,6 +29,7 @@ namespace BuddhaBowls
         public ReportsTabVM() : base()
         {
             InitSwitchButtons(new string[] { "COGS", "P & L" });
+            _plVM = new ProfitLossVM();
         }
 
         #region ICommand Helpers
@@ -41,6 +42,18 @@ namespace BuddhaBowls
 
         #region UI Updaters
 
+        public override void Refresh()
+        {
+            _cogsVM.CogsUpdated();
+            base.Refresh();
+        }
+
+        public void UpdatedCogs(DateTime inventoryDate)
+        {
+            if (_cogsVM.PeriodSelector.SelectedWeek.StartDate <= inventoryDate && inventoryDate <= _cogsVM.PeriodSelector.SelectedWeek.EndDate)
+                Refresh();
+        }
+
         #endregion
 
         protected override void ChangePageState(int pageIdx)
@@ -51,30 +64,18 @@ namespace BuddhaBowls
             {
                 case 0:
                     Header = "Cost of Goods Sold";
-                    if (_cogsVM == null)
+                    if(_cogsVM == null)
                         _cogsVM = new CogsVM();
-
                     TabControl = _tabCache[0] ?? new CogsControl(_cogsVM);
                     break;
                 case 1:
                     Header = "Profit & Loss";
-                    if (_plVM == null)
-                        _plVM = new ProfitLossVM();
-
                     TabControl = _tabCache[1] ?? new PAndLControl(_plVM);
                     break;
                 case -1:
                     //DisplayItemsNotFound();
                     break;
             }
-        }
-
-        /// <summary>
-        /// Total cluge. Needed to update COGS when report tab is selected
-        /// </summary>
-        public void CalculateCogs()
-        {
-            _cogsVM.CalculateCogs(_cogsVM.PeriodSelector.SelectedWeek);
         }
     }
 }

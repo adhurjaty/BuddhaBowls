@@ -12,6 +12,7 @@ namespace BuddhaBowls.Models
         public string VendorName { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime? ReceivedDate { get; set; }
+        bool _orderChanged = true;  // bool to track whether the order/order items have changed. Used to speed up calls to RecCategoryItemsDict
 
         public DateTime Date
         {
@@ -48,6 +49,19 @@ namespace BuddhaBowls.Models
             }
         }
 
+        private Dictionary<string, List<InventoryItem>> _recCategoryItemsDict;
+        public Dictionary<string, List<InventoryItem>> RecCategoryItemsDict
+        {
+            get
+            {
+                if (_orderChanged)
+                {
+                    _recCategoryItemsDict = GetReceivedPOItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
+                    _orderChanged = false;
+                }
+                return _recCategoryItemsDict;
+            }
+        }
 
         public PurchaseOrder() : base()
         {
@@ -78,7 +92,7 @@ namespace BuddhaBowls.Models
             }
             ModelHelper.CreateTable(inventoryItems, GetOrderTableName());
 
-            // update the vendor table last order amounts adn prices
+            // update the vendor table last order amounts and prices
             vendor.Update(inventoryItems);
         }
 
@@ -86,12 +100,14 @@ namespace BuddhaBowls.Models
         {
             ReceivedDate = DateTime.Now;
             Update();
+            _orderChanged = true;
         }
 
         public void ReOpen()
         {
             ReceivedDate = null;
             Update();
+            _orderChanged = true;
         }
 
         /// <summary>
@@ -125,11 +141,9 @@ namespace BuddhaBowls.Models
             return GetReceivedPOItems().Sum(x => x.PurchaseExtension);
         }
 
-
-
         public Dictionary<string, float> GetCategoryCosts()
         {
-            Dictionary<string, float> catCosts = GetReceivedPOItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.Sum(y => y.PurchaseExtension));
+            Dictionary<string, float> catCosts = RecCategoryItemsDict.ToDictionary(x => x.Key, x => x.Value.Sum(y => y.PurchaseExtension));
             float total = catCosts.Sum(x => x.Value);
             catCosts["Food Total"] = catCosts.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key)).Sum(x => x.Value);
             catCosts["Total"] = total;
@@ -143,6 +157,7 @@ namespace BuddhaBowls.Models
             invItems[idx] = item;
 
             ModelHelper.CreateTable(invItems, GetOrderTableName());
+            _orderChanged = true;
         }
 
         public string GetPOPath()
@@ -181,6 +196,7 @@ namespace BuddhaBowls.Models
         public override void Destroy()
         {
             _dbInt.DestroyTable(GetOrderTableName());
+            //_orderChanged = true;
             base.Destroy();
         }
         #endregion

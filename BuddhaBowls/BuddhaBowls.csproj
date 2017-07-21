@@ -171,6 +171,7 @@
     <Compile Include="Helpers\ErrorHandler.cs" />
     <Compile Include="Models\BreadOrder.cs" />
     <Compile Include="Models\BreadOrderTotal.cs" />
+    <Compile Include="Models\DailySale.cs" />
     <Compile Include="Models\IItem.cs" />
     <Compile Include="Models\Inventory.cs" />
     <Compile Include="Models\ISortable.cs" />

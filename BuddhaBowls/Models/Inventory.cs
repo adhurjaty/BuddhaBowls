@@ -10,7 +10,23 @@ namespace BuddhaBowls.Models
 {
     public class Inventory : Model
     {
+        private bool _invChanged = true;    // used to speed up calls to CategoryItemsDict
+
         public DateTime Date { get; set; }
+
+        private Dictionary<string, List<InventoryItem>> _categoryItemsDict;
+        public Dictionary<string, List<InventoryItem>> CategoryItemsDict
+        {
+            get
+            {
+                if (_invChanged)
+                {
+                    _categoryItemsDict = GetInventoryHistory().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
+                    _invChanged = false;
+                }
+                return _categoryItemsDict;
+            }
+        }
 
         public Inventory()
         {
@@ -40,6 +56,7 @@ namespace BuddhaBowls.Models
             if(!File.Exists(Path.Combine(Properties.Settings.Default.DBLocation, GetInventoryTable() + ".csv")))
             {
                 ModelHelper.CreateTable(items.OrderBy(x => x.Id).ToList(), GetInventoryTable());
+                _invChanged = true;
                 return base.Insert();
             }
 
@@ -62,12 +79,14 @@ namespace BuddhaBowls.Models
         public void Update(List<InventoryItem> items)
         {
             ModelHelper.CreateTable(items.OrderBy(x => x.Id).ToList(), GetInventoryTable());
+            _invChanged = true;
             base.Update();
         }
 
         public override void Destroy()
         {
             _dbInt.DestroyTable(GetInventoryTable());
+            _invChanged = true;
             base.Destroy();
         }
 

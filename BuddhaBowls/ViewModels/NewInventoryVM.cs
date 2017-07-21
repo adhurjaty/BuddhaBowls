@@ -117,6 +117,7 @@ namespace BuddhaBowls
                 InvListVM.SaveNew(InventoryDate);
 
                 ParentContext.Refresh();
+                ParentContext.ReportTab.UpdatedCogs(InventoryDate);
                 Close();
             }
         }
@@ -126,6 +127,7 @@ namespace BuddhaBowls
             if (CheckUniqueInvDate())
             {
                 InvListVM.SaveOld(InventoryDate);
+                ParentContext.ReportTab.UpdatedCogs(InventoryDate);
                 Close();
             }
         }
