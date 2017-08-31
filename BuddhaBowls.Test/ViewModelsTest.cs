@@ -440,7 +440,7 @@ namespace BuddhaBowls.Test
             {
                 Assert.IsNotNull(newOrder);
                 
-                List<InventoryItem> orderItems = newOrder.GetPOItems()[0];
+                List<InventoryItem> orderItems = newOrder.GetPOItems();
                 foreach (InventoryItem item in orderItems)
                 {
                     Assert.AreEqual(_updateOrderDict[item.Name], item.LastOrderAmount);
@@ -471,7 +471,7 @@ namespace BuddhaBowls.Test
                 Assert.IsNull(orderTab.SelectedOpenOrder);
                 CollectionAssert.Contains(orderTab.ReceivedOrders, newOrder);
 
-                List<InventoryItem> receivedItems = newOrder.GetPOItems()[1];
+                List<InventoryItem> receivedItems = newOrder.GetPOItems();
                 foreach (InventoryItem item in receivedItems)
                 {
                     Assert.AreEqual(_updateOrderDict[item.Name], item.LastOrderAmount);
@@ -503,7 +503,7 @@ namespace BuddhaBowls.Test
 
                 CollectionAssert.Contains(orderTab.OpenOrders, newOrder);
 
-                List<InventoryItem> openItems = newOrder.GetPOItems()[0];
+                List<InventoryItem> openItems = newOrder.GetPOItems();
                 foreach (InventoryItem item in openItems)
                 {
                     Assert.AreEqual(_updateOrderDict[item.Name], item.LastOrderAmount);

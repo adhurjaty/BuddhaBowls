@@ -149,7 +149,8 @@ namespace BuddhaBowls
                 _models.AddUpdateInventoryItem(ref invItem);
 
                 // update the VendorInventoryItem with vendors
-                VendorInventoryItem vInvItem = _models.VendorInvItems.First(x => x.Id == Item.Id);
+                VendorInventoryItem vInvItem = _models.VendorInvItems.First(x => x.Id == invItem.Id);
+                vInvItem.InvItem = invItem;
                 vInvItem.Update(VendorList.ToList());
 
                 ParentContext.AddedInvItem();

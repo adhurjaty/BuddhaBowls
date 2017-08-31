@@ -56,7 +56,7 @@ namespace BuddhaBowls.Models
             {
                 if (_orderChanged)
                 {
-                    _recCategoryItemsDict = GetReceivedPOItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
+                    _recCategoryItemsDict = GetPOItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
                     _orderChanged = false;
                 }
                 return _recCategoryItemsDict;
@@ -114,31 +114,17 @@ namespace BuddhaBowls.Models
         /// Get the ordered inventory items - { open items, received items }
         /// </summary>
         /// <returns></returns>
-        public List<InventoryItem>[] GetPOItems()
+        public List<InventoryItem> GetPOItems()
         {
-            List<InventoryItem> openItems = null;
-            List<InventoryItem> receivedItems = null;
-
-            if(Received)
-                receivedItems = ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), isModel: false);
-            else
-                openItems = ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), isModel: false);
-            return new List<InventoryItem>[] { openItems, receivedItems };
-        }
-
-        public List<InventoryItem> GetOpenPOItems()
-        {
-            return GetPOItems()[0];
-        }
-
-        public List<InventoryItem> GetReceivedPOItems()
-        {
-            return GetPOItems()[1];
+            return ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), isModel: false);
         }
 
         public float GetTotalCost()
         {
-            return GetReceivedPOItems().Sum(x => x.PurchaseExtension);
+            List<InventoryItem> items = GetPOItems();
+            if(items != null)
+                return items.Sum(x => x.PurchaseExtension);
+            return 0;
         }
 
         public Dictionary<string, float> GetCategoryCosts()
@@ -152,7 +138,7 @@ namespace BuddhaBowls.Models
 
         public void UpdateItem(InventoryItem item)
         {
-            List<InventoryItem> invItems = Received ? GetReceivedPOItems() : GetOpenPOItems();
+            List<InventoryItem> invItems = Received ? GetPOItems() : GetPOItems();
             int idx = invItems.FindIndex(x => x.Id == item.Id);
             invItems[idx] = item;
 

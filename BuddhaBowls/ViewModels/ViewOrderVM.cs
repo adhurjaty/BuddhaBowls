@@ -101,21 +101,18 @@ namespace BuddhaBowls
         #region Initializers
         private void InitBreakdown(PurchaseOrder po)
         {
-            List<InventoryItem>[] poItems = po.GetPOItems();
-            List<InventoryItem> openItems = poItems[0];
-            List<InventoryItem> receivedItems = poItems[1];
-            List<InventoryItem> items = openItems != null ? openItems : receivedItems;
+            List<InventoryItem> items = po.GetPOItems();
 
             // check where duplicates are being formed. Remove this if I find the source
             items = po.RemoveViewingDuplicates(items);
 
-            string header = openItems != null ? "Open Ordered Items" : "Received Ordered Items";
+            string header = po.Received ? "Received Ordered Items" : "Open Ordered Items";
 
             float oTotal = 0;
             BreakdownContext = new OrderBreakdownVM()
             {
                 BreakdownList = GetOrderBreakdown(items, out oTotal),
-                OrderTotal = oTotal,
+                //OrderTotal = oTotal,
                 OrderVendor = _models.Vendors.First(x => x.Name == _order.VendorName),
                 Header = header
             };
@@ -155,6 +152,7 @@ namespace BuddhaBowls
             // inventory item (last order price, last order qty...)
             PurchaseOrder latestOrderFromVendor = _models.PurchaseOrders.Where(x => x.VendorName == _order.VendorName)
                                                                         .OrderByDescending(x => x.OrderDate).First();
+            BreakdownContext.UpdateTotal();
             if (latestOrderFromVendor.Id == _order.Id)
             {
                 Vendor vend = _models.Vendors.First(x => x.Name == _order.VendorName);

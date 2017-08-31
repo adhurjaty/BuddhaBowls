@@ -23,6 +23,7 @@ namespace BuddhaBowls
         private Inventory _endInventory;
         private List<PurchaseOrder> _recOrders;
         private List<InventoryItem> _breadOrderItems;
+        private ReportsTabVM _reportsTab;
 
         #region Content Binders
 
@@ -84,16 +85,15 @@ namespace BuddhaBowls
             }
         }
 
-        private PeriodSelectorVM _periodSelector;
         public PeriodSelectorVM PeriodSelector
         {
             get
             {
-                return _periodSelector;
+                return _reportsTab.PeriodSelector;
             }
             set
             {
-                _periodSelector = value;
+                _reportsTab.PeriodSelector = value;
                 NotifyPropertyChanged("PeriodSelector");
             }
         }
@@ -106,10 +106,9 @@ namespace BuddhaBowls
 
         #endregion
 
-        public CogsVM() : base()
+        public CogsVM(ReportsTabVM tabContext) : base()
         {
-
-            PeriodSelector = new PeriodSelectorVM(_models, SwitchedPeriod, hasShowAll: false);
+            _reportsTab = tabContext;
 
             StartInvCommand = new RelayCommand(OpenStartInv);
             EndInvCommand = new RelayCommand(OpenEndInv);
@@ -117,28 +116,9 @@ namespace BuddhaBowls
 
         #region ICommand Helpers
 
-        public void SwitchedPeriod(PeriodMarker period, WeekMarker week)
-        {
-            CalculateCogs(week);
-        }
-
         public void CalculateCogs(WeekMarker week)
         {
-            CategoryList = new ObservableCollection<CogsCategory>();
-            SetInvAndOrders(week);
-            CogsCategory totalCogs = new CogsCategory("Total", ref _startInventory, ref _endInventory, ref _recOrders, 0);
-            foreach (string category in _models.GetInventoryCategories().Concat(new List<string> { "Food Total" }))
-            {
-                if (category == "Bread")
-                {
-                    CategoryList.Add(new CogsCategory(category, ref _startInventory, ref _endInventory, ref _breadOrderItems, totalCogs.CogsCost));
-                }
-                else
-                {
-                    CategoryList.Add(new CogsCategory(category, ref _startInventory, ref _endInventory, ref _recOrders, totalCogs.CogsCost));
-                }
-            }
-            CategoryList.Add(totalCogs);
+            CategoryList = new ObservableCollection<CogsCategory>(GetCogs(week));
         }
 
         #endregion
@@ -186,25 +166,39 @@ namespace BuddhaBowls
         }
         #endregion
 
-        private void SetInvAndOrders(WeekMarker week)
+        public IEnumerable<CogsCategory> GetCogs(PeriodMarker timeFrame)
+        {
+            SetInvAndOrders(timeFrame);
+            CogsCategory totalCogs = new CogsCategory("Total", ref _startInventory, ref _endInventory, ref _recOrders, 0);
+            foreach (string category in _models.GetInventoryCategories().Concat(new List<string> { "Food Total" }))
+            {
+                if (category == "Bread")
+                    yield return new CogsCategory(category, ref _startInventory, ref _endInventory, ref _breadOrderItems, totalCogs.CogsCost);
+                else
+                    yield return new CogsCategory(category, ref _startInventory, ref _endInventory, ref _recOrders, totalCogs.CogsCost);
+            }
+            yield return totalCogs;
+        }
+
+        private void SetInvAndOrders(PeriodMarker timeFrame)
         {
             List<Inventory> inventoryList = _models.Inventories.OrderByDescending(x => x.Date).ToList();
-            List<Inventory> periodInvList = inventoryList.Where(x => week.StartDate <= x.Date && x.Date <= week.EndDate).ToList();
-            _endInventory = inventoryList.FirstOrDefault(x => x.Date <= week.EndDate);
+            List<Inventory> periodInvList = inventoryList.Where(x => timeFrame.StartDate <= x.Date && x.Date <= timeFrame.EndDate).ToList();
+            _endInventory = inventoryList.FirstOrDefault(x => x.Date <= timeFrame.EndDate);
 
             if (periodInvList.Count == 0)
                 periodInvList.Add(_endInventory);
 
             if (_endInventory != null)
             {
-                _startInventory = inventoryList.FirstOrDefault(x => x.Date <= week.StartDate);
+                _startInventory = inventoryList.FirstOrDefault(x => x.Date <= timeFrame.StartDate);
                 if (_startInventory == null)
                     _startInventory = inventoryList.Last();
 
-                _recOrders = _models.PurchaseOrders.Where(x => x.ReceivedDate >= week.StartDate &&
-                                                               x.ReceivedDate <= week.EndDate.Date.AddDays(1)).ToList();
+                _recOrders = _models.PurchaseOrders.Where(x => x.ReceivedDate >= timeFrame.StartDate &&
+                                                               x.ReceivedDate <= timeFrame.EndDate.Date.AddDays(1)).ToList();
             }
-            _breadOrderItems = _models.GetBreadWeekOrders(week).ToList();
+            _breadOrderItems = _models.GetBreadPeriodOrders(timeFrame).ToList();
         }
 
         private List<InventoryItem> GetFoodInv(List<InventoryItem> invList)
@@ -218,7 +212,7 @@ namespace BuddhaBowls
 
             foreach (PurchaseOrder order in orders)
             {
-                foreach (InventoryItem item in order.GetReceivedPOItems())
+                foreach (InventoryItem item in order.GetPOItems())
                 {
                     if (invDict.ContainsKey(item.Id))
                     {

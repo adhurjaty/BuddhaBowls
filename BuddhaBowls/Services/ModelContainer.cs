@@ -41,6 +41,7 @@ namespace BuddhaBowls.Services
         public List<VendorInventoryItem> VendorInvItems { get; private set; }
         public BreadOrder[] BreadWeek { get; set; }
         public List<DailySale> DailySales { get; set; }
+        public List<ExpenseItem> ExpenseItems { get; set; }
 
         public ModelContainer()
         {
@@ -65,6 +66,7 @@ namespace BuddhaBowls.Services
             PrepItems = ModelHelper.InstantiateList<PrepItem>("PrepItem") ?? new List<PrepItem>();
             SetBreadWeek();
             DailySales = ModelHelper.InstantiateList<DailySale>("DailySale") ?? new List<DailySale>();
+            ExpenseItems = ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem") ?? new List<ExpenseItem>();
         }
 
         private void AddVendorItems()
@@ -185,14 +187,17 @@ namespace BuddhaBowls.Services
                                                                            .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
-        public IEnumerable<InventoryItem> GetBreadWeekOrders(WeekMarker week)
+        public IEnumerable<InventoryItem> GetBreadPeriodOrders(PeriodMarker period)
         {
-            foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeek(week).Where(x => x.BreadDescDict != null)
-                                                                                        .SelectMany(x => x.BreadDescDict.ToList()))
+            foreach (WeekMarker week in GetWeeksInPeriod(period).Where(x => x.StartDate < DateTime.Now))
             {
-                InventoryItem item = InventoryItems.First(x => x.Name == descKvp.Key).Copy<InventoryItem>();
-                item.LastOrderAmount = descKvp.Value.Delivery;
-                yield return item;
+                foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeek(week).Where(x => x.BreadDescDict != null)
+                                                                                            .SelectMany(x => x.BreadDescDict.ToList()))
+                {
+                    InventoryItem item = InventoryItems.First(x => x.Name == descKvp.Key).Copy<InventoryItem>();
+                    item.LastOrderAmount = descKvp.Value.Delivery;
+                    yield return item;
+                }
             }
             //return GetBreadWeek(week).Sum(x => x.BreadDescDict.Sum(y => y.Value.Delivery * InventoryItems.First(z => z.Name == y.Key).LastPurchasedPrice));
         }
@@ -571,6 +576,7 @@ namespace BuddhaBowls.Services
 
         private Dictionary<string, float> GetParFactors(List<BreadOrder> breadOrders)
         {
+            //TODO: throw away outliers
             // calculate par using data from a month back
             DateTime pastDate = DateTime.Today.AddDays(-30);
             Dictionary<string, float> salesDict = new Dictionary<string, float>();
@@ -620,6 +626,14 @@ namespace BuddhaBowls.Services
                     yield return new WeekMarker(startDate.AddDays(7 * i), (i + 1));
                 }
             }
+        }
+
+        public IEnumerable<WeekMarker> GetWeeksInPeriod(PeriodMarker period)
+        {
+            if (period.GetType() == typeof(WeekMarker))
+                return new List<WeekMarker>() { (WeekMarker)period };
+            else
+                return GetWeekLabels(period.Period);
         }
 
         public IEnumerable<PeriodMarker> GetPeriodLabels()

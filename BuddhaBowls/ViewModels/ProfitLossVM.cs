@@ -16,20 +16,23 @@ namespace BuddhaBowls
 {
     public class ProfitLossVM : TabVM
     {
-        private BackgroundWorker _worker;
+        private BackgroundWorker _revenueWorker;
+        private BackgroundWorker _payrollWorker;
+        private ReportsTabVM _reportsTab;
+
+        private object _lock = new object();
 
         #region Content Binders
 
-        private PeriodSelectorVM _periodSelector;
         public PeriodSelectorVM PeriodSelector
         {
             get
             {
-                return _periodSelector;
+                return _reportsTab.PeriodSelector;
             }
             set
             {
-                _periodSelector = value;
+                _reportsTab.PeriodSelector = value;
                 NotifyPropertyChanged("PeriodSelector");
             }
         }
@@ -69,9 +72,10 @@ namespace BuddhaBowls
 
         #endregion
 
-        public ProfitLossVM()
+        public ProfitLossVM(ReportsTabVM tabContext)
         {
-            PeriodSelector = new PeriodSelectorVM(_models, SwitchedPeriod, hasShowAll: false);
+            _reportsTab = tabContext;
+
             SquareCommand = new RelayCommand(UpdateSquare);
 
             SummarySections = new ObservableCollection<PAndLSummarySection>(new PAndLSummarySection[5]);
@@ -81,7 +85,7 @@ namespace BuddhaBowls
 
         private void UpdateSquare(object obj)
         {
-            CalculatePAndL();
+            CalculatePAndL(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
         }
 
         #endregion
@@ -94,40 +98,52 @@ namespace BuddhaBowls
 
         public void SwitchedPeriod(PeriodMarker period, WeekMarker week)
         {
-            CalculatePAndL();
+            CalculatePAndL(period, week);
         }
 
-        private void CalculatePAndL()
+        public void CalculatePAndL(PeriodMarker period, WeekMarker week)
         {
-            _worker = new BackgroundWorker();
-            _worker.DoWork += _worker_DoWork;
-            _worker.RunWorkerCompleted += _worker_RunWorkerCompleted;
-            _worker.WorkerSupportsCancellation = true;
+            _revenueWorker = new BackgroundWorker();
+            _revenueWorker.DoWork += _worker_DoWorkRevenue;
+            _revenueWorker.RunWorkerCompleted += _worker_RunWorkerCompletedRevenue;
+            _revenueWorker.WorkerSupportsCancellation = true;
 
             SquareProgMessage = "Updating from Square...";
-            _worker.RunWorkerAsync();
+            _revenueWorker.RunWorkerAsync(new object[] { period, week });
 
-        }
-        #endregion
+            _payrollWorker = new BackgroundWorker();
+            _payrollWorker.DoWork += _worker_DoWorkPayroll;
+            _payrollWorker.RunWorkerCompleted += _worker_RunWorkerCompletedPayroll;
+            _payrollWorker.WorkerSupportsCancellation = true;
 
-        private void FillSummarySections()
-        {
+            SquareProgMessage = "Updating from Square...";
+            _payrollWorker.RunWorkerAsync(new object[] { period, week });
+
             NotifyPropertyChanged("SummarySections");
         }
 
-        private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        #endregion
+
+        private void _worker_RunWorkerCompletedRevenue(object sender, RunWorkerCompletedEventArgs e)
         {
             PAndLSummarySection section = (PAndLSummarySection)e.Result;
 
             SummarySections[0] = section;
-            FillSummarySections();
             SquareProgMessage = "";
+
+            PeriodMarker period = PeriodSelector.SelectedPeriod;
+            PeriodMarker week = PeriodSelector.SelectedWeek;
+            // move this shit elsewhere
+            SummarySections[1] = new PAndLSummarySection("Cost of Sales", week.Period, GetCogsSummaryItems());
+            SummarySections[2] = new PAndLSummarySection("Payroll", week.Period, GetPayrollSummaryItems(period, week));
+            SummarySections[3] = new PAndLSummarySection("Overhead Expense", week.Period, GetOverheadSummaryItems(period, week));
+
         }
 
-        private void _worker_DoWork(object sender, DoWorkEventArgs e)
+        private void _worker_DoWorkRevenue(object sender, DoWorkEventArgs e)
         {
-            PeriodMarker period = PeriodSelector.SelectedPeriod;
-            WeekMarker week = PeriodSelector.SelectedWeek;
+            PeriodMarker period = (PeriodMarker)((object[])e.Argument)[0];
+            WeekMarker week = (WeekMarker)((object[])e.Argument)[1];
             List<DailySale> periodSales = _models.DailySales.Where(x => period.StartDate <= x.Date && x.Date <= period.EndDate).ToList();
             DateTime lastUpdated;
             if (periodSales.Count == 0)
@@ -139,7 +155,8 @@ namespace BuddhaBowls
 
             SquareService ss = new SquareService();
             // only call API for days where we have not already retrieved and saved a full day of sales
-            List<SquareSale>[] dailySales = new List<SquareSale>[(int)Math.Ceiling(periodEndDate.Subtract(lastUpdated).TotalDays)];
+            int numDays = new int[] { (int)Math.Ceiling(periodEndDate.Subtract(lastUpdated).TotalDays), 0 }.Max();
+            List<SquareSale>[] dailySales = new List<SquareSale>[numDays];
             Parallel.For(0, dailySales.Length, i =>
             {
                 try
@@ -156,6 +173,7 @@ namespace BuddhaBowls
 
             Dictionary<string, float> periodRevenueDict = new Dictionary<string, float>();
             Dictionary<string, float> weekRevenueDict = new Dictionary<string, float>();
+            Dictionary<string, float> prevPeriodRevenueDict = new Dictionary<string, float>();
             Dictionary<string, string> itemCategoryCache = new Dictionary<string, string>();
 
             // destroy period sale records that are partial days
@@ -178,6 +196,12 @@ namespace BuddhaBowls
                     if (!weekRevenueDict.ContainsKey(sale.Category))
                         weekRevenueDict[sale.Category] = 0;
                     weekRevenueDict[sale.Category] += sale.NetTotal;
+                }
+                else
+                {
+                    if (!prevPeriodRevenueDict.ContainsKey(sale.Category))
+                        prevPeriodRevenueDict[sale.Category] = 0;
+                    prevPeriodRevenueDict[sale.Category] += sale.NetTotal;
                 }
             }
 
@@ -212,6 +236,12 @@ namespace BuddhaBowls
                                     weekRevenueDict[itemCategoryCache[itemization.Name]] = 0;
                                 weekRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
                             }
+                            else
+                            {
+                                if (!prevPeriodRevenueDict.ContainsKey(itemCategoryCache[itemization.Name]))
+                                    prevPeriodRevenueDict[itemCategoryCache[itemization.Name]] = 0;
+                                prevPeriodRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
+                            }
 
                             DailySale existingSale = salesToSave[i].FirstOrDefault(x => x.Name == itemization.Name);
                             if(existingSale != null)
@@ -241,58 +271,226 @@ namespace BuddhaBowls
             {
                 foreach(DailySale sale in sales)
                 {
-                    sale.Insert();
+                    lock(_lock)
+                        sale.Insert();
                 }
             }
 
             float weekTotal = weekRevenueDict.Sum(x => x.Value);
-            float periodTotal = periodRevenueDict.Sum(x => x.Value);
+            float prevPeriodTotal = prevPeriodRevenueDict.Sum(x => x.Value);
 
-            List<PAndLSummaryItem> revenueItems = new List<PAndLSummaryItem>();
+            List<ExpenseItem> revenueItems = new List<ExpenseItem>();
             foreach (string key in periodRevenueDict.Keys)
             {
-                revenueItems.Add(new PAndLSummaryItem()
+                revenueItems.Add(new ExpenseItem()
                 {
                     Name = key,
                     WeekSales = weekRevenueDict[key],
                     WeekPSales = weekRevenueDict[key] / weekTotal,
-                    PeriodSales = periodRevenueDict[key],
+                    PrevPeriodSales = prevPeriodRevenueDict.ContainsKey(key) ? prevPeriodRevenueDict[key] : 0,
                     PeriodPSales = periodRevenueDict[key] / weekTotal
                 });
             }
+            revenueItems.Add(new ExpenseItem()
+            {
+                Name = "Total",
+                WeekSales = weekRevenueDict.Sum(x => x.Value),
+                WeekPSales = 1,
+                WeekPBudget = 1,
+                PrevPeriodSales = prevPeriodRevenueDict.Sum(x => x.Value),
+                PeriodPSales = 1,
+                PeriodPBudget = 1
+            });
 
-            e.Result = new PAndLSummarySection("Sales", PeriodSelector.SelectedWeek.Period, revenueItems);
+            e.Result = new PAndLSummarySection("Sales", week.Period, revenueItems);
         }
+
+        private void _worker_RunWorkerCompletedPayroll(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //SummarySections[2] = (PAndLSummarySection)e.Result;
+        }
+
+        private void _worker_DoWorkPayroll(object sender, DoWorkEventArgs e)
+        {
+            PeriodMarker period = (PeriodMarker)((object[])e.Argument)[0];
+            WeekMarker week = (WeekMarker)((object[])e.Argument)[1];
+
+            //e.Result = new PAndLSummarySection("Payroll", PeriodSelector.SelectedWeek.Period, );
+        }
+
+
+        public void FillEditableItem(ExpenseItem item)
+        {
+            ExpenseItem totalSales = SummarySections[0].Summaries.Last();
+            if(totalSales.WeekSales != 0)
+                item.WeekPSales = item.WeekSales / totalSales.WeekSales;
+            else
+                item.WeekPSales = 0;
+
+            if (totalSales.WeekBudget != 0)
+                item.WeekPBudget = item.WeekBudget / totalSales.WeekBudget;
+            else
+                item.WeekPBudget = 0;
+
+            if (totalSales.PeriodSales != 0)
+                item.PeriodPSales = item.PeriodSales / totalSales.PeriodSales;
+            else
+                item.PeriodPSales = 0;
+
+            if (totalSales.PeriodBudget != 0)
+                item.PeriodPBudget = item.PeriodBudget / totalSales.PeriodBudget;
+            else
+                item.PeriodPBudget = 0;
+
+            item.Update();
+        }
+
+        private List<ExpenseItem> GetCogsSummaryItems()
+        {
+            List<ExpenseItem> summary = new List<ExpenseItem>();
+
+            float totalWeekCogs = _reportsTab.WeekCogs.Sum(x => x.CogsCost);
+            float totalPerCogs = _reportsTab.PeriodCogs.Sum(x => x.CogsCost);
+
+            float foodCogs = _reportsTab.WeekCogs.First(x => x.Name == "Food Total").CogsCost;
+            float perFoodCogs = _reportsTab.PeriodCogs.First(x => x.Name == "Food Total").CogsCost;
+            summary.Add(new ExpenseItem()
+            {
+                Name = "Food",
+                WeekPSales = foodCogs / totalWeekCogs,
+                WeekSales = foodCogs,
+                PeriodPSales = perFoodCogs / totalPerCogs,
+                PrevPeriodSales = perFoodCogs - foodCogs
+            });
+            float bevCogs = _reportsTab.WeekCogs.First(x => x.Name == "Beverage").CogsCost;
+            float perBevCogs = _reportsTab.PeriodCogs.First(x => x.Name == "Beverage").CogsCost;
+            summary.Add(new ExpenseItem()
+            {
+                Name = "Beverage",
+                WeekPSales = bevCogs / totalWeekCogs,
+                WeekSales = bevCogs,
+                PeriodPSales = perBevCogs / totalPerCogs,
+                PrevPeriodSales = perBevCogs - bevCogs
+            });
+            float paperCogs = _reportsTab.WeekCogs.First(x => x.Name == "Paper Goods").CogsCost;
+            float perPaperCogs = _reportsTab.PeriodCogs.First(x => x.Name == "Paper Goods").CogsCost;
+            summary.Add(new ExpenseItem()
+            {
+                Name = "Paper Goods",
+                WeekPSales = paperCogs / totalWeekCogs,
+                WeekSales = paperCogs,
+                PeriodPSales = perPaperCogs / totalPerCogs,
+                PrevPeriodSales = perPaperCogs - paperCogs
+            });
+
+            return summary;
+        }
+
+        private IEnumerable<ExpenseItem> GetPayrollSummaryItems(PeriodMarker period, PeriodMarker week)
+        {
+            ExpenseItem totalSales = SummarySections[0].Summaries.Last();
+            List<ExpenseItem> periodPayrolls = _models.ExpenseItems.Where(x => x.ExpenseType == "Payroll" &&
+                                                                            PeriodSelector.SelectedPeriod.StartDate <= x.Date &&
+                                                                            x.Date < week.EndDate).ToList();
+
+            List<ExpenseItem> summary = new List<ExpenseItem>();
+
+            string[] userDefFields = new string[] { "Payroll", "Payroll Taxes", "Benefits & Expenditures" };
+            foreach (string key in userDefFields)
+            {
+                IEnumerable<ExpenseItem> pastItems = periodPayrolls.Where(x => x.Name == key).OrderByDescending(x => x.Date);
+                ExpenseItem latestItem = pastItems.FirstOrDefault() ?? new ExpenseItem("Payroll", key, week.StartDate);
+                IEnumerable<ExpenseItem> prevWeeks = pastItems.Skip(1);
+                latestItem.PrevPeriodSales = prevWeeks.Sum(x => x.WeekSales);
+                latestItem.PrevPeriodBudget = prevWeeks.Sum(x => x.WeekBudget);
+
+                if (totalSales.PeriodPSales != 0)
+                    latestItem.PeriodPSales = latestItem.PeriodSales / totalSales.PeriodSales;
+                else
+                    latestItem.PeriodPSales = 0;
+                if (totalSales.PeriodPBudget != 0)
+                    latestItem.PeriodPBudget = latestItem.PeriodBudget / totalSales.PeriodBudget;
+                else
+                    latestItem.PeriodPBudget = 0;
+
+                summary.Add(latestItem);
+            }
+
+            summary.Add(new ExpenseItem("Payroll", "Total Payroll", week.StartDate)
+            {
+                WeekSales = summary.Sum(x => x.WeekSales),
+                WeekBudget = summary.Sum(x => x.WeekBudget),
+                PrevPeriodSales = summary.Sum(x => x.PrevPeriodSales),
+                PrevPeriodBudget = summary.Sum(x => x.PrevPeriodBudget),
+                PeriodPSales = summary.Sum(x => x.PeriodPSales),
+                PeriodPBudget = summary.Sum(x => x.PeriodPBudget)
+            });
+
+            ExpenseItem totalCogs = SummarySections[1].Summaries.Last();
+            ExpenseItem primeCost = new ExpenseItem("Payroll", "Prime Cost", week.StartDate)
+            {
+                WeekSales = summary.Last().WeekSales + totalCogs.WeekSales,
+                WeekBudget = summary.Last().WeekBudget + totalCogs.WeekBudget,
+                PrevPeriodSales = summary.Last().PrevPeriodSales + totalCogs.PrevPeriodSales,
+                PrevPeriodBudget = summary.Last().PrevPeriodBudget + totalCogs.PrevPeriodBudget,
+            };
+            if (totalSales.PeriodPSales != 0)
+                primeCost.PeriodPSales = primeCost.PeriodSales / totalSales.PeriodSales;
+            else
+                primeCost.PeriodPSales = 0;
+            if (totalSales.PeriodPBudget != 0)
+                primeCost.PeriodPBudget = primeCost.PeriodBudget / totalSales.PeriodBudget;
+            else
+                primeCost.PeriodPBudget = 0;
+
+            summary.Add(primeCost);
+
+            ExpenseItem profitAfter = new ExpenseItem("Payroll", "Profit after Prime Cost", week.StartDate)
+            {
+                WeekSales = totalSales.WeekSales - summary.Last().WeekSales,
+                WeekBudget = totalSales.WeekBudget - summary.Last().WeekBudget,
+                PrevPeriodSales = totalSales.PrevPeriodSales - summary.Last().PrevPeriodSales,
+                PrevPeriodBudget = totalSales.PrevPeriodBudget - summary.Last().PrevPeriodBudget,
+            };
+
+            if (totalSales.PeriodPSales != 0)
+                profitAfter.PeriodPSales = profitAfter.PeriodSales / totalSales.PeriodSales;
+            else
+                profitAfter.PeriodPSales = 0;
+            if (totalSales.PeriodPBudget != 0)
+                profitAfter.PeriodPBudget = profitAfter.PeriodBudget / totalSales.PeriodBudget;
+            else
+                profitAfter.PeriodPBudget = 0;
+
+            summary.Add(profitAfter);
+
+            return summary;
+            //return new List<ExpenseItem>()
+            //{
+            //    new ExpenseItem("Payroll", PeriodSelector.Selec)
+            //};
+        }
+
+        private IEnumerable<ExpenseItem> GetOverheadSummaryItems(PeriodMarker period, PeriodMarker week)
+        {
+            return new List<ExpenseItem>();
+        }
+
     }
 
     public class PAndLSummarySection
     {
         public string SummaryType { get; set; }
         public int WeekNumber { get; set; }
-        public ObservableCollection<PAndLSummaryItem> Summaries { get; set; }
+        public bool ReadOnly { get; set; }
+        public ObservableCollection<ExpenseItem> Summaries { get; set; }
 
-        public PAndLSummarySection(string sumType, int weekNum, IEnumerable<PAndLSummaryItem> items)
+        public PAndLSummarySection(string sumType, int weekNum, IEnumerable<ExpenseItem> items, bool readOnly = true)
         {
             SummaryType = sumType;
             WeekNumber = weekNum;
-            Summaries = new ObservableCollection<PAndLSummaryItem>(items);
+            Summaries = new ObservableCollection<ExpenseItem>(items);
+            ReadOnly = ReadOnly;
         }
-    }
-
-    public class PAndLSummaryItem
-    {
-        public string Name { get; set; }
-        public float WeekPSales { get; set; }
-        public float WeekSales { get; set; }
-        public float WeekPBudget { get; set; }
-        public float WeekBudget { get; set; }
-        public float WeekVar { get; set; }
-        public float WeekPVar { get; set; }
-        public float PeriodPSales { get; set; }
-        public float PeriodSales { get; set; }
-        public float PeriodPBudget { get; set; }
-        public float PeriodBudget { get; set; }
-        public float PeriodVar { get; set; }
-        public float PeriodPVar { get; set; }
     }
 }

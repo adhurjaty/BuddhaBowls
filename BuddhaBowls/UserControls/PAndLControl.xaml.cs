@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuddhaBowls.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,6 +29,13 @@ namespace BuddhaBowls.UserControls
         public PAndLControl(ProfitLossVM context) : this()
         {
             DataContext = context;
+        }
+
+        private void dataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            ExpenseItem item = (ExpenseItem)e.Row.Item;
+            //string sectionName = ((PAndLSummarySection)((DataGrid)e.Row.Parent).DataContext).SummaryType;
+            ((ProfitLossVM)DataContext).FillEditableItem(item);
         }
     }
 }

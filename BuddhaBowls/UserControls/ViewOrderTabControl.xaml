@@ -25,12 +25,7 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
-                <!--<Button Content="&gt;" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="50" Height="50" Margin="0, 20"
-                        FontSize="24" Command="{Binding MoveToReceivedCommand}" />
-                <Button Content="&lt;" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" Width="50" Height="50" Margin="0, 20"
-                        FontSize="24" Command="{Binding MoveToOpenCommand}" />-->
             </Grid>
-            <!--<local:BreakdownDisplay Grid.Column="2" DataContext="{Binding ReceivedBreakdownContext}" />-->
         </Grid>
         <Button Content="Save" Grid.Row="2" Height="25" Width="60" HorizontalAlignment="Right" Margin="5" Command="{Binding SaveCommand}" />
         <Button Content="Cancel" Grid.Row="2" Height="25" Width="60" HorizontalAlignment="Right" Margin="65, 0" Command="{Binding CancelCommand}" />

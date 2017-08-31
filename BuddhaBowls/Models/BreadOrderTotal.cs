@@ -87,6 +87,22 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public override int ProjectedOrder
+        {
+            get
+            {
+                return _descWeek.Sum(x => x.ProjectedOrder);
+            }
+        }
+
+        public override int Useage
+        {
+            get
+            {
+                return _descWeek.Sum(x => x.Useage);
+            }
+        }
+
         public BreadDescriptorTotal(BreadDescriptor[] descWeek) : base()
         {
             _descWeek = descWeek;

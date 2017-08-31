@@ -16,7 +16,17 @@ namespace BuddhaBowls
     public class ReportsTabVM : ChangeableTabVM
     {
         private CogsVM _cogsVM;
-        private ProfitLossVM _plVM;
+        //private ProfitLossVM _plVM;
+
+        public List<CogsCategory> WeekCogs
+        {
+            get
+            {
+                return _cogsVM.CategoryList.ToList();
+            }
+        }
+
+        public List<CogsCategory> PeriodCogs { get; set; }
 
         #region Content Binders
 
@@ -29,7 +39,9 @@ namespace BuddhaBowls
         public ReportsTabVM() : base()
         {
             InitSwitchButtons(new string[] { "COGS", "P & L" });
-            _plVM = new ProfitLossVM();
+            //_plVM = new ProfitLossVM(this);
+            if(DBConnection)
+                PeriodSelector = new PeriodSelectorVM(_models, SwitchedPeriod, hasShowAll: false);
         }
 
         #region ICommand Helpers
@@ -54,6 +66,13 @@ namespace BuddhaBowls
                 Refresh();
         }
 
+        public void SwitchedPeriod(PeriodMarker period, WeekMarker week)
+        {
+            _cogsVM.CalculateCogs(week);
+            PeriodCogs = _cogsVM.GetCogs(period).ToList();
+            //_plVM.CalculatePAndL(period, week);
+        }
+
         #endregion
 
         protected override void ChangePageState(int pageIdx)
@@ -65,12 +84,12 @@ namespace BuddhaBowls
                 case 0:
                     Header = "Cost of Goods Sold";
                     if(_cogsVM == null)
-                        _cogsVM = new CogsVM();
+                        _cogsVM = new CogsVM(this);
                     TabControl = _tabCache[0] ?? new CogsControl(_cogsVM);
                     break;
                 case 1:
                     Header = "Profit & Loss";
-                    TabControl = _tabCache[1] ?? new PAndLControl(_plVM);
+                    //TabControl = _tabCache[1] ?? new PAndLControl(_plVM);
                     break;
                 case -1:
                     //DisplayItemsNotFound();

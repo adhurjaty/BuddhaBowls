@@ -65,17 +65,11 @@ namespace BuddhaBowls
             }
         }
 
-        private float _orderCost;
         public float OrderTotal
         {
             get
             {
-                return _orderCost;
-            }
-            set
-            {
-                _orderCost = value;
-                NotifyPropertyChanged("OrderTotal");
+                return BreakdownList.Sum(x => x.TotalAmount) + VendorShippingCost;
             }
         }
 
@@ -140,6 +134,11 @@ namespace BuddhaBowls
             {
                 bci.SelectedItem = null;
             }
+        }
+
+        public void UpdateTotal()
+        {
+            NotifyPropertyChanged("OrderTotal");
         }
     }
 

@@ -40,6 +40,7 @@ namespace BuddhaBowls.UserControls
                 ((BreakdownCategoryItem)DataContext).UpdateOrderItem((InventoryItem)e.Row.Item);
             }
             PriceColumn.Binding = new Binding("PurchaseExtension") { StringFormat = "c" };
+            ((BreakdownCategoryItem)DataContext).UpdateOrderItem((InventoryItem)e.Row.Item);
         }
     }
 }

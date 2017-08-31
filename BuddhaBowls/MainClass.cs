@@ -52,7 +52,8 @@ namespace BuddhaBowls
         private void MainClass_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             MessageBox.Show(e.Exception.Message + "\n" + e.Exception.StackTrace, "Unhandled Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
+            System.Windows.Forms.Application.Restart();
+            Current.Shutdown();
         }
     }
 }

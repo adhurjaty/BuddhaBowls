@@ -313,7 +313,7 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public int ProjectedOrder
+        public virtual int ProjectedOrder
         {
             get
             {
@@ -326,7 +326,7 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public int Useage
+        public virtual int Useage
         {
             get
             {

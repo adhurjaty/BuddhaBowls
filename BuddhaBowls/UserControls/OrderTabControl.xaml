@@ -11,7 +11,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
-            <RowDefinition Height="120" />
+            <RowDefinition Height="160" />
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
             <RowDefinition Height="1*" />
@@ -22,12 +22,34 @@
                                 ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding OpenOrders}"
                                 SelectedItem="{Binding SelectedOpenOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
+                <DataGridTemplateColumn Width="35">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Expander Expanded="Expander_Clicked" Collapsed="Expander_Clicked" IsExpanded="False" Height="30" Background="White"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Vendor" Binding="{Binding VendorName}" Width="2*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Total Cost" Binding="{Binding Path=TotalCost, StringFormat=c}" Width="2*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Order Date" Binding="{Binding Path=OrderDate, StringFormat={}{0:MM/dd/yy}}"
                                                 Width="2*" IsReadOnly="True" />
                 <DataGridCheckBoxColumn Header="Received" Binding="{Binding ReceivedCheck}" Width="1*"/>
             </DataGrid.Columns>
+
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <ListBox HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding Path=OrderStats}"
+                             ScrollViewer.CanContentScroll="False" IsEnabled="False">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <local:LabelCostValueControl DataContext="{Binding}" Height="30" Width="180" HorizontalAlignment="Left"
+                                                                Margin="20, 0, 0, 0" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
         </DataGrid>
         <Button Grid.Row="0" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Margin="35, 0" Command="{Binding AddNewOrderCommand}">
