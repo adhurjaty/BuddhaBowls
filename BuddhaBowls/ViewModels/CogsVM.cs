@@ -164,6 +164,18 @@ namespace BuddhaBowls
         {
             CalculateCogs(PeriodSelector.SelectedWeek);
         }
+
+        public void BreadUpdated()
+        {
+            CogsCategory breadCat = CategoryList.First(x => x.Name == "Bread");
+            breadCat.SetBreadOrders(_models.GetBreadPeriodOrders(PeriodSelector.SelectedWeek).ToList());
+            breadCat.UpdateProperties();
+
+            if(SelectedCogs.Name == "Bread")
+            {
+                CatItems = new ObservableCollection<CatItem>(SelectedCogs.CatItems);
+            }
+        }
         #endregion
 
         public IEnumerable<CogsCategory> GetCogs(PeriodMarker timeFrame)
@@ -301,7 +313,7 @@ namespace BuddhaBowls
                 List<InventoryItem> endInvItems = GetInvItems(_endInv);
                 List<InventoryItem> purchasedItems = GetInvItems(_purchases);
                 return GetInvItems(_startInv).Select(x => new CatItem(x.Name, x, endInvItems.FirstOrDefault(y => y.Name == x.Name),
-                                                                      purchasedItems.FirstOrDefault(y => y.Name == x.Name))).ToList();
+                                                                      purchasedItems.Where(y => y.Name == x.Name))).ToList();
             }
         }
 
@@ -341,6 +353,11 @@ namespace BuddhaBowls
             NotifyPropertyChanged("CatItems");
         }
 
+        public void SetBreadOrders(List<InventoryItem> purchases)
+        {
+            _breadOrders = purchases;
+        }
+
         private List<InventoryItem> GetInvItems(Inventory inv)
         {
             Dictionary<string, List<InventoryItem>> catDict = inv.CategoryItemsDict;
@@ -376,7 +393,7 @@ namespace BuddhaBowls
         public float EndCount { get; set; }
         public float EndValue { get; set; }
 
-        public CatItem(string name, InventoryItem startItem, InventoryItem endItem, InventoryItem purchasedItem)
+        public CatItem(string name, InventoryItem startItem, InventoryItem endItem, IEnumerable<InventoryItem> purchasedItem)
         {
             Name = name;
             StartCount = startItem.Count;
@@ -387,10 +404,10 @@ namespace BuddhaBowls
                 EndCount = endItem.Count;
                 EndValue = endItem.PriceExtension;
             }
-            if (purchasedItem != null)
+            if (purchasedItem != null && purchasedItem.Count() > 0)
             {
-                RecCount = purchasedItem.LastOrderAmount * purchasedItem.Conversion;
-                RecValue = purchasedItem.PurchaseExtension;
+                RecCount = purchasedItem.Sum(x => x.LastOrderAmount) * purchasedItem.First().Conversion;
+                RecValue = purchasedItem.Sum(x => x.PurchaseExtension);
             }
         }
     }

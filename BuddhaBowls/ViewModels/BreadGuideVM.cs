@@ -148,6 +148,8 @@ namespace BuddhaBowls
                     _models.AddUpdateInventoryItem(ref newItem);
                 }
             }
+
+            ParentContext.ReportTab.UpdateBreadOrder();
         }
 
         public void ChangeBreadWeek(PeriodMarker period, WeekMarker week)

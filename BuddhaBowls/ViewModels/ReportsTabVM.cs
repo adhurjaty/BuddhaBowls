@@ -66,6 +66,11 @@ namespace BuddhaBowls
                 Refresh();
         }
 
+        public void UpdateBreadOrder()
+        {
+            _cogsVM.BreadUpdated();
+        }
+
         public void SwitchedPeriod(PeriodMarker period, WeekMarker week)
         {
             _cogsVM.CalculateCogs(week);

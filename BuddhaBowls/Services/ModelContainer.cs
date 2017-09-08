@@ -191,7 +191,7 @@ namespace BuddhaBowls.Services
         {
             foreach (WeekMarker week in GetWeeksInPeriod(period).Where(x => x.StartDate < DateTime.Now))
             {
-                foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeek(week).Where(x => x.BreadDescDict != null)
+                foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeekNoTotal(week).Where(x => x.BreadDescDict != null)
                                                                                             .SelectMany(x => x.BreadDescDict.ToList()))
                 {
                     InventoryItem item = InventoryItems.First(x => x.Name == descKvp.Key).Copy<InventoryItem>();
@@ -562,6 +562,11 @@ namespace BuddhaBowls.Services
             breadWeek[7] = new BreadOrderTotal(ref tempBreadWeek);
 
             return breadWeek;
+        }
+
+        public BreadOrder[] GetBreadWeekNoTotal(WeekMarker week)
+        {
+            return GetBreadWeek(week).Take(7).ToArray();
         }
 
         public List<string> GetBreadTypes()

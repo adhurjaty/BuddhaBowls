@@ -339,14 +339,14 @@ namespace BuddhaBowls.UserControls
             if (int.TryParse(box.Text, out outInt))
             {
                 box.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 7; i++)
                 {
                     ((BreadGuideVM)DataContext).UpdateValue(i);
                 }
             }
             else if(box.Text.Length > 0)
             {
-                box.Text = box.Text.Substring(0, box.Text.Length - 1);
+                box.Text = box.Text.Substring(0, box.Text.Length);
             }
         }
     }
