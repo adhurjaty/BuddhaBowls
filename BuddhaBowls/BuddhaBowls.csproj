@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>56</ApplicationRevision>
+    <ApplicationRevision>58</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -181,6 +181,7 @@
     <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\Vendor.cs" />
     <Compile Include="Models\VendorInventoryItem.cs" />
+    <Compile Include="Services\ModelContainer.cs" />
     <Compile Include="Services\PeriodMarker.cs" />
     <Compile Include="Services\ShowAllMarker.cs" />
     <Compile Include="Services\WeekMarker.cs" />
@@ -259,7 +260,7 @@
     </Compile>
     <Compile Include="ReportGenerator.cs" />
     <Compile Include="Services\DatabaseInterface.cs" />
-    <Compile Include="Services\ModelContainer.cs" />
+    <Compile Include="Services\DBCache.cs" />
     <Compile Include="UserControls\BreakdownCategory.xaml.cs">
       <DependentUpon>BreakdownCategory.xaml</DependentUpon>
     </Compile>

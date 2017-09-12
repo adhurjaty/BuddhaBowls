@@ -19,7 +19,7 @@ namespace BuddhaBowls
     public class MainViewModel : INotifyPropertyChanged
     {
         private MainWindow _window;
-        private ModelContainer _models;
+        private DBCache _models;
         private Thread _thread;
 
         public Thread ExcelThread;
@@ -277,13 +277,13 @@ namespace BuddhaBowls
         {
             SaveSettings();
             //ModelContainer.ChangeContainer(null);
-            _models = new ModelContainer();
+            _models = new DBCache();
             InitTabsAndModel();
         }
 
         private void RefreshHelper(object obj)
         {
-            _models = new ModelContainer();
+            _models = new DBCache();
             Refresh();
         }
 
@@ -298,18 +298,18 @@ namespace BuddhaBowls
 
         private void InitTabsAndModel()
         {
-            _models = new ModelContainer();
+            _models = new DBCache();
             DatabaseFound = _models.InventoryItems != null && _models.InventoryItems.Count > 0;
             TabVM.ParentContext = this;
             TabVM.IsDBConnected = DatabaseFound;
             TabVM.SetModelContainer(_models);
 
-            OrderTab = new OrderTabVM();
+            //OrderTab = new OrderTabVM();
             InventoryTab = new InventoryTabVM();
-            VendorTab = new VendorTabVM();
-            BreadTab = new BreadGuideVM();
-            RecipeTab = new RecipeTabVM();
-            ReportTab = new ReportsTabVM();
+            //VendorTab = new VendorTabVM();
+            //BreadTab = new BreadGuideVM();
+            //RecipeTab = new RecipeTabVM();
+            //ReportTab = new ReportsTabVM();
         }
 
         #endregion
@@ -371,29 +371,29 @@ namespace BuddhaBowls
             InventoryTab.AddedInvItem();
             VendorTab.Refresh();
 
-            foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
-            {
-                if (tempVM.GetType() == typeof(NewInventoryVM))
-                    ((NewInventoryVM)tempVM).InvListVM.AddedItem();
-                if (tempVM.GetType() == typeof(NewVendorWizardVM))
-                    ((NewVendorWizardVM)tempVM).Refresh();
-            }
+            //foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
+            //{
+            //    if (tempVM.GetType() == typeof(NewInventoryVM))
+            //        ((NewInventoryVM)tempVM).InvListVM.AddedItem();
+            //    if (tempVM.GetType() == typeof(NewVendorWizardVM))
+            //        ((NewVendorWizardVM)tempVM).Refresh();
+            //}
         }
 
-        public void InvItemChanged(VendorInventoryItem item)
-        {
-            if (TempTabVM.TabStack != null)
-            {
-                VendorInventoryItem cpy = item.Copy();
-                foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
-                {
-                    if (tempVM.GetType() == typeof(NewInventoryVM))
-                        ((NewInventoryVM)tempVM).InvListVM.EditedItem(cpy);
-                    if (tempVM.GetType() == typeof(NewOrderVM))
-                        ((NewOrderVM)tempVM).EditedItem(cpy);
-                }
-            }
-        }
+        //public void InvItemChanged(VendorInventoryItem item)
+        //{
+        //    if (TempTabVM.TabStack != null)
+        //    {
+        //        VendorInventoryItem cpy = item.Copy();
+        //        foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
+        //        {
+        //            if (tempVM.GetType() == typeof(NewInventoryVM))
+        //                ((NewInventoryVM)tempVM).InvListVM.EditedItem(cpy);
+        //            if (tempVM.GetType() == typeof(NewOrderVM))
+        //                ((NewOrderVM)tempVM).EditedItem(cpy);
+        //        }
+        //    }
+        //}
 
         public void SaveSettings()
         {
@@ -443,7 +443,7 @@ namespace BuddhaBowls
         /// Only use for testing
         /// </summary>
         /// <returns></returns>
-        public ModelContainer GetModelContainer()
+        public DBCache GetModelContainer()
         {
             return _models;
         }

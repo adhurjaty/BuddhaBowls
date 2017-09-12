@@ -21,13 +21,13 @@ namespace BuddhaBowls
         //HashSet<string> _itemCategories;
         //Dictionary<string, string> _categoryColors;
 
-        ModelContainer _models;
+        DBCache _models;
 
         Excel.Application _excelApp;
         Excel.Workbook _workbook;
         Excel.Sheets _sheets;
 
-        public ReportGenerator(ModelContainer models)
+        public ReportGenerator(DBCache models)
         {
             _models = models;
 

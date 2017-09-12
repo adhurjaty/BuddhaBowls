@@ -145,7 +145,7 @@ namespace BuddhaBowls
                     BreadDescriptor bread = bo.BreadDescDict[item.Name];
                     InventoryItem newItem = item;
                     newItem.Count = bread.BeginInventory + bread.FreezerCount;
-                    _models.AddUpdateInventoryItem(ref newItem);
+                    //_models.AddUpdateInventoryItem(ref newItem);
                 }
             }
 

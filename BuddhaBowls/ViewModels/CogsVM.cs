@@ -171,7 +171,7 @@ namespace BuddhaBowls
             breadCat.SetBreadOrders(_models.GetBreadPeriodOrders(PeriodSelector.SelectedWeek).ToList());
             breadCat.UpdateProperties();
 
-            if(SelectedCogs.Name == "Bread")
+            if(SelectedCogs != null && SelectedCogs.Name == "Bread")
             {
                 CatItems = new ObservableCollection<CatItem>(SelectedCogs.CatItems);
             }
@@ -196,14 +196,17 @@ namespace BuddhaBowls
         {
             List<Inventory> inventoryList = _models.Inventories.OrderByDescending(x => x.Date).ToList();
             List<Inventory> periodInvList = inventoryList.Where(x => timeFrame.StartDate <= x.Date && x.Date <= timeFrame.EndDate).ToList();
-            _endInventory = inventoryList.FirstOrDefault(x => x.Date <= timeFrame.EndDate);
+            _endInventory = inventoryList.Where(x => x.Date > timeFrame.EndDate).OrderBy(x => x.Date).FirstOrDefault();
+            if(_endInventory == null)
+                _endInventory = inventoryList.Where(x => x.Date <= timeFrame.EndDate).OrderByDescending(x => x.Date).FirstOrDefault();
 
-            if (periodInvList.Count == 0)
+                if (periodInvList.Count == 0)
                 periodInvList.Add(_endInventory);
 
             if (_endInventory != null)
             {
-                _startInventory = inventoryList.FirstOrDefault(x => x.Date <= timeFrame.StartDate);
+                _startInventory = inventoryList.Where(x => x.Date >= timeFrame.StartDate && x.Date < timeFrame.EndDate)
+                                               .OrderBy(x => x.Date).FirstOrDefault();
                 if (_startInventory == null)
                     _startInventory = inventoryList.Last();
 
@@ -366,7 +369,7 @@ namespace BuddhaBowls
             if (Name == "Food Total")
                 return catDict.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key)).SelectMany(x => x.Value).ToList();
             if (!catDict.ContainsKey(Name))
-                return null;
+                return new List<InventoryItem>();
             return catDict[Name];
         }
 

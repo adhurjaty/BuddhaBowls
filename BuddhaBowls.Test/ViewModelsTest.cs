@@ -243,7 +243,7 @@ namespace BuddhaBowls.Test
             }
             catch
             {
-                ModelContainer models = _vm.GetModelContainer();
+                DBCache models = _vm.GetModelContainer();
                 models.DeleteInventoryItem(models.InventoryItems.First(x => x.Name == name));
                 Assert.IsTrue(false);
             }
@@ -388,7 +388,7 @@ namespace BuddhaBowls.Test
         public void SelectEmptyOrderVendorTest()
         {
             OrderTabVM orderTab = _vm.OrderTab;
-            ModelContainer models = _vm.GetModelContainer();
+            DBCache models = _vm.GetModelContainer();
             Vendor newVend = new Vendor() { Name = "TempVend" };
 
             try

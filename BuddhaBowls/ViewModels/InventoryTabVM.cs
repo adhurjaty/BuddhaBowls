@@ -296,19 +296,19 @@ namespace BuddhaBowls
         {
             ShowSelectedWeek(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
             if(InvListVM != null)
-                InvListVM.Refresh();
+                InvListVM.InitContainer();
             PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderByDescending(x => x.Name));
         }
 
         public void AddedInvItem()
         {
-            InvListVM.Refresh();
+            InvListVM.InitContainer();
             //InvListVM.AddItem(item);
         }
 
         public void RemoveInvItem(InventoryItem item)
         {
-            InvListVM.RemoveItem(item);
+            //InvListVM.RemoveItem(item);
         }
 
         public void AddPrepItem(PrepItem item)

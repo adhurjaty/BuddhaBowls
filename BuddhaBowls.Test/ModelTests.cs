@@ -377,7 +377,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void UpdateVendorPriceTest()
         {
-            ModelContainer models = new ModelContainer();
+            DBCache models = new DBCache();
             InventoryItem item = models.InventoryItems.First(x => x.Name == "Feta");
             VendorInventoryItem vi = new VendorInventoryItem(item);
             List<Vendor> vendors = vi.Vendors;
@@ -408,7 +408,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void ToInventoryItemTest()
         {
-            ModelContainer models = new ModelContainer();
+            DBCache models = new DBCache();
             InventoryItem item = models.InventoryItems.First(x => x.Name == "Feta");
             VendorInventoryItem vi = new VendorInventoryItem(item);
 

@@ -115,12 +115,12 @@ namespace BuddhaBowls.Test
         /// <typeparam name="T">Data type for Model container (ModelContainer or MockModelContainer)</typeparam>
         /// <param name="path">Path of the XML file to deserialize</param>
         /// <returns>IModelContainer object</returns>
-        public static ModelContainer DeserializeModelContainer(string path)
+        public static DBCache DeserializeModelContainer(string path)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(path);
 
-            ModelContainer obj = new ModelContainer();
+            DBCache obj = new DBCache();
             PropertyInfo[] props = obj.GetType().GetProperties();
 
             foreach(PropertyInfo prop in props)

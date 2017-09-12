@@ -9,14 +9,10 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public delegate Dictionary<Vendor, InventoryItem> VendorDictDel(InventoryItem item);
-
     public class VendorInventoryItem : InventoryItem
     {
         // dictionary relating the vendor to the inventory item (differ in conversion, price, and purchased unit)
         private Dictionary<Vendor, InventoryItem> _vendorDict;
-
-        public static VendorDictDel GetItemVendorDict;
 
         private InventoryItem _invItem;
         public InventoryItem InvItem
@@ -94,10 +90,10 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public VendorInventoryItem(InventoryItem item)
+        public VendorInventoryItem(InventoryItem item, Dictionary<Vendor, InventoryItem> vendorDict)
         {
             InvItem = item;
-            _vendorDict = GetItemVendorDict(item);
+            _vendorDict = vendorDict;
 
             if (LastVendorId != null)
                 SelectedVendor = _vendorDict.Keys.FirstOrDefault(x => x.Id == LastVendorId);

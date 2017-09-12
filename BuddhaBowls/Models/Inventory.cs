@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,14 +20,16 @@ namespace BuddhaBowls.Models
         {
             get
             {
-                if (_invChanged)
-                {
-                    _categoryItemsDict = GetInventoryHistory().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
-                    _invChanged = false;
-                }
+                //if (_invChanged)
+                //{
+                //    _categoryItemsDict = GetInventoryHistory().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
+                //    _invChanged = false;
+                //}
                 return _categoryItemsDict;
             }
         }
+
+        public VendorInvItemsContainer InvItemsContainer { get; private set; }
 
         public Inventory()
         {
@@ -38,24 +41,33 @@ namespace BuddhaBowls.Models
             Date = date;
         }
 
+        public Inventory(DateTime date, VendorInvItemsContainer viContainer) : this(date)
+        {
+            InvItemsContainer = viContainer;
+        }
+
         /// <summary>
         /// Load the inventory items from the history folder
         /// </summary>
-        public List<InventoryItem> GetInventoryHistory()
-        {
-            return ModelHelper.InstantiateList<InventoryItem>(GetInventoryTable(), isModel: false);
-        }
+        //public VendorInvItemsContainer GetInventoryHistory()
+        //{
+        //    return new VendorInvItemsContainer(ModelHelper.InstantiateList<InventoryItem>(GetInventoryTable(), isModel: false));
+        //}
 
         /// <summary>
         /// Creates a new record in the Inventory table and creates a new inventory sold items table
         /// </summary>
-        /// <param name="items">Items the vendor sells</param>
         /// <returns></returns>
-        public int Insert(List<InventoryItem> items)
+        public override int Insert()
         {
-            if(!File.Exists(Path.Combine(Properties.Settings.Default.DBLocation, GetInventoryTable() + ".csv")))
+            if(InvItemsContainer == null)
             {
-                ModelHelper.CreateTable(items.OrderBy(x => x.Id).ToList(), GetInventoryTable());
+                throw new InvalidOperationException("Must set InvItemsContainer before using insert");
+            }
+
+            if (!File.Exists(Path.Combine(Properties.Settings.Default.DBLocation, GetInventoryTable() + ".csv")))
+            {
+                ModelHelper.CreateTable(InvItemsContainer.Items.Select(x => x.ToInventoryItem()).OrderBy(x => x.Id).ToList(), GetInventoryTable());
                 _invChanged = true;
                 return base.Insert();
             }
@@ -64,22 +76,16 @@ namespace BuddhaBowls.Models
         }
 
         /// <summary>
-        /// Do not allow a parameter-less insert
-        /// </summary>
-        /// <returns></returns>
-        public override int Insert()
-        {
-            throw new InvalidOperationException("Must use the parameter version of Insert(List<InventoryItem> item)");
-        }
-
-        /// <summary>
         /// Update both the record in the Inventory table
         /// </summary>
         /// <param name="items"></param>
-        public void Update(List<InventoryItem> items)
+        public override void Update()
         {
-            ModelHelper.CreateTable(items.OrderBy(x => x.Id).ToList(), GetInventoryTable());
-            _invChanged = true;
+            if (InvItemsContainer != null)
+            {
+                ModelHelper.CreateTable(InvItemsContainer.Items.Select(x => x.ToInventoryItem()).OrderBy(x => x.Id).ToList(), GetInventoryTable());
+                _invChanged = true;
+            }
             base.Update();
         }
 
@@ -90,10 +96,15 @@ namespace BuddhaBowls.Models
             base.Destroy();
         }
 
-        public string GetHistoryTablePath()
+        public void SetInvItemsContainer(VendorInvItemsContainer container)
         {
-            return Path.Combine(Properties.Settings.Default.DBLocation, GetInventoryTable() + ".csv");
+            InvItemsContainer = container;
         }
+
+        //public string GetHistoryTablePath()
+        //{
+        //    return Path.Combine(Properties.Settings.Default.DBLocation, GetInventoryTable() + ".csv");
+        //}
 
         private string GetInventoryTable()
         {

@@ -34,7 +34,7 @@ namespace BuddhaBowls.Test
         /// </summary>
         /// <param name="waferId">Database ID in WaferTest table</param>
         /// <returns>Model container</returns>
-        public static ModelContainer GetModelContainer(Int32 waferId)
+        public static DBCache GetModelContainer(Int32 waferId)
         {
             return XmlSerialize.DeserializeModelContainer(Path.Combine(OBJECT_PATH, waferId.ToString() + "Models.xml"));
         }
@@ -59,7 +59,7 @@ namespace BuddhaBowls.Test
             return XmlSerialize.DeserializeModel<T>(path);
         }
 
-        public static void SaveModelContainer(ModelContainer models)
+        public static void SaveModelContainer(DBCache models)
         {
             XmlSerialize.Serialize(Path.Combine(OBJECT_PATH, "Models.xml"), models);
         }

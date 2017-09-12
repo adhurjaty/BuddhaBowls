@@ -15,7 +15,7 @@ namespace BuddhaBowls
 
     public class PeriodSelectorVM : INotifyPropertyChanged
     {
-        private ModelContainer _models;
+        private DBCache _models;
         private WeekChange OnChangeWeek;
 
         // INotifyPropertyChanged event and method
@@ -113,7 +113,7 @@ namespace BuddhaBowls
 
         public ICommand CurWeekCommand { get; set; }
 
-        public PeriodSelectorVM(ModelContainer models, WeekChange onChangeWeek, bool hasShowAll = true)
+        public PeriodSelectorVM(DBCache models, WeekChange onChangeWeek, bool hasShowAll = true)
         {
             _models = models;
             OnChangeWeek = onChangeWeek;

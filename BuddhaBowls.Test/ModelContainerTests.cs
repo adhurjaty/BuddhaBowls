@@ -16,7 +16,7 @@ namespace BuddhaBowls.Test
     [TestClass]
     public class ModelContainerTests
     {
-        private ModelContainer _models;
+        private DBCache _models;
 
         public ModelContainerTests()
         {
@@ -60,7 +60,7 @@ namespace BuddhaBowls.Test
         public void MyTestInitialize()
         {
             BuddhaBowls.Properties.Settings.Default.DBLocation = Properties.Settings.Default.DBLocation;
-            _models = new ModelContainer();
+            _models = new DBCache();
         }
         //
         // Use TestCleanup to run code after each test has run

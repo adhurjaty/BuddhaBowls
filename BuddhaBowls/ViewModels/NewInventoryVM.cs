@@ -175,7 +175,7 @@ namespace BuddhaBowls
 
         public override void Refresh()
         {
-            InvListVM.Refresh();
+            InvListVM.InitContainer();
         }
 
         #endregion

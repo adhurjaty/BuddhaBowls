@@ -273,7 +273,7 @@ namespace BuddhaBowls
             VendorInventoryItem vendItem = _models.VendorInvItems.First(x => x.Id == item.Id);
             vendItem.SetVendorItem(SelectedVendor, item);
             item.Update();
-            ParentContext.InvItemChanged(vendItem);
+            //ParentContext.InvItemChanged(vendItem);
         }
         #endregion
     }

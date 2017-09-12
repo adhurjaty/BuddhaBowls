@@ -144,16 +144,19 @@ namespace BuddhaBowls
                 // save desired inventory order
                 Properties.Settings.Default.InventoryOrder = InvOrderList.Select(x => x.Name).ToList();
                 Properties.Settings.Default.Save();
-                _models.SaveInvOrder();
+                _models.VIContainer.SaveOrder();
+                //_models.SaveInvOrder();
 
-                _models.AddUpdateInventoryItem(ref invItem);
+                //_models.AddUpdateInventoryItem(ref invItem);
 
                 // update the VendorInventoryItem with vendors
                 VendorInventoryItem vInvItem = _models.VendorInvItems.First(x => x.Id == invItem.Id);
                 vInvItem.InvItem = invItem;
                 vInvItem.Update(VendorList.ToList());
 
-                ParentContext.AddedInvItem();
+                //ParentContext.AddedInvItem();
+                _models.VIContainer.AddItem(vInvItem);
+
                 Close();
             }
         }

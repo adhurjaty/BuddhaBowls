@@ -156,7 +156,7 @@ namespace BuddhaBowls
             if (latestOrderFromVendor.Id == _order.Id)
             {
                 Vendor vend = _models.Vendors.First(x => x.Name == _order.VendorName);
-                _models.AddUpdateInventoryItem(ref item);
+                //_models.AddUpdateInventoryItem(ref item);
                 
                 vend.Update(item);
                 VendorInventoryItem vItem = _models.VendorInvItems.FirstOrDefault(x => x.Id == item.Id);
