@@ -16,7 +16,20 @@ namespace BuddhaBowls.Models
         public string Contact { get; set; }
         public float ShippingCost { get; set; }
 
-        public List<InventoryItem> ItemList { get; set; }
+        private List<InventoryItem> _itemList;
+        public List<InventoryItem> ItemList
+        {
+            get
+            {
+                if (_itemList == null)
+                    _itemList = GetInventoryItems();
+                return _itemList;
+            }
+            set
+            {
+                _itemList = value;
+            }
+        }
 
         public Vendor() : base()
         {

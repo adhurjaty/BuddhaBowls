@@ -53,8 +53,6 @@ namespace BuddhaBowls
 
         public void Execute(object parameter)
         {
-            //_execute(parameter);
-
             try
             {
                 _execute(parameter);

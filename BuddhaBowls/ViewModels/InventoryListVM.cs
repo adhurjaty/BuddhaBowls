@@ -309,8 +309,9 @@ namespace BuddhaBowls
                                                       "Delete " + SelectedInventoryItem.Name + "?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                _invItemsContainer.RemoveItem(SelectedInventoryItem);
                 SelectedInventoryItem.Destroy();
+                Properties.Settings.Default.InventoryOrder.Remove(SelectedInventoryItem.Name);
+                _invItemsContainer.RemoveItem(SelectedInventoryItem);
                 SelectedInventoryItem = null;
 
                 //InventoryItem item = SelectedInventoryItem.ToInventoryItem();
@@ -396,8 +397,6 @@ namespace BuddhaBowls
                 else
                 {
                     _invItemsContainer = _inventory.InvItemsContainer;
-                    //_inventoryItems = MainHelper.SortItems(_inventory.GetInventoryHistory().Select(x =>
-                    //                new VendorInventoryItem(x, _models.Vendors.FirstOrDefault(y => y.Id == x.LastVendorId)))).ToList();
                 }
             }
             _invItemsContainer.AddUpdateBinding(CollectionChanged);
@@ -524,7 +523,7 @@ namespace BuddhaBowls
             //{
             //    item.Count = item.GetLastCount();
             //}
-            //InitContainer();
+            InitContainer();
         }
 
         /// <summary>

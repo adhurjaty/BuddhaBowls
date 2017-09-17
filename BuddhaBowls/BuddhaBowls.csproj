@@ -249,9 +249,6 @@
     <Compile Include="UserControls\NewOrder.xaml.cs">
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\NewPrepItem.xaml.cs">
-      <DependentUpon>NewPrepItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControls\NewRecipe.xaml.cs">
       <DependentUpon>NewRecipe.xaml</DependentUpon>
     </Compile>
@@ -298,7 +295,6 @@
     <Compile Include="ViewModels\NewInventoryVM.cs" />
     <Compile Include="ViewModels\InventoryTabVM.cs" />
     <Compile Include="ViewModels\NewInventoryItemWizard.cs" />
-    <Compile Include="ViewModels\NewPrepItemVM.cs" />
     <Compile Include="ViewModels\NewVendorWizardVM.cs" />
     <Compile Include="ViewModels\TabVM.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -397,10 +393,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\BreakdownCategory.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\NewPrepItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

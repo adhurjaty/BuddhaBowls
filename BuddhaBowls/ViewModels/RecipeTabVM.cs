@@ -105,7 +105,8 @@ namespace BuddhaBowls
 
         private void AddItem(object obj)
         {
-            NewRecipeVM tabVM = new NewRecipeVM(_pageIndex == 0, SaveRecipeHandler);
+            //NewRecipeVM tabVM = new NewRecipeVM(_pageIndex == 0, SaveRecipeHandler);
+            NewRecipeVM tabVM = new NewRecipeVM(_pageIndex == 0);
             tabVM.Add("New Recipe");
         }
 
@@ -124,7 +125,8 @@ namespace BuddhaBowls
 
         private void EditRecipe(object obj)
         {
-            NewRecipeVM tabVM = new NewRecipeVM(SelectedItem.GetRecipe(), SaveRecipeHandler);
+            //NewRecipeVM tabVM = new NewRecipeVM(SelectedItem.GetRecipe(), SaveRecipeHandler);
+            NewRecipeVM tabVM = new NewRecipeVM(SelectedItem.GetRecipe());
             tabVM.Add("Edit Recipe");
         }
 

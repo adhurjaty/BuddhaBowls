@@ -132,16 +132,17 @@ namespace BuddhaBowls
         {
             Header = "Inventory";
 
-            InitSwitchButtons(new string[] { "Master", "Prep", "History" });
+            //InitSwitchButtons(new string[] { "Master", "Prep", "History" });
+            InitSwitchButtons(new string[] { "Master", "History" });
 
             AddCommand = new RelayCommand(StartNewInventory, x => DBConnection);
-            DeleteCommand = new RelayCommand(DeleteInventoryItem, x => DeleteEditCanExecute && DBConnection);
+            DeleteCommand = new RelayCommand(DeleteInventory, x => DeleteEditCanExecute && DBConnection);
             ViewCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute && DBConnection);
             //CompareCommand = new RelayCommand(CompareInventories, x => CompareCanExecute && DBConnection);
             InvListCommand = new RelayCommand(GenerateInvList, x => DBConnection);
-            AddPrepCommand = new RelayCommand(NewPrepItem);
+            //AddPrepCommand = new RelayCommand(NewPrepItem);
             DeletePrepCommand = new RelayCommand(DeletePrepItem, x => SelectedPrepItem != null);
-            EditPrepCommand = new RelayCommand(EditPrepItem, x => SelectedPrepItem != null);
+            //EditPrepCommand = new RelayCommand(EditPrepItem, x => SelectedPrepItem != null);
 
             if (DBConnection)
                 PeriodSelector = new PeriodSelectorVM(_models, ShowSelectedWeek);
@@ -173,15 +174,15 @@ namespace BuddhaBowls
         /// Presents user with warning dialog, then removes item from DB and in-memory list - Minus button
         /// </summary>
         /// <param name="obj"></param>
-        private void DeleteInventoryItem(object obj)
+        private void DeleteInventory(object obj)
         {
             MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this record?", "Delete record?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                _models.Inventories.Remove(SelectedInventory);
                 SelectedInventory.Destroy();
+                _models.InContainer.RemoveItem(SelectedInventory);
                 SelectedInventory = null;
-                ParentContext.ReportTab.Refresh();
+                //ParentContext.ReportTab.Refresh();
                 Refresh();
             }
         }
@@ -231,11 +232,11 @@ namespace BuddhaBowls
             }
         }
 
-        private void NewPrepItem(object obj)
-        {
-            NewPrepItemVM tabVM = new NewPrepItemVM(AddPrepItem);
-            tabVM.Add("New Prep Item");
-        }
+        //private void NewPrepItem(object obj)
+        //{
+        //    NewPrepItemVM tabVM = new NewPrepItemVM(AddPrepItem);
+        //    tabVM.Add("New Prep Item");
+        //}
 
         private void DeletePrepItem(object obj)
         {
@@ -249,11 +250,11 @@ namespace BuddhaBowls
             }
         }
 
-        private void EditPrepItem(object obj)
-        {
-            NewPrepItemVM tabVM = new NewPrepItemVM(SelectedPrepItem, AddPrepItem);
-            tabVM.Add("Edit Prep Item");
-        }
+        //private void EditPrepItem(object obj)
+        //{
+        //    NewPrepItemVM tabVM = new NewPrepItemVM(SelectedPrepItem, AddPrepItem);
+        //    tabVM.Add("Edit Prep Item");
+        //}
 
         public void PrepRowEdited(PrepItem item)
         {
@@ -300,22 +301,6 @@ namespace BuddhaBowls
             PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderByDescending(x => x.Name));
         }
 
-        public void AddedInvItem()
-        {
-            InvListVM.InitContainer();
-            //InvListVM.AddItem(item);
-        }
-
-        public void RemoveInvItem(InventoryItem item)
-        {
-            //InvListVM.RemoveItem(item);
-        }
-
-        public void AddPrepItem(PrepItem item)
-        {
-            PrepItemList.Add(item);
-        }
-
         private void ShowSelectedWeek(PeriodMarker period, WeekMarker week)
         {
             InventoryList = new ObservableCollection<Inventory> (_models.Inventories.Where(x => week.StartDate <= x.Date &&
@@ -336,12 +321,12 @@ namespace BuddhaBowls
                         InvListVM = new InventoryListVM();
                     TabControl = _tabCache[0] ?? new MasterInventoryControl(this);
                     break;
+                //case 1:
+                //    if (PrepItemList == null)
+                //        PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderBy(x => x.Name));
+                //    TabControl = _tabCache[1] ?? new PrepListControl(this);
+                //    break;
                 case 1:
-                    if (PrepItemList == null)
-                        PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderBy(x => x.Name));
-                    TabControl = _tabCache[1] ?? new PrepListControl(this);
-                    break;
-                case 2:
                     if (InventoryList == null)
                         InventoryList = new ObservableCollection<Inventory>(_models.Inventories.OrderByDescending(x => x.Date));
                     TabControl = _tabCache[2] ?? new InventoryHistoryControl(this);

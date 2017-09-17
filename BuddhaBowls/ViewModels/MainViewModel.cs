@@ -365,11 +365,11 @@ namespace BuddhaBowls
             }
         }
 
-        public void AddedInvItem()
-        {
-            _models.InvOrderChanged();
-            InventoryTab.AddedInvItem();
-            VendorTab.Refresh();
+        //public void AddedInvItem()
+        //{
+        //    _models.InvOrderChanged();
+        //    InventoryTab.AddedInvItem();
+        //    VendorTab.Refresh();
 
             //foreach (TempTabVM tempVM in TempTabVM.TabStack.Select(x => x.DataContext))
             //{
@@ -378,7 +378,7 @@ namespace BuddhaBowls
             //    if (tempVM.GetType() == typeof(NewVendorWizardVM))
             //        ((NewVendorWizardVM)tempVM).Refresh();
             //}
-        }
+        //}
 
         //public void InvItemChanged(VendorInventoryItem item)
         //{

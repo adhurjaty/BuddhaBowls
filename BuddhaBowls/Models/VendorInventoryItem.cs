@@ -54,6 +54,8 @@ namespace BuddhaBowls.Models
         {
             get
             {
+                if (_selectedVendor == null && _vendorDict != null && Vendors.Count > 0)
+                    _selectedVendor = Vendors[0];
                 return _selectedVendor;
             }
             set
@@ -90,10 +92,10 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public VendorInventoryItem(InventoryItem item, Dictionary<Vendor, InventoryItem> vendorDict)
+        public VendorInventoryItem(InventoryItem item, Dictionary<Vendor, InventoryItem> vendorDict = null)
         {
             InvItem = item;
-            _vendorDict = vendorDict;
+            _vendorDict = vendorDict ?? new Dictionary<Vendor, InventoryItem>();
 
             if (LastVendorId != null)
                 SelectedVendor = _vendorDict.Keys.FirstOrDefault(x => x.Id == LastVendorId);
@@ -244,26 +246,7 @@ namespace BuddhaBowls.Models
 
         public void Update(List<VendorInfo> vInfoList)
         {
-            InventoryItem invItem = ToInventoryItem();
-            List<Vendor> removedVendors = _vendorDict.Keys.Where(x => !vInfoList.Select(y => y.Name).Contains(x.Name)).ToList();
-            foreach (VendorInfo v in vInfoList)
-            {
-                invItem = ToInventoryItem();
-                invItem.LastPurchasedPrice = v.Price;
-                invItem.Conversion = v.Conversion;
-                invItem.PurchasedUnit = v.PurchasedUnit;
-                invItem.Yield = Yield;
-                v.Vend.Update(invItem);
-                _vendorDict[v.Vend] = invItem;
-            }
-
-            foreach (Vendor remVend in removedVendors)
-            {
-                remVend.RemoveInvItem(invItem);
-                DeleteVendor(remVend);
-            }
-
-            UpdateVendorParams();
+            SetVendorDict(vInfoList);
             Update();
         }
 
@@ -289,6 +272,31 @@ namespace BuddhaBowls.Models
             cpy.SelectedVendor = SelectedVendor;
 
             return cpy;
+        }
+
+        public void SetVendorDict(List<VendorInfo> vInfo)
+        {
+            InventoryItem invItem = ToInventoryItem();
+            List<Vendor> removedVendors = _vendorDict != null ? _vendorDict.Keys.Where(x => !vInfo.Select(y => y.Name).Contains(x.Name)).ToList() :
+                                          new List<Vendor>();
+            foreach (VendorInfo v in vInfo)
+            {
+                invItem = ToInventoryItem();
+                invItem.LastPurchasedPrice = v.Price;
+                invItem.Conversion = v.Conversion;
+                invItem.PurchasedUnit = v.PurchasedUnit;
+                invItem.Yield = Yield;
+                v.Vend.Update(invItem);
+                _vendorDict[v.Vend] = invItem;
+            }
+
+            foreach (Vendor remVend in removedVendors)
+            {
+                remVend.RemoveInvItem(invItem);
+                DeleteVendor(remVend);
+            }
+
+            UpdateVendorParams();
         }
     }
 }

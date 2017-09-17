@@ -21,7 +21,7 @@ namespace BuddhaBowls
     public class NewRecipeVM : WizardVM
     {
         private bool _newItem;
-        private AddItemDel<Recipe> SaveItem;
+        //private AddItemDel<Recipe> SaveItem;
         protected List<RecipeItem> _recipeItems;
 
         #region Content Binders
@@ -211,7 +211,7 @@ namespace BuddhaBowls
         /// Default constructor
         /// </summary>
         /// <param name="addDel"></param>
-        private NewRecipeVM(AddItemDel<Recipe> addDel) : base()
+        private NewRecipeVM(): base()        // AddItemDel<Recipe> addDel) : base()
         {
             AddItemCommand = new RelayCommand(AddItem);
             RemoveItemCommand = new RelayCommand(RemoveItem, x => RemoveCanExecute);
@@ -219,7 +219,7 @@ namespace BuddhaBowls
             ModalCancelCommand = new RelayCommand(ModalCancel);
 
             CategoryList = _models.GetRecipeCategories();
-            SaveItem = addDel;
+            //SaveItem = addDel;
             FinishVisibility = Visibility.Visible;
         }
 
@@ -228,7 +228,7 @@ namespace BuddhaBowls
         /// </summary>
         /// <param name="isBatch"></param>
         /// <param name="addDel"></param>
-        public NewRecipeVM(bool isBatch, AddItemDel<Recipe> addDel) : this(addDel)
+        public NewRecipeVM(bool isBatch) : this()         //, AddItemDel<Recipe> addDel) : this(addDel)
         {
             _newItem = true;
             IsBatch = isBatch;
@@ -247,7 +247,7 @@ namespace BuddhaBowls
         /// </summary>
         /// <param name="recipe"></param>
         /// <param name="addDel"></param>
-        public NewRecipeVM(Recipe recipe, AddItemDel<Recipe> addDel) : this(addDel)
+        public NewRecipeVM(Recipe recipe) : this()          // AddItemDel<Recipe> addDel) : this(addDel)
         {
             _newItem = false;
             IsBatch = recipe.IsBatch;
@@ -331,7 +331,7 @@ namespace BuddhaBowls
                 {
                     Item.Update(Ingredients.Select(x => x.GetRecipeItem()).ToList());
                 }
-                SaveItem(Item);
+                //SaveItem(Item);
                 Close();
             }
         }

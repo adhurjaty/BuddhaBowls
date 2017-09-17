@@ -12,8 +12,6 @@ using System.Windows.Input;
 
 namespace BuddhaBowls
 {
-    public delegate void AddItemDel<T>(T item);
-
     public class NewInventoryItemWizard : ReOrderVM
     {
         private bool _newItem;
@@ -145,17 +143,14 @@ namespace BuddhaBowls
                 Properties.Settings.Default.InventoryOrder = InvOrderList.Select(x => x.Name).ToList();
                 Properties.Settings.Default.Save();
                 _models.VIContainer.SaveOrder();
-                //_models.SaveInvOrder();
-
-                //_models.AddUpdateInventoryItem(ref invItem);
 
                 // update the VendorInventoryItem with vendors
-                VendorInventoryItem vInvItem = _models.VendorInvItems.First(x => x.Id == invItem.Id);
-                vInvItem.InvItem = invItem;
-                vInvItem.Update(VendorList.ToList());
+                //VendorInventoryItem vInvItem = _models.VendorInvItems.First(x => x.Id == invItem.Id);
+                //vInvItem.InvItem = invItem;
+                //vInvItem.Update(VendorList.ToList());
 
                 //ParentContext.AddedInvItem();
-                _models.VIContainer.AddItem(vInvItem);
+                _models.VIContainer.AddItem(invItem, VendorList.ToList());
 
                 Close();
             }

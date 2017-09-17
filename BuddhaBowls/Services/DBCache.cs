@@ -723,10 +723,37 @@ namespace BuddhaBowls.Services
             _vendorsContainer = vContainer;
         }
 
+        public void AddItem(InventoryItem item, List<VendorInfo> vendors)
+        {
+            int idx = Items.FindIndex(x => x.Id == item.Id);
+            if (idx != -1)
+            {
+                _items[idx].Update(vendors);
+                _items[idx].InvItem = item;
+                PushChange();
+            }
+            else
+            {
+                VendorInventoryItem vItem = new VendorInventoryItem(item);
+
+                vItem.Id = item.Insert();
+                vItem.SetVendorDict(vendors);
+
+                int insertIdx = Properties.Settings.Default.InventoryOrder.IndexOf(item.Name);
+                if (insertIdx == -1)
+                    _items.Add(vItem);
+                else
+                    _items.Insert(insertIdx, vItem);
+
+                PushChange();
+            }
+        }
+
         public override void RemoveItem(VendorInventoryItem item)
         {
             _vendorsContainer.RemoveItemFromVendors(item);
-            PushChange();
+
+            base.RemoveItem(item);
         }
 
         public VendorInvItemsContainer Copy()
