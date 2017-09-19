@@ -231,13 +231,12 @@ namespace BuddhaBowls.Services
         /// </summary>
         /// <param name="inv"></param>
         /// <returns></returns>
-        public Inventory LoadInventory(Inventory inv)
+        public void LoadInvContainer(Inventory inv)
         {
-            inv.SetInvItemsContainer(new VendorInvItemsContainer(_inventoryItems.Select(x => new VendorInventoryItem(x, GetVendorsFromItem(x)))
+            List<InventoryItem> items = inv.GetInvItems();
+            inv.SetInvItemsContainer(new VendorInvItemsContainer(items.Select(x => new VendorInventoryItem(x, GetVendorsFromItem(x)))
                                                                                 .ToList(),
                                                                  VContainer));
-
-            return inv;
         }
 
         /// <summary>
@@ -782,6 +781,14 @@ namespace BuddhaBowls.Services
 
             return costDict;
         }
+
+        public void UpdateContainer()
+        {
+            foreach (VendorInventoryItem item in Items)
+            {
+                item.Update();
+            }
+        }
     }
 
     public class InventoriesContainer : ModelContainer<Inventory>
@@ -799,11 +806,11 @@ namespace BuddhaBowls.Services
             {
                 Items[idx].Id = inv.Id;
                 Items[idx] = inv;
-                inv.Update();
+                PushChange();
             }
             else
             {
-                inv.Id = inv.Insert();
+                base.AddItem(inv);
             }
         }
 

@@ -53,14 +53,14 @@ namespace BuddhaBowls
 
         public void Execute(object parameter)
         {
-            try
-            {
+            //try
+            //{
                 _execute(parameter);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
         }
 
         public void OnCanExecuteChanged()

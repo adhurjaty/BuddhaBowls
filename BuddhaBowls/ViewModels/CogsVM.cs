@@ -137,13 +137,13 @@ namespace BuddhaBowls
 
         public void OpenStartInv(object obj)
         {
-            NewInventoryVM tabVM = new NewInventoryVM(ParentContext.InventoryTab.Refresh, _startInventory);
+            NewInventoryVM tabVM = new NewInventoryVM(_startInventory);
             tabVM.Add("View Inventory");
         }
 
         public void OpenEndInv(object obj)
         {
-            NewInventoryVM tabVM = new NewInventoryVM(ParentContext.InventoryTab.Refresh, _endInventory);
+            NewInventoryVM tabVM = new NewInventoryVM(_endInventory);
             tabVM.Add("View Inventory");
         }
 

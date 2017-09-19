@@ -11,7 +11,7 @@ namespace BuddhaBowls.Models
 {
     public class Inventory : Model
     {
-        private bool _invChanged = true;    // used to speed up calls to CategoryItemsDict
+        //private bool _invChanged = true;    // used to speed up calls to CategoryItemsDict
 
         public DateTime Date { get; set; }
 
@@ -68,7 +68,7 @@ namespace BuddhaBowls.Models
             if (!File.Exists(Path.Combine(Properties.Settings.Default.DBLocation, GetInventoryTable() + ".csv")))
             {
                 ModelHelper.CreateTable(InvItemsContainer.Items.Select(x => x.ToInventoryItem()).OrderBy(x => x.Id).ToList(), GetInventoryTable());
-                _invChanged = true;
+                //_invChanged = true;
                 return base.Insert();
             }
 
@@ -84,7 +84,7 @@ namespace BuddhaBowls.Models
             if (InvItemsContainer != null)
             {
                 ModelHelper.CreateTable(InvItemsContainer.Items.Select(x => x.ToInventoryItem()).OrderBy(x => x.Id).ToList(), GetInventoryTable());
-                _invChanged = true;
+                //_invChanged = true;
             }
             base.Update();
         }
@@ -92,7 +92,7 @@ namespace BuddhaBowls.Models
         public override void Destroy()
         {
             _dbInt.DestroyTable(GetInventoryTable());
-            _invChanged = true;
+            //_invChanged = true;
             base.Destroy();
         }
 
@@ -101,15 +101,14 @@ namespace BuddhaBowls.Models
             InvItemsContainer = container;
         }
 
-        //public string GetHistoryTablePath()
-        //{
-        //    return Path.Combine(Properties.Settings.Default.DBLocation, GetInventoryTable() + ".csv");
-        //}
+        public List<InventoryItem> GetInvItems()
+        {
+            return ModelHelper.InstantiateList<InventoryItem>(GetInventoryTable(), false);
+        }
 
         private string GetInventoryTable()
         {
             return @"Inventory History\Inventory_" + Date.ToString("MM-dd-yyyy");
         }
-
     }
 }

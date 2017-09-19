@@ -286,7 +286,8 @@ namespace BuddhaBowls
         /// <param name="inv"></param>
         public InventoryListVM(Inventory inv, StatusUpdatedDel countDel) : base()
         {
-            _inventory = _models.LoadInventory(inv);
+            _inventory = inv;
+            _models.LoadInvContainer(_inventory);
             CountChanged = countDel;
             IsMasterList = false;
 
@@ -569,21 +570,21 @@ namespace BuddhaBowls
         /// <summary>
         /// Called from New Inventory: saves the filtered items
         /// </summary>
-        public void SaveNew(DateTime invDate)
-        {
-            FilterText = "";
-            //if (_models.Inventories == null)
-            //    _models.Inventories = new List<Inventory>();
+        //public void SaveNew(DateTime invDate)
+        //{
+        //    FilterText = "";
+        //    //if (_models.Inventories == null)
+        //    //    _models.Inventories = new List<Inventory>();
 
-            Inventory inv = new Inventory(invDate, _invItemsContainer);
+        //    Inventory inv = new Inventory(invDate, _invItemsContainer);
 
-            DateTime maxInvDate = _models.Inventories.Max(x => x.Date).Date;
-            if (maxInvDate <= invDate)
-                _models.InContainer.AddUpdateBinding(UpdateItemValues);
-            else
-                _models.InContainer.RemoveUpdateBinding(UpdateItemValues);
+        //    DateTime maxInvDate = _models.Inventories.Max(x => x.Date).Date;
+        //    if (maxInvDate <= invDate)
+        //        _models.InContainer.AddUpdateBinding(UpdateItemValues);
+        //    else
+        //        _models.InContainer.RemoveUpdateBinding(UpdateItemValues);
 
-            _models.InContainer.AddItem(inv);
+        //    _models.InContainer.AddItem(inv);
             //if (_models.Inventories.Select(x => x.Date.Date).Contains(invDate.Date))
             //{
             //    int idx = _models.Inventories.FindIndex(x => x.Date.Date == invDate.Date);
@@ -612,16 +613,21 @@ namespace BuddhaBowls
 
             //    ParentContext.InventoryTab.InvListVM.UpdateInvValue();
             //}
+        //}
+
+        public VendorInvItemsContainer GetItemsContainer()
+        {
+            return _invItemsContainer;
         }
 
-        public void SaveOld(DateTime invDate)
-        {
-            _inventory.Date = invDate;
-            _models.InContainer.Update(_inventory);
-            //int idx = _models.Inventories.FindIndex(x => x.Id == _inventory.Id);
-            //_models.Inventories[idx].Date = invDate;
-            //_inventory.Update(_inventoryItems.Select(x => x.ToInventoryItem()).ToList());
-        }
+        //public void SaveOld(DateTime invDate)
+        //{
+        //    _inventory.Date = invDate;
+        //    _models.InContainer.Update(_inventory);
+        //    //int idx = _models.Inventories.FindIndex(x => x.Id == _inventory.Id);
+        //    //_models.Inventories[idx].Date = invDate;
+        //    //_inventory.Update(_inventoryItems.Select(x => x.ToInventoryItem()).ToList());
+        //}
 
         private void UpdateItemValues()
         {

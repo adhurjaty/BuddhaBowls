@@ -267,9 +267,6 @@
     <Compile Include="UserControls\PeriodSelectorControl.xaml.cs">
       <DependentUpon>PeriodSelectorControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\PrepListControl.xaml.cs">
-      <DependentUpon>PrepListControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControls\RecipeTabControl.xaml.cs">
       <DependentUpon>RecipeTabControl.xaml</DependentUpon>
     </Compile>
@@ -409,10 +406,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\PeriodSelectorControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\PrepListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -68,6 +68,7 @@ namespace BuddhaBowls.Services
         public void SetItems(List<T> items)
         {
             _items = items;
+            PushChange();
         }
 
         public void PushChange()

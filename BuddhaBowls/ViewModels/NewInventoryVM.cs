@@ -22,21 +22,20 @@ namespace BuddhaBowls
     /// </summary>
     public class NewInventoryVM : TempTabVM, INotifyPropertyChanged
     {
-        private RefreshDel RefreshInv;
 
         #region Data Bindings
 
-        private DateTime? _inventoryDate;
-        public DateTime InventoryDate
+        private Inventory _inventory;
+        public Inventory Inv
         {
             get
             {
-                return _inventoryDate ?? DateTime.Now;
+                return _inventory;
             }
             set
             {
-                _inventoryDate = value;
-                NotifyPropertyChanged("InventoryDate");
+                _inventory = value;
+                NotifyPropertyChanged("Inventory");
             }
         }
         
@@ -70,28 +69,27 @@ namespace BuddhaBowls
 
         #endregion
 
-        public NewInventoryVM(RefreshDel refresh) : base()
+        public NewInventoryVM() : base()
         {
             _tabControl = new NewInventory(this);
-            RefreshInv = refresh;
             InvListVM = new InventoryListVM(InventoryItemCountChanged);
             InventoryControl = InvListVM.TabControl;
+            Inv = new Inventory(DateTime.Now);
             
             InitICommand();
             Header = "New Inventory";
         }
 
-        public NewInventoryVM(RefreshDel refresh, Inventory inv) : base()
+        public NewInventoryVM(Inventory inv) : base()
         {
             _tabControl = new NewInventory(this);
-            RefreshInv = refresh;
+            Inv = inv;
             InvListVM = new InventoryListVM(inv, InventoryItemCountChanged);
             InventoryControl = InvListVM.TabControl;
-            InventoryDate = inv.Date;
 
             InitICommand();
-            ((RelayCommand)SaveCountCommand).ChangeCallback(SaveOldInventory);
-            Header = "Edit Inventory " + inv.Date.ToShortDateString();
+            //((RelayCommand)SaveCountCommand).ChangeCallback(SaveOldInventory);
+            Header = "Edit Inventory " + Inv.Date.ToShortDateString();
         }
         
         #region ICommand Helpers
@@ -110,27 +108,47 @@ namespace BuddhaBowls
         /// Writes the Inventory items to DB as they are in the Master List datagrid
         /// </summary>
         /// <param name="obj"></param>
-        private void SaveNewInventory(object obj)
+        private void SaveInventory(object obj)
         {
             if (CheckUniqueInvDate())
             {
-                InvListVM.SaveNew(InventoryDate);
+                // if this is an edit or new inventory
+                if (_models.InContainer.Items.Contains(Inv))
+                {
+                    _models.InContainer.Update(Inv);
+                    Inv.Update();
+                }
+                else
+                {
+                    Inv.SetInvItemsContainer(new VendorInvItemsContainer(InvListVM.GetItemsContainer().Items, _models.VContainer));
+                    _models.InContainer.AddItem(Inv);
+                    Inv.Insert();
+                }
 
-                ParentContext.Refresh();
-                ParentContext.ReportTab.UpdatedCogs(InventoryDate);
+                // if this is the latest date inventory, change item counts for current inv items
+                if(Inv.Date >= _models.InContainer.Items.Max(x => x.Date))
+                {
+                    _models.VIContainer.SetItems(InvListVM.GetItemsContainer().Items);
+                    _models.VIContainer.UpdateContainer();
+                }
+
+                //InvListVM.SaveNew(Inv.Date);
+
+                //ParentContext.Refresh();
+                //ParentContext.ReportTab.UpdatedCogs(InventoryDate);
                 Close();
             }
         }
 
-        private void SaveOldInventory(object obj)
-        {
-            if (CheckUniqueInvDate())
-            {
-                InvListVM.SaveOld(InventoryDate);
-                ParentContext.ReportTab.UpdatedCogs(InventoryDate);
-                Close();
-            }
-        }
+        //private void SaveOldInventory(object obj)
+        //{
+        //    if (CheckUniqueInvDate())
+        //    {
+        //        InvListVM.SaveOld(Inv.Date);
+        //        //ParentContext.ReportTab.UpdatedCogs(InventoryDate);
+        //        Close();
+        //    }
+        //}
 
         private void CancelInventory(object obj)
         {
@@ -139,13 +157,14 @@ namespace BuddhaBowls
 
         private bool CheckUniqueInvDate()
         {
-            Inventory existingInv = _models.Inventories.FirstOrDefault(x => x.Date == InventoryDate);
-            if(existingInv != null)
+            Inventory existingInv = _models.InContainer.Items.FirstOrDefault(x => x.Date == Inv.Date);
+            if(existingInv != null && existingInv != Inv)
             {
-                if (MessageBox.Show("Inventory with that date already exists. Do you wish to replace it?", "Replace Inventory", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                if (MessageBox.Show("Inventory with that date already exists. Do you wish to replace it?", "Replace Inventory",
+                    MessageBoxButton.YesNo) == MessageBoxResult.No)
                     return false;
-                _models.Inventories.Remove(existingInv);
-                existingInv.Destroy();
+                //_models.Inventories.Remove(existingInv);
+                //existingInv.Destroy();
             }
 
             return true;
@@ -156,7 +175,7 @@ namespace BuddhaBowls
 
         private void InitICommand()
         {
-            SaveCountCommand = new RelayCommand(SaveNewInventory, x => ChangeCountCanExecute);
+            SaveCountCommand = new RelayCommand(SaveInventory, x => ChangeCountCanExecute);
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
             CancelCommand = new RelayCommand(CancelInventory);
         }
