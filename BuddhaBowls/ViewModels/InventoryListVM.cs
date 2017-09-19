@@ -314,16 +314,6 @@ namespace BuddhaBowls
                 Properties.Settings.Default.InventoryOrder.Remove(SelectedInventoryItem.Name);
                 _invItemsContainer.RemoveItem(SelectedInventoryItem);
                 SelectedInventoryItem = null;
-
-                //InventoryItem item = SelectedInventoryItem.ToInventoryItem();
-                //foreach (Vendor v in SelectedInventoryItem.Vendors)
-                //{
-                //    v.RemoveInvItem(item);
-                //}
-                //_models.DeleteInventoryItem(item);
-                //FilteredItems.Remove(SelectedInventoryItem);
-                //ParentContext.InventoryTab.RemoveInvItem(item);
-                //SelectedInventoryItem = null;
             }
         }
 
@@ -401,59 +391,15 @@ namespace BuddhaBowls
                 }
             }
             _invItemsContainer.AddUpdateBinding(CollectionChanged);
-            UpdateInvValue();
-            FilteredItems = new ObservableCollection<VendorInventoryItem>(_invItemsContainer.Items);
+            _invItemsContainer.AddUpdateBinding(UpdateInvValue);
             FilterText = "";
+            _invItemsContainer.PushChange();
         }
 
         public void CollectionChanged()
         {
             FilteredItems = new ObservableCollection<VendorInventoryItem>(_invItemsContainer.Items);
         }
-        /// <summary>
-        /// Updates inventory items list on notification that a new item has been added
-        /// </summary>
-        //public void AddedItem()
-        //{
-        //    FilterText = "";
-
-        //    // find the new vendor inventory item
-        //    List<int> newIds = _models.VendorInvItems.Select(x => x.Id).Except(_inventoryItems.Select(x => x.Id)).ToList();
-        //    if (newIds.Count == 0)
-        //        return;
-        //    VendorInventoryItem newItem = _models.VendorInvItems.First(x => x.Id == newIds[0]);
-
-        //    // add and sort to list
-        //    _inventoryItems.Add(newItem);
-        //    _inventoryItems = MainHelper.SortItems(_inventoryItems).ToList();
-        //    FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
-        //}
-
-        /// <summary>
-        /// Removes an item from this list
-        /// </summary>
-        /// <param name="item"></param>
-        //public void RemoveItem(InventoryItem item)
-        //{
-        //    VendorInventoryItem vendorItem = _inventoryItems.FirstOrDefault(x => x.Id == item.Id);
-        //    _inventoryItems.Remove(vendorItem);
-        //    FilteredItems.Remove(vendorItem);
-        //}
-
-        /// <summary>
-        /// Method used to update values that have been edited from the master list or vendor list
-        /// </summary>
-        /// <param name="item"></param>
-        //public void EditedItem(VendorInventoryItem item)
-        //{
-        //    if (!IsMasterList && _inventory == null)
-        //    {
-        //        FilterText = "";
-        //        int idx = _inventoryItems.FindIndex(x => x.Id == item.Id);
-        //        _inventoryItems[idx] = item;
-        //        FilteredItems = new ObservableCollection<VendorInventoryItem>(_inventoryItems);
-        //    }
-        //}
 
         public void MoveDown(InventoryItem item)
         {
@@ -478,9 +424,6 @@ namespace BuddhaBowls
             Properties.Settings.Default.Save();
 
             _invItemsContainer.SaveOrder();
-
-            //_models.SaveInvOrder();
-            //_models.ReOrderInvList();
         }
 
         /// <summary>
@@ -492,26 +435,10 @@ namespace BuddhaBowls
             if (IsMasterList)
             {
                 item.Update();
-                //ParentContext.InvItemChanged(item);
             }
-            //else
-            //{
-            //    InventoryItemCountChanged();
-            //    item.NotifyAllChanges();
-            //}
-
-            _invItemsContainer.PushChange();
-
+            item.NotifyAllChanges();
+            UpdateInvValue();
         }
-
-        /// <summary>
-        /// Called when New/Edit Inventory List is edited
-        /// </summary>
-        //public void InventoryItemCountChanged()
-        //{
-        //    CountChanged();
-        //    UpdateInvValue();
-        //}
 
         /// <summary>
         /// Resets the inventory count to the saved value before changing the datagrid. Called from New Inventory form
@@ -520,10 +447,10 @@ namespace BuddhaBowls
         public void ResetCount()
         {
             FilterText = "";
-            //foreach (InventoryItem item in FilteredItems)
-            //{
-            //    item.Count = item.GetLastCount();
-            //}
+            foreach (VendorInventoryItem item in FilteredItems)
+            {
+                item.Count = item.GetLastCount();
+            }
             InitContainer();
         }
 
@@ -567,81 +494,9 @@ namespace BuddhaBowls
         //}
         #endregion
 
-        /// <summary>
-        /// Called from New Inventory: saves the filtered items
-        /// </summary>
-        //public void SaveNew(DateTime invDate)
-        //{
-        //    FilterText = "";
-        //    //if (_models.Inventories == null)
-        //    //    _models.Inventories = new List<Inventory>();
-
-        //    Inventory inv = new Inventory(invDate, _invItemsContainer);
-
-        //    DateTime maxInvDate = _models.Inventories.Max(x => x.Date).Date;
-        //    if (maxInvDate <= invDate)
-        //        _models.InContainer.AddUpdateBinding(UpdateItemValues);
-        //    else
-        //        _models.InContainer.RemoveUpdateBinding(UpdateItemValues);
-
-        //    _models.InContainer.AddItem(inv);
-            //if (_models.Inventories.Select(x => x.Date.Date).Contains(invDate.Date))
-            //{
-            //    int idx = _models.Inventories.FindIndex(x => x.Date.Date == invDate.Date);
-            //    Inventory oldInv = _models.Inventories[idx];
-            //    inv.Id = oldInv.Id;
-            //    _models.Inventories[idx] = inv;
-            //    inv.Update(_inventoryItems.Select(x => x.ToInventoryItem()).ToList());
-            //}
-            //else
-            //{
-            //    _models.Inventories.Add(inv);
-            //}
-
-            //DateTime maxInvDate = _models.Inventories.Max(x => x.Date).Date;
-            //if (maxInvDate <= invDate)
-            //{
-            //    foreach (VendorInventoryItem item in _inventoryItems)
-            //    {
-            //        InventoryItem invItem = item.ToInventoryItem();
-            //        _models.AddUpdateInventoryItem(ref invItem);
-            //        VendorInventoryItem origVitem = _models.VendorInvItems.First(x => x.Id == item.Id);
-            //        origVitem.SetVendorItem(item.SelectedVendor, invItem);
-            //        origVitem.SelectedVendor = item.SelectedVendor;
-            //        origVitem.Count = invItem.Count;
-            //    }
-
-            //    ParentContext.InventoryTab.InvListVM.UpdateInvValue();
-            //}
-        //}
-
         public VendorInvItemsContainer GetItemsContainer()
         {
             return _invItemsContainer;
-        }
-
-        //public void SaveOld(DateTime invDate)
-        //{
-        //    _inventory.Date = invDate;
-        //    _models.InContainer.Update(_inventory);
-        //    //int idx = _models.Inventories.FindIndex(x => x.Id == _inventory.Id);
-        //    //_models.Inventories[idx].Date = invDate;
-        //    //_inventory.Update(_inventoryItems.Select(x => x.ToInventoryItem()).ToList());
-        //}
-
-        private void UpdateItemValues()
-        {
-            _models.VIContainer.SetItems(_invItemsContainer.Items);
-
-            //foreach (VendorInventoryItem item in _invItemsContainer.Items)
-            //{
-            //    InventoryItem invItem = item.ToInventoryItem();
-            //    _models.AddUpdateInventoryItem(ref invItem);
-            //    VendorInventoryItem origVitem = _models.VendorInvItems.First(x => x.Id == item.Id);
-            //    origVitem.SetVendorItem(item.SelectedVendor, invItem);
-            //    origVitem.SelectedVendor = item.SelectedVendor;
-            //    origVitem.Count = invItem.Count;
-            //}
         }
     }
 
