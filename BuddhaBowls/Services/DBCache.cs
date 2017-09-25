@@ -35,9 +35,9 @@ namespace BuddhaBowls.Services
         }
 
         public List<Recipe> Recipes { get; set; }
-        public List<PurchaseOrder> PurchaseOrders { get; set; }
-        public List<Vendor> Vendors { get; set; }
-        public List<Inventory> Inventories { get; set; }
+        //public List<PurchaseOrder> PurchaseOrders { get; set; }
+        //public List<Vendor> Vendors { get; set; }
+        //public List<Inventory> Inventories { get; set; }
         public List<PrepItem> PrepItems { get; set; }
         public List<VendorInventoryItem> VendorInvItems { get; private set; }
         public BreadOrder[] BreadWeek { get; set; }
@@ -61,13 +61,13 @@ namespace BuddhaBowls.Services
 
         private void InitializeModels()
         {
-            Vendors = ModelHelper.InstantiateList<Vendor>("Vendor") ?? new List<Vendor>();
+            //Vendors = ModelHelper.InstantiateList<Vendor>("Vendor") ?? new List<Vendor>();
             //AddVendorItems();
             InventoryItems = MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem") ?? new List<InventoryItem>()).ToList();
             Recipes = ModelHelper.InstantiateList<Recipe>("Recipe") ?? new List<Recipe>();
             AddRecipeItems();
-            PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder") ?? new List<PurchaseOrder>();
-            Inventories = ModelHelper.InstantiateList<Inventory>("Inventory") ?? new List<Inventory>();
+            //PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder") ?? new List<PurchaseOrder>();
+            //Inventories = ModelHelper.InstantiateList<Inventory>("Inventory") ?? new List<Inventory>();
             PrepItems = ModelHelper.InstantiateList<PrepItem>("PrepItem") ?? new List<PrepItem>();
             SetBreadWeek();
             DailySales = ModelHelper.InstantiateList<DailySale>("DailySale") ?? new List<DailySale>();
@@ -290,72 +290,72 @@ namespace BuddhaBowls.Services
         /// Adds or updates vendor in DB and model container
         /// </summary>
         /// <param name="vendor"></param>
-        public void AddUpdateVendor(ref Vendor vendor, List<InventoryItem> vendorItems)
-        {
-            // remove reference of this vendor from old VendorInventoryItems
-            List<InventoryItem> oldVendorItems = vendor.ItemList;
-            if (oldVendorItems != null)
-            {
-                List<int> removedItemIds = oldVendorItems.Select(x => x.Id).Except(vendorItems.Select(x => x.Id)).ToList();
-                if (removedItemIds.Count > 0)
-                {
-                    List<VendorInventoryItem> removedItems = removedItemIds.Select(x => VendorInvItems.First(y => y.Id == x)).ToList();
-                    foreach (VendorInventoryItem item in removedItems)
-                    {
-                        item.DeleteVendor(vendor);
-                    }
-                }
-            }
+        //public void AddUpdateVendor(ref Vendor vendor, List<InventoryItem> vendorItems)
+        //{
+        //    // remove reference of this vendor from old VendorInventoryItems
+        //    List<InventoryItem> oldVendorItems = vendor.ItemList;
+        //    if (oldVendorItems != null)
+        //    {
+        //        List<int> removedItemIds = oldVendorItems.Select(x => x.Id).Except(vendorItems.Select(x => x.Id)).ToList();
+        //        if (removedItemIds.Count > 0)
+        //        {
+        //            List<VendorInventoryItem> removedItems = removedItemIds.Select(x => VendorInvItems.First(y => y.Id == x)).ToList();
+        //            foreach (VendorInventoryItem item in removedItems)
+        //            {
+        //                item.DeleteVendor(vendor);
+        //            }
+        //        }
+        //    }
 
-            int vendorId = vendor.Id;
-            if(Vendors.FirstOrDefault(x => x.Id == vendorId) != null)
-            {
-                vendor.ClearAndUpdate(vendorItems);
-            }
-            else
-            {
-                vendor.Id = vendor.Insert(vendorItems);
-                Vendors.Add(vendor);
-            }
+        //    int vendorId = vendor.Id;
+        //    if(Vendors.FirstOrDefault(x => x.Id == vendorId) != null)
+        //    {
+        //        vendor.ClearAndUpdate(vendorItems);
+        //    }
+        //    else
+        //    {
+        //        vendor.Id = vendor.Insert(vendorItems);
+        //        Vendors.Add(vendor);
+        //    }
 
-            foreach (InventoryItem item in vendorItems)
-            {
-                VendorInventoryItem vInvItem = VendorInvItems.FirstOrDefault(x => x.Id == item.Id);
-                if (vInvItem != null)
-                {
-                    vInvItem.AddVendor(vendor, item);
-                }
-            }
-        }
+        //    foreach (InventoryItem item in vendorItems)
+        //    {
+        //        VendorInventoryItem vInvItem = VendorInvItems.FirstOrDefault(x => x.Id == item.Id);
+        //        if (vInvItem != null)
+        //        {
+        //            vInvItem.AddVendor(vendor, item);
+        //        }
+        //    }
+        //}
 
-        public void AddUpdateVendor(ref Vendor vendor)
-        {
-            int vendorId = vendor.Id;
-            if (Vendors.FirstOrDefault(x => x.Id == vendorId) != null)
-            {
-                vendor.Update();
-            }
-            else
-            {
-                vendor.Id = vendor.Insert();
-                Vendors.Add(vendor);
-            }
-        }
+        //public void AddUpdateVendor(ref Vendor vendor)
+        //{
+        //    int vendorId = vendor.Id;
+        //    if (Vendors.FirstOrDefault(x => x.Id == vendorId) != null)
+        //    {
+        //        vendor.Update();
+        //    }
+        //    else
+        //    {
+        //        vendor.Id = vendor.Insert();
+        //        Vendors.Add(vendor);
+        //    }
+        //}
 
         /// <summary>
         /// Deletes vendor from DB and model container
         /// </summary>
         /// <param name="vendor"></param>
-        public void DeleteVendor(Vendor vendor)
-        {
-            foreach (VendorInventoryItem item in VendorInvItems.Where(x => x.Vendors.Contains(vendor)))
-            {
-                item.DeleteVendor(vendor);
-            }
+        //public void DeleteVendor(Vendor vendor)
+        //{
+        //    foreach (VendorInventoryItem item in VendorInvItems.Where(x => x.Vendors.Contains(vendor)))
+        //    {
+        //        item.DeleteVendor(vendor);
+        //    }
 
-            Vendors.Remove(vendor);
-            vendor.Destroy();
-        }
+        //    Vendors.Remove(vendor);
+        //    vendor.Destroy();
+        //}
 
         /// <summary>
         /// Gets a dictionary of vendors that offer the passed-in inventory item. The inventory item value is the vendor-specific inventory
@@ -377,10 +377,10 @@ namespace BuddhaBowls.Services
             return vendorDict;
         }
 
-        public void AddPurchaseOrder(PurchaseOrder order)
-        {
-            PurchaseOrders.Add(order);
-        }
+        //public void AddPurchaseOrder(PurchaseOrder order)
+        //{
+        //    PurchaseOrders.Add(order);
+        //}
 
         public List<string> GetRecipeCategories()
         {
@@ -506,7 +506,7 @@ namespace BuddhaBowls.Services
         {
             InventoryItems = MainHelper.SortItems(InventoryItems).ToList();
             VendorInvItems = MainHelper.SortItems(VendorInvItems).ToList();
-            foreach (Vendor vend in Vendors)
+            foreach (Vendor vend in VContainer.Items)
             {
                 if(vend.ItemList != null && vend.ItemList.Count > 0)
                     vend.ItemList = MainHelper.SortItems(vend.ItemList).ToList();
@@ -753,6 +753,16 @@ namespace BuddhaBowls.Services
             _vendorsContainer.RemoveItemFromVendors(item);
 
             base.RemoveItem(item);
+        }
+
+        public void Update(List<VendorInventoryItem> items)
+        {
+            foreach (VendorInventoryItem item in items)
+            {
+                int idx = Items.FindIndex(x => x.Id == item.Id);
+                Items[idx] = item;
+            }
+            PushChange();
         }
 
         public VendorInvItemsContainer Copy()

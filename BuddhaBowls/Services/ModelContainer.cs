@@ -73,9 +73,12 @@ namespace BuddhaBowls.Services
 
         public void PushChange()
         {
-            foreach (UpdateBinding ub in _updateFncs)
+            if (_updateFncs != null)
             {
-                ub();
+                foreach (UpdateBinding ub in _updateFncs)
+                {
+                    ub();
+                }
             }
         }
     }

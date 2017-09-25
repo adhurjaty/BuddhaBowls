@@ -123,7 +123,7 @@ namespace BuddhaBowls
 
         private void AddVendor(object obj)
         {
-            List<Vendor> remainingItems = _models.Vendors.Where(x => !VendorList.Select(y => y.Name).Contains(x.Name)).ToList();
+            List<Vendor> remainingItems = _models.VContainer.Items.Where(x => !VendorList.Select(y => y.Name).Contains(x.Name)).ToList();
             ModalVM<Vendor> modal = new ModalVM<Vendor>("Add Vendor", remainingItems, AddVendor);
             ParentContext.ModalContext = modal;
         }

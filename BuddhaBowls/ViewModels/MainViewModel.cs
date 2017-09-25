@@ -304,7 +304,7 @@ namespace BuddhaBowls
             TabVM.IsDBConnected = DatabaseFound;
             TabVM.SetModelContainer(_models);
 
-            //OrderTab = new OrderTabVM();
+            OrderTab = new OrderTabVM();
             InventoryTab = new InventoryTabVM();
             //VendorTab = new VendorTabVM();
             //BreadTab = new BreadGuideVM();

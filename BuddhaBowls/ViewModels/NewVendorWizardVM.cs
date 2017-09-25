@@ -167,7 +167,7 @@ namespace BuddhaBowls
                                                       "Delete " + Vend.Name + "?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                _models.DeleteVendor(Vend);
+                _models.VContainer.RemoveItem(Vend);
                 Close();
                 ParentContext.Refresh();
             }

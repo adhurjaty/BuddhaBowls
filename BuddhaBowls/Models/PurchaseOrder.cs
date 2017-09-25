@@ -138,7 +138,7 @@ namespace BuddhaBowls.Models
 
         public void UpdateItem(InventoryItem item)
         {
-            List<InventoryItem> invItems = Received ? GetPOItems() : GetPOItems();
+            List<InventoryItem> invItems = GetPOItems();
             int idx = invItems.FindIndex(x => x.Id == item.Id);
             invItems[idx] = item;
 

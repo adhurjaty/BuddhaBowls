@@ -131,7 +131,7 @@ namespace BuddhaBowls
 
         public void RecOrderDouleClicked(PurchaseOrder order)
         {
-            ViewOrderVM tabVM = new ViewOrderVM(order, ParentContext.OrderTab.RefreshOrderList);
+            ViewOrderVM tabVM = new ViewOrderVM(order);
             tabVM.Add("PO#: " + order.Id);
         }
 
@@ -194,7 +194,7 @@ namespace BuddhaBowls
 
         private void SetInvAndOrders(PeriodMarker timeFrame)
         {
-            List<Inventory> inventoryList = _models.Inventories.OrderByDescending(x => x.Date).ToList();
+            List<Inventory> inventoryList = null; // _models.Inventories.OrderByDescending(x => x.Date).ToList();
             List<Inventory> periodInvList = inventoryList.Where(x => timeFrame.StartDate <= x.Date && x.Date <= timeFrame.EndDate).ToList();
             _endInventory = inventoryList.Where(x => x.Date > timeFrame.EndDate).OrderBy(x => x.Date).FirstOrDefault();
             if(_endInventory == null)
@@ -210,8 +210,8 @@ namespace BuddhaBowls
                 if (_startInventory == null)
                     _startInventory = inventoryList.Last();
 
-                _recOrders = _models.PurchaseOrders.Where(x => x.ReceivedDate >= timeFrame.StartDate &&
-                                                               x.ReceivedDate <= timeFrame.EndDate.Date.AddDays(1)).ToList();
+                //_recOrders = _models.PurchaseOrders.Where(x => x.ReceivedDate >= timeFrame.StartDate &&
+                //                                               x.ReceivedDate <= timeFrame.EndDate.Date.AddDays(1)).ToList();
             }
             _breadOrderItems = _models.GetBreadPeriodOrders(timeFrame).ToList();
         }

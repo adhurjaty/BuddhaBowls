@@ -290,6 +290,7 @@ namespace BuddhaBowls
                 WeekCostTotal = new OrderStat() { Label = "Total Cost for Week" };
 
                 PeriodSelector = new PeriodSelectorVM(_models, LoadPreviousOrders);
+                _models.POContainer.AddUpdateBinding(RefreshOrderList);
             }
             else
             {
@@ -325,7 +326,7 @@ namespace BuddhaBowls
             SelectedOpenOrder = null;
 
             RefreshOrderList();
-            ParentContext.ReportTab.Refresh();
+            //ParentContext.ReportTab.Refresh();
         }
 
         private void ReOpenOrder(object obj)
@@ -348,7 +349,7 @@ namespace BuddhaBowls
 
         private void ViewOrder(PurchaseOrder order)
         {
-            ViewOrderVM tabVM = new ViewOrderVM(order, OrderEdited);
+            ViewOrderVM tabVM = new ViewOrderVM(order);
             tabVM.Add("PO#: " + order.Id);
         }
 
@@ -378,7 +379,7 @@ namespace BuddhaBowls
             if (result == MessageBoxResult.Yes)
             {
                 order.Destroy();
-                _models.PurchaseOrders.Remove(order);
+                _models.POContainer.RemoveItem(order);
                 RefreshOrderList();
             }
         }
@@ -389,7 +390,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void StartNewOrder(object obj)
         {
-            NewOrderVM tabVM = new NewOrderVM(RefreshOrderList);
+            NewOrderVM tabVM = new NewOrderVM();
             tabVM.Add("New Order");
         }
 
@@ -479,11 +480,11 @@ namespace BuddhaBowls
         /// <returns></returns>
         public void LoadPreviousOrders(PeriodMarker period, WeekMarker week)
         {
-            if (_models != null && _models.PurchaseOrders != null)
+            if (_models != null && _models.POContainer != null)
             {
-                OpenOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => !x.Received)
+                OpenOrders = new ObservableCollection<PurchaseOrder>(_models.POContainer.Items.Where(x => !x.Received)
                                                                         .OrderBy(x => x.OrderDate));
-                ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received &&
+                ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.POContainer.Items.Where(x => x.Received &&
                                                                                                       week.StartDate <= x.ReceivedDate &&
                                                                                                       x.ReceivedDate < week.EndDate)
                                                                         .OrderByDescending(x => x.ReceivedDate));
@@ -522,11 +523,11 @@ namespace BuddhaBowls
             LoadPreviousOrders(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
         }
 
-        public void OrderEdited()
-        {
-            RefreshOrderList();
-            ParentContext.ReportTab.Refresh();
-        }
+        //public void OrderEdited()
+        //{
+        //    RefreshOrderList();
+        //    ParentContext.ReportTab.Refresh();
+        //}
 
         public void UpdateRecDate(PurchaseOrder order)
         {
@@ -541,16 +542,16 @@ namespace BuddhaBowls
         {
             if (period == null)
                 return PeriodCostTotal != null ? PeriodCostTotal.Value : 0;
-            return _models.PurchaseOrders.Where(x => x.Received && period.StartDate <= x.ReceivedDate &&
-                                                x.ReceivedDate < period.EndDate).Sum(x => x.GetTotalCost());
+            return _models.POContainer.Items.Where(x => x.Received && period.StartDate <= x.ReceivedDate &&
+                                                    x.ReceivedDate < period.EndDate).Sum(x => x.GetTotalCost());
         }
 
         private float GetWeekTotal(WeekMarker week)
         {
             if (week == null)
                 return WeekCostTotal != null ? WeekCostTotal.Value : 0;
-            return _models.PurchaseOrders.Where(x => x.Received && week.StartDate <= x.ReceivedDate &&
-                                                x.ReceivedDate < week.EndDate).Sum(x => x.GetTotalCost());
+            return _models.POContainer.Items.Where(x => x.Received && week.StartDate <= x.ReceivedDate &&
+                                                    x.ReceivedDate < week.EndDate).Sum(x => x.GetTotalCost());
         }
     }
 

@@ -19,7 +19,7 @@ namespace BuddhaBowls
     public class ViewOrderVM : TempTabVM
     {
         private PurchaseOrder _order;
-        private RefreshDel RefreshOrders;
+        //private RefreshDel RefreshOrders;
 
         #region Content Binders
         private OrderBreakdownVM _breakdownContext;
@@ -73,15 +73,15 @@ namespace BuddhaBowls
         }
         #endregion
 
-        public ViewOrderVM(PurchaseOrder po, RefreshDel refresh)
+        public ViewOrderVM(PurchaseOrder po)
         {
             _order = po;
             _tabControl = new ViewOrderTabControl(this);
-            RefreshOrders = refresh;
+            //RefreshOrders = refresh;
 
             SaveCommand = new RelayCommand(SaveEdits, x => SaveButtonCanExecute);
             CancelCommand = new RelayCommand(CancelView);
-            InitBreakdown(po);
+            InitBreakdown();
         }
 
         #region ICommand Helpers
@@ -93,20 +93,20 @@ namespace BuddhaBowls
 
         private void SaveEdits(object obj)
         {
-            RefreshOrders();
+            //RefreshOrders();
             Close();
         }
         #endregion
 
         #region Initializers
-        private void InitBreakdown(PurchaseOrder po)
+        private void InitBreakdown()
         {
-            List<InventoryItem> items = po.GetPOItems();
+            List<InventoryItem> items = _order.GetPOItems();
 
             // check where duplicates are being formed. Remove this if I find the source
-            items = po.RemoveViewingDuplicates(items);
+            items = _order.RemoveViewingDuplicates(items);
 
-            string header = po.Received ? "Received Ordered Items" : "Open Ordered Items";
+            string header = _order.Received ? "Received Ordered Items" : "Open Ordered Items";
 
             float oTotal = 0;
             BreakdownContext = new OrderBreakdownVM()
@@ -150,16 +150,16 @@ namespace BuddhaBowls
 
             // check whether the item being edited is the latest order from this vendor. If so, then change the properties of the current
             // inventory item (last order price, last order qty...)
-            PurchaseOrder latestOrderFromVendor = _models.PurchaseOrders.Where(x => x.VendorName == _order.VendorName)
+            PurchaseOrder latestOrderFromVendor = _models.POContainer.Items.Where(x => x.VendorName == _order.VendorName)
                                                                         .OrderByDescending(x => x.OrderDate).First();
             BreakdownContext.UpdateTotal();
             if (latestOrderFromVendor.Id == _order.Id)
             {
-                Vendor vend = _models.Vendors.First(x => x.Name == _order.VendorName);
+                Vendor vend = _models.VContainer.Items.First(x => x.Name == _order.VendorName);
                 //_models.AddUpdateInventoryItem(ref item);
                 
                 vend.Update(item);
-                VendorInventoryItem vItem = _models.VendorInvItems.FirstOrDefault(x => x.Id == item.Id);
+                VendorInventoryItem vItem = _models.VIContainer.Items.FirstOrDefault(x => x.Id == item.Id);
                 if (vItem != null)
                 {
                     vItem.SetVendorItem(vend, item);
