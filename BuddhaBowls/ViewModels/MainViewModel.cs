@@ -306,7 +306,7 @@ namespace BuddhaBowls
 
             OrderTab = new OrderTabVM();
             InventoryTab = new InventoryTabVM();
-            //VendorTab = new VendorTabVM();
+            VendorTab = new VendorTabVM();
             //BreadTab = new BreadGuideVM();
             //RecipeTab = new RecipeTabVM();
             //ReportTab = new ReportsTabVM();

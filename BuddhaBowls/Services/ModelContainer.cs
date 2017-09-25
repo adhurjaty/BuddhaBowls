@@ -33,8 +33,11 @@ namespace BuddhaBowls.Services
 
         public virtual void AddItem(T item)
         {
-            _items.Add(item);
-            PushChange();
+            if (!Contains(item))
+            {
+                _items.Add(item);
+                PushChange();
+            }
         }
 
         public virtual void RemoveItem(T item)
@@ -46,6 +49,11 @@ namespace BuddhaBowls.Services
         public virtual void Update(T item)
         {
             item.Update();
+        }
+
+        public virtual bool Contains(T item)
+        {
+            return Items.Contains(item);
         }
 
         //public List<T> GetItemsCopy()

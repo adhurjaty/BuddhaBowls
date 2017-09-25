@@ -359,19 +359,17 @@ namespace BuddhaBowls.Services
 
         /// <summary>
         /// Gets a dictionary of vendors that offer the passed-in inventory item. The inventory item value is the vendor-specific inventory
-        /// item associated with that vendor (not the one from the model container, which is passed in)
+        /// item associated with that vendor (not the one from the model container, which is passed in). Really should be in VendorInvItemsContainer
+        /// but cannot put it in due to build error problems
         /// </summary>
         public Dictionary<Vendor, InventoryItem> GetVendorsFromItem(InventoryItem item)
         {
             Dictionary<Vendor, InventoryItem> vendorDict = new Dictionary<Vendor, InventoryItem>();
             foreach(Vendor v in VContainer.Items)
             {
-                if (v.ItemList != null)
-                {
-                    InventoryItem vendorItem = v.ItemList.FirstOrDefault(x => x.Id == item.Id);
-                    if (vendorItem != null)
-                        vendorDict[v] = vendorItem;
-                }
+                InventoryItem vendorItem = v.ItemList.FirstOrDefault(x => x.Id == item.Id);
+                if (vendorItem != null)
+                    vendorDict[v] = vendorItem;
             }
 
             return vendorDict;
@@ -502,16 +500,16 @@ namespace BuddhaBowls.Services
         /// <summary>
         /// Reorder inventory items and vendor inventory items due to a change in the order
         /// </summary>
-        public void InvOrderChanged()
-        {
-            InventoryItems = MainHelper.SortItems(InventoryItems).ToList();
-            VendorInvItems = MainHelper.SortItems(VendorInvItems).ToList();
-            foreach (Vendor vend in VContainer.Items)
-            {
-                if(vend.ItemList != null && vend.ItemList.Count > 0)
-                    vend.ItemList = MainHelper.SortItems(vend.ItemList).ToList();
-            }
-        }
+        //public void InvOrderChanged()
+        //{
+        //    InventoryItems = MainHelper.SortItems(InventoryItems).ToList();
+        //    VendorInvItems = MainHelper.SortItems(VendorInvItems).ToList();
+        //    foreach (Vendor vend in VContainer.Items)
+        //    {
+        //        if(vend.ItemList != null && vend.ItemList.Count > 0)
+        //            vend.ItemList = MainHelper.SortItems(vend.ItemList).ToList();
+        //    }
+        //}
 
         /// <summary>
         /// Converts case-sensitive hashset into case insensitive (will not store OZ-wt AND OZ-WT)
@@ -713,15 +711,29 @@ namespace BuddhaBowls.Services
         }
     }
 
+    /// <summary>
+    /// Class to hold the inventory items associated with which vendors sell them
+    /// </summary>
     public class VendorInvItemsContainer : ModelContainer<VendorInventoryItem>
     {
+        // tracks vendors, necessary for each item to reference
         private VendorsContainer _vendorsContainer;
 
+        /// <summary>
+        /// Instantiate the container. Should only be called in the DBCache class
+        /// </summary>
+        /// <param name="items">List of vendor inventory items to contain</param>
+        /// <param name="vContainer">Vendor container</param>
         public VendorInvItemsContainer(List<VendorInventoryItem> items, VendorsContainer vContainer) : base(items)
         {
             _vendorsContainer = vContainer;
         }
 
+        /// <summary>
+        /// Adds a new item with a list of which vendors sell the item
+        /// </summary>
+        /// <param name="item">New item</param>
+        /// <param name="vendors">List of vendors that sell it</param>
         public void AddItem(InventoryItem item, List<VendorInfo> vendors)
         {
             int idx = Items.FindIndex(x => x.Id == item.Id);
@@ -748,6 +760,10 @@ namespace BuddhaBowls.Services
             }
         }
 
+        /// <summary>
+        /// Removes item from current inventory list and all vendor lists
+        /// </summary>
+        /// <param name="item"></param>
         public override void RemoveItem(VendorInventoryItem item)
         {
             _vendorsContainer.RemoveItemFromVendors(item);
@@ -755,6 +771,10 @@ namespace BuddhaBowls.Services
             base.RemoveItem(item);
         }
 
+        /// <summary>
+        /// Updates the items in the list. Does not remove any items from the master list
+        /// </summary>
+        /// <param name="items"></param>
         public void Update(List<VendorInventoryItem> items)
         {
             foreach (VendorInventoryItem item in items)
@@ -765,11 +785,47 @@ namespace BuddhaBowls.Services
             PushChange();
         }
 
+        /// <summary>
+        /// Copy the container
+        /// </summary>
+        /// <returns></returns>
         public VendorInvItemsContainer Copy()
         {
             return new VendorInvItemsContainer(_items, _vendorsContainer);
         }
 
+        /// <summary>
+        /// Adds vendor to vendor container and associates items with new vendor
+        /// </summary>
+        /// <param name="vend"></param>
+        public void AddVendor(Vendor vend, List<InventoryItem> invItems)
+        {
+            _vendorsContainer.AddItem(vend);
+            vend.SetItemList(invItems);
+            foreach (InventoryItem item in invItems)
+            {
+                Items.First(x => x.Id == item.Id).AddVendor(vend, item);
+            }
+            PushChange();
+        }
+
+        /// <summary>
+        /// Removes a vendor from vendor container and all associations with inv items
+        /// </summary>
+        /// <param name="vend"></param>
+        public void RemoveVendor(Vendor vend)
+        {
+            _vendorsContainer.RemoveItem(vend);
+            foreach (InventoryItem item in vend.ItemList)
+            {
+                Items.First(x => x.Id == item.Id).DeleteVendor(vend);
+            }
+            PushChange();
+        }
+
+        /// <summary>
+        /// Save the display order of the inventory items
+        /// </summary>
         public void SaveOrder()
         {
             string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
@@ -778,6 +834,10 @@ namespace BuddhaBowls.Services
             _items = MainHelper.SortItems(_items).ToList();
         }
 
+        /// <summary>
+        /// Get the PriceExtension value of each category of items
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<string, float> GetCategoryValues()
         {
             Dictionary<string, float> costDict = new Dictionary<string, float>();
@@ -792,6 +852,9 @@ namespace BuddhaBowls.Services
             return costDict;
         }
 
+        /// <summary>
+        /// Update (push to DB) all of the items in the container
+        /// </summary>
         public void UpdateContainer()
         {
             foreach (VendorInventoryItem item in Items)
@@ -799,15 +862,49 @@ namespace BuddhaBowls.Services
                 item.Update();
             }
         }
+
+        /// <summary>
+        /// Associates item with vendor and updates vendor
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="vend"></param>
+        public void UpdateItem(InventoryItem item, Vendor vend)
+        {
+            vend.AddInvItem(item);
+            _vendorsContainer.Update(vend);
+            PushChange();
+        }
+
+        /// <summary>
+        /// Associates vendor with all of items in invItems, removes association with vendor and items not in invItems
+        /// </summary>
+        /// <param name="vendor"></param>
+        /// <param name="list"></param>
+        public void UpdateVendorItems(Vendor vendor, List<InventoryItem> invItems)
+        {
+            RemoveVendor(vendor);
+            AddVendor(vendor, invItems);
+        }
     }
 
+    /// <summary>
+    /// Container for holding inventories
+    /// </summary>
     public class InventoriesContainer : ModelContainer<Inventory>
     {
+        /// <summary>
+        /// Instantiate the container
+        /// </summary>
+        /// <param name="items"></param>
         public InventoriesContainer(List<Inventory> items) : base(items)
         {
 
         }
 
+        /// <summary>
+        /// Adds or overwrites inventory based on date
+        /// </summary>
+        /// <param name="inv"></param>
         public override void AddItem(Inventory inv)
         {
             int idx = Items.FindIndex(x => x.Date.Date == inv.Date);
@@ -824,6 +921,10 @@ namespace BuddhaBowls.Services
             }
         }
 
+        /// <summary>
+        /// Updates the inventory
+        /// </summary>
+        /// <param name="inv"></param>
         public override void Update(Inventory inv)
         {
             int idx = _items.FindIndex(x => x.Id == inv.Id);
@@ -832,16 +933,47 @@ namespace BuddhaBowls.Services
         }
     }
 
+    /// <summary>
+    /// Container for vendors
+    /// </summary>
     public class VendorsContainer : ModelContainer<Vendor>
     {
+        /// <summary>
+        /// Instantiate container
+        /// </summary>
+        /// <param name="items"></param>
         public VendorsContainer(List<Vendor> items) : base(items)
         {
-            foreach (Vendor vend in items)
-            {
-                vend.InitItems();
-            }
+            //foreach (Vendor vend in items)
+            //{
+            //    vend.InitItems();
+            //}
         }
 
+        /// <summary>
+        /// Check to see if the vendor name already exists (case and space insensitive)
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public override bool Contains(Vendor item)
+        {
+            return Items.Select(x => x.Name.ToUpper().Replace(" ", "")).Contains(item.Name.ToUpper().Replace(" ", ""));
+        }
+
+        /// <summary>
+        /// Adds or updates vendor and sets the items sold to the invItems parameter
+        /// </summary>
+        /// <param name="vend"></param>
+        /// <param name="invItems"></param>
+        public void AddItem(Vendor vend, List<InventoryItem> invItems)
+        {
+
+        }
+
+        /// <summary>
+        /// Removes the inventory item from all the vendors' lists that contain it
+        /// </summary>
+        /// <param name="item"></param>
         public void RemoveItemFromVendors(VendorInventoryItem item)
         {
             foreach (Vendor v in item.Vendors)

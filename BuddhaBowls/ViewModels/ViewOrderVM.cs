@@ -113,7 +113,7 @@ namespace BuddhaBowls
             {
                 BreakdownList = GetOrderBreakdown(items, out oTotal),
                 //OrderTotal = oTotal,
-                OrderVendor = _models.Vendors.First(x => x.Name == _order.VendorName),
+                OrderVendor = _models.VContainer.Items.First(x => x.Name == _order.VendorName),
                 Header = header
             };
             
@@ -134,7 +134,7 @@ namespace BuddhaBowls
                     {
                         BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items, OrderEdited, false);
                         bdItem.Background = _models.GetCategoryColorHex(category);
-                        bdItem.OrderVendor = _models.Vendors.FirstOrDefault(x => x.Name == _order.VendorName);
+                        bdItem.OrderVendor = _models.VContainer.Items.FirstOrDefault(x => x.Name == _order.VendorName);
                         breakdown.Add(bdItem);
                         total += bdItem.TotalAmount;
                     }

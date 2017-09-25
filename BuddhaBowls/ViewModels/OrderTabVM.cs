@@ -414,7 +414,7 @@ namespace BuddhaBowls
                 }
                 else
                 {
-                    Vendor v = _models.Vendors.FirstOrDefault(x => x.Name == po.VendorName);
+                    Vendor v = _models.VContainer.Items.FirstOrDefault(x => x.Name == po.VendorName);
                     if (v != null)
                     {
                         ParentContext.GeneratePO(po, v);
@@ -448,7 +448,7 @@ namespace BuddhaBowls
                 }
                 else
                 {
-                    Vendor v = _models.Vendors.FirstOrDefault(x => x.Name == po.VendorName);
+                    Vendor v = _models.VContainer.Items.FirstOrDefault(x => x.Name == po.VendorName);
                     if (v != null)
                     {
                         ParentContext.GenerateReceivingList(po, v);

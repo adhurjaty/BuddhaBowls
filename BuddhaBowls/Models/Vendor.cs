@@ -25,7 +25,7 @@ namespace BuddhaBowls.Models
                     _itemList = GetInventoryItems();
                 return _itemList;
             }
-            set
+            private set
             {
                 _itemList = value;
             }
@@ -43,13 +43,19 @@ namespace BuddhaBowls.Models
             if (record != null)
             {
                 InitializeObject(record);
-                InitItems();
+                //InitItems();
             }
         }
 
-        public void InitItems()
+        /// <summary>
+        /// Insert the vendor and create a price table if there exist any items
+        /// </summary>
+        /// <returns></returns>
+        public override int Insert()
         {
-            ItemList = GetInventoryItems();
+            if(ItemList.Count > 0)
+                ModelHelper.CreateTable(ItemList, GetPriceTableName());
+            return base.Insert();
         }
 
         /// <summary>
@@ -66,6 +72,12 @@ namespace BuddhaBowls.Models
             return base.Insert();
         }
 
+        public override void Update()
+        {
+            ModelHelper.CreateTable(ItemList, GetPriceTableName());
+            base.Update();
+        }
+
         /// <summary>
         /// Update the vendor record and only update the items in the vendor price table
         /// </summary>
@@ -77,7 +89,7 @@ namespace BuddhaBowls.Models
                 ItemList[ItemList.FindIndex(x => x.Id == item.Id)] = item;
             }
 
-            ClearAndUpdate(ItemList);
+            Update();
         }
 
         /// <summary>
@@ -85,13 +97,13 @@ namespace BuddhaBowls.Models
         /// </summary>
         /// <remarks>Creates a new price table if one does not already exist</remarks>
         /// <param name="items"></param>
-        public void ClearAndUpdate(List<InventoryItem> items)
-        {
-            ModelHelper.CreateTable(items, GetPriceTableName());
-            ItemList = items;
+        //public void ClearAndUpdate(List<InventoryItem> items)
+        //{
+        //    ModelHelper.CreateTable(items, GetPriceTableName());
+        //    ItemList = items;
 
-            base.Update();
-        }
+        //    base.Update();
+        //}
 
         public void Update(InventoryItem item)
         {
@@ -195,30 +207,40 @@ namespace BuddhaBowls.Models
         public List<InventoryItem> GetInventoryItems()
         {
             if (_dbInt.TableExists(GetPriceTableName()))
-                return ModelHelper.InstantiateList<InventoryItem>(GetPriceTableName(), false);
-            return null;
+                return MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>(GetPriceTableName(), false)).ToList();
+            return new List<InventoryItem>();
         }
 
         /// <summary>
         /// Adds or updates inventory item on vendor items sold list
         /// </summary>
         /// <param name="item"></param>
-        private void AddInvItem(InventoryItem item)
+        public void AddInvItem(InventoryItem item)
         {
-            if (!_dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id))
-            {
-                _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict(), item.Id);
-            }
+            //if (!_dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id))
+            //{
+            //    _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict(), item.Id);
+            //}
 
             InventoryItem existingItem = ItemList.FirstOrDefault(x => x.Id == item.Id);
             if(existingItem == null)
             {
                 ItemList.Add(item);
+                ItemList = MainHelper.SortItems(ItemList).ToList();
             }
             else
             {
                 ItemList[ItemList.IndexOf(existingItem)] = item;
             }
+        }
+
+        /// <summary>
+        /// Sets the item list
+        /// </summary>
+        /// <param name="invItems"></param>
+        public void SetItemList(List<InventoryItem> invItems)
+        {
+            ItemList = MainHelper.SortItems(invItems).ToList();
         }
 
         /// <summary>
@@ -234,6 +256,5 @@ namespace BuddhaBowls.Models
         {
             return @"Vendors\" + Name + "_Prices";
         }
-
     }
 }

@@ -168,8 +168,9 @@ namespace BuddhaBowls
             if (result == MessageBoxResult.Yes)
             {
                 _models.VContainer.RemoveItem(Vend);
+                Vend.Destroy();
                 Close();
-                ParentContext.Refresh();
+                //ParentContext.Refresh();
             }
         }
 
@@ -185,7 +186,7 @@ namespace BuddhaBowls
                 NameError = 2;
                 return false;
             }
-            if (_newVendor && _models.Vendors.Select(x => x.Name.ToUpper().Replace(" ", "")).Contains(Vend.Name.ToUpper().Replace(" ", "")))
+            if (_newVendor && _models.VContainer.Contains(Vend))
             {
                 ErrorMessage = Vend.Name + " already exists";
                 NameError = 2;
@@ -225,10 +226,17 @@ namespace BuddhaBowls
             if (ValidateInputs())
             {
                 Vendor vendor = Vend;
-                _models.AddUpdateVendor(ref vendor, InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList());
+                //_models.AddUpdateVendor(ref vendor, InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList());
+                //_models.VContainer.AddItem(vendor);
+                _models.VIContainer.UpdateVendorItems(vendor, InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList());
+
+                if (_newVendor)
+                    vendor.Insert();
+                else
+                    vendor.Update();
 
                 Close();
-                ParentContext.Refresh();
+                //ParentContext.Refresh();
             }
         }
 
