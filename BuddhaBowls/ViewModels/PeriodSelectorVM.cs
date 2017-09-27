@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Services;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +16,6 @@ namespace BuddhaBowls
 
     public class PeriodSelectorVM : INotifyPropertyChanged
     {
-        private DBCache _models;
         private WeekChange OnChangeWeek;
 
         // INotifyPropertyChanged event and method
@@ -60,7 +60,7 @@ namespace BuddhaBowls
                     if (_selectedPeriod.Period == -1)
                         WeekList = new List<WeekMarker>() { (WeekMarker)_selectedPeriod };
                     else
-                        WeekList = _models.GetWeekLabels(SelectedPeriod.Period).ToList();
+                        WeekList = MainHelper.GetWeekLabels(SelectedPeriod.Period).ToList();
                     SelectedWeek = WeekList[0];
                 }
             }
@@ -115,10 +115,9 @@ namespace BuddhaBowls
 
         public PeriodSelectorVM(DBCache models, WeekChange onChangeWeek, bool hasShowAll = true)
         {
-            _models = models;
             OnChangeWeek = onChangeWeek;
 
-            PeriodList = _models.GetPeriodLabels().ToList();
+            PeriodList = MainHelper.GetPeriodLabels().ToList();
             if(hasShowAll)
                 PeriodList.Add(new ShowAllMarker());
 

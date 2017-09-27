@@ -213,7 +213,7 @@ namespace BuddhaBowls.Services
 
         public IEnumerable<InventoryItem> GetBreadPeriodOrders(PeriodMarker period)
         {
-            foreach (WeekMarker week in GetWeeksInPeriod(period).Where(x => x.StartDate < DateTime.Now))
+            foreach (WeekMarker week in MainHelper.GetWeeksInPeriod(period).Where(x => x.StartDate < DateTime.Now))
             {
                 foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeekNoTotal(week).Where(x => x.BreadDescDict != null)
                                                                                             .SelectMany(x => x.BreadDescDict.ToList()))
@@ -611,7 +611,7 @@ namespace BuddhaBowls.Services
 
         private void SetBreadWeek()
         {
-            BreadWeek = GetBreadWeek(GetThisWeek());
+            BreadWeek = GetBreadWeek(MainHelper.GetThisWeek());
         }
 
         private Dictionary<string, float> GetParFactors(List<BreadOrder> breadOrders)
@@ -647,67 +647,6 @@ namespace BuddhaBowls.Services
             }
 
             return salesDict.ToDictionary(x => x.Key, x => usageDict[x.Key] > 0 ? x.Value / usageDict[x.Key] : 1);
-        }
-
-        public IEnumerable<WeekMarker> GetWeekLabels(int period)
-        {
-            DateTime theFirst = new DateTime(DateTime.Today.Year, 1, 1);
-            DateTime firstMonday = theFirst.AddDays(MainHelper.Mod(8 - (int)theFirst.DayOfWeek, 7));
-
-            if (period == 0 && firstMonday != theFirst)
-            {
-                yield return new WeekMarker(theFirst, 0);
-            }
-            else
-            {
-                DateTime startDate = firstMonday.AddDays(28 * (period - 1));
-                for (int i = 0; i < 4; i++)
-                {
-                    yield return new WeekMarker(startDate.AddDays(7 * i), (i + 1));
-                }
-            }
-        }
-
-        public IEnumerable<WeekMarker> GetWeeksInPeriod(PeriodMarker period)
-        {
-            if (period.GetType() == typeof(WeekMarker))
-                return new List<WeekMarker>() { (WeekMarker)period };
-            else
-                return GetWeekLabels(period.Period);
-        }
-
-        public IEnumerable<PeriodMarker> GetPeriodLabels()
-        {
-            DateTime theFirst = new DateTime(DateTime.Today.Year, 1, 1);
-            DateTime firstMonday = theFirst.AddDays(MainHelper.Mod(8 - (int)theFirst.DayOfWeek, 7));
-
-            for (int i = 0; i < 14; i++)
-            {
-                if(!(i == 0 && theFirst == firstMonday))
-                    yield return new PeriodMarker(firstMonday.AddDays(28 * (i - 1)), i);
-            }
-        }
-
-        public WeekMarker GetThisWeek()
-        {
-            List<PeriodMarker> periods = GetPeriodLabels().ToList();
-            if(periods != null && periods.Count > 0)
-            {
-                return GetWeekLabels(periods.First(x => x.StartDate <= DateTime.Now && DateTime.Now <= x.EndDate).Period)
-                                            .First(x => x.StartDate <= DateTime.Now && DateTime.Now <= x.EndDate);
-            }
-            return null;
-        }
-
-        public WeekMarker GetWeek(DateTime date)
-        {
-            List<PeriodMarker> periods = GetPeriodLabels().ToList();
-            if (periods != null && periods.Count > 0)
-            {
-                return GetWeekLabels(periods.First(x => x.StartDate <= date && date <= x.EndDate).Period)
-                                            .First(x => x.StartDate <= date && date <= x.EndDate);
-            }
-            return null;
         }
     }
 

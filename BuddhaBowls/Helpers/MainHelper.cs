@@ -156,6 +156,67 @@ namespace BuddhaBowls.Helpers
         {
             return catCosts.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key)).Sum(x => x.Value);
         }
+
+        public static IEnumerable<WeekMarker> GetWeekLabels(int period)
+        {
+            DateTime theFirst = new DateTime(DateTime.Today.Year, 1, 1);
+            DateTime firstMonday = theFirst.AddDays(MainHelper.Mod(8 - (int)theFirst.DayOfWeek, 7));
+
+            if (period == 0 && firstMonday != theFirst)
+            {
+                yield return new WeekMarker(theFirst, 0);
+            }
+            else
+            {
+                DateTime startDate = firstMonday.AddDays(28 * (period - 1));
+                for (int i = 0; i < 4; i++)
+                {
+                    yield return new WeekMarker(startDate.AddDays(7 * i), (i + 1));
+                }
+            }
+        }
+
+        public static IEnumerable<WeekMarker> GetWeeksInPeriod(PeriodMarker period)
+        {
+            if (period.GetType() == typeof(WeekMarker))
+                return new List<WeekMarker>() { (WeekMarker)period };
+            else
+                return GetWeekLabels(period.Period);
+        }
+
+        public static IEnumerable<PeriodMarker> GetPeriodLabels()
+        {
+            DateTime theFirst = new DateTime(DateTime.Today.Year, 1, 1);
+            DateTime firstMonday = theFirst.AddDays(MainHelper.Mod(8 - (int)theFirst.DayOfWeek, 7));
+
+            for (int i = 0; i < 14; i++)
+            {
+                if (!(i == 0 && theFirst == firstMonday))
+                    yield return new PeriodMarker(firstMonday.AddDays(28 * (i - 1)), i);
+            }
+        }
+
+        public static WeekMarker GetThisWeek()
+        {
+            List<PeriodMarker> periods = GetPeriodLabels().ToList();
+            if (periods != null && periods.Count > 0)
+            {
+                return GetWeekLabels(periods.First(x => x.StartDate <= DateTime.Now && DateTime.Now <= x.EndDate).Period)
+                                            .First(x => x.StartDate <= DateTime.Now && DateTime.Now <= x.EndDate);
+            }
+            return null;
+        }
+
+        public static WeekMarker GetWeek(DateTime date)
+        {
+            List<PeriodMarker> periods = GetPeriodLabels().ToList();
+            if (periods != null && periods.Count > 0)
+            {
+                return GetWeekLabels(periods.First(x => x.StartDate <= date && date <= x.EndDate).Period)
+                                            .First(x => x.StartDate <= date && date <= x.EndDate);
+            }
+            return null;
+        }
     }
 
     public class BindingProxy : Freezable
