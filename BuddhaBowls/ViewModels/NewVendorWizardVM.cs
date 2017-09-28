@@ -249,7 +249,7 @@ namespace BuddhaBowls
         {
             if(_newVendor)
             {
-                _inventoryItems = _models.InventoryItems.Select(x => new InventoryVendorItem(x)).ToList();
+                _inventoryItems = _models.VIContainer.Items.Select(x => new InventoryVendorItem(x.ToInventoryItem())).ToList();
                 InventoryList = new ObservableCollection<InventoryVendorItem>(_inventoryItems);
             }
             else

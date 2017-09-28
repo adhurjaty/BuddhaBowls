@@ -213,7 +213,7 @@ namespace BuddhaBowls
             // categorized sections
             int currentRow = 3;
             int[] borderBounds = new int[2];
-            foreach (IGrouping<string, InventoryItem> invGroup in MainHelper.CategoryGrouping(_models.InventoryItems))
+            foreach (IGrouping<string, VendorInventoryItem> invGroup in MainHelper.CategoryGrouping(_models.VIContainer.Items))
             {
                 string category = invGroup.Key;
                 long categoryColor = _models.GetColorFromCategory(category);
@@ -309,7 +309,7 @@ namespace BuddhaBowls
             string[] topHeader = new string[] { "", "AS PURCHASED UNITS", "INVENTORY COUNT UNIT" };
             string[] subHeader = new string[] { "", "Unit", "Unit Price", "Conversion", "Count Unit", "Count Price", "Count No.", "Extension" };
 
-            List<InventoryItem> categorizedInvItems = _models.InventoryItems.OrderBy(x => x.Category).ToList();
+            List<VendorInventoryItem> categorizedInvItems = _models.VIContainer.Items.OrderBy(x => x.Category).ToList();
             string curCategory = "";
             float categoryCost = 0;
 

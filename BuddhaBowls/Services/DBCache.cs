@@ -15,31 +15,31 @@ namespace BuddhaBowls.Services
     {
         private Dictionary<string, string> _categoryColors;
 
-        private List<InventoryItem> _inventoryItems;
-        public List<InventoryItem> InventoryItems
-        {
-            get
-            {
-                return _inventoryItems;
-            }
-            set
-            {
-                _inventoryItems = value;
+        //private List<InventoryItem> _inventoryItems;
+        //public List<InventoryItem> InventoryItems
+        //{
+        //    get
+        //    {
+        //        return _inventoryItems;
+        //    }
+        //    set
+        //    {
+        //        _inventoryItems = value;
 
-                //if (_inventoryItems != null && VendorInvItems == null)
-                //{
-                //    VendorInventoryItem.GetItemVendorDict = GetVendorsFromItem;
-                //    VendorInvItems = _inventoryItems.Select(x => new VendorInventoryItem(x)).ToList();
-                //}
-            }
-        }
+        //        //if (_inventoryItems != null && VendorInvItems == null)
+        //        //{
+        //        //    VendorInventoryItem.GetItemVendorDict = GetVendorsFromItem;
+        //        //    VendorInvItems = _inventoryItems.Select(x => new VendorInventoryItem(x)).ToList();
+        //        //}
+        //    }
+        //}
 
         public List<Recipe> Recipes { get; set; }
         //public List<PurchaseOrder> PurchaseOrders { get; set; }
         //public List<Vendor> Vendors { get; set; }
         //public List<Inventory> Inventories { get; set; }
         public List<PrepItem> PrepItems { get; set; }
-        public List<VendorInventoryItem> VendorInvItems { get; private set; }
+        //public List<VendorInventoryItem> VendorInvItems { get; private set; }
         public BreadOrder[] BreadWeek { get; set; }
         public List<DailySale> DailySales { get; set; }
         public List<ExpenseItem> ExpenseItems { get; set; }
@@ -53,17 +53,17 @@ namespace BuddhaBowls.Services
             InitializeModels();
             InitializeInventoryOrder();
             InitializeFoodCategories();
-            if (InventoryItems != null)
-            {
-                SetCategoryColors();
-            }
+            //if (InventoryItems != null)
+            //{
+            SetCategoryColors();
+            //}
         }
 
         private void InitializeModels()
         {
             //Vendors = ModelHelper.InstantiateList<Vendor>("Vendor") ?? new List<Vendor>();
             //AddVendorItems();
-            InventoryItems = MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem") ?? new List<InventoryItem>()).ToList();
+            //InventoryItems = MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem") ?? new List<InventoryItem>()).ToList();
             Recipes = ModelHelper.InstantiateList<Recipe>("Recipe") ?? new List<Recipe>();
             AddRecipeItems();
             //PurchaseOrders = ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder") ?? new List<PurchaseOrder>();
@@ -105,7 +105,7 @@ namespace BuddhaBowls.Services
             if (File.Exists(orderPath))
                 Properties.Settings.Default.InventoryOrder = new List<string>(File.ReadAllLines(orderPath));
             else
-                Properties.Settings.Default.InventoryOrder = new List<string>(InventoryItems.Select(x => x.Name).OrderBy(x => x));
+                Properties.Settings.Default.InventoryOrder = new List<string>(VIContainer.Items.Select(x => x.Name).OrderBy(x => x));
             Properties.Settings.Default.Save();
         }
 
@@ -181,7 +181,7 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public List<string> GetCountUnits()
         {
-            return EnsureCaseInsensitive(new HashSet<string>(InventoryItems.Select(x => x.CountUnit)
+            return EnsureCaseInsensitive(new HashSet<string>(VIContainer.Items.Select(x => x.CountUnit)
                                                                            .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
@@ -207,7 +207,7 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public List<string> GetPurchasedUnits()
         {
-            return EnsureCaseInsensitive(new HashSet<string>(InventoryItems.Select(x => x.PurchasedUnit)
+            return EnsureCaseInsensitive(new HashSet<string>(VIContainer.Items.Select(x => x.PurchasedUnit)
                                                                            .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
@@ -218,7 +218,7 @@ namespace BuddhaBowls.Services
                 foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeekNoTotal(week).Where(x => x.BreadDescDict != null)
                                                                                             .SelectMany(x => x.BreadDescDict.ToList()))
                 {
-                    InventoryItem item = InventoryItems.First(x => x.Name == descKvp.Key).Copy<InventoryItem>();
+                    InventoryItem item = VIContainer.Items.First(x => x.Name == descKvp.Key).Copy<InventoryItem>();
                     item.LastOrderAmount = descKvp.Value.Delivery;
                     yield return item;
                 }
@@ -266,16 +266,16 @@ namespace BuddhaBowls.Services
         /// </summary>
         /// <param name="item"></param>
         /// <returns>Whether or not the item existed and was deleted</returns>
-        public bool DeleteInventoryItem(InventoryItem item)
-        {
-            if(InventoryItems.First(x => x.Id == item.Id) == null)
-                return false;
-            InventoryItems.RemoveAll(x => x.Id == item.Id);
-            VendorInvItems.RemoveAll(x => x.Id == item.Id);
-            Properties.Settings.Default.InventoryOrder.Remove(item.Name);
-            item.Destroy();
-            return true;
-        }
+        //public bool DeleteInventoryItem(InventoryItem item)
+        //{
+        //    if(InventoryItems.First(x => x.Id == item.Id) == null)
+        //        return false;
+        //    InventoryItems.RemoveAll(x => x.Id == item.Id);
+        //    VendorInvItems.RemoveAll(x => x.Id == item.Id);
+        //    Properties.Settings.Default.InventoryOrder.Remove(item.Name);
+        //    item.Destroy();
+        //    return true;
+        //}
 
         /// <summary>
         /// 
@@ -394,14 +394,14 @@ namespace BuddhaBowls.Services
 
         public List<IItem> GetAllIItems()
         {
-            return InventoryItems.Select(x => (IItem)x).Concat(Recipes).ToList();
+            return VIContainer.Items.Select(x => (IItem)x.ToInventoryItem()).Concat(Recipes).ToList();
         }
 
         public List<string> GetInventoryCategories()
         {
             HashSet<string> categories = new HashSet<string>();
 
-            foreach (InventoryItem item in InventoryItems)
+            foreach (VendorInventoryItem item in VIContainer.Items)
             {
                 if(!string.IsNullOrWhiteSpace(item.Category))
                     categories.Add(item.Category);
@@ -438,7 +438,7 @@ namespace BuddhaBowls.Services
         public Dictionary<string, float> GetCategoryValues()
         {
             Dictionary<string, float> costDict = new Dictionary<string, float>();
-            foreach (InventoryItem item in InventoryItems)
+            foreach (VendorInventoryItem item in VIContainer.Items)
             {
                 if (!costDict.Keys.Contains(item.Category))
                     costDict[item.Category] = 0;
@@ -461,7 +461,7 @@ namespace BuddhaBowls.Services
 
             foreach (PrepItem item in PrepItems)
             {
-                InventoryItem invItem = InventoryItems.FirstOrDefault(x => x.Name == item.Name);
+                InventoryItem invItem = VIContainer.Items.FirstOrDefault(x => x.Name == item.Name);
                 if (invItem != null)
                 {
                     if (!costDict.Keys.Contains(invItem.Category))
@@ -606,7 +606,7 @@ namespace BuddhaBowls.Services
 
         public List<string> GetBreadTypes()
         {
-            return InventoryItems.Where(x => x.Category.ToUpper() == "BREAD").Select(x => x.Name).ToList();
+            return VIContainer.Items.Where(x => x.Category.ToUpper() == "BREAD").Select(x => x.Name).ToList();
         }
 
         private void SetBreadWeek()

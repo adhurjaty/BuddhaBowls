@@ -56,8 +56,7 @@ namespace BuddhaBowls.UserControls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            // TODO: re-enable when I get here
-            //((BreadGuideVM)DataContext).InitializeDataGrid(this);
+            ((BreadGuideVM)DataContext).InitializeDataGrid(this);
         }
 
         private void SetDateGrid(BreadOrder[] breadWeek)

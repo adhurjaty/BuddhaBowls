@@ -204,7 +204,8 @@ namespace BuddhaBowls
                     break;
                 case 2:
                     if (InvOrderList == null)
-                        InvOrderList = new ObservableCollection<InventoryItem>(MainHelper.SortItems(_models.InventoryItems));
+                        InvOrderList = new ObservableCollection<InventoryItem>(MainHelper.SortItems(_models.VIContainer.Items
+                                                                                                           .Select(x => x.ToInventoryItem())));
                     if (!_newItem)
                         SelectedOrderedItem = InvOrderList.FirstOrDefault(x => x.Id == Item.Id);
                     _itemToMove = Item;
@@ -221,7 +222,7 @@ namespace BuddhaBowls
         {
             if(_currentStep == 0)
             {
-                if (string.IsNullOrWhiteSpace(Item.Name) || (_models.InventoryItems.Select(x => x.Name.ToUpper()).Contains(Item.Name.ToUpper())
+                if (string.IsNullOrWhiteSpace(Item.Name) || (_models.VIContainer.Items.Select(x => x.Name.ToUpper()).Contains(Item.Name.ToUpper())
                     && _newItem))
                     return false;
                 return !string.IsNullOrEmpty(Item.Name) &&

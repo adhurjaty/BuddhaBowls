@@ -299,7 +299,7 @@ namespace BuddhaBowls
         private void InitTabsAndModel()
         {
             _models = new DBCache();
-            DatabaseFound = _models.InventoryItems != null && _models.InventoryItems.Count > 0;
+            DatabaseFound = _models.VIContainer.Items != null && _models.VIContainer.Items.Count > 0;
             TabVM.ParentContext = this;
             TabVM.IsDBConnected = DatabaseFound;
             TabVM.SetModelContainer(_models);

@@ -112,6 +112,7 @@ namespace BuddhaBowls
 
         private void InitSquareSales()
         {
+            // TODO: Change to Async pattern
             _worker = new BackgroundWorker();
             _worker.DoWork += _worker_DoWork;
             _worker.RunWorkerCompleted += _worker_RunWorkerCompleted;
@@ -136,8 +137,8 @@ namespace BuddhaBowls
             if (idx > 0)
                 BreadOrderList[idx - 1].UpdateProperties();
 
-            List<InventoryItem> breads = _models.InventoryItems.Where(x => x.Category == "Bread").ToList();
-            foreach (InventoryItem item in breads)
+            List<VendorInventoryItem> breads = _models.VIContainer.Items.Where(x => x.Category == "Bread").ToList();
+            foreach (VendorInventoryItem item in breads)
             {
                 BreadOrder bo = BreadOrderList.FirstOrDefault(x => x.Date == DateTime.Today);
                 if (bo != null && bo.BreadDescDict.ContainsKey(item.Name))

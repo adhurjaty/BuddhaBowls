@@ -196,7 +196,8 @@ namespace BuddhaBowls
 
         private void AddVendorItem(object obj)
         {
-            List<InventoryItem> remainingItems = _models.InventoryItems.Where(x => !SelectedVendorItems.Select(y => y.Id).Contains(x.Id)).ToList();
+            List<InventoryItem> remainingItems = _models.VIContainer.Items.Where(x => !SelectedVendorItems.Select(y => y.Id).Contains(x.Id))
+                                                                          .Select(x => x.ToInventoryItem()).ToList();
             ModalVM<InventoryItem> modal = new ModalVM<InventoryItem>("Add Inv Item", remainingItems, AddInvItemToVendor);
             ParentContext.ModalContext = modal;
         }
