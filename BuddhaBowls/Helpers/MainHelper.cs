@@ -152,11 +152,6 @@ namespace BuddhaBowls.Helpers
             return (x % m + m) % m;
         }
 
-        public static float GetFoodCost(Dictionary<string, float> catCosts)
-        {
-            return catCosts.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key)).Sum(x => x.Value);
-        }
-
         public static IEnumerable<WeekMarker> GetWeekLabels(int period)
         {
             DateTime theFirst = new DateTime(DateTime.Today.Year, 1, 1);
@@ -216,6 +211,17 @@ namespace BuddhaBowls.Helpers
                                             .First(x => x.StartDate <= date && date <= x.EndDate);
             }
             return null;
+        }
+
+        /// <summary>
+        /// Converts case-sensitive hashset into case insensitive (will not store OZ-wt AND OZ-WT)
+        /// </summary>
+        /// <param name="set"></param>
+        /// <returns></returns>
+        public static HashSet<string> EnsureCaseInsensitive(HashSet<string> set)
+        {
+            return set.Comparer == StringComparer.OrdinalIgnoreCase
+                   ? set : new HashSet<string>(set, StringComparer.OrdinalIgnoreCase);
         }
     }
 

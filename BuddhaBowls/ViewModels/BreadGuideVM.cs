@@ -22,6 +22,7 @@ namespace BuddhaBowls
     {
         private BreadGuideControl _control;
         private BackgroundWorker _worker;
+        private BreadWeekContainer _breadWeek;
 
         #region Content Binders
 
@@ -128,19 +129,19 @@ namespace BuddhaBowls
 
         public void UpdateValue(int idx)
         {
-            BreadOrderList[idx].Update();
-            BreadOrderList[idx].UpdateProperties();
+            _breadWeek.Week[idx].Update();
+            _breadWeek.Week[idx].UpdateProperties();
 
-            ((BreadOrderTotal)BreadOrderList[7]).UpdateDetails();
-            BreadOrderList[7].UpdateProperties();
+            ((BreadOrderTotal)_breadWeek.Week[7]).UpdateDetails();
+            _breadWeek.Week[7].UpdateProperties();
 
             if (idx > 0)
-                BreadOrderList[idx - 1].UpdateProperties();
+                _breadWeek.Week[idx - 1].UpdateProperties();
 
             List<VendorInventoryItem> breads = _models.VIContainer.Items.Where(x => x.Category == "Bread").ToList();
             foreach (VendorInventoryItem item in breads)
             {
-                BreadOrder bo = BreadOrderList.FirstOrDefault(x => x.Date == DateTime.Today);
+                BreadOrder bo = _breadWeek.Week.FirstOrDefault(x => x.Date == DateTime.Today);
                 if (bo != null && bo.BreadDescDict.ContainsKey(item.Name))
                 {
                     BreadDescriptor bread = bo.BreadDescDict[item.Name];
@@ -150,13 +151,13 @@ namespace BuddhaBowls
                 }
             }
 
-            ParentContext.ReportTab.UpdateBreadOrder();
+            //ParentContext.ReportTab.UpdateBreadOrder();
         }
 
         public void ChangeBreadWeek(PeriodMarker period, WeekMarker week)
         {
-            BreadOrder[] bWeek = _models.GetBreadWeek(week);
-            BreadOrderList = new ObservableCollection<BreadOrder>(bWeek);
+            _breadWeek = _models.GetBreadWeek(week);
+            BreadOrderList = new ObservableCollection<BreadOrder>(_breadWeek.Week);
             if (_control != null)
                 _control.SetBreadGrid(BreadOrderList.ToArray(), _models.GetBreadTypes());
             NotifyPropertyChanged("BreadOrderList");

@@ -283,8 +283,8 @@ namespace BuddhaBowls
 
         public override void FilterItems(string filterStr)
         {
-            PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
-                                                                          .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
+            //PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
+            //                                                              .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
         }
 
         /// <summary>
