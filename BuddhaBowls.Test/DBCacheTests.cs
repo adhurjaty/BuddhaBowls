@@ -14,11 +14,11 @@ namespace BuddhaBowls.Test
     /// Summary description for ModelContainerTests
     /// </summary>
     [TestClass]
-    public class ModelContainerTests
+    public class DBCacheTests
     {
         private DBCache _models;
 
-        public ModelContainerTests()
+        public DBCacheTests()
         {
             //
             // TODO: Add constructor logic here
@@ -72,8 +72,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void GetIngredientsTest()
         {
-            // commenting this out probably destroys the test, but I don't want outside classes setting InventoryItems
-            _models.InventoryItems = _models.InventoryItems.Take(5).ToList();
+            _models.VIContainer.SetItems(_models.VIContainer.Items.Take(5).ToList());
             _models.Recipes = _models.Recipes.Take(4).ToList();
 
             List<IItem> allItems = _models.GetAllIItems();
@@ -153,7 +152,7 @@ namespace BuddhaBowls.Test
         {
             string name = "New Test Item";
             InventoryItem testItem = new InventoryItem() { Name = name };
-            int origSize = _models.InventoryItems.Count;
+            int origSize = _models.VIContainer.Items.Count;
 
             InventoryItem dbItem;
             try

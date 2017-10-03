@@ -181,7 +181,11 @@
     <Compile Include="Models\RecipeItem.cs" />
     <Compile Include="Models\Vendor.cs" />
     <Compile Include="Models\VendorInventoryItem.cs" />
-    <Compile Include="Services\ModelContainer.cs" />
+    <Compile Include="Services\ModelContainers\BreadWeekContainer.cs" />
+    <Compile Include="Services\ModelContainers\InventoriesContainer.cs" />
+    <Compile Include="Services\ModelContainers\ModelContainer.cs" />
+    <Compile Include="Services\ModelContainers\PurchaseOrdersContainer.cs" />
+    <Compile Include="Services\ModelContainers\VendorInvItemsContainer.cs" />
     <Compile Include="Services\PeriodMarker.cs" />
     <Compile Include="Services\ShowAllMarker.cs" />
     <Compile Include="Services\WeekMarker.cs" />

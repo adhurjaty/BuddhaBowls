@@ -11,20 +11,29 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Services
 {
+    /// <summary>
+    /// Class to store database values in memory
+    /// </summary>
     public class DBCache
     {
         private Dictionary<string, string> _categoryColors;
+
+        // Cache of bread info by week. Key is the start date of the week
         private Dictionary<DateTime, BreadWeekContainer> _breadWeekDict;
 
+        // TODO: Get rid of these 3 and create containers
         public List<Recipe> Recipes { get; set; }
-        public BreadOrder[] BreadWeek { get; set; }
         public List<DailySale> DailySales { get; set; }
         public List<ExpenseItem> ExpenseItems { get; set; }
+
         public VendorInvItemsContainer VIContainer { get; private set; }
         public PurchaseOrdersContainer POContainer { get; private set; }
         public VendorsContainer VContainer { get; private set; }
         public InventoriesContainer InContainer { get; private set; }
 
+        /// <summary>
+        /// Constructor. Initialize containers, settings and ordering information
+        /// </summary>
         public DBCache()
         {
             InitializeModels();
@@ -36,6 +45,9 @@ namespace BuddhaBowls.Services
             //}
         }
 
+        /// <summary>
+        /// Loads containers from database
+        /// </summary>
         private void InitializeModels()
         {
             Recipes = ModelHelper.InstantiateList<Recipe>("Recipe") ?? new List<Recipe>();
@@ -55,6 +67,9 @@ namespace BuddhaBowls.Services
             InitBreadOrders();
         }
 
+        /// <summary>
+        /// Initializes the recipe info in each recipe. Should change as I edit the recipe tab
+        /// </summary>
         private void AddRecipeItems()
         {
             foreach (Recipe item in Recipes)
@@ -63,6 +78,9 @@ namespace BuddhaBowls.Services
             }
         }
 
+        /// <summary>
+        /// Sets the desired ordering for inventory items by the inventory order file. Alphabetical otherwise
+        /// </summary>
         private void InitializeInventoryOrder()
         {
             string orderPath = Path.Combine(Properties.Settings.Default.DBLocation, "Settings", GlobalVar.INV_ORDER_FILE);
@@ -73,6 +91,9 @@ namespace BuddhaBowls.Services
             Properties.Settings.Default.Save();
         }
 
+        /// <summary>
+        /// Sets the setting for which categories are food categories
+        /// </summary>
         private void InitializeFoodCategories()
         {
             string filepath = Path.Combine(Properties.Settings.Default.DBLocation, "Settings", GlobalVar.FOOD_CAT_FILE);
@@ -149,6 +170,7 @@ namespace BuddhaBowls.Services
                                                                            .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
+        // may bring back prep concept. Do not remove yet
         //public List<string> GetPrepCountUnits()
         //{
         //    return EnsureCaseInsensitive(new HashSet<string>(PrepItems.Select(x => x.CountUnit)
@@ -175,6 +197,11 @@ namespace BuddhaBowls.Services
                                                                            .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
+        /// <summary>
+        /// Gets the bread order items for the given period
+        /// </summary>
+        /// <param name="period"></param>
+        /// <returns></returns>
         public IEnumerable<InventoryItem> GetBreadPeriodOrders(PeriodMarker period)
         {
             foreach (WeekMarker week in MainHelper.GetWeeksInPeriod(period).Where(x => x.StartDate < DateTime.Now))
@@ -220,6 +247,10 @@ namespace BuddhaBowls.Services
             return vendorDict;
         }
 
+        /// <summary>
+        /// Gets a list of the currently existing recipe categories
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetRecipeCategories()
         {
             HashSet<string> categories = new HashSet<string>();
@@ -232,11 +263,19 @@ namespace BuddhaBowls.Services
             return categories.ToList();
         }
 
+        /// <summary>
+        /// Gets all IItems (Inventory items and batch recipe items)
+        /// </summary>
+        /// <returns></returns>
         public List<IItem> GetAllIItems()
         {
             return VIContainer.Items.Select(x => (IItem)x.ToInventoryItem()).Concat(Recipes).ToList();
         }
 
+        /// <summary>
+        /// Gets a list of the inventory categories
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetInventoryCategories()
         {
             HashSet<string> categories = new HashSet<string>();
@@ -271,6 +310,7 @@ namespace BuddhaBowls.Services
             }
         }
 
+        // don't know if the prep item concept is coming back. Leave in for now
         /// <summary>
         /// Gets the all category breakdown of the value of inventory (inventory and prep items)
         /// </summary>
@@ -419,21 +459,20 @@ namespace BuddhaBowls.Services
             return new BreadWeekContainer(breadWeek.ToList());
         }
 
-        //public BreadOrder[] GetBreadWeekNoTotal(WeekMarker week)
-        //{
-        //    return GetBreadWeek(week).Take(7).ToArray();
-        //}
-
+        /// <summary>
+        /// Gets the types of bread that exist
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetBreadTypes()
         {
             return VIContainer.Items.Where(x => x.Category.ToUpper() == "BREAD").Select(x => x.Name).ToList();
         }
 
-        //private void SetBreadWeek()
-        //{
-        //    BreadWeek = GetBreadWeek(MainHelper.GetThisWeek());
-        //}
-
+        /// <summary>
+        /// Calculates par factors for bread ordering
+        /// </summary>
+        /// <param name="breadOrders"></param>
+        /// <returns></returns>
         private Dictionary<string, float> GetParFactors(List<BreadOrder> breadOrders)
         {
             //TODO: throw away outliers
@@ -467,310 +506,6 @@ namespace BuddhaBowls.Services
             }
 
             return salesDict.ToDictionary(x => x.Key, x => usageDict[x.Key] > 0 ? x.Value / usageDict[x.Key] : 1);
-        }
-    }
-
-    /// <summary>
-    /// Class to hold the inventory items associated with which vendors sell them
-    /// </summary>
-    public class VendorInvItemsContainer : ModelContainer<VendorInventoryItem>
-    {
-        // tracks vendors, necessary for each item to reference
-        private VendorsContainer _vendorsContainer;
-
-        /// <summary>
-        /// Instantiate the container. Should only be called in the DBCache class
-        /// </summary>
-        /// <param name="items">List of vendor inventory items to contain</param>
-        /// <param name="vContainer">Vendor container</param>
-        public VendorInvItemsContainer(List<VendorInventoryItem> items, VendorsContainer vContainer) : base(items)
-        {
-            _vendorsContainer = vContainer;
-        }
-
-        /// <summary>
-        /// Adds a new item with a list of which vendors sell the item
-        /// </summary>
-        /// <param name="item">New item</param>
-        /// <param name="vendors">List of vendors that sell it</param>
-        public void AddItem(InventoryItem item, List<VendorInfo> vendors)
-        {
-            int idx = Items.FindIndex(x => x.Id == item.Id);
-            if (idx != -1)
-            {
-                _items[idx].Update(vendors);
-                _items[idx].InvItem = item;
-                PushChange();
-            }
-            else
-            {
-                VendorInventoryItem vItem = new VendorInventoryItem(item);
-
-                vItem.Id = item.Insert();
-                vItem.SetVendorDict(vendors);
-
-                int insertIdx = Properties.Settings.Default.InventoryOrder.IndexOf(item.Name);
-                if (insertIdx == -1)
-                    _items.Add(vItem);
-                else
-                    _items.Insert(insertIdx, vItem);
-
-                PushChange();
-            }
-        }
-
-        /// <summary>
-        /// Removes item from current inventory list and all vendor lists
-        /// </summary>
-        /// <param name="item"></param>
-        public override void RemoveItem(VendorInventoryItem item)
-        {
-            _vendorsContainer.RemoveItemFromVendors(item);
-
-            base.RemoveItem(item);
-        }
-
-        /// <summary>
-        /// Updates the items in the list. Does not remove any items from the master list
-        /// </summary>
-        /// <param name="items"></param>
-        public void Update(List<VendorInventoryItem> items)
-        {
-            foreach (VendorInventoryItem item in items)
-            {
-                int idx = Items.FindIndex(x => x.Id == item.Id);
-                Items[idx] = item;
-            }
-            PushChange();
-        }
-
-        /// <summary>
-        /// Copy the container
-        /// </summary>
-        /// <returns></returns>
-        public VendorInvItemsContainer Copy()
-        {
-            return new VendorInvItemsContainer(_items, _vendorsContainer);
-        }
-
-        /// <summary>
-        /// Adds vendor to vendor container and associates items with new vendor
-        /// </summary>
-        /// <param name="vend"></param>
-        public void AddVendor(Vendor vend, List<InventoryItem> invItems)
-        {
-            _vendorsContainer.AddItem(vend);
-            vend.SetItemList(invItems);
-            foreach (InventoryItem item in invItems)
-            {
-                Items.First(x => x.Id == item.Id).AddVendor(vend, item);
-            }
-            PushChange();
-        }
-
-        /// <summary>
-        /// Removes a vendor from vendor container and all associations with inv items
-        /// </summary>
-        /// <param name="vend"></param>
-        public void RemoveVendor(Vendor vend)
-        {
-            _vendorsContainer.RemoveItem(vend);
-            foreach (InventoryItem item in vend.ItemList)
-            {
-                Items.First(x => x.Id == item.Id).DeleteVendor(vend);
-            }
-            PushChange();
-        }
-
-        /// <summary>
-        /// Save the display order of the inventory items
-        /// </summary>
-        public void SaveOrder()
-        {
-            string dir = Path.Combine(Properties.Settings.Default.DBLocation, "Settings");
-            Directory.CreateDirectory(dir);
-            File.WriteAllLines(Path.Combine(dir, GlobalVar.INV_ORDER_FILE), Properties.Settings.Default.InventoryOrder);
-            _items = MainHelper.SortItems(_items).ToList();
-        }
-
-        /// <summary>
-        /// Get the PriceExtension value of each category of items
-        /// </summary>
-        /// <returns></returns>
-        public Dictionary<string, float> GetCategoryValues()
-        {
-            Dictionary<string, float> costDict = new Dictionary<string, float>();
-
-            foreach (VendorInventoryItem item in _items)
-            {
-                if (!costDict.Keys.Contains(item.Category))
-                    costDict[item.Category] = 0;
-                costDict[item.Category] += item.PriceExtension;
-            }
-
-            return costDict;
-        }
-
-        /// <summary>
-        /// Update (push to DB) all of the items in the container
-        /// </summary>
-        public void UpdateContainer()
-        {
-            foreach (VendorInventoryItem item in Items)
-            {
-                item.Update();
-            }
-        }
-
-        /// <summary>
-        /// Associates item with vendor and updates vendor
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="vend"></param>
-        public void UpdateItem(InventoryItem item, Vendor vend)
-        {
-            vend.AddInvItem(item);
-            _vendorsContainer.Update(vend);
-            PushChange();
-        }
-
-        /// <summary>
-        /// Associates vendor with all of items in invItems, removes association with vendor and items not in invItems
-        /// </summary>
-        /// <param name="vendor"></param>
-        /// <param name="list"></param>
-        public void UpdateVendorItems(Vendor vendor, List<InventoryItem> invItems)
-        {
-            RemoveVendor(vendor);
-            AddVendor(vendor, invItems);
-        }
-    }
-
-    /// <summary>
-    /// Container for holding inventories
-    /// </summary>
-    public class InventoriesContainer : ModelContainer<Inventory>
-    {
-        /// <summary>
-        /// Instantiate the container
-        /// </summary>
-        /// <param name="items"></param>
-        public InventoriesContainer(List<Inventory> items) : base(items)
-        {
-
-        }
-
-        /// <summary>
-        /// Adds or overwrites inventory based on date
-        /// </summary>
-        /// <param name="inv"></param>
-        public override void AddItem(Inventory inv)
-        {
-            int idx = Items.FindIndex(x => x.Date.Date == inv.Date);
-
-            if (idx != -1)
-            {
-                Items[idx].Id = inv.Id;
-                Items[idx] = inv;
-                PushChange();
-            }
-            else
-            {
-                base.AddItem(inv);
-            }
-        }
-
-        /// <summary>
-        /// Updates the inventory
-        /// </summary>
-        /// <param name="inv"></param>
-        public override void Update(Inventory inv)
-        {
-            int idx = _items.FindIndex(x => x.Id == inv.Id);
-            _items[idx].Date = inv.Date;
-            base.Update(inv);
-        }
-    }
-
-    /// <summary>
-    /// Container for vendors
-    /// </summary>
-    public class VendorsContainer : ModelContainer<Vendor>
-    {
-        /// <summary>
-        /// Instantiate container
-        /// </summary>
-        /// <param name="items"></param>
-        public VendorsContainer(List<Vendor> items) : base(items)
-        {
-            //foreach (Vendor vend in items)
-            //{
-            //    vend.InitItems();
-            //}
-        }
-
-        /// <summary>
-        /// Check to see if the vendor name already exists (case and space insensitive)
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public override bool Contains(Vendor item)
-        {
-            return Items.Select(x => x.Name.ToUpper().Replace(" ", "")).Contains(item.Name.ToUpper().Replace(" ", ""));
-        }
-
-        /// <summary>
-        /// Adds or updates vendor and sets the items sold to the invItems parameter
-        /// </summary>
-        /// <param name="vend"></param>
-        /// <param name="invItems"></param>
-        public void AddItem(Vendor vend, List<InventoryItem> invItems)
-        {
-
-        }
-
-        /// <summary>
-        /// Removes the inventory item from all the vendors' lists that contain it
-        /// </summary>
-        /// <param name="item"></param>
-        public void RemoveItemFromVendors(VendorInventoryItem item)
-        {
-            foreach (Vendor v in item.Vendors)
-            {
-                v.RemoveInvItem(item);
-            }
-        }
-    }
-
-    public class PurchaseOrdersContainer : ModelContainer<PurchaseOrder>
-    {
-        public PurchaseOrdersContainer(List<PurchaseOrder> items) : base(items)
-        {
-
-        }
-    }
-
-    public class BreadWeekContainer : ModelContainer<BreadOrder>
-    {
-        public BreadOrder[] Week
-        {
-            get
-            {
-                return Items.ToArray();
-            }
-        }
-
-        public BreadOrder[] WeekNoTotal
-        {
-            get
-            {
-                return Week.Take(7).ToArray();
-            }
-        }
-
-        public BreadWeekContainer(List<BreadOrder> items) : base(items)
-        {
-
         }
     }
 }
