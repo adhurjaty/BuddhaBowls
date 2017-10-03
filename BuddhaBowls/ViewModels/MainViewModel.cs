@@ -309,7 +309,7 @@ namespace BuddhaBowls
             VendorTab = new VendorTabVM();
             BreadTab = new BreadGuideVM();
             //RecipeTab = new RecipeTabVM();
-            //ReportTab = new ReportsTabVM();
+            ReportTab = new ReportsTabVM();
         }
 
         #endregion

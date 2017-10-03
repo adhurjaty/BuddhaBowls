@@ -49,6 +49,7 @@ namespace BuddhaBowls.Services
         public virtual void Update(T item)
         {
             item.Update();
+            PushChange();
         }
 
         public virtual bool Contains(T item)

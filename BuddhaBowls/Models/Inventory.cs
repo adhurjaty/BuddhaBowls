@@ -15,17 +15,17 @@ namespace BuddhaBowls.Models
 
         public DateTime Date { get; set; }
 
-        private Dictionary<string, List<InventoryItem>> _categoryItemsDict;
+        //private Dictionary<string, List<InventoryItem>> _categoryItemsDict;
         public Dictionary<string, List<InventoryItem>> CategoryItemsDict
         {
             get
             {
-                //if (_invChanged)
-                //{
-                //    _categoryItemsDict = GetInventoryHistory().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
-                //    _invChanged = false;
-                //}
-                return _categoryItemsDict;
+                if (InvItemsContainer == null)
+                {
+                    return GetInvItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
+                    //_invChanged = false;
+                }
+                return InvItemsContainer.Items.GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.Select(y => y.ToInventoryItem()).ToList());
             }
         }
 
@@ -96,11 +96,20 @@ namespace BuddhaBowls.Models
             base.Destroy();
         }
 
+        public void DestroyTable()
+        {
+            _dbInt.DestroyTable(GetInventoryTable());
+        }
+
         public void SetInvItemsContainer(VendorInvItemsContainer container)
         {
             InvItemsContainer = container;
         }
 
+        /// <summary>
+        /// Gets the inventory list associated with this inventory
+        /// </summary>
+        /// <returns></returns>
         public List<InventoryItem> GetInvItems()
         {
             return ModelHelper.InstantiateList<InventoryItem>(GetInventoryTable(), false);

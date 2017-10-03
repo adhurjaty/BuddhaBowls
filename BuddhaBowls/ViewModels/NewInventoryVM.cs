@@ -38,6 +38,20 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("Inventory");
             }
         }
+
+        private DateTime _invDate;
+        public DateTime InvDate
+        {
+            get
+            {
+                return _invDate;
+            }
+            set
+            {
+                _invDate = value;
+                NotifyPropertyChanged("InvDate");
+            }
+        }
         
         private InventoryListControl _inventoryControl;
         public InventoryListControl InventoryControl
@@ -69,26 +83,34 @@ namespace BuddhaBowls
 
         #endregion
 
+        /// <summary>
+        /// Constructor for a new inventory
+        /// </summary>
         public NewInventoryVM() : base()
         {
             _tabControl = new NewInventory(this);
             InvListVM = new InventoryListVM(InventoryItemCountChanged);
             InventoryControl = InvListVM.TabControl;
             Inv = new Inventory(DateTime.Now);
+            InvDate = Inv.Date;
             
             InitICommand();
             Header = "New Inventory";
         }
 
+        /// <summary>
+        /// Constructor for viewing existing inventory
+        /// </summary>
+        /// <param name="inv"></param>
         public NewInventoryVM(Inventory inv) : base()
         {
             _tabControl = new NewInventory(this);
             Inv = inv;
             InvListVM = new InventoryListVM(inv, InventoryItemCountChanged);
             InventoryControl = InvListVM.TabControl;
+            InvDate = Inv.Date;
 
             InitICommand();
-            //((RelayCommand)SaveCountCommand).ChangeCallback(SaveOldInventory);
             Header = "Edit Inventory " + Inv.Date.ToShortDateString();
         }
         
@@ -112,6 +134,9 @@ namespace BuddhaBowls
         {
             if (CheckUniqueInvDate())
             {
+                Inv.DestroyTable();
+                Inv.Date = InvDate;
+
                 // if this is an edit or new inventory
                 if (_models.InContainer.Items.Contains(Inv))
                 {
@@ -132,23 +157,9 @@ namespace BuddhaBowls
                     _models.VIContainer.UpdateContainer();
                 }
 
-                //InvListVM.SaveNew(Inv.Date);
-
-                //ParentContext.Refresh();
-                //ParentContext.ReportTab.UpdatedCogs(InventoryDate);
                 Close();
             }
         }
-
-        //private void SaveOldInventory(object obj)
-        //{
-        //    if (CheckUniqueInvDate())
-        //    {
-        //        InvListVM.SaveOld(Inv.Date);
-        //        //ParentContext.ReportTab.UpdatedCogs(InventoryDate);
-        //        Close();
-        //    }
-        //}
 
         private void CancelInventory(object obj)
         {

@@ -181,20 +181,20 @@ namespace BuddhaBowls
         public IEnumerable<CogsCategory> GetCogs(PeriodMarker timeFrame)
         {
             SetInvAndOrders(timeFrame);
-            CogsCategory totalCogs = new CogsCategory("Total", ref _startInventory, ref _endInventory, ref _recOrders, 0);
+            CogsCategory totalCogs = new CogsCategory("Total", _startInventory, _endInventory, _recOrders, 0);
             foreach (string category in _models.GetInventoryCategories().Concat(new List<string> { "Food Total" }))
             {
                 if (category == "Bread")
-                    yield return new CogsCategory(category, ref _startInventory, ref _endInventory, ref _breadOrderItems, totalCogs.CogsCost);
+                    yield return new CogsCategory(category, _startInventory, _endInventory, _breadOrderItems, totalCogs.CogsCost);
                 else
-                    yield return new CogsCategory(category, ref _startInventory, ref _endInventory, ref _recOrders, totalCogs.CogsCost);
+                    yield return new CogsCategory(category, _startInventory, _endInventory, _recOrders, totalCogs.CogsCost);
             }
             yield return totalCogs;
         }
 
         private void SetInvAndOrders(PeriodMarker timeFrame)
         {
-            List<Inventory> inventoryList = null; // _models.Inventories.OrderByDescending(x => x.Date).ToList();
+            List<Inventory> inventoryList = _models.InContainer.Items.OrderByDescending(x => x.Date).ToList();
             List<Inventory> periodInvList = inventoryList.Where(x => timeFrame.StartDate <= x.Date && x.Date <= timeFrame.EndDate).ToList();
             _endInventory = inventoryList.Where(x => x.Date > timeFrame.EndDate).OrderBy(x => x.Date).FirstOrDefault();
             if(_endInventory == null)
@@ -210,8 +210,8 @@ namespace BuddhaBowls
                 if (_startInventory == null)
                     _startInventory = inventoryList.Last();
 
-                //_recOrders = _models.PurchaseOrders.Where(x => x.ReceivedDate >= timeFrame.StartDate &&
-                //                                               x.ReceivedDate <= timeFrame.EndDate.Date.AddDays(1)).ToList();
+                _recOrders = _models.POContainer.Items.Where(x => x.ReceivedDate >= timeFrame.StartDate &&
+                                                                  x.ReceivedDate <= timeFrame.EndDate.Date.AddDays(1)).ToList();
             }
             _breadOrderItems = _models.GetBreadPeriodOrders(timeFrame).ToList();
         }
@@ -271,6 +271,7 @@ namespace BuddhaBowls
                 return startInvItems.Sum(x => x.PriceExtension);
             }
         }
+
         public float EndInv
         {
             get
@@ -281,6 +282,7 @@ namespace BuddhaBowls
                 return endInvItems.Sum(x => x.PriceExtension);
             }
         }
+
         public float Purchases
         {
             get
@@ -320,7 +322,7 @@ namespace BuddhaBowls
             }
         }
 
-        public CogsCategory(string category, ref Inventory startInv, ref Inventory endInv, ref List<PurchaseOrder> purchased, float totalCogs)
+        public CogsCategory(string category, Inventory startInv, Inventory endInv, List<PurchaseOrder> purchased, float totalCogs)
         {
             Name = category;
             _startInv = startInv;
@@ -337,7 +339,7 @@ namespace BuddhaBowls
         /// <param name="endInv"></param>
         /// <param name="breadOrders"></param>
         /// <param name="totalCogs"></param>
-        public CogsCategory(string category, ref Inventory startInv, ref Inventory endInv, ref List<InventoryItem> breadOrders, float totalCogs)
+        public CogsCategory(string category, Inventory startInv, Inventory endInv, List<InventoryItem> breadOrders, float totalCogs)
         {
             Name = category;
             _startInv = startInv;

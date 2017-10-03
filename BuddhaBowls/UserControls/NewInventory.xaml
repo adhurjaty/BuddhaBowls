@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
         <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="{Binding Header}" VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="30"/>
-        <DatePicker Grid.Row="1" SelectedDate="{Binding InventoryDate}" Height="25" Width="130" HorizontalAlignment="Left" VerticalAlignment="Top"
+        <DatePicker Grid.Row="1" SelectedDate="{Binding InvDate}" Height="25" Width="130" HorizontalAlignment="Left" VerticalAlignment="Top"
                     Margin="10, 35, 0, 0"/>
         <ContentControl Content="{Binding InventoryControl}" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         <Button Grid.Row="2" Height ="25" Width="80" Content="Cancel" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding CancelCommand}" />

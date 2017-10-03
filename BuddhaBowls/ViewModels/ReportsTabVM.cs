@@ -74,7 +74,7 @@ namespace BuddhaBowls
         public void SwitchedPeriod(PeriodMarker period, WeekMarker week)
         {
             _cogsVM.CalculateCogs(week);
-            PeriodCogs = _cogsVM.GetCogs(period).ToList();
+            //PeriodCogs = _cogsVM.GetCogs(period).ToList();
             //_plVM.CalculatePAndL(period, week);
         }
 
