@@ -85,7 +85,7 @@ namespace BuddhaBowls.Test
         {
             Inventory inv = new Inventory(new DateTime(2017, 3, 1));
 
-            List<InventoryItem> history = inv.GetInventoryHistory();
+            List<InventoryItem> history = inv.GetInvItems();
 
             List<string> refHistory = new List<string>()
             {
@@ -115,7 +115,8 @@ namespace BuddhaBowls.Test
                 MockObjects.GetInventoryItem("Feta"),
             };
 
-            inv.Insert(refList);
+            inv.InvItemsContainer = 
+            inv.Insert();
 
             try
             {

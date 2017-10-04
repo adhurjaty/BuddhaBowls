@@ -25,11 +25,11 @@ namespace BuddhaBowls.Models
                     return GetInvItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
                     //_invChanged = false;
                 }
-                return InvItemsContainer.Items.GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.Select(y => y.ToInventoryItem()).ToList());
+                return InvItemsContainer.Items.GroupBy(x => x.Category).ToDictionary(x => x.Key, y => y.ToList());
             }
         }
 
-        public VendorInvItemsContainer InvItemsContainer { get; private set; }
+        public InventoryItemsContainer InvItemsContainer { get; private set; }
 
         public Inventory()
         {
@@ -41,7 +41,7 @@ namespace BuddhaBowls.Models
             Date = date;
         }
 
-        public Inventory(DateTime date, VendorInvItemsContainer viContainer) : this(date)
+        public Inventory(DateTime date, InventoryItemsContainer viContainer) : this(date)
         {
             InvItemsContainer = viContainer;
         }
@@ -67,7 +67,7 @@ namespace BuddhaBowls.Models
 
             if (!File.Exists(Path.Combine(Properties.Settings.Default.DBLocation, GetInventoryTable() + ".csv")))
             {
-                ModelHelper.CreateTable(InvItemsContainer.Items.Select(x => x.ToInventoryItem()).OrderBy(x => x.Id).ToList(), GetInventoryTable());
+                ModelHelper.CreateTable(InvItemsContainer.Items.OrderBy(x => x.Id).ToList(), GetInventoryTable());
                 //_invChanged = true;
                 return base.Insert();
             }
@@ -83,7 +83,7 @@ namespace BuddhaBowls.Models
         {
             if (InvItemsContainer != null)
             {
-                ModelHelper.CreateTable(InvItemsContainer.Items.Select(x => x.ToInventoryItem()).OrderBy(x => x.Id).ToList(), GetInventoryTable());
+                ModelHelper.CreateTable(InvItemsContainer.Items.OrderBy(x => x.Id).ToList(), GetInventoryTable());
                 //_invChanged = true;
             }
             base.Update();
@@ -101,7 +101,7 @@ namespace BuddhaBowls.Models
             _dbInt.DestroyTable(GetInventoryTable());
         }
 
-        public void SetInvItemsContainer(VendorInvItemsContainer container)
+        public void SetInvItemsContainer(InventoryItemsContainer container)
         {
             InvItemsContainer = container;
         }

@@ -116,26 +116,6 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
-        /// Converts a list of InventoryItems to VendorInventoryItems. Used for instantiating an old inventory 
-        /// </summary>
-        /// <param name="invItems"></param>
-        /// <returns></returns>
-        public List<VendorInventoryItem> InvToVendorInvList(List<InventoryItem> invItems)
-        {
-            return invItems.Select(x => new VendorInventoryItem(x, VContainer.Items.First(y => y.Id == x.LastVendorId))).ToList();
-        }
-
-        /// <summary>
-        /// Get the total cost of the recipe's ingredients
-        /// </summary>
-        /// <param name="rec"></param>
-        /// <returns>Cost</returns>
-        public float GetBatchItemCost(Recipe rec)
-        {
-            return rec.GetCost();
-        }
-
-        /// <summary>
         /// Gets the color (excel format) from the passed-in category (case insensitive)
         /// </summary>
         /// <remarks>Probably no need to test</remarks>
@@ -224,9 +204,7 @@ namespace BuddhaBowls.Services
         public void LoadInvContainer(Inventory inv)
         {
             List<InventoryItem> items = inv.GetInvItems();
-            inv.SetInvItemsContainer(new VendorInvItemsContainer(items.Select(x => new VendorInventoryItem(x, GetVendorsFromItem(x)))
-                                                                                .ToList(),
-                                                                 VContainer));
+            inv.SetInvItemsContainer(new InventoryItemsContainer(items));
         }
 
         /// <summary>

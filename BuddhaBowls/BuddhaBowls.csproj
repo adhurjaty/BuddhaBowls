@@ -183,6 +183,7 @@
     <Compile Include="Models\VendorInventoryItem.cs" />
     <Compile Include="Services\ModelContainers\BreadWeekContainer.cs" />
     <Compile Include="Services\ModelContainers\InventoriesContainer.cs" />
+    <Compile Include="Services\ModelContainers\InventoryItemsContainer.cs" />
     <Compile Include="Services\ModelContainers\ModelContainer.cs" />
     <Compile Include="Services\ModelContainers\PurchaseOrdersContainer.cs" />
     <Compile Include="Services\ModelContainers\VendorInvItemsContainer.cs" />

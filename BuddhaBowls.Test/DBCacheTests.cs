@@ -148,162 +148,26 @@ namespace BuddhaBowls.Test
         }
 
         [TestMethod]
-        public void AddInventoryItemTest()
+        public void GetBreadPeriodOrdersTest()
         {
-            string name = "New Test Item";
-            InventoryItem testItem = new InventoryItem() { Name = name };
-            int origSize = _models.VIContainer.Items.Count;
+            PeriodMarker period = new PeriodMarker(new DateTime(2017, 7, 17), 1, 7);
 
-            InventoryItem dbItem;
-            try
-            {
-                _models.AddUpdateInventoryItem(ref testItem);
+            InventoryItem sourdough = new InventoryItem(new Dictionary<string, string>() { { "Name", "Sourdough" } });
+            sourdough.LastOrderAmount = 1;
+            InventoryItem wheat = new InventoryItem(new Dictionary<string, string>() { { "Name", "Wheat" } });
+            wheat.LastOrderAmount = 2;
 
-                CollectionAssert.Contains(_models.InventoryItems, testItem);
-                Assert.AreEqual(origSize, testItem.Id);
-                dbItem = ModelHelper.InstantiateList<InventoryItem>("InventoryItem").First(x => x.Name == name);
-                Assert.AreEqual(origSize, dbItem.Id);
-            }
-            finally
+            List<InventoryItem> refItems = new List<InventoryItem>();
+
+            for (int i = 0; i < 7; i++)
             {
-                _models.DeleteInventoryItem(testItem);
+                refItems.Add(sourdough);
+                refItems.Add(wheat);
             }
 
-            CollectionAssert.DoesNotContain(_models.InventoryItems, testItem);
-            dbItem = new InventoryItem(new Dictionary<string, string>() { { "Name", name } });
-            Assert.IsNull(dbItem.Name);
-            CollectionAssert.DoesNotContain(BuddhaBowls.Properties.Settings.Default.InventoryOrder, name);
+            List<InventoryItem> breadItems = _models.GetBreadPeriodOrders(period).ToList();
 
-        }
-
-        [TestMethod]
-        public void UpdateInventoryItemTest()
-        {
-            InventoryItem testItem = _models.InventoryItems.First();
-            float tempOrderAmt = testItem.LastOrderAmount;
-            int refId = testItem.Id;
-            int refCount = _models.InventoryItems.Count;
-            testItem.LastOrderAmount = 77;
-
-            try
-            {
-                _models.AddUpdateInventoryItem(ref testItem);
-
-                Assert.AreSame(_models.InventoryItems.First(), testItem);
-                Assert.AreEqual(77, testItem.LastOrderAmount);
-                Assert.AreEqual(refId, testItem.Id);
-                Assert.AreEqual(refCount, _models.InventoryItems.Count);
-                InventoryItem dbItem = ModelHelper.InstantiateList<InventoryItem>("InventoryItem").FirstOrDefault(x => x.Name == testItem.Name);
-                Assert.AreEqual(77, dbItem.LastOrderAmount);
-            }
-            finally
-            {
-                testItem.LastOrderAmount = tempOrderAmt;
-                _models.AddUpdateInventoryItem(ref testItem);
-            }
-        }
-
-        [TestMethod]
-        public void AddVendorTest()
-        {
-            string name = "New Test Vendor";
-            Vendor testVendor = new Vendor() { Name = name };
-
-            try
-            {
-                _models.AddUpdateVendor(ref testVendor);
-
-                CollectionAssert.Contains(_models.Vendors, testVendor);
-                Assert.AreEqual(5, testVendor.Id);
-                Vendor dbItem = ModelHelper.InstantiateList<Vendor>("Vendor").First(x => x.Name == name);
-                Assert.AreEqual(5, dbItem.Id);
-            }
-            finally
-            {
-                _models.DeleteVendor(testVendor);
-            }
-            CollectionAssert.DoesNotContain(_models.InventoryItems, testVendor);
-            Vendor newDbItem = ModelHelper.InstantiateList<Vendor>("InventoryItem").FirstOrDefault(x => x.Name == name);
-            Assert.IsNull(newDbItem);
-        }
-
-        [TestMethod]
-        public void UpdateVendorTest()
-        {
-            Vendor testVendor = _models.Vendors.First();
-            string tempPhone = testVendor.PhoneNumber;
-            int refId = testVendor.Id;
-            int refCount = _models.Vendors.Count;
-            string phone = "8887777";
-            testVendor.PhoneNumber = phone;
-
-            _models.AddUpdateVendor(ref testVendor);
-
-            Assert.AreSame(_models.Vendors.First(), testVendor);
-            Assert.AreEqual(phone, testVendor.PhoneNumber);
-            Assert.AreEqual(refId, testVendor.Id);
-            Assert.AreEqual(refCount, _models.Vendors.Count);
-            Vendor dbItem = ModelHelper.InstantiateList<Vendor>("Vendor").FirstOrDefault(x => x.Name == testVendor.Name);
-            Assert.AreEqual(phone, dbItem.PhoneNumber);
-
-            testVendor.PhoneNumber = tempPhone;
-            _models.AddUpdateVendor(ref testVendor);
-        }
-
-        [TestMethod]
-        public void GetVendorsFromItemTest()
-        {
-            InventoryItem testItem = _models.InventoryItems.First(x => x.Name == "Cheddar");
-
-            Dictionary<Vendor, InventoryItem> testDict = _models.GetVendorsFromItem(testItem);
-            List<Vendor> keyList = new List<Vendor>(testDict.Keys);
-
-            Assert.AreEqual(2, keyList.Count);
-            Assert.AreEqual(7, testDict[keyList.First(x => x.Name == "Another guy")].LastOrderAmount);
-            Assert.AreEqual(3, testDict[keyList.First(x => x.Name == "Sysco")].LastOrderAmount);
-        }
-
-        [TestMethod]
-        public void GetEmptyVendorsFromItemTest()
-        {
-            InventoryItem testItem = _models.InventoryItems.First(x => x.Name == "Cookie Dough");
-
-            Dictionary<Vendor, InventoryItem> testDict = _models.GetVendorsFromItem(testItem);
-            List<Vendor> keyList = new List<Vendor>(testDict.Keys);
-
-            Assert.AreEqual(0, keyList.Count);
-        }
-
-        [TestMethod]
-        public void GetCategoryValuesTest()
-        {
-            _models.InventoryItems = new List<InventoryItem>()
-            {
-                new InventoryItem() { Name = "Sourdough", Category = "Bread", LastPurchasedPrice = 5f, Conversion = 1, Count = 10, Yield = 1 },
-                new InventoryItem() { Name = "Wheat", Category = "Bread", LastPurchasedPrice = 6f, Conversion = 1, Count = 10, Yield = 1 },
-                new InventoryItem() { Name = "Milk", Category = "Dairy", LastPurchasedPrice = 7f, Conversion = 1, Count = 10, Yield = 1 },
-                new InventoryItem() { Name = "Cheese", Category = "Dairy", LastPurchasedPrice = 8f, Conversion = 1, Count = 10, Yield = 1 },
-                new InventoryItem() { Name = "Celery", Category = "Produce", LastPurchasedPrice = 9f, Conversion = 1, Count = 10, Yield = 1 }
-            };
-
-            _models.PrepItems = new List<PrepItem>()
-            {
-                new PrepItem() { Name = "Sourdough",Cost = 5f, LineCount = 1 },
-                new PrepItem() { Name = "Wheat", Cost = 6f, WalkInCount = 1 },
-                new PrepItem() { Name = "Milk", Cost = 1f, WalkInCount = 5, LineCount = 10 },
-                new PrepItem() { Name = "Cheese", Cost = 1f, LineCount = 10, WalkInCount = 10 },
-            };
-
-            Dictionary<string, float> refCostDict = new Dictionary<string, float>()
-            {
-                { "Bread", 55f + 66f  },
-                { "Dairy", 185f  },
-                { "Produce", 90f  },
-            };
-
-            Dictionary<string, float> costDict = _models.GetCategoryValues();
-
-            CollectionAssert.AreEquivalent(refCostDict, costDict);
+            CollectionAssert.AreEquivalent(refItems, breadItems);
         }
 
         [TestMethod]
@@ -320,61 +184,6 @@ namespace BuddhaBowls.Test
             //{
             //    MockObjects.SaveRecipe(rec);
             //}
-        }
-
-        [TestMethod]
-        public void WeekLabelsTest()
-        {
-            List<string> labels = _models.GetWeekLabels(13).Select(x => x.ToString()).ToList();
-
-            List<string> refLabels = new List<string>()
-            {
-                "WK1 12/4-12/10",
-                "WK2 12/11-12/17",
-                "WK3 12/18-12/24",
-                "WK4 12/25-12/31"
-            };
-
-            CollectionAssert.AreEqual(refLabels, labels);
-        }
-
-        [TestMethod]
-        public void WeekLabelsGet0Test()
-        {
-            List<string> labels = _models.GetWeekLabels(0).Select(x => x.ToString()).ToList();
-
-            List<string> refLabels = new List<string>()
-            {
-                "WK0 1/1-1/1"
-            };
-
-            CollectionAssert.AreEqual(refLabels, labels);
-        }
-
-        [TestMethod]
-        public void PeriodLabelsTest()
-        {
-            List<string> labels = _models.GetPeriodLabels().Select(x => x.ToString()).ToList();
-
-            List<string> refLabels = new List<string>()
-            {
-                "P0 1/1-1/1",
-                "P1 1/2-1/29",
-                "P2 1/30-2/26",
-                "P3 2/27-3/26",
-                "P4 3/27-4/23",
-                "P5 4/24-5/21",
-                "P6 5/22-6/18",
-                "P7 6/19-7/16",
-                "P8 7/17-8/13",
-                "P9 8/14-9/10",
-                "P10 9/11-10/8",
-                "P11 10/9-11/5",
-                "P12 11/6-12/3",
-                "P13 12/4-12/31"
-            };
-
-            CollectionAssert.AreEqual(refLabels, labels);
         }
     }
 }

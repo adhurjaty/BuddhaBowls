@@ -1,5 +1,6 @@
 ﻿using BuddhaBowls.Helpers;
 using BuddhaBowls.Models;
+using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
@@ -94,6 +95,7 @@ namespace BuddhaBowls
             SetDefaultValues();
             VendorList = new ObservableCollection<VendorInfo>();
             Header = "New Inventory Item";
+            FinishDelegate = AddNewItem;
 
             InitICommand();
         }
@@ -115,6 +117,7 @@ namespace BuddhaBowls
             {
                 VendorList.Add(new VendorInfo(vend, item.GetInvItemFromVendor(vend)));
             }
+            FinishDelegate = EditExistingItem;
 
             InitICommand();
         }
@@ -144,13 +147,7 @@ namespace BuddhaBowls
                 Properties.Settings.Default.Save();
                 _models.VIContainer.SaveOrder();
 
-                // update the VendorInventoryItem with vendors
-                //VendorInventoryItem vInvItem = _models.VendorInvItems.First(x => x.Id == invItem.Id);
-                //vInvItem.InvItem = invItem;
-                //vInvItem.Update(VendorList.ToList());
-
-                //ParentContext.AddedInvItem();
-                _models.VIContainer.AddItem(invItem, VendorList.ToList());
+                _models.VIContainer.AddItem(invItem, VendorList.ToList(), FinishDelegate);
 
                 Close();
             }
@@ -173,19 +170,16 @@ namespace BuddhaBowls
 
         #endregion
 
-        //private void InitVendors()
-        //{
-        //    Dictionary<Vendor, InventoryItem> vendorDict = _models.GetVendorsFromItem(Item);
-        //    VendorList = new ObservableCollection<VendorInfo>();
 
-        //    foreach(KeyValuePair<Vendor, InventoryItem> kvp in vendorDict.OrderBy(x => x.Key.Name))
-        //    {
-        //        Vendor v = kvp.Key;
-        //        InventoryItem invItem = kvp.Value;
+        private void AddNewItem()
+        {
+            Item.Id = Item.Insert();
+        }
 
-        //        VendorList.Add(new VendorInfo(v, invItem));
-        //    }
-        //}
+        private void EditExistingItem()
+        {
+            Item.Update();
+        }
 
         protected override void SetWizardStep()
         {

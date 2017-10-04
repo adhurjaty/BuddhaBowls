@@ -30,27 +30,21 @@ namespace BuddhaBowls.Services
             int idx = Items.FindIndex(x => x.Date.Date == inv.Date);
 
             if (idx != -1)
-            {
-                Items[idx].Id = inv.Id;
-                Items[idx] = inv;
-                PushChange();
-            }
+                base.Update(inv);
             else
-            {
                 base.AddItem(inv);
-            }
         }
 
         /// <summary>
         /// Updates the inventory
         /// </summary>
         /// <param name="inv"></param>
-        public override void Update(Inventory inv)
-        {
-            int idx = _items.FindIndex(x => x.Id == inv.Id);
-            _items[idx].Date = inv.Date;
-            base.Update(inv);
-        }
+        //public override void Update(Inventory inv)
+        //{
+        //    int idx = _items.FindIndex(x => x.Id == inv.Id);
+        //    _items[idx].Date = inv.Date;
+        //    base.Update(inv);
+        //}
     }
 
     /// <summary>

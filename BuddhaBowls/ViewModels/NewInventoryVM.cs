@@ -93,6 +93,7 @@ namespace BuddhaBowls
             InventoryControl = InvListVM.TabControl;
             Inv = new Inventory(DateTime.Now);
             InvDate = Inv.Date;
+            FinishDelegate = InsertInv;
             
             InitICommand();
             Header = "New Inventory";
@@ -109,11 +110,12 @@ namespace BuddhaBowls
             InvListVM = new InventoryListVM(inv, InventoryItemCountChanged);
             InventoryControl = InvListVM.TabControl;
             InvDate = Inv.Date;
+            FinishDelegate = UpdateInv;
 
             InitICommand();
             Header = "Edit Inventory " + Inv.Date.ToShortDateString();
         }
-        
+
         #region ICommand Helpers
 
         /// <summary>
@@ -137,18 +139,7 @@ namespace BuddhaBowls
                 Inv.DestroyTable();
                 Inv.Date = InvDate;
 
-                // if this is an edit or new inventory
-                if (_models.InContainer.Items.Contains(Inv))
-                {
-                    _models.InContainer.Update(Inv);
-                    Inv.Update();
-                }
-                else
-                {
-                    Inv.SetInvItemsContainer(new VendorInvItemsContainer(InvListVM.GetItemsContainer().Items, _models.VContainer));
-                    _models.InContainer.AddItem(Inv);
-                    Inv.Insert();
-                }
+                _models.InContainer.AddItem(Inv, FinishDelegate);
 
                 // if this is the latest date inventory, change item counts for current inv items
                 if(Inv.Date >= _models.InContainer.Items.Max(x => x.Date))
@@ -169,13 +160,11 @@ namespace BuddhaBowls
         private bool CheckUniqueInvDate()
         {
             Inventory existingInv = _models.InContainer.Items.FirstOrDefault(x => x.Date == Inv.Date);
-            if(existingInv != null && existingInv != Inv)
+            if(existingInv != null && existingInv.Id != Inv.Id)
             {
                 if (MessageBox.Show("Inventory with that date already exists. Do you wish to replace it?", "Replace Inventory",
                     MessageBoxButton.YesNo) == MessageBoxResult.No)
                     return false;
-                //_models.Inventories.Remove(existingInv);
-                //existingInv.Destroy();
             }
 
             return true;
@@ -209,5 +198,17 @@ namespace BuddhaBowls
         }
 
         #endregion
+
+        private void InsertInv()
+        {
+            Inv.SetInvItemsContainer(InvListVM.GetItemsContainer().ToInvContainer());
+            Inv.Insert();
+        }
+
+        private void UpdateInv()
+        {
+            Inv.Update();
+        }
+
     }
 }

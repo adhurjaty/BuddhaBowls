@@ -11,6 +11,7 @@ namespace BuddhaBowls
     public class TempTabVM : TabVM
     {
         protected UserControl _tabControl;
+        protected UpdateBinding FinishDelegate;
 
         private string _header;
         public string Header

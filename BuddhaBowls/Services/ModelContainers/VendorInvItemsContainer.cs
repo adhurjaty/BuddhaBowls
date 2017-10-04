@@ -37,7 +37,7 @@ namespace BuddhaBowls.Services
             int idx = Items.FindIndex(x => x.Id == item.Id);
             if (idx != -1)
             {
-                _items[idx].Update(vendors);
+                _items[idx].SetVendorDict(vendors);
                 _items[idx].InvItem = item;
                 PushChange();
             }
@@ -45,7 +45,6 @@ namespace BuddhaBowls.Services
             {
                 VendorInventoryItem vItem = new VendorInventoryItem(item);
 
-                vItem.Id = item.Insert();
                 vItem.SetVendorDict(vendors);
 
                 int insertIdx = Properties.Settings.Default.InventoryOrder.IndexOf(item.Name);
@@ -56,6 +55,19 @@ namespace BuddhaBowls.Services
 
                 PushChange();
             }
+        }
+
+        /// <summary>
+        /// Adds a new item with one-time update method
+        /// </summary>
+        /// <param name="invItem"></param>
+        /// <param name="list"></param>
+        /// <param name="finishDelegate"></param>
+        public void AddItem(InventoryItem invItem, List<VendorInfo> list, UpdateBinding ub)
+        {
+            AddUpdateBinding(ub);
+            AddItem(invItem, list);
+            RemoveUpdateBinding(ub);
         }
 
         /// <summary>
@@ -182,6 +194,15 @@ namespace BuddhaBowls.Services
         {
             RemoveVendor(vendor);
             AddVendor(vendor, invItems);
+        }
+
+        /// <summary>
+        /// Convert to an InventoryItemsContainer with empty update bindings
+        /// </summary>
+        /// <returns></returns>
+        public InventoryItemsContainer ToInvContainer()
+        {
+            return new InventoryItemsContainer(Items.Select(x => x.ToInventoryItem()).ToList());
         }
     }
 }

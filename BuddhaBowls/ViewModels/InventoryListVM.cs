@@ -387,7 +387,11 @@ namespace BuddhaBowls
                 }
                 else
                 {
-                    _invItemsContainer = _inventory.InvItemsContainer;
+                    VendorInvItemsContainer vContainer = new VendorInvItemsContainer(_inventory.InvItemsContainer.Items
+                                                                                    .Select(x => new VendorInventoryItem(x,
+                                                                                            _models.GetVendorsFromItem(x))).ToList(),
+                                                                                    _models.VContainer);
+                    _invItemsContainer = vContainer;
                 }
             }
             _invItemsContainer.AddUpdateBinding(CollectionChanged);
@@ -470,28 +474,6 @@ namespace BuddhaBowls
 
             CategoryPrices = new ObservableCollection<PriceExpanderItem>(items);
         }
-
-        /// <summary>
-        /// Used to calculate value of each category - different method for master vs new inventory list
-        /// </summary>
-        /// <returns></returns>
-        //private Dictionary<string, float> GetCategoryValues()
-        //{
-        //    return _invItemsContainer.GetCategoryValues();
-            //if (IsMasterList)
-            //    return _models.GetCategoryValues();
-
-            //Dictionary<string, float> costDict = _models.GetPrepCatValues();
-
-            //foreach (InventoryItem item in _inventoryItems)
-            //{
-            //    if (!costDict.Keys.Contains(item.Category))
-            //        costDict[item.Category] = 0;
-            //    costDict[item.Category] += item.PriceExtension;
-            //}
-
-            //return costDict;
-        //}
         #endregion
 
         public VendorInvItemsContainer GetItemsContainer()
