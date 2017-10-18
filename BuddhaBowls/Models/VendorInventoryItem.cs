@@ -145,9 +145,6 @@ namespace BuddhaBowls.Models
         /// <returns></returns>
         public InventoryItem ToInventoryItem()
         {
-            if (InvItem != null)
-                return InvItem;
-
             InventoryItem item = new InventoryItem();
             foreach(string property in item.GetPropertiesDB())
             {

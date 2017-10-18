@@ -120,7 +120,7 @@ namespace BuddhaBowls.Test
 
             try
             {
-                Assert.IsTrue(File.Exists(inv.GetInventoryTable()));
+                Assert.IsTrue(File.Exists(Path.Combine(Properties.Settings.Default.DBLocation, inv.GetInventoryTable() + ".csv")));
 
                 List<InventoryItem> invList = inv.GetInvItems();
 
@@ -130,10 +130,6 @@ namespace BuddhaBowls.Test
                     Dictionary<string, string> comp = item.Compare(refItem);
                     Assert.AreEqual(0, comp.Keys.Count);
                 }
-            }
-            catch(Exception e)
-            {
-                Assert.IsFalse(true);
             }
             finally
             {
@@ -254,7 +250,7 @@ namespace BuddhaBowls.Test
             }
             Vendor newDbVendor = new Vendor(new Dictionary<string, string>() { { "Name", "TestVendor" } });
             Assert.IsNull(newDbVendor.Name);
-            Assert.IsNull(vend.ItemList);
+            Assert.AreEqual(0, vend.ItemList.Count);
         }
 
         [TestMethod]

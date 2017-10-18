@@ -217,6 +217,8 @@ namespace BuddhaBowls.Services
         /// <param name="vend"></param>
         public void UpdateItem(InventoryItem item, Vendor vend)
         {
+            VendorInventoryItem vItem = Items.First(x => x.Id == item.Id);
+            vItem.SetVendorItem(vend, item);
             vend.AddInvItem(item);
             _vendorsContainer.Update(vend);
             PushChange();
@@ -247,11 +249,11 @@ namespace BuddhaBowls.Services
         /// </summary>
         /// <param name="v"></param>
         /// <returns></returns>
-        public List<InventoryItem> GetVendorItems(Vendor v)
-        {
-            List<InventoryItem> items = Items.Where(x => x.Vendors.Select(y => y.Id).Contains(v.Id)).Select(x => x.GetInvItemFromVendor(v)).ToList();
-            v.SetItemList(items);
-            return items;
-        }
+        //public List<InventoryItem> GetVendorItems(Vendor v)
+        //{
+        //    List<InventoryItem> items = Items.Where(x => x.Vendors.Select(y => y.Id).Contains(v.Id)).Select(x => x.GetInvItemFromVendor(v)).ToList();
+        //    v.SetItemList(items);
+        //    return items;
+        //}
     }
 }

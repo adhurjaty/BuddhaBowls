@@ -178,25 +178,6 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
-        /// Gets the bread order items for the given period
-        /// </summary>
-        /// <param name="period"></param>
-        /// <returns></returns>
-        public IEnumerable<InventoryItem> GetBreadPeriodOrders(PeriodMarker period)
-        {
-            foreach (WeekMarker week in MainHelper.GetWeeksInPeriod(period).Where(x => x.StartDate < DateTime.Now))
-            {
-                foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeek(week).WeekNoTotal.Where(x => x.BreadDescDict != null)
-                                                                                            .SelectMany(x => x.BreadDescDict.ToList()))
-                {
-                    InventoryItem item = VIContainer.Items.First(x => x.Name == descKvp.Key).Copy<InventoryItem>();
-                    item.LastOrderAmount = descKvp.Value.Delivery;
-                    yield return item;
-                }
-            }
-        }
-
-        /// <summary>
         /// Loads the inventory items as a container into the inventory and returns the inventory object
         /// </summary>
         /// <param name="inv"></param>
@@ -398,6 +379,25 @@ namespace BuddhaBowls.Services
 
             //if (_breadWeekDict[thisWeekStartDate].Items[0].BreadDescDict == null)
             //    InitThisWeekBreadDesc();
+        }
+
+        /// <summary>
+        /// Gets the bread order items for the given period
+        /// </summary>
+        /// <param name="period"></param>
+        /// <returns></returns>
+        public IEnumerable<InventoryItem> GetBreadPeriodOrders(PeriodMarker period)
+        {
+            foreach (WeekMarker week in MainHelper.GetWeeksInPeriod(period).Where(x => x.StartDate < DateTime.Now))
+            {
+                foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeek(week).WeekNoTotal.Where(x => x.BreadDescDict != null)
+                                                                                            .SelectMany(x => x.BreadDescDict.ToList()))
+                {
+                    InventoryItem item = VIContainer.Items.First(x => x.Name == descKvp.Key).Copy<InventoryItem>();
+                    item.LastOrderAmount = descKvp.Value.Delivery;
+                    yield return item;
+                }
+            }
         }
 
         /// <summary>

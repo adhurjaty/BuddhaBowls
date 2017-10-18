@@ -150,7 +150,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void GetBreadPeriodOrdersTest()
         {
-            PeriodMarker period = new PeriodMarker(new DateTime(2017, 7, 17), 1, 7);
+            PeriodMarker period = MainHelper.GetWeek(new DateTime(2017, 7, 17));
 
             InventoryItem sourdough = new InventoryItem(new Dictionary<string, string>() { { "Name", "Sourdough" } });
             sourdough.LastOrderAmount = 1;
@@ -167,7 +167,7 @@ namespace BuddhaBowls.Test
 
             List<InventoryItem> breadItems = _models.GetBreadPeriodOrders(period).ToList();
 
-            CollectionAssert.AreEquivalent(refItems, breadItems);
+            CollectionAssert.AreEquivalent(refItems.Select(x => x.Name).ToList(), breadItems.Select(x => x.Name).ToList());
         }
 
         [TestMethod]

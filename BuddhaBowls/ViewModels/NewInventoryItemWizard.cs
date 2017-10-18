@@ -145,14 +145,14 @@ namespace BuddhaBowls
                 Properties.Settings.Default.Save();
                 _models.VIContainer.SaveOrder();
 
-                //VendorInventoryItem vItem = _models.VIContainer.AddItem(invItem, VendorList.ToList());
                 VendorInventoryItem vItem = new VendorInventoryItem(invItem, VendorList.ToList());
                 if (_newItem)
                     Item.Id = vItem.Insert();
                 else
                     vItem.Update();
 
-                _models.VIContainer.AddItem(vItem);
+                // call is under Insert for some reason...
+                _models.VIContainer.AddItem(vItem, VendorList.ToList());
 
                 Close();
             }

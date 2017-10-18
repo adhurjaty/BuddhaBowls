@@ -1,5 +1,5 @@
 Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Count,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate,LastVendorId
-0,Mozzarella,Dairy,CASE 30lb,5lb BAG,6,OZ-wt,480,6,1,59,0,2/27/2017 14:33,0
+0,Mozzarella,Dairy,CASE 30lb,5lb BAG,6,OZ-wt,480,104,1,59,0,2/27/2017 14:33,0
 1,Cheddar,Dairy,CASE 20lb,5lb BAG,4,OZ-wt,320,14,1,20,0,2/27/2017 14:33,0
 2,Feta,Dairy,CASE 10lb,5lb BAG,2,OZ-wt,160,4,1E+08,69.69,0,3/19/2017 22:37,4
 3,Butter,Dairy,CASE 30lb,1lb,30,OZ-wt,480,32,1,76.99,0,2/27/2017 14:33,0
@@ -75,4 +75,4 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 73,Sourdough,Bread,10lb CASE,EACH,0,EA,1,183,1,0,0,,5
 74,Whole Wheat,Bread,10lb CASE,EACH,0,EA,1,84,1,0,0,,2
 75,Biopack #4,Paper Goods,10lb CASE,EACH,0,EA,4,8,1,0,0,,2
-76,Allspice,Herbs,CS 3 each,OZ-wt,0,TBL,50,1122,100,0,0,,0
+76,Allspice,Herbs,EACH,OZ-wt,1,TBL,50,1122,100,12.5,0,,0

@@ -96,7 +96,7 @@ namespace BuddhaBowls.Test
             _vm.DataFileFolder = validPath;
             _vm.SaveSettingsCommand.Execute(null);
 
-            _vm.InventoryTab.SwitchButtonList.First(x => x.PageName == "History").SwitchCommand.Execute(2);
+            _vm.InventoryTab.SwitchButtonList.First(x => x.PageName == "History").SwitchCommand.Execute(1);
 
             _vm.InventoryTab.PeriodSelector.SelectedPeriod = _vm.InventoryTab.PeriodSelector.PeriodList.First(x => x.ToString().Contains("All"));
             Assert.AreEqual(DateTime.Parse("3/22/2017  8:28:00 PM"), new List<Inventory>(_vm.InventoryTab.InventoryList)[0].Date);
@@ -159,7 +159,8 @@ namespace BuddhaBowls.Test
             tabVM.AddCommand.Execute(null);
             NewInventoryVM newInvVM = GetOpenTempTabVM<NewInventoryVM>();
             newInvVM.InvDate = invDate;
-            newInvVM.InvListVM.FilteredItems[0].Count = 1122;
+            int randCount = new Random().Next(1, 1000);
+            newInvVM.InvListVM.FilteredItems.First(x => x.Name == "Mozzarella").Count = randCount;
 
             try
             {
@@ -170,7 +171,7 @@ namespace BuddhaBowls.Test
                 tabVM.ViewCommand.Execute(null);
                 NewInventoryVM editInvVM = GetOpenTempTabVM<NewInventoryVM>();
 
-                Assert.AreEqual(1122, editInvVM.InvListVM.FilteredItems[0].Count);
+                Assert.AreEqual(randCount, editInvVM.InvListVM.FilteredItems.First(x => x.Name == "Mozzarella").Count);
 
                 editInvVM.InvDate = invDate.AddDays(-1);
                 editInvVM.SaveCountCommand.Execute(null);
