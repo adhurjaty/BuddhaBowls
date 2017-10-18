@@ -122,9 +122,7 @@ namespace BuddhaBowls.Models
         public float GetTotalCost()
         {
             List<InventoryItem> items = GetPOItems();
-            if(items != null)
-                return items.Sum(x => x.PurchaseExtension);
-            return 0;
+            return items.Sum(x => x.PurchaseExtension);
         }
 
         public Dictionary<string, float> GetCategoryCosts()

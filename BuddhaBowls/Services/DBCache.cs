@@ -50,19 +50,19 @@ namespace BuddhaBowls.Services
         /// </summary>
         private void InitializeModels()
         {
-            Recipes = ModelHelper.InstantiateList<Recipe>("Recipe") ?? new List<Recipe>();
+            Recipes = ModelHelper.InstantiateList<Recipe>("Recipe");
             AddRecipeItems();
-            DailySales = ModelHelper.InstantiateList<DailySale>("DailySale") ?? new List<DailySale>();
-            ExpenseItems = ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem") ?? new List<ExpenseItem>();
+            DailySales = ModelHelper.InstantiateList<DailySale>("DailySale");
+            ExpenseItems = ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem");
 
             List<InventoryItem> invItems = MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem") ??
                                            new List<InventoryItem>()).ToList();
 
-            VContainer = new VendorsContainer(ModelHelper.InstantiateList<Vendor>("Vendor") ?? new List<Vendor>());
+            VContainer = new VendorsContainer(ModelHelper.InstantiateList<Vendor>("Vendor"));
             VIContainer = new VendorInvItemsContainer(invItems.Select(x => new VendorInventoryItem(x, GetVendorsFromItem(x))).ToList(),
                                                        VContainer);
-            POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder") ?? new List<PurchaseOrder>());
-            InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory") ?? new List<Inventory>());
+            POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder"));
+            InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory"));
             _breadWeekDict = new Dictionary<DateTime, BreadWeekContainer>();
             InitBreadOrders();
         }
@@ -358,14 +358,15 @@ namespace BuddhaBowls.Services
             BreadOrder[] breadWeek = new BreadOrder[8];
             Dictionary<string, float> parFactors = GetParFactors(breadOrders);
             int day = 0;
-            DateTime firstDay = DateTime.Today;
+            DateTime weekStartDate = DateTime.Today;
+            DateTime thisWeekStartDate = MainHelper.GetWeek(DateTime.Today).StartDate;
 
             foreach (BreadOrder bo in breadOrders)
             {
                 if(breadWeek[0] == null)
                 {
-                    firstDay = MainHelper.GetWeek(bo.Date).StartDate;
-                    if (bo.Date != firstDay)
+                    weekStartDate = MainHelper.GetWeek(bo.Date).StartDate;
+                    if (bo.Date != weekStartDate)
                         continue;
                     breadWeek[day] = bo;
                 }
@@ -379,12 +380,14 @@ namespace BuddhaBowls.Services
                     BreadDescriptor breadDesc = breadWeek[day].GetBreadDescriptor(breadType);
                     breadDesc.ParFactor = parFactors[breadType];
                 }
-                if(breadWeek[6] != null)
+                // Add the total column and push the week into _breadWeekDict
+                if (breadWeek[6] != null)
                 {
                     BreadOrder[] tempBreadWeek = new BreadOrder[7];
                     Array.Copy(breadWeek, tempBreadWeek, 7);
                     breadWeek[7] = new BreadOrderTotal(ref tempBreadWeek);
-                    _breadWeekDict[firstDay] = new BreadWeekContainer(breadWeek.ToList());
+                    
+                    _breadWeekDict[weekStartDate] = new BreadWeekContainer(breadWeek.ToList());
                     day = 0;
                     Array.Clear(breadWeek, 0, breadWeek.Length);
                     continue;
@@ -392,6 +395,9 @@ namespace BuddhaBowls.Services
 
                 day++;
             }
+
+            //if (_breadWeekDict[thisWeekStartDate].Items[0].BreadDescDict == null)
+            //    InitThisWeekBreadDesc();
         }
 
         /// <summary>
@@ -408,7 +414,8 @@ namespace BuddhaBowls.Services
             if (_breadWeekDict.Count > 0)
             {
                 Dictionary<string, BreadDescriptor> latestDesc = _breadWeekDict[_breadWeekDict.Keys.Max()].Items[0].BreadDescDict;
-                parFactors = latestDesc.ToDictionary(x => x.Key, y => y.Value.ParFactor);
+                if(latestDesc != null)
+                    parFactors = latestDesc.ToDictionary(x => x.Key, y => y.Value.ParFactor);
             }
 
             for (int i = 0; i < 7; i++)
@@ -424,7 +431,7 @@ namespace BuddhaBowls.Services
                 {
                     foreach (string breadType in parFactors.Keys)
                     {
-                        if (breadWeek[i].BreadDescDict != null && breadWeek[i].BreadDescDict.ContainsKey(breadType))
+                        if (breadWeek[i].GetBreadDescriptor(breadType) != null && breadWeek[i].BreadDescDict.ContainsKey(breadType))
                             breadWeek[i].BreadDescDict[breadType].ParFactor = parFactors[breadType];
                     }
                 }
@@ -485,5 +492,18 @@ namespace BuddhaBowls.Services
 
             return salesDict.ToDictionary(x => x.Key, x => usageDict[x.Key] > 0 ? x.Value / usageDict[x.Key] : 1);
         }
+
+        //private void InitThisWeekBreadDesc()
+        //{
+        //    DateTime startDate = MainHelper.GetWeek(DateTime.Today).StartDate;
+        //    DateTime prevStartDate = startDate.AddDays(-7);
+        //    List<BreadOrder> prevWeek = _breadWeekDict[prevStartDate].Items;
+
+        //    for (int i = 0; i < 7; i++)
+        //    {
+        //        //_breadWeekDict[startDate].Items[i].BreadDescDict = new Dictionary<string, BreadDescriptor>(prevWeek[i].BreadDescDict);
+        //        _breadWeekDict[startDate].Items[i].BreadDescDict = prevWeek[i].BreadDescDict.ToDictionary(x => x.Key, x => x.Value.;
+        //    }
+        //}
     }
 }

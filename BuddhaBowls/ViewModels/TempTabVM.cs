@@ -59,7 +59,7 @@ namespace BuddhaBowls
             }
         }
 
-        protected void Close()
+        protected virtual void Close()
         {
             TabStack.RemoveAt(0);
 

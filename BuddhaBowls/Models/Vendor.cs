@@ -53,7 +53,7 @@ namespace BuddhaBowls.Models
         /// <returns></returns>
         public override int Insert()
         {
-            if(ItemList.Count > 0)
+            if(ItemList != null && ItemList.Count > 0)
                 ModelHelper.CreateTable(ItemList, GetPriceTableName());
             return base.Insert();
         }
@@ -74,7 +74,8 @@ namespace BuddhaBowls.Models
 
         public override void Update()
         {
-            ModelHelper.CreateTable(ItemList, GetPriceTableName());
+            if(ItemList != null && ItemList.Count > 0)
+                ModelHelper.CreateTable(ItemList, GetPriceTableName());
             base.Update();
         }
 

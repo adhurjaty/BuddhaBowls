@@ -89,7 +89,7 @@ namespace BuddhaBowls.Services
             PushChange();
         }
 
-        public void PushChange()
+        public virtual void PushChange()
         {
             if (_updateFncs != null)
             {

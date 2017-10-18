@@ -95,7 +95,6 @@ namespace BuddhaBowls
             SetDefaultValues();
             VendorList = new ObservableCollection<VendorInfo>();
             Header = "New Inventory Item";
-            FinishDelegate = AddNewItem;
 
             InitICommand();
         }
@@ -117,7 +116,6 @@ namespace BuddhaBowls
             {
                 VendorList.Add(new VendorInfo(vend, item.GetInvItemFromVendor(vend)));
             }
-            FinishDelegate = EditExistingItem;
 
             InitICommand();
         }
@@ -147,7 +145,14 @@ namespace BuddhaBowls
                 Properties.Settings.Default.Save();
                 _models.VIContainer.SaveOrder();
 
-                _models.VIContainer.AddItem(invItem, VendorList.ToList(), FinishDelegate);
+                //VendorInventoryItem vItem = _models.VIContainer.AddItem(invItem, VendorList.ToList());
+                VendorInventoryItem vItem = new VendorInventoryItem(invItem, VendorList.ToList());
+                if (_newItem)
+                    Item.Id = vItem.Insert();
+                else
+                    vItem.Update();
+
+                _models.VIContainer.AddItem(vItem);
 
                 Close();
             }
@@ -170,17 +175,6 @@ namespace BuddhaBowls
 
         #endregion
 
-
-        private void AddNewItem()
-        {
-            Item.Id = Item.Insert();
-        }
-
-        private void EditExistingItem()
-        {
-            Item.Update();
-        }
-
         protected override void SetWizardStep()
         {
             switch (_currentStep)
@@ -198,10 +192,13 @@ namespace BuddhaBowls
                     break;
                 case 2:
                     if (InvOrderList == null)
+                    {
                         InvOrderList = new ObservableCollection<InventoryItem>(MainHelper.SortItems(_models.VIContainer.Items
                                                                                                            .Select(x => x.ToInventoryItem())));
-                    if (!_newItem)
-                        SelectedOrderedItem = InvOrderList.FirstOrDefault(x => x.Id == Item.Id);
+                        if (_newItem)
+                            InvOrderList.Insert(0, Item);
+                    }
+                    SelectedOrderedItem = InvOrderList.FirstOrDefault(x => x.Id == Item.Id);
                     _itemToMove = Item;
                     WizardStepControl = new ChangeItemOrderControl(this);
                     FinishVisibility = Visibility.Visible;

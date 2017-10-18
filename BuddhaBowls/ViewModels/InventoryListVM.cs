@@ -384,6 +384,8 @@ namespace BuddhaBowls
                 if (_inventory == null)
                 {
                     _invItemsContainer = _models.VIContainer.Copy();
+                    // notify this container when the original is updated
+                    //_models.VIContainer.AddUpdateBinding(SyncCopyInvList);
                 }
                 else
                 {
@@ -404,6 +406,20 @@ namespace BuddhaBowls
         {
             FilteredItems = new ObservableCollection<VendorInventoryItem>(_invItemsContainer.Items);
         }
+
+        /// <summary>
+        /// Sync the copy inventory list with the master. Maintain count values however
+        /// </summary>
+        //public void SyncCopyInvList()
+        //{
+        //    Dictionary<int, float> vCountDict = _invItemsContainer.Items.ToDictionary(x => x.Id, x => x.Count);
+        //    InitContainer();
+        //    foreach (VendorInventoryItem item in _invItemsContainer.Items)
+        //    {
+        //        if (vCountDict.ContainsKey(item.Id))
+        //            item.Count = vCountDict[item.Id];
+        //    }
+        //}
 
         public void MoveDown(InventoryItem item)
         {
@@ -439,6 +455,7 @@ namespace BuddhaBowls
             if (IsMasterList)
             {
                 item.Update();
+                _models.VIContainer.UpdateCopies(item);
             }
             item.NotifyAllChanges();
             UpdateInvValue();

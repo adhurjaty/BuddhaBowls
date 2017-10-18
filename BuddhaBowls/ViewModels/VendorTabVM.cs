@@ -257,6 +257,7 @@ namespace BuddhaBowls
             //}
 
             //SelectedVendorItems = _vItemsCache[SelectedVendor.Id];
+            //SelectedVendorItems = new ObservableCollection<InventoryItem>(_models.VIContainer.GetVendorItems(SelectedVendor));
             SelectedVendorItems = new ObservableCollection<InventoryItem>(SelectedVendor.ItemList);
         }
 

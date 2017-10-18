@@ -178,6 +178,9 @@ namespace BuddhaBowls
             SaveCountCommand = new RelayCommand(SaveInventory, x => ChangeCountCanExecute);
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
             CancelCommand = new RelayCommand(CancelInventory);
+
+            //_models.VIContainer.AddUpdateBinding(InvListVM.CollectionChanged);
+            //_models.VIContainer.AddUpdateBinding(InvListVM.UpdateInvValue);
         }
 
         #endregion
@@ -197,6 +200,13 @@ namespace BuddhaBowls
             InvListVM.InitContainer();
         }
 
+        protected override void Close()
+        {
+            //_models.VIContainer.RemoveUpdateBinding(InvListVM.CollectionChanged);
+            //_models.VIContainer.RemoveUpdateBinding(InvListVM.UpdateInvValue);
+            //_models.VIContainer.RemoveUpdateBinding(InvListVM.SyncCopyInvList);
+            base.Close();
+        }
         #endregion
 
         private void InsertInv()

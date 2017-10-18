@@ -454,13 +454,8 @@ namespace BuddhaBowls
 
         public string GenerateOrder(PurchaseOrder po, Vendor vendor, string filepath = "")
         {
-
             List<InventoryItem> items = po.GetPOItems();
-            if (items == null)
-                items = po.GetPOItems();
-
             Dictionary<string, float> categoryCosts = new Dictionary<string, float>();
-
             Excel.Worksheet sheet = _sheets.Add();
 
             // format column widths
@@ -621,8 +616,6 @@ namespace BuddhaBowls
         public string GenerateReceivingList(PurchaseOrder po, Vendor vendor)
         {
             List<InventoryItem> items = po.GetPOItems();
-            if (items == null)
-                items = po.GetPOItems();
             List<string> itemOrder = vendor.GetRecListOrder();
 
             Excel.Worksheet sheet = _sheets.Add();

@@ -157,6 +157,7 @@ namespace BuddhaBowls
             ShowSelectVendor();
             VendorList = new ObservableCollection<Vendor>(_models.VContainer.Items);
             PurchasedUnitList = _models.GetPurchasedUnits();
+            _itemsContainer = _models.VIContainer.Copy();
         }
 
         #region ICommand Helpers
@@ -177,10 +178,7 @@ namespace BuddhaBowls
 
             GenerateAfterOrderSaved(po, OrderVendor);
 
-            //_models.AddPurchaseOrder(po);
             _models.POContainer.AddItem(po);
-            //RefreshOrder();
-            ParentContext.InventoryTab.InvListVM.UpdateInvValue();
 
             Close();
         }
@@ -260,7 +258,6 @@ namespace BuddhaBowls
             BreakdownContext = new OrderBreakdownVM()
             {
                 BreakdownList = GetOrderBreakdown(_itemsContainer.Items, out oTotal),
-                //OrderTotal = oTotal + (OrderVendor != null ? OrderVendor.ShippingCost : 0),
                 OrderVendor = OrderVendor,
                 Header = "Price Breakdown"
             };
@@ -273,8 +270,6 @@ namespace BuddhaBowls
         /// </summary>
         public void RowEdited(VendorInventoryItem item)
         {
-            //_editedIds.Add(item.Id);
-
             NotifyPropertyChanged("FilteredOrderItems");
             SetLastOrderBreakdown();
         }
@@ -300,7 +295,6 @@ namespace BuddhaBowls
 
             if (OrderVendor != null)
             {
-                _itemsContainer = _models.VIContainer.Copy();
                 _itemsContainer.SetItems(_itemsContainer.Items.Where(x => x.Vendors.Select(y => y.Id).Contains(OrderVendor.Id)).ToList());
                 //_shownInvItems = _sortedInvtems.Where(x => x.Vendors.Select(y => y.Id).Contains(OrderVendor.Id)).ToList();
             }

@@ -50,7 +50,7 @@ namespace BuddhaBowls.Helpers
                     return InstantiateListHelper<T>(records, dbInt.GetColumnNames(table));
             }
 
-            return null;
+            return new List<T>();
         }
 
         /// <summary>

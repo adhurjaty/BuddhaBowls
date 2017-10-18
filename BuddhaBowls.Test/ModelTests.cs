@@ -115,14 +115,14 @@ namespace BuddhaBowls.Test
                 MockObjects.GetInventoryItem("Feta"),
             };
 
-            inv.InvItemsContainer = 
+            inv.SetInvItemsContainer(new InventoryItemsContainer(refList));
             inv.Insert();
 
             try
             {
-                Assert.IsTrue(File.Exists(inv.GetHistoryTablePath()));
+                Assert.IsTrue(File.Exists(inv.GetInventoryTable()));
 
-                List<InventoryItem> invList = inv.GetInventoryHistory();
+                List<InventoryItem> invList = inv.GetInvItems();
 
                 foreach (InventoryItem item in invList)
                 {
@@ -140,7 +140,7 @@ namespace BuddhaBowls.Test
                 inv.Destroy();
             }
 
-            Assert.IsFalse(File.Exists(inv.GetHistoryTablePath()));
+            Assert.IsFalse(File.Exists(inv.GetInventoryTable()));
         }
 
 
@@ -148,23 +148,24 @@ namespace BuddhaBowls.Test
         public void UpdateInventoryTest()
         {
             Inventory inv = new Inventory(new DateTime(2017, 3, 20));
-            List<InventoryItem> oldList = inv.GetInventoryHistory();
+            List<InventoryItem> oldList = inv.InvItemsContainer.Items;
 
             float tempCount = oldList[0].Count;
             oldList[0].Count = 111;
             string tempCountUnit = oldList[1].CountUnit;
             oldList[1].CountUnit = "NewUnit";
 
-            inv.Update(oldList);
+            inv.Update();
 
-            List<InventoryItem> newList = inv.GetInventoryHistory();
+            List<InventoryItem> newList = inv.GetInvItems();
 
             Assert.AreEqual(111, newList[0].Count);
             Assert.AreEqual("NewUnit", newList[1].CountUnit);
 
-            newList[0].Count = tempCount;
-            newList[1].CountUnit = tempCountUnit;
-            inv.Update(newList);
+            // reset to initail values
+            oldList[0].Count = tempCount;
+            oldList[1].CountUnit = tempCountUnit;
+            inv.Update();
         }
 
         #endregion
@@ -282,7 +283,7 @@ namespace BuddhaBowls.Test
                 itemList[1].LastPurchasedPrice = 22.22f;
 
                 vend.PhoneNumber = "5559999";
-                vend.ClearAndUpdate(itemList);
+                vend.Update();
                 List<InventoryItem> newList = vend.ItemList;
 
                 Vendor newVend = new Vendor(new Dictionary<string, string>() { { "Name", vend.Name } });
@@ -379,30 +380,29 @@ namespace BuddhaBowls.Test
         public void UpdateVendorPriceTest()
         {
             DBCache models = new DBCache();
-            InventoryItem item = models.InventoryItems.First(x => x.Name == "Feta");
-            VendorInventoryItem vi = new VendorInventoryItem(item);
-            List<Vendor> vendors = vi.Vendors;
+            VendorInventoryItem item = models.VIContainer.Items.First(x => x.Name == "Feta");
+            List<Vendor> vendors = item.Vendors;
 
-            vi.SelectedVendor = vendors[0];
-            float tempPrice0 = vi.LastPurchasedPrice;
-            vi.LastPurchasedPrice = 69.69f;
+            item.SelectedVendor = vendors[0];
+            float tempPrice0 = item.LastPurchasedPrice;
+            item.LastPurchasedPrice = 69.69f;
 
             try
             {
-                vi.NotifyAllChanges();
-                vi.Update();
+                item.NotifyAllChanges();
+                item.Update();
 
                 InventoryItem testItem = vendors[0].ItemList.First(x => x.Name == "Feta");
                 Assert.AreEqual(69.69f, testItem.LastPurchasedPrice);
 
-                vi.SelectedVendor = vendors[1];
-                Assert.AreNotEqual(69.69f, vi.LastPurchasedPrice);
+                item.SelectedVendor = vendors[1];
+                Assert.AreNotEqual(69.69f, item.LastPurchasedPrice);
             }
             finally
             {
-                vi.SelectedVendor = vendors[0];
-                vi.LastPurchasedPrice = tempPrice0;
-                vi.NotifyAllChanges();
+                item.SelectedVendor = vendors[0];
+                item.LastPurchasedPrice = tempPrice0;
+                item.NotifyAllChanges();
             }
         }
 
@@ -410,8 +410,7 @@ namespace BuddhaBowls.Test
         public void ToInventoryItemTest()
         {
             DBCache models = new DBCache();
-            InventoryItem item = models.InventoryItems.First(x => x.Name == "Feta");
-            VendorInventoryItem vi = new VendorInventoryItem(item);
+            VendorInventoryItem vi = models.VIContainer.Items.First(x => x.Name == "Feta");
 
             string[] refProperties = (new InventoryItem()).GetPropertiesDB();
             CollectionAssert.AreEqual(refProperties, vi.ToInventoryItem().GetPropertiesDB());
@@ -978,7 +977,7 @@ namespace BuddhaBowls.Test
             Dictionary<string, BreadDescriptor> refBdList = new Dictionary<string, BreadDescriptor>()
             {
                 { "test", new BreadDescriptor(bo) { Id=0, Name = "test", BeginInventory = 9, Delivery = 8 } },
-                { "other test", new BreadDescriptor(bo) { Id=0, Name = "other test", BeginInventory = 1, Delivery = 4 } }
+                { "other test", new BreadDescriptor(bo) { Id=1, Name = "other test", BeginInventory = 1, Delivery = 4 } }
             };
 
             Assert.AreEqual(refBdList.Count, bo.BreadDescDict.Count);

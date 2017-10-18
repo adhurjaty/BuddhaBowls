@@ -60,9 +60,9 @@ namespace BuddhaBowls.Models
             }
             set
             {
+                _selectedVendor = value;
                 if (value != null)
                 {
-                    _selectedVendor = value;
                     UpdateVendorParams();
                 }
             }
@@ -70,6 +70,7 @@ namespace BuddhaBowls.Models
 
         public VendorInventoryItem()
         {
+            _vendorDict = new Dictionary<Vendor, InventoryItem>();
         }
 
         /// <summary>
@@ -105,6 +106,16 @@ namespace BuddhaBowls.Models
             //CopyInvItem(item);
         }
 
+        public VendorInventoryItem(InventoryItem item, IEnumerable<VendorInfo> vInfo) : this(item)
+        {
+            SetVendorDict(vInfo.ToList());
+
+            if (LastVendorId != null)
+                SelectedVendor = _vendorDict.Keys.FirstOrDefault(x => x.Id == LastVendorId);
+            else
+                SelectedVendor = _vendorDict.Keys.FirstOrDefault();
+        }
+
         /// <summary>
         /// Writes new price to DB when user has changed the price or conversion in the datagrid
         /// </summary>
@@ -134,6 +145,9 @@ namespace BuddhaBowls.Models
         /// <returns></returns>
         public InventoryItem ToInventoryItem()
         {
+            if (InvItem != null)
+                return InvItem;
+
             InventoryItem item = new InventoryItem();
             foreach(string property in item.GetPropertiesDB())
             {
@@ -216,8 +230,10 @@ namespace BuddhaBowls.Models
 
         public void DeleteVendor(Vendor vendor)
         {
-            _vendorDict.Remove(vendor);
+            _vendorDict = _vendorDict.Where(x => x.Key.Id != vendor.Id).ToDictionary(x => x.Key, y => y.Value);
             vendor.RemoveInvItem(ToInventoryItem());
+            if (SelectedVendor != null && SelectedVendor.Id == vendor.Id)
+                SelectedVendor = Vendors.FirstOrDefault();
             NotifyAllChanges();
         }
 
@@ -228,13 +244,25 @@ namespace BuddhaBowls.Models
 
         public override int Insert()
         {
-            return ToInventoryItem().Insert();
+            Id = ToInventoryItem().Insert();
+
+            foreach (KeyValuePair<Vendor, InventoryItem> vi in _vendorDict)
+            {
+                vi.Value.Id = Id;
+                vi.Key.Update();
+            }
+
+            return Id;
         }
 
         public override void Update()
         {
             InventoryItem item = ToInventoryItem();
 
+            foreach (Vendor v in Vendors)
+            {
+                v.Update();
+            }
             if (SelectedVendor != null)
             {
                 SelectedVendor.Update(item);

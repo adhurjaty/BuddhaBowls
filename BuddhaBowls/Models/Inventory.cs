@@ -29,7 +29,20 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public InventoryItemsContainer InvItemsContainer { get; private set; }
+        private InventoryItemsContainer _invItemsContainer;
+        public InventoryItemsContainer InvItemsContainer
+        {
+            get
+            {
+                if (_invItemsContainer == null)
+                    InvItemsContainer = new InventoryItemsContainer(GetInvItems());
+                return _invItemsContainer;
+            }
+            private set
+            {
+                _invItemsContainer = value;
+            }
+        }
 
         public Inventory()
         {
@@ -115,7 +128,7 @@ namespace BuddhaBowls.Models
             return ModelHelper.InstantiateList<InventoryItem>(GetInventoryTable(), false);
         }
 
-        private string GetInventoryTable()
+        public string GetInventoryTable()
         {
             return @"Inventory History\Inventory_" + Date.ToString("MM-dd-yyyy");
         }

@@ -124,13 +124,13 @@ namespace BuddhaBowls.Test
         {
             InventoryTabVM tabVM = _vm.InventoryTab;
             DateTime invDate = DateTime.Today;
-            tabVM.SwitchButtonList.First(x => x.PageName == "History").SwitchCommand.Execute(2);
+            tabVM.SwitchButtonList.First(x => x.PageName == "History").SwitchCommand.Execute(1);
             tabVM.PeriodSelector.SelectedPeriod = tabVM.PeriodSelector.PeriodList.First(x => x.ToString().Contains("All"));
             int initInvCount = tabVM.InventoryList.Count;
 
             tabVM.AddCommand.Execute(null);
             NewInventoryVM newInvVM = GetOpenTempTabVM<NewInventoryVM>();
-            newInvVM.InventoryDate = invDate;
+            newInvVM.InvDate = invDate;
 
             try
             {
@@ -158,7 +158,7 @@ namespace BuddhaBowls.Test
 
             tabVM.AddCommand.Execute(null);
             NewInventoryVM newInvVM = GetOpenTempTabVM<NewInventoryVM>();
-            newInvVM.InventoryDate = invDate;
+            newInvVM.InvDate = invDate;
             newInvVM.InvListVM.FilteredItems[0].Count = 1122;
 
             try
@@ -172,7 +172,7 @@ namespace BuddhaBowls.Test
 
                 Assert.AreEqual(1122, editInvVM.InvListVM.FilteredItems[0].Count);
 
-                editInvVM.InventoryDate = invDate.AddDays(-1);
+                editInvVM.InvDate = invDate.AddDays(-1);
                 editInvVM.SaveCountCommand.Execute(null);
 
                 Assert.AreEqual(invDate.AddDays(-1), tabVM.InventoryList[0].Date);
@@ -244,7 +244,7 @@ namespace BuddhaBowls.Test
             catch
             {
                 DBCache models = _vm.GetModelContainer();
-                models.DeleteInventoryItem(models.InventoryItems.First(x => x.Name == name));
+                models.VIContainer.RemoveItem(models.VIContainer.Items.First(x => x.Name == name));
                 Assert.IsTrue(false);
             }
 
@@ -310,7 +310,10 @@ namespace BuddhaBowls.Test
             }
             finally
             {
-                item.Destroy();
+                if (item != null)
+                    item.Destroy();
+                else
+                    _vm.GetModelContainer().VIContainer.Items.First(x => x.Name == name).Destroy();
             }
         }
 
@@ -375,7 +378,7 @@ namespace BuddhaBowls.Test
 
             orderTab.AddNewOrderCommand.Execute(null);
             NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
-            Vendor selectVendor = _vm.GetModelContainer().Vendors.First(x => x.Name == "Sysco");
+            Vendor selectVendor = _vm.GetModelContainer().VContainer.Items.First(x => x.Name == "Sysco");
             newOrderTab.OrderVendor = selectVendor;
 
             List<InventoryItem> refItems = MainHelper.SortItems(selectVendor.ItemList).ToList();
@@ -393,7 +396,7 @@ namespace BuddhaBowls.Test
 
             try
             {
-                models.AddUpdateVendor(ref newVend);
+                models.VContainer.AddItem(newVend);
 
                 orderTab.AddNewOrderCommand.Execute(null);
                 NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
@@ -404,7 +407,7 @@ namespace BuddhaBowls.Test
             }
             finally
             {
-                models.DeleteVendor(newVend);
+                models.VContainer.RemoveItem(newVend);
             }
         }
 
@@ -1008,14 +1011,14 @@ namespace BuddhaBowls.Test
                 vendorTab.SelectedVendorItem.LastPurchasedPrice = 5f;
                 vendorTab.VendorItemChanged(vendorTab.SelectedVendorItem);
                 
-                VendorInventoryItem vendItem = listVM.FilteredItems.First(x => x.Name == name);
+                VendorInventoryItem masterItem = listVM.FilteredItems.First(x => x.Name == name);
                 Assert.AreEqual(v1.Id, listVM.SelectedInventoryItem.SelectedVendor.Id);
-                Assert.AreEqual(10, vendItem.Conversion);
-                Assert.AreEqual(10f, vendItem.LastPurchasedPrice);
+                Assert.AreEqual(10, masterItem.Conversion);
+                Assert.AreEqual(10f, masterItem.LastPurchasedPrice);
 
-                vendItem.SelectedVendor = v2;
-                Assert.AreEqual(5, vendItem.Conversion);
-                Assert.AreEqual(5f, vendItem.LastPurchasedPrice);
+                masterItem.SelectedVendor = v2;
+                Assert.AreEqual(5, masterItem.Conversion);
+                Assert.AreEqual(5f, masterItem.LastPurchasedPrice);
             }
             finally
             {
@@ -1217,34 +1220,35 @@ namespace BuddhaBowls.Test
             Vendor v2 = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
             InventoryListVM listVM = CreateTestInventoryItem(name, v1, v2);
 
-            VendorInventoryItem item = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
+            VendorInventoryItem masterItem = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
 
             try
             {
                 _vm.OrderTab.AddNewOrderCommand.Execute(null);
                 NewOrderVM newOrder = GetOpenTempTabVM<NewOrderVM>();
                 newOrder.OrderVendor = v1;
-                VendorInventoryItem vendItem = newOrder.FilteredOrderItems.First(x => x.Name == name);
+                VendorInventoryItem orderItem = newOrder.FilteredOrderItems.First(x => x.Name == name);
+                newOrder.SelectedOrderItem = orderItem;
 
-                listVM.SelectedInventoryItem = item;
-                item.SelectedVendor = v1;
+                listVM.SelectedInventoryItem = masterItem;
+                masterItem.SelectedVendor = v1;
 
                 VendorTabVM vendorTab = _vm.VendorTab;
-                vendItem.SelectedVendor = v1;
-                float v1conv = vendItem.Conversion;
-                float v1price = vendItem.LastPurchasedPrice;
+                orderItem.SelectedVendor = v1;
+                float v1conv = orderItem.Conversion;
+                float v1price = orderItem.LastPurchasedPrice;
 
-                vendItem.Conversion = 10;
-                vendItem.LastPurchasedPrice = 10f;
-                newOrder.RowEdited(vendItem);
+                orderItem.Conversion = 10;
+                orderItem.LastPurchasedPrice = 10f;
+                newOrder.RowEdited(orderItem);
 
                 newOrder.OrderVendor = v2;
-                float v2conv = vendItem.Conversion;
-                float v2price = vendItem.LastPurchasedPrice;
+                float v2conv = orderItem.Conversion;
+                float v2price = orderItem.LastPurchasedPrice;
 
-                vendItem.Conversion = 5;
-                vendItem.LastPurchasedPrice = 5f;
-                newOrder.RowEdited(vendItem);
+                orderItem.Conversion = 5;
+                orderItem.LastPurchasedPrice = 5f;
+                newOrder.RowEdited(orderItem);
 
                 Assert.AreEqual(v1.Id, listVM.SelectedInventoryItem.SelectedVendor.Id);
                 Assert.AreEqual(v1conv, listVM.SelectedInventoryItem.Conversion);
@@ -1256,7 +1260,7 @@ namespace BuddhaBowls.Test
             }
             finally
             {
-                item.Destroy();
+                masterItem.Destroy();
             }
         }
 
@@ -1290,7 +1294,9 @@ namespace BuddhaBowls.Test
             newInvVM.VendorList.Add(new VendorInfo(v1) { Conversion = 2 });
             newInvVM.VendorList.Add(new VendorInfo(v2) { Conversion = 4 });
 
-            newInvVM.InvOrderList = new ObservableCollection<InventoryItem>(_vm.GetModelContainer().InventoryItems);
+            newInvVM.NextCommand.Execute(null);
+
+            newInvVM.InvOrderList = new ObservableCollection<InventoryItem>(_vm.GetModelContainer().VIContainer.ToInvContainer().Items);
 
             newInvVM.FinishCommand.Execute(null);
 
