@@ -143,8 +143,11 @@ namespace BuddhaBowls
 
         public void UpdateItem(VendorInventoryItem item)
         {
-            BreakdownCategoryItem bdItem = BreakdownList.First(x => x.Category == item.Category);
-            bdItem.UpdateOrderItem(item);
+            BreakdownCategoryItem bdItem = BreakdownList.FirstOrDefault(x => x.Category == item.Category);
+            if (bdItem == null)
+                BreakdownList.Add(new BreakdownCategoryItem(new List<InventoryItem>() { item }));
+            else
+                bdItem.UpdateOrderItem(item);
             UpdateTotal();
             NotifyPropertyChanged("BreakdownList");
             //BreakdownList = new ObservableCollection<BreakdownCategoryItem>(BreakdownList);
