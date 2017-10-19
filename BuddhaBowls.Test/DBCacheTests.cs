@@ -73,7 +73,7 @@ namespace BuddhaBowls.Test
         public void GetIngredientsTest()
         {
             _models.VIContainer.SetItems(_models.VIContainer.Items.Take(5).ToList());
-            _models.Recipes = _models.Recipes.Take(4).ToList();
+            _models.RContainer.SetItems(_models.RContainer.Items.Take(4).ToList());
 
             List<IItem> allItems = _models.GetAllIItems();
 
@@ -90,7 +90,7 @@ namespace BuddhaBowls.Test
                 new Recipe(new Dictionary<string, string>() { { "Name", "Chili" } })
             };
 
-            CollectionAssert.AreEqual(refList.Select(x => x.Name).ToList(), allItems.Select(x => x.Name).ToList());
+            CollectionAssert.AreEquivalent(refList.Select(x => x.Name).ToList(), allItems.Select(x => x.Name).ToList());
         }
 
         [TestMethod]
@@ -168,6 +168,17 @@ namespace BuddhaBowls.Test
             List<InventoryItem> breadItems = _models.GetBreadPeriodOrders(period).ToList();
 
             CollectionAssert.AreEquivalent(refItems.Select(x => x.Name).ToList(), breadItems.Select(x => x.Name).ToList());
+        }
+
+        [TestMethod]
+        public void VItemsAndVendorItemsSame()
+        {
+            foreach (Vendor vend in _models.VContainer.Items)
+            {
+                List<InventoryItem> vItems = _models.VIContainer.Items.Where(x => x.Vendors.Select(y => y.Id).Contains(vend.Id))
+                                                    .Select(x => x.ToInventoryItem()).ToList();
+                CollectionAssert.AreEquivalent(vend.ItemList.Select(x => x.Id).ToList(), vItems.Select(x => x.Id).ToList());
+            }
         }
 
         [TestMethod]

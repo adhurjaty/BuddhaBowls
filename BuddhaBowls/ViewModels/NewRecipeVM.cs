@@ -218,7 +218,7 @@ namespace BuddhaBowls
             ModalOkCommand = new RelayCommand(ModalOk, x => ModalOkCanExecute);
             ModalCancelCommand = new RelayCommand(ModalCancel);
 
-            CategoryList = _models.GetRecipeCategories();
+            CategoryList = _models.RContainer.GetRecipeCategories();
             //SaveItem = addDel;
             FinishVisibility = Visibility.Visible;
         }
@@ -325,11 +325,12 @@ namespace BuddhaBowls
                 if (_newItem)
                 {
                     Item.Insert(Ingredients.Select(x => x.GetRecipeItem()).ToList());
-                    _models.Recipes.Add(Item);
+                    _models.RContainer.AddItem(Item);
                 }
                 else
                 {
                     Item.Update(Ingredients.Select(x => x.GetRecipeItem()).ToList());
+                    _models.RContainer.Update(Item);
                 }
                 //SaveItem(Item);
                 Close();
@@ -344,7 +345,7 @@ namespace BuddhaBowls
                 NameError = 2;
                 return false;
             }
-            if(_newItem && _models.Recipes.Select(x => x.Name.ToUpper().Replace(" ", "")).Contains(Item.Name.ToUpper().Replace(" ", "")))
+            if(_newItem && _models.RContainer.Items.Select(x => x.Name.ToUpper().Replace(" ", "")).Contains(Item.Name.ToUpper().Replace(" ", "")))
             {
                 ErrorMessage = Item.Name + " already exists";
                 NameError = 2;

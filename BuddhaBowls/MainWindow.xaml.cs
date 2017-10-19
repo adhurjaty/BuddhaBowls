@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Models;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using System;
@@ -50,6 +51,7 @@ namespace BuddhaBowls
 
         public void AppendTempTab(UserControl tabControl)
         {
+            Logger.Info("Adding temp tab: " + tabControl.DataContext.GetType().Name);
             _lastTabIdx = Tabs.SelectedIndex;
             TabItem newTab = new TabItem() { Header = (string)tabControl.Tag, Content = tabControl };
             Tabs.Items.Add(newTab);
@@ -58,6 +60,7 @@ namespace BuddhaBowls
 
         public void RemoveTempTab()
         {
+            Logger.Info("Removing temp tab");
             Tabs.Items.RemoveAt(Tabs.Items.Count - 1);
             Tabs.SelectedIndex = _lastTabIdx;
         }
@@ -68,6 +71,14 @@ namespace BuddhaBowls
             TabItem newTab = new TabItem() { Header = (string)tabControl.Tag, Content = tabControl };
             Tabs.Items[Tabs.Items.Count - 1] = newTab;
             Tabs.SelectedIndex = Tabs.Items.Count - 1;
+        }
+
+        public void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            TabItem t = (TabItem)((TabControl)sender).SelectedItem;
+            if(t != null)
+                Logger.Info("Changed to tab: " + t.Header);
+            e.Handled = true;
         }
     }
 }

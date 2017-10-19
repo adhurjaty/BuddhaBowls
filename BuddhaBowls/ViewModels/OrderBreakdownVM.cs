@@ -140,17 +140,19 @@ namespace BuddhaBowls
         {
             NotifyPropertyChanged("OrderTotal");
         }
+
+        public void UpdateItem(VendorInventoryItem item)
+        {
+            BreakdownCategoryItem bdItem = BreakdownList.First(x => x.Category == item.Category);
+            bdItem.UpdateOrderItem(item);
+            UpdateTotal();
+            NotifyPropertyChanged("BreakdownList");
+            //BreakdownList = new ObservableCollection<BreakdownCategoryItem>(BreakdownList);
+        }
     }
 
     public class BreakdownCategoryItem : TabVM
     {
-        // INotifyPropertyChanged event and method
-        //public event PropertyChangedEventHandler PropertyChanged;
-
-        //protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //}
         private BreakdownUpdate OnValueChanged;
 
         public string Background { get; set; }
@@ -216,13 +218,21 @@ namespace BuddhaBowls
 
         public void UpdateOrderItem(InventoryItem item)
         {
+            if (OnValueChanged != null)
+                OnValueChanged(item);
+            else
+            {
+                InventoryItem listItem = Items.FirstOrDefault(x => x.Id == item.Id);
+                if (listItem != null)
+                {
+                    int idx = Items.IndexOf(listItem);
+                    Items[idx] = item;
+                }
+                Items = new ObservableCollection<InventoryItem>(Items);
+            }
+
             NotifyPropertyChanged("TotalAmount");
             NotifyPropertyChanged("Items");
-
-            if (OnValueChanged == null)
-                throw new Exception("Value was able to be edited when BreakdownCategoryItem was read-only");
-
-            OnValueChanged(item);
         }
     }
 }

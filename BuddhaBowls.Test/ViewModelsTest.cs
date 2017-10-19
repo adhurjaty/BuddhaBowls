@@ -851,6 +851,45 @@ namespace BuddhaBowls.Test
                 newVendor.Destroy();
             }
         }
+
+        [TestMethod]
+        public void AddItemToVendorCheckMaster()
+        {
+            string name = "My New Vendor2";
+            VendorTabVM vendorTab = CreateTestVendor(name, "mynew2@example.com");
+
+            Vendor newVendor = vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == name);
+            vendorTab.SelectedVendor = newVendor;
+
+            try
+            {
+                string itemName = "Avocado";
+                InventoryItem itemToAdd = _vm.GetModelContainer().VIContainer.Items.First(x => x.Name == itemName).ToInventoryItem();
+                // add sourdough to vendor list
+                vendorTab.AddInvItemToVendor(itemToAdd);
+
+                InventoryListVM masterListVM = _vm.InventoryTab.InvListVM;
+                VendorInventoryItem alteredItem = masterListVM.FilteredItems.First(x => x.Name == itemName);
+
+                CollectionAssert.Contains(alteredItem.Vendors.Select(x => x.Id).ToList(), newVendor.Id);
+                CollectionAssert.Contains(newVendor.ItemList.Select(x => x.Name).ToList(), itemToAdd.Name);
+                List<InventoryItem> vendorItems = newVendor.GetInventoryItems();
+                CollectionAssert.Contains(vendorItems.Select(x => x.Id).ToList(), itemToAdd.Id);
+
+                // test delete this item from vendor as well
+                vendorTab.SelectedVendor = newVendor;
+                vendorTab.SelectedVendorItem = itemToAdd;
+                vendorTab.DeleteVendorItemCommand.Execute(null);
+                CollectionAssert.DoesNotContain(alteredItem.Vendors.Select(x => x.Id).ToList(), newVendor.Id);
+                CollectionAssert.DoesNotContain(newVendor.ItemList.Select(x => x.Name).ToList(), itemToAdd.Name);
+                vendorItems = newVendor.GetInventoryItems();
+                CollectionAssert.DoesNotContain(vendorItems.Select(x => x.Id).ToList(), itemToAdd.Id);
+            }
+            finally
+            {
+                newVendor.Destroy();
+            }
+        }
         #endregion
 
         #region RecipeTabVM Tests
@@ -1318,6 +1357,10 @@ namespace BuddhaBowls.Test
             {
                 newOrderTab.FilteredOrderItems.First(x => x.Name == kvp.Key).LastOrderAmount = kvp.Value;
             }
+            //foreach (InventoryItem item in newOrderTab.FilteredOrderItems)
+            //{
+            //    item.LastOrderAmount = new Random().Next(1, 30);
+            //}
 
             newOrderTab.SaveNewOrderCommand.Execute(null);
 

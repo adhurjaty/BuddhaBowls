@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Services;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,7 @@ namespace BuddhaBowls.Models
         /// </summary>
         public virtual void Update()
         {
+            Logger.Info(string.Format("Upating {0}: {1}", GetType().Name, Id.ToString()));
             Dictionary<string, string> setDict = FieldsToDict();
 
             _dbInt.UpdateRecord(_tableName, setDict, Id);
@@ -57,6 +59,7 @@ namespace BuddhaBowls.Models
         /// </summary>
         public virtual void Destroy()
         {
+            Logger.Info(string.Format("Destroying {0}: {1}", GetType().Name, Id.ToString()));
             _dbInt.DeleteRecords(_tableName, new Dictionary<string, string>() { { "Id", Id.ToString() } });
         }
 
@@ -67,6 +70,7 @@ namespace BuddhaBowls.Models
         {
             Dictionary<string, string> mapping = FieldsToDict();
             Id = _dbInt.WriteRecord(_tableName, mapping);
+            Logger.Info(string.Format("Inserted {0}: {1}", GetType().Name, Id.ToString()));
             return Id;
         }
 

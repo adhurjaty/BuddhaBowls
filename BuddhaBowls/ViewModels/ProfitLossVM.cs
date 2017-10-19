@@ -205,7 +205,7 @@ namespace BuddhaBowls
                 }
             }
 
-            List<Recipe> soldItems = _models.Recipes.Where(x => !x.IsBatch).ToList();
+            List<Recipe> soldItems = _models.RContainer.Items.Where(x => !x.IsBatch).ToList();
             List<DailySale>[] salesToSave = new List<DailySale>[dailySales.Length];
 
             for (int i = 0; i < dailySales.Length; i++)

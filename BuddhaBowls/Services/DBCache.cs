@@ -22,7 +22,6 @@ namespace BuddhaBowls.Services
         private Dictionary<DateTime, BreadWeekContainer> _breadWeekDict;
 
         // TODO: Get rid of these 3 and create containers
-        public List<Recipe> Recipes { get; set; }
         public List<DailySale> DailySales { get; set; }
         public List<ExpenseItem> ExpenseItems { get; set; }
 
@@ -30,6 +29,7 @@ namespace BuddhaBowls.Services
         public PurchaseOrdersContainer POContainer { get; private set; }
         public VendorsContainer VContainer { get; private set; }
         public InventoriesContainer InContainer { get; private set; }
+        public RecipesContainer RContainer { get; private set; }
 
         /// <summary>
         /// Constructor. Initialize containers, settings and ordering information
@@ -50,33 +50,35 @@ namespace BuddhaBowls.Services
         /// </summary>
         private void InitializeModels()
         {
-            Recipes = ModelHelper.InstantiateList<Recipe>("Recipe");
-            AddRecipeItems();
+            Logger.Info("Loading models");
             DailySales = ModelHelper.InstantiateList<DailySale>("DailySale");
             ExpenseItems = ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem");
 
-            List<InventoryItem> invItems = MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem") ??
-                                           new List<InventoryItem>()).ToList();
+            List<InventoryItem> invItems = MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem")).ToList();
 
             VContainer = new VendorsContainer(ModelHelper.InstantiateList<Vendor>("Vendor"));
             VIContainer = new VendorInvItemsContainer(invItems.Select(x => new VendorInventoryItem(x, GetVendorsFromItem(x))).ToList(),
                                                        VContainer);
             POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder"));
             InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory"));
+            RContainer = new RecipesContainer(ModelHelper.InstantiateList<Recipe>("Recipe"));
+            //AddRecipeItems();
+
             _breadWeekDict = new Dictionary<DateTime, BreadWeekContainer>();
             InitBreadOrders();
+            Logger.Info("Models loaded");
         }
 
         /// <summary>
         /// Initializes the recipe info in each recipe. Should change as I edit the recipe tab
         /// </summary>
-        private void AddRecipeItems()
-        {
-            foreach (Recipe item in Recipes)
-            {
-                item.GetRecipeItems();
-            }
-        }
+        //private void AddRecipeItems()
+        //{
+        //    foreach (Recipe item in RContainer.Items)
+        //    {
+        //        item.GetRecipeItems();
+        //    }
+        //}
 
         /// <summary>
         /// Sets the desired ordering for inventory items by the inventory order file. Alphabetical otherwise
@@ -207,28 +209,12 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
-        /// Gets a list of the currently existing recipe categories
-        /// </summary>
-        /// <returns></returns>
-        public List<string> GetRecipeCategories()
-        {
-            HashSet<string> categories = new HashSet<string>();
-            foreach (Recipe rec in Recipes)
-            {
-                if (!string.IsNullOrWhiteSpace(rec.Category))
-                    categories.Add(rec.Category);
-            }
-
-            return categories.ToList();
-        }
-
-        /// <summary>
         /// Gets all IItems (Inventory items and batch recipe items)
         /// </summary>
         /// <returns></returns>
         public List<IItem> GetAllIItems()
         {
-            return VIContainer.Items.Select(x => (IItem)x.ToInventoryItem()).Concat(Recipes).ToList();
+            return VIContainer.Items.Select(x => (IItem)x.ToInventoryItem()).Concat(RContainer.Items.Where(x => x.IsBatch)).ToList();
         }
 
         /// <summary>
@@ -241,7 +227,7 @@ namespace BuddhaBowls.Services
 
             foreach (VendorInventoryItem item in VIContainer.Items)
             {
-                if(!string.IsNullOrWhiteSpace(item.Category))
+                if (!string.IsNullOrWhiteSpace(item.Category))
                     categories.Add(item.Category);
             }
 

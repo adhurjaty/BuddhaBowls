@@ -360,7 +360,7 @@ namespace BuddhaBowls
         private void RemoveReceivedOrder(object obj)
         {
             DeleteOrder(SelectedReceivedOrder);
-            ParentContext.ReportTab.Refresh();
+            //ParentContext.ReportTab.Refresh();
         }
 
         /// <summary>

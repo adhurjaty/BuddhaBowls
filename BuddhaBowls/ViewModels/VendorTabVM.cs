@@ -204,8 +204,8 @@ namespace BuddhaBowls
 
         private void DeleteVendorItem(object obj)
         {
-            SelectedVendor.RemoveInvItem(SelectedVendorItem);
-            SelectedVendorItems.Remove(SelectedVendorItem);
+            _models.VIContainer.RemoveFromVendor(SelectedVendorItem, SelectedVendor);
+            SelectedVendor.Update();
         }
 
         #endregion
@@ -234,7 +234,7 @@ namespace BuddhaBowls
         public void FilterVendors(string filterStr)
         {
             if (string.IsNullOrWhiteSpace(filterStr))
-                new ObservableCollection<Vendor>(_models.VContainer.Items.OrderBy(x => x.Name));
+                FilteredVendorList = new ObservableCollection<Vendor>(_models.VContainer.Items.OrderBy(x => x.Name));
             else
                 FilteredVendorList = new ObservableCollection<Vendor>(_models.VContainer.Items
                                                         .Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
@@ -248,28 +248,13 @@ namespace BuddhaBowls
 
         private void LoadVendorItems()
         {
-            //if (!_vItemsCache.Keys.Contains(SelectedVendor.Id))
-            //{
-            //    List<InventoryItem> vendorItems = _models.VendorInvItems.Select(x => x.GetInvItemFromVendor(SelectedVendor))
-            //                                                            .Where(x => x != null).ToList();
-
-                //_vItemsCache[SelectedVendor.Id] = new ObservableCollection<InventoryItem>(MainHelper.SortItems(vendorItems));
-            //}
-
-            //SelectedVendorItems = _vItemsCache[SelectedVendor.Id];
-            //SelectedVendorItems = new ObservableCollection<InventoryItem>(_models.VIContainer.GetVendorItems(SelectedVendor));
             SelectedVendorItems = new ObservableCollection<InventoryItem>(SelectedVendor.ItemList);
         }
 
         public void AddInvItemToVendor(InventoryItem item)
         {
             _models.VIContainer.UpdateItem(item, SelectedVendor);
-            //SelectedVendorItems.Add(item);
-            //SelectedVendorItems = new ObservableCollection<InventoryItem>(MainHelper.SortItems(SelectedVendorItems));
-            //_vItemsCache[SelectedVendor.Id] = SelectedVendorItems;
-            //_models.VendorInvItems.First(x => x.Id == item.Id).AddVendor(SelectedVendor, item);
-
-            //SelectedVendor.ClearAndUpdate(SelectedVendorItems.ToList());
+            SelectedVendor.Update();
         }
 
         public void VendorItemChanged(InventoryItem item)

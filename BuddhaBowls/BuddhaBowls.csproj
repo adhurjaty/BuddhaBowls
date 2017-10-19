@@ -169,6 +169,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helpers\ErrorHandler.cs" />
+    <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Models\BreadOrder.cs" />
     <Compile Include="Models\BreadOrderTotal.cs" />
     <Compile Include="Models\DailySale.cs" />
@@ -186,6 +187,7 @@
     <Compile Include="Services\ModelContainers\InventoryItemsContainer.cs" />
     <Compile Include="Services\ModelContainers\ModelContainer.cs" />
     <Compile Include="Services\ModelContainers\PurchaseOrdersContainer.cs" />
+    <Compile Include="Services\ModelContainers\RecipesContainer.cs" />
     <Compile Include="Services\ModelContainers\VendorInvItemsContainer.cs" />
     <Compile Include="Services\PeriodMarker.cs" />
     <Compile Include="Services\ShowAllMarker.cs" />

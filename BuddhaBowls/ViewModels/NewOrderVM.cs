@@ -167,18 +167,20 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void SaveOrder(object obj)
         {
-            foreach (VendorInventoryItem item in _itemsContainer.Items.Where(x => x.LastOrderAmount > 0))
-            {
-                _models.VIContainer.Update(item);
-                item.Update();
-            }
+            List<VendorInventoryItem> purchasedVItems = _itemsContainer.Items.Where(x => x.LastOrderAmount > 0).ToList();
 
-            List<InventoryItem> purchasedItems = _itemsContainer.Items.Where(x => x.LastOrderAmount > 0).Select(x => x.ToInventoryItem()).ToList();
+            List<InventoryItem> purchasedItems = purchasedVItems.Select(x => x.ToInventoryItem()).ToList();
             PurchaseOrder po = new PurchaseOrder(OrderVendor, purchasedItems, OrderDate);
 
             GenerateAfterOrderSaved(po, OrderVendor);
 
             _models.POContainer.AddItem(po);
+
+            _models.VIContainer.Update(purchasedVItems);
+            foreach (VendorInventoryItem item in purchasedVItems)
+            {
+                item.Update();
+            }
 
             Close();
         }
@@ -271,7 +273,9 @@ namespace BuddhaBowls
         public void RowEdited(VendorInventoryItem item)
         {
             NotifyPropertyChanged("FilteredOrderItems");
-            SetLastOrderBreakdown();
+            BreakdownContext.UpdateItem(item);
+            NotifyPropertyChanged("BreakdownContext");
+            //SetLastOrderBreakdown();
         }
 
         /// <summary>

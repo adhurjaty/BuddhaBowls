@@ -224,6 +224,15 @@ namespace BuddhaBowls.Services
             PushChange();
         }
 
+        public void RemoveFromVendor(InventoryItem item, Vendor vend)
+        {
+            vend.RemoveInvItem(item);
+            VendorInventoryItem vItem = Items.First(x => x.Id == item.Id);
+            vItem.DeleteVendor(vend);
+            _vendorsContainer.Update(vend);
+            PushChange();
+        }
+
         /// <summary>
         /// Associates vendor with all of items in invItems, removes association with vendor and items not in invItems
         /// </summary>

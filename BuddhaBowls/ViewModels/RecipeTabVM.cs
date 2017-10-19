@@ -99,6 +99,7 @@ namespace BuddhaBowls
             EditItemCommand = new RelayCommand(EditRecipe, x => SelectedItemCanExecute && DBConnection);
 
             RecipeUnitList = _models.GetRecipeUnits();
+            _models.RContainer.AddUpdateBinding(RefreshList);
         }
 
         #region ICommand Helpers
@@ -116,8 +117,9 @@ namespace BuddhaBowls
                                                       "Delete " + SelectedItem.Name + "?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                _models.Recipes.Remove(SelectedItem.GetRecipe());
-                SelectedItem.GetRecipe().Destroy();
+                Recipe rec = SelectedItem.GetRecipe();
+                _models.RContainer.RemoveItem(rec);
+                rec.Destroy();
                 SelectedItem = null;
                 RefreshList();
             }
@@ -171,10 +173,10 @@ namespace BuddhaBowls
             switch (pageIdx)
             {
                 case 0:
-                    _recipeItems = _models.Recipes.Where(x => x.IsBatch).Select(x => new DisplayRecipe(x)).ToList();
+                    _recipeItems = _models.RContainer.Items.Where(x => x.IsBatch).Select(x => new DisplayRecipe(x)).ToList();
                     break;
                 case 1:
-                    _recipeItems = _models.Recipes.Where(x => !x.IsBatch).Select(x => new DisplayRecipe(x)).ToList();
+                    _recipeItems = _models.RContainer.Items.Where(x => !x.IsBatch).Select(x => new DisplayRecipe(x)).ToList();
                     break;
                 case -1:
                     _recipeItems = new List<DisplayRecipe>() { new DisplayRecipe(new Recipe { Name = "DB not found" }) };

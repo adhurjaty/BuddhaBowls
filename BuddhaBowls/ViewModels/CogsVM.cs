@@ -21,7 +21,7 @@ namespace BuddhaBowls
 
         private Inventory _startInventory;
         private Inventory _endInventory;
-        private List<PurchaseOrder> _recOrders;
+        private Dictionary<string, List<InventoryItem>> _recOrdersDict;
         private List<InventoryItem> _breadOrderItems;
         private ReportsTabVM _reportsTab;
 
@@ -181,13 +181,14 @@ namespace BuddhaBowls
         public IEnumerable<CogsCategory> GetCogs(PeriodMarker timeFrame)
         {
             SetInvAndOrders(timeFrame);
-            CogsCategory totalCogs = new CogsCategory("Total", _startInventory, _endInventory, _recOrders, 0);
+            CogsCategory totalCogs = new CogsCategory("Total", _startInventory, _endInventory, _recOrdersDict["Total"], 0);
             foreach (string category in _models.GetInventoryCategories().Concat(new List<string> { "Food Total" }))
             {
-                if (category == "Bread")
-                    yield return new CogsCategory(category, _startInventory, _endInventory, _breadOrderItems, totalCogs.CogsCost);
-                else
-                    yield return new CogsCategory(category, _startInventory, _endInventory, _recOrders, totalCogs.CogsCost);
+                yield return new CogsCategory(category, _startInventory, _endInventory, _recOrdersDict[category], totalCogs.CogsCost);
+                //if (category == "Bread")
+                //    yield return new CogsCategory(category, _startInventory, _endInventory, _breadOrderItems, totalCogs.CogsCost);
+                //else
+                //    yield return new CogsCategory(category, _startInventory, _endInventory, _recOrders, totalCogs.CogsCost);
             }
             yield return totalCogs;
         }
@@ -196,7 +197,11 @@ namespace BuddhaBowls
         {
             List<Inventory> inventoryList = _models.InContainer.Items.OrderByDescending(x => x.Date).ToList();
             List<Inventory> periodInvList = inventoryList.Where(x => timeFrame.StartDate <= x.Date && x.Date <= timeFrame.EndDate).ToList();
+
+            // end inventory should be the first inventory after the end of the week
             _endInventory = inventoryList.Where(x => x.Date > timeFrame.EndDate).OrderBy(x => x.Date).FirstOrDefault();
+
+            // fallback to the last inventory of the week
             if(_endInventory == null)
                 _endInventory = inventoryList.Where(x => x.Date <= timeFrame.EndDate).OrderByDescending(x => x.Date).FirstOrDefault();
 
@@ -205,15 +210,31 @@ namespace BuddhaBowls
 
             if (_endInventory != null)
             {
+                // start inventory is the first inventory in the week
                 _startInventory = inventoryList.Where(x => x.Date >= timeFrame.StartDate && x.Date < timeFrame.EndDate)
                                                .OrderBy(x => x.Date).FirstOrDefault();
-                if (_startInventory == null)
-                    _startInventory = inventoryList.Last();
 
-                _recOrders = _models.POContainer.Items.Where(x => x.ReceivedDate >= timeFrame.StartDate &&
-                                                                  x.ReceivedDate <= timeFrame.EndDate.Date.AddDays(1)).ToList();
+                // fallback to making start and end inventories the same
+                if (_startInventory == null)
+                    _startInventory = _endInventory;
             }
-            _breadOrderItems = _models.GetBreadPeriodOrders(timeFrame).ToList();
+            InitRecOrdersDict(timeFrame);
+        }
+
+        private void InitRecOrdersDict(PeriodMarker timeFrame)
+        {
+            List<PurchaseOrder> recOrders = _models.POContainer.Items.Where(x => x.ReceivedDate >= timeFrame.StartDate &&
+                                                                  x.ReceivedDate <= timeFrame.EndDate.Date.AddDays(1)).ToList();
+
+            _recOrdersDict = _models.GetInventoryCategories().ToDictionary(x => x, x => new List<InventoryItem>());
+            foreach (KeyValuePair<string, List<InventoryItem>> itemDict in recOrders.SelectMany(x => x.RecCategoryItemsDict))
+            {
+                _recOrdersDict[itemDict.Key].AddRange(itemDict.Value);
+            }
+            _recOrdersDict["Bread"] = _models.GetBreadPeriodOrders(timeFrame).ToList();
+            _recOrdersDict["Total"] = _recOrdersDict.Values.SelectMany(x => x).ToList();
+            _recOrdersDict["Food Total"] = _recOrdersDict.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key))
+                                                         .SelectMany(x => x.Value).ToList();
         }
 
         private List<InventoryItem> GetFoodInv(List<InventoryItem> invList)
@@ -248,7 +269,7 @@ namespace BuddhaBowls
     {
         private Inventory _startInv;
         private Inventory _endInv;
-        private List<PurchaseOrder> _purchases;
+        private List<InventoryItem> _purchases;
         private List<InventoryItem> _breadOrders;
 
         // INotifyPropertyChanged event and method
@@ -287,10 +308,7 @@ namespace BuddhaBowls
         {
             get
             {
-                List<InventoryItem> purchasedItems = GetInvItems(_purchases);
-                if (purchasedItems == null)
-                    return 0;
-                return purchasedItems.Sum(x => x.PurchaseExtension);
+                return _purchases.Sum(x => x.PurchaseExtension);
             }
         }
         public float CatPercent
@@ -316,35 +334,18 @@ namespace BuddhaBowls
             get
             {
                 List<InventoryItem> endInvItems = GetInvItems(_endInv);
-                List<InventoryItem> purchasedItems = GetInvItems(_purchases);
-                return GetInvItems(_startInv).Select(x => new CatItem(x.Name, x, endInvItems.FirstOrDefault(y => y.Name == x.Name),
-                                                                      purchasedItems.Where(y => y.Name == x.Name))).ToList();
+                return MainHelper.SortItems(GetInvItems(_startInv)).Select(x => new CatItem(x.Name, x,
+                                                                                            endInvItems.FirstOrDefault(y => y.Name == x.Name),
+                                                                           _purchases.Where(y => y.Name == x.Name))).ToList();
             }
         }
 
-        public CogsCategory(string category, Inventory startInv, Inventory endInv, List<PurchaseOrder> purchased, float totalCogs)
+        public CogsCategory(string category, Inventory startInv, Inventory endInv, List<InventoryItem> purchased, float totalCogs)
         {
             Name = category;
             _startInv = startInv;
             _endInv = endInv;
             _purchases = purchased;
-            TotalCogs = totalCogs;
-        }
-
-        /// <summary>
-        /// Used only for bread COGS
-        /// </summary>
-        /// <param name="category"></param>
-        /// <param name="startInv"></param>
-        /// <param name="endInv"></param>
-        /// <param name="breadOrders"></param>
-        /// <param name="totalCogs"></param>
-        public CogsCategory(string category, Inventory startInv, Inventory endInv, List<InventoryItem> breadOrders, float totalCogs)
-        {
-            Name = category;
-            _startInv = startInv;
-            _endInv = endInv;
-            _breadOrders = breadOrders;
             TotalCogs = totalCogs;
         }
 
@@ -373,18 +374,6 @@ namespace BuddhaBowls
             if (!catDict.ContainsKey(Name))
                 return new List<InventoryItem>();
             return catDict[Name];
-        }
-
-        private List<InventoryItem> GetInvItems(List<PurchaseOrder> orders)
-        {
-            if (Name == "Total")
-                return _purchases.SelectMany(x => x.RecCategoryItemsDict.SelectMany(y => y.Value)).ToList();
-            if (Name == "Food Total")
-                return _purchases.SelectMany(x => x.RecCategoryItemsDict.Where(y => Properties.Settings.Default.FoodCategories.Contains(y.Key))
-                                                                        .SelectMany(y => y.Value)).ToList();
-            if (Name == "Bread")
-                return _breadOrders;
-            return _purchases.Where(x => x.RecCategoryItemsDict.ContainsKey(Name)).SelectMany(x => x.RecCategoryItemsDict[Name]).ToList();
         }
     }
 
