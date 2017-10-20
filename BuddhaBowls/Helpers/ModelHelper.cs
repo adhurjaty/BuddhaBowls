@@ -107,6 +107,9 @@ namespace BuddhaBowls.Helpers
 
         public static void CreateTable<T>(List<T> records, string tableName) where T : Model, new()
         {
+            if (records.Count == 0)
+                return;
+
             string[] columns = records[0].GetPropertiesDB();
             if(columns[columns.Length - 1] == "Id")
             {

@@ -35,7 +35,7 @@ namespace BuddhaBowls.Models
             get
             {
                 if (_invItemsContainer == null)
-                    InvItemsContainer = new InventoryItemsContainer(GetInvItems());
+                    InvItemsContainer = new InventoryItemsContainer(MainHelper.SortItems(GetInvItems()).ToList());
                 return _invItemsContainer;
             }
             private set

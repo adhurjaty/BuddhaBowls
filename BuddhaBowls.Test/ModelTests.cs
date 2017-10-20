@@ -146,17 +146,18 @@ namespace BuddhaBowls.Test
             Inventory inv = new Inventory(new DateTime(2017, 3, 20));
             List<InventoryItem> oldList = inv.InvItemsContainer.Items;
 
+            int itemId = oldList[0].Id;
             float tempCount = oldList[0].Count;
             oldList[0].Count = 111;
             string tempCountUnit = oldList[1].CountUnit;
-            oldList[1].CountUnit = "NewUnit";
+            oldList[0].CountUnit = "NewUnit";
 
             inv.Update();
 
             List<InventoryItem> newList = inv.GetInvItems();
 
-            Assert.AreEqual(111, newList[0].Count);
-            Assert.AreEqual("NewUnit", newList[1].CountUnit);
+            Assert.AreEqual(111, newList.First(x => x.Id == itemId).Count);
+            Assert.AreEqual("NewUnit", newList.First(x => x.Id == itemId).CountUnit);
 
             // reset to initail values
             oldList[0].Count = tempCount;

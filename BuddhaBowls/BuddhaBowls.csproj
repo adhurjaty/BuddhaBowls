@@ -32,7 +32,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>58</ApplicationRevision>
+    <ApplicationRevision>60</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -189,6 +189,7 @@
     <Compile Include="Services\ModelContainers\PurchaseOrdersContainer.cs" />
     <Compile Include="Services\ModelContainers\RecipesContainer.cs" />
     <Compile Include="Services\ModelContainers\VendorInvItemsContainer.cs" />
+    <Compile Include="Services\ModelContainers\VendorsContainer.cs" />
     <Compile Include="Services\PeriodMarker.cs" />
     <Compile Include="Services\ShowAllMarker.cs" />
     <Compile Include="Services\WeekMarker.cs" />

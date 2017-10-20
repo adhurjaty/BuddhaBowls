@@ -167,6 +167,9 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void SaveOrder(object obj)
         {
+            // close at top so the copy gets removed in dbcache and there are fewer updates to run
+            Close();
+
             List<VendorInventoryItem> purchasedVItems = _itemsContainer.Items.Where(x => x.LastOrderAmount > 0).ToList();
 
             List<InventoryItem> purchasedItems = purchasedVItems.Select(x => x.ToInventoryItem()).ToList();
@@ -182,7 +185,6 @@ namespace BuddhaBowls
                 item.Update();
             }
 
-            Close();
         }
 
         /// <summary>
@@ -342,6 +344,11 @@ namespace BuddhaBowls
             FilteredOrderItems = new ObservableCollection<VendorInventoryItem>() { new VendorInventoryItem() { Name = "Vendor has no items" } };
         }
 
+        protected override void Close()
+        {
+            _models.VIContainer.RemoveCopy(_itemsContainer);
+            base.Close();
+        }
         #endregion
 
         private void RefreshInventoryList()

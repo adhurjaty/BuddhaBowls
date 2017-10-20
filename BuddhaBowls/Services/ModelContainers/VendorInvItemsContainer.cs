@@ -170,6 +170,12 @@ namespace BuddhaBowls.Services
             PushChange();
         }
 
+        public void RemoveCopy(VendorInvItemsContainer viContainer)
+        {
+            if(_copies != null)
+                _copies.Remove(viContainer);
+        }
+
         /// <summary>
         /// Save the display order of the inventory items
         /// </summary>

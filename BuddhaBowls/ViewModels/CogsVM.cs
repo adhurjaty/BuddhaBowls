@@ -22,7 +22,6 @@ namespace BuddhaBowls
         private Inventory _startInventory;
         private Inventory _endInventory;
         private Dictionary<string, List<InventoryItem>> _recOrdersDict;
-        private List<InventoryItem> _breadOrderItems;
         private ReportsTabVM _reportsTab;
 
         #region Content Binders
@@ -112,6 +111,9 @@ namespace BuddhaBowls
 
             StartInvCommand = new RelayCommand(OpenStartInv);
             EndInvCommand = new RelayCommand(OpenEndInv);
+
+            _models.InContainer.AddUpdateBinding(delegate () { CalculateCogs(PeriodSelector.SelectedWeek); });
+            _models.POContainer.AddUpdateBinding(delegate () { CalculateCogs(PeriodSelector.SelectedWeek); });
         }
 
         #region ICommand Helpers

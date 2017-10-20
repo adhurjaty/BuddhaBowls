@@ -384,8 +384,6 @@ namespace BuddhaBowls
                 if (_inventory == null)
                 {
                     _invItemsContainer = _models.VIContainer.Copy();
-                    // notify this container when the original is updated
-                    //_models.VIContainer.AddUpdateBinding(SyncCopyInvList);
                 }
                 else
                 {

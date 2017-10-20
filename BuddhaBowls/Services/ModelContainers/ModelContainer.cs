@@ -32,20 +32,15 @@ namespace BuddhaBowls.Services
             _items = items;
         }
 
-        public virtual void AddItem(T item)
+        public virtual T AddItem(T item)
         {
             if (!Contains(item))
             {
                 _items.Add(item);
                 PushChange();
             }
-        }
 
-        public virtual void AddItem(T item, UpdateBinding ub)
-        {
-            AddUpdateBinding(ub);
-            AddItem(item);
-            RemoveUpdateBinding(ub);
+            return item;
         }
 
         public virtual void RemoveItem(T item)
@@ -56,7 +51,6 @@ namespace BuddhaBowls.Services
 
         public virtual void Update(T item)
         {
-            //item.Update();
             int idx = Items.FindIndex(x => x.Id == item.Id);
             Items[idx] = item;
             PushChange();

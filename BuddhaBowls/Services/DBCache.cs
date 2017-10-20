@@ -186,7 +186,7 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public void LoadInvContainer(Inventory inv)
         {
-            List<InventoryItem> items = inv.GetInvItems();
+            List<InventoryItem> items = MainHelper.SortItems(inv.GetInvItems()).ToList();
             inv.SetInvItemsContainer(new InventoryItemsContainer(items));
         }
 

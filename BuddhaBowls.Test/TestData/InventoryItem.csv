@@ -1,5 +1,5 @@
 Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Count,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate,LastVendorId
-0,Mozzarella,Dairy,CASE 30lb,5lb BAG,6,OZ-wt,480,912,1,59,0,2/27/2017 14:33,0
+0,Mozzarella,Dairy,CASE 30lb,5lb BAG,6,OZ-wt,480,634,1,59,0,2/27/2017 14:33,0
 1,Cheddar,Dairy,CASE 20lb,5lb BAG,4,OZ-wt,320,14,1,20,0,2/27/2017 14:33,0
 2,Feta,Dairy,CASE 10lb,5lb BAG,2,OZ-wt,160,4,1E+08,69.69,0,3/19/2017 22:37,4
 3,Butter,Dairy,CASE 30lb,1lb,30,OZ-wt,480,32,1,76.99,0,2/27/2017 14:33,0

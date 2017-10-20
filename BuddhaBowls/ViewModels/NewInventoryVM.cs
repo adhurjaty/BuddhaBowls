@@ -22,7 +22,6 @@ namespace BuddhaBowls
     /// </summary>
     public class NewInventoryVM : TempTabVM, INotifyPropertyChanged
     {
-
         #region Data Bindings
 
         private Inventory _inventory;
@@ -93,7 +92,6 @@ namespace BuddhaBowls
             InventoryControl = InvListVM.TabControl;
             Inv = new Inventory(DateTime.Now);
             InvDate = Inv.Date;
-            FinishDelegate = InsertInv;
             
             InitICommand();
             Header = "New Inventory";
@@ -110,7 +108,6 @@ namespace BuddhaBowls
             InvListVM = new InventoryListVM(inv, InventoryItemCountChanged);
             InventoryControl = InvListVM.TabControl;
             InvDate = Inv.Date;
-            FinishDelegate = UpdateInv;
 
             InitICommand();
             Header = "Edit Inventory " + Inv.Date.ToShortDateString();
@@ -136,19 +133,26 @@ namespace BuddhaBowls
         {
             if (CheckUniqueInvDate())
             {
-                Inv.DestroyTable();
-                Inv.Date = InvDate;
+                // close at top so that the copy gets removed and there are fewer updates to do
+                Close();
 
-                _models.InContainer.AddItem(Inv, FinishDelegate);
+                Inv.Date = InvDate;
+                Inv.DestroyTable();
+
+                Inv.SetInvItemsContainer(InvListVM.GetItemsContainer().ToInvContainer());
+                Inv = _models.InContainer.AddItem(Inv);
+
+                if (Inv.Id == -1)
+                    Inv.Insert();
+                else
+                    Inv.Update();
 
                 // if this is the latest date inventory, change item counts for current inv items
-                if(Inv.Date >= _models.InContainer.Items.Max(x => x.Date))
+                if (Inv.Date >= _models.InContainer.Items.Max(x => x.Date))
                 {
                     _models.VIContainer.SetItems(InvListVM.GetItemsContainer().Items);
                     _models.VIContainer.UpdateContainer();
                 }
-
-                Close();
             }
         }
 
@@ -159,7 +163,7 @@ namespace BuddhaBowls
 
         private bool CheckUniqueInvDate()
         {
-            Inventory existingInv = _models.InContainer.Items.FirstOrDefault(x => x.Date == Inv.Date);
+            Inventory existingInv = _models.InContainer.Items.FirstOrDefault(x => x.Date.Date == Inv.Date.Date);
             if(existingInv != null && existingInv.Id != Inv.Id)
             {
                 if (MessageBox.Show("Inventory with that date already exists. Do you wish to replace it?", "Replace Inventory",
@@ -178,9 +182,6 @@ namespace BuddhaBowls
             SaveCountCommand = new RelayCommand(SaveInventory, x => ChangeCountCanExecute);
             ResetCountCommand = new RelayCommand(ResetCount, x => ChangeCountCanExecute);
             CancelCommand = new RelayCommand(CancelInventory);
-
-            //_models.VIContainer.AddUpdateBinding(InvListVM.CollectionChanged);
-            //_models.VIContainer.AddUpdateBinding(InvListVM.UpdateInvValue);
         }
 
         #endregion
@@ -202,23 +203,9 @@ namespace BuddhaBowls
 
         protected override void Close()
         {
-            //_models.VIContainer.RemoveUpdateBinding(InvListVM.CollectionChanged);
-            //_models.VIContainer.RemoveUpdateBinding(InvListVM.UpdateInvValue);
-            //_models.VIContainer.RemoveUpdateBinding(InvListVM.SyncCopyInvList);
+            _models.VIContainer.RemoveCopy(InvListVM.GetItemsContainer());
             base.Close();
         }
         #endregion
-
-        private void InsertInv()
-        {
-            Inv.SetInvItemsContainer(InvListVM.GetItemsContainer().ToInvContainer());
-            Inv.Insert();
-        }
-
-        private void UpdateInv()
-        {
-            Inv.Update();
-        }
-
     }
 }

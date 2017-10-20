@@ -77,7 +77,6 @@ namespace BuddhaBowls
             _reportsTab = tabContext;
 
             SquareCommand = new RelayCommand(UpdateSquare);
-
             SummarySections = new ObservableCollection<PAndLSummarySection>(new PAndLSummarySection[5]);
         }
 
