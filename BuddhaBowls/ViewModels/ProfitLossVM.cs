@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -16,10 +17,8 @@ namespace BuddhaBowls
 {
     public class ProfitLossVM : TabVM
     {
-        private BackgroundWorker _revenueWorker;
-        private BackgroundWorker _payrollWorker;
         private ReportsTabVM _reportsTab;
-
+        private CancellationTokenSource _cts;
         private object _lock = new object();
 
         #region Content Binders
@@ -95,113 +94,154 @@ namespace BuddhaBowls
 
         #region UI Updaters
 
-        public void SwitchedPeriod(PeriodMarker period, WeekMarker week)
+        //public void SwitchedPeriod(PeriodMarker period, WeekMarker week)
+        //{
+        //    CalculatePAndL(period, week);
+        //}
+
+        public async void CalculatePAndL(PeriodMarker period, WeekMarker week)
         {
-            CalculatePAndL(period, week);
-        }
-
-        public void CalculatePAndL(PeriodMarker period, WeekMarker week)
-        {
-            _revenueWorker = new BackgroundWorker();
-            _revenueWorker.DoWork += _worker_DoWorkRevenue;
-            _revenueWorker.RunWorkerCompleted += _worker_RunWorkerCompletedRevenue;
-            _revenueWorker.WorkerSupportsCancellation = true;
-
             SquareProgMessage = "Updating from Square...";
-            _revenueWorker.RunWorkerAsync(new object[] { period, week });
 
-            _payrollWorker = new BackgroundWorker();
-            _payrollWorker.DoWork += _worker_DoWorkPayroll;
-            _payrollWorker.RunWorkerCompleted += _worker_RunWorkerCompletedPayroll;
-            _payrollWorker.WorkerSupportsCancellation = true;
+            if (_cts != null)
+            {
+                _cts.Cancel();
+            }
+            _cts = new CancellationTokenSource();
 
-            SquareProgMessage = "Updating from Square...";
-            _payrollWorker.RunWorkerAsync(new object[] { period, week });
+            try
+            {
+                Task<PAndLSummarySection> revenueTask = new Task<PAndLSummarySection>(() => CalculateRevenue(period, week));
+                revenueTask.Start();
 
-            NotifyPropertyChanged("SummarySections");
+                SummarySections[0] = await revenueTask;
+            }
+            catch (OperationCanceledException e)
+            {
+                return;
+            }
+            finally
+            {
+                _cts = null;
+            }
+
+            SummarySections[1] = new PAndLSummarySection("Cost of Sales", week.Period, GetCogsSummaryItems());
+            SummarySections[2] = new PAndLSummarySection("Payroll", week.Period, GetPayrollSummaryItems(period, week));
+            SummarySections[3] = new PAndLSummarySection("Overhead Expense", week.Period, GetOverheadSummaryItems(period, week));
+            SquareProgMessage = "";
+
+            // TODO: populate payroll
+            //_payrollWorker = new BackgroundWorker();
+            //_payrollWorker.DoWork += _worker_DoWorkPayroll;
+            //_payrollWorker.RunWorkerCompleted += _worker_RunWorkerCompletedPayroll;
+            //_payrollWorker.WorkerSupportsCancellation = true;
+
+            //SquareProgMessage = "Updating from Square...";
+            //_payrollWorker.RunWorkerAsync(new object[] { period, week });
+
+            //NotifyPropertyChanged("SummarySections");
         }
 
         #endregion
 
-        private void _worker_RunWorkerCompletedRevenue(object sender, RunWorkerCompletedEventArgs e)
+        /// <summary>
+        /// Gets the date when the last record was retrieved from API
+        /// </summary>
+        /// <param name="period">Time period to search</param>
+        /// <param name="periodSales">Records of sales</param>
+        /// <returns></returns>
+        private DateTime GetLastUpdated(PeriodMarker period, List<DailySale> periodSales)
         {
-            PAndLSummarySection section = (PAndLSummarySection)e.Result;
-
-            SummarySections[0] = section;
-            SquareProgMessage = "";
-
-            PeriodMarker period = PeriodSelector.SelectedPeriod;
-            PeriodMarker week = PeriodSelector.SelectedWeek;
-            // move this shit elsewhere
-            SummarySections[1] = new PAndLSummarySection("Cost of Sales", week.Period, GetCogsSummaryItems());
-            SummarySections[2] = new PAndLSummarySection("Payroll", week.Period, GetPayrollSummaryItems(period, week));
-            SummarySections[3] = new PAndLSummarySection("Overhead Expense", week.Period, GetOverheadSummaryItems(period, week));
-
+            return periodSales.Count == 0 ? period.StartDate : periodSales.Max(x => x.LastUpdated).Date;
         }
 
-        private void _worker_DoWorkRevenue(object sender, DoWorkEventArgs e)
+        /// <summary>
+        /// Gets an array of list of sales from Square API. Each array element corresponds to a day in the period
+        /// </summary>
+        /// <param name="period">Period of time to get sales</param>
+        /// <param name="lastUpdated">Last full day of transaction records (partials do not count)</param>
+        /// <returns></returns>
+        private List<SquareSale>[] GetDailySales(PeriodMarker period, DateTime lastUpdated, CancellationToken token)
         {
-            PeriodMarker period = (PeriodMarker)((object[])e.Argument)[0];
-            WeekMarker week = (WeekMarker)((object[])e.Argument)[1];
-            List<DailySale> periodSales = _models.DailySales.Where(x => period.StartDate <= x.Date && x.Date <= period.EndDate).ToList();
-            DateTime lastUpdated;
-            if (periodSales.Count == 0)
-                lastUpdated = period.StartDate;
-            else
-                lastUpdated = periodSales.Max(x => x.LastUpdated).Date;
-
             DateTime periodEndDate = new DateTime[] { DateTime.Now, period.EndDate }.Min();
 
             SquareService ss = new SquareService();
             // only call API for days where we have not already retrieved and saved a full day of sales
             int numDays = new int[] { (int)Math.Ceiling(periodEndDate.Subtract(lastUpdated).TotalDays), 0 }.Max();
             List<SquareSale>[] dailySales = new List<SquareSale>[numDays];
-            Parallel.For(0, dailySales.Length, i =>
-            {
-                try
-                {
-                    DateTime startTime = lastUpdated.AddDays(i);
-                    DateTime endTime = startTime.AddDays(1).AddSeconds(-1);
-                    dailySales[i] = ss.ListTransactions(startTime, endTime).ToList();
-                }
-                catch (Exception ex)
-                {
-                    dailySales[i] = null;
-                }
-            });
 
-            Dictionary<string, float> periodRevenueDict = new Dictionary<string, float>();
-            Dictionary<string, float> weekRevenueDict = new Dictionary<string, float>();
-            Dictionary<string, float> prevPeriodRevenueDict = new Dictionary<string, float>();
-            Dictionary<string, string> itemCategoryCache = new Dictionary<string, string>();
+            try
+            {
+                Parallel.For(0, dailySales.Length, i =>
+                {
+                    token.ThrowIfCancellationRequested();
+                    try
+                    {
+                        DateTime startTime = lastUpdated.AddDays(i);
+                        DateTime endTime = startTime.AddDays(1).AddSeconds(-1);
+                        dailySales[i] = ss.ListTransactions(startTime, endTime).ToList();
+                    }
+                    catch (Exception ex)
+                    {
+                        dailySales[i] = null;
+                    }
+                });
+            }
+            catch(AggregateException e)
+            {
+                throw new OperationCanceledException(token);
+            }
+
+            return dailySales;
+        }
+
+        /// <summary>
+        /// Calculates revenue from Square API and organizes to formatted display
+        /// </summary>
+        /// <param name="period">Selected period</param>
+        /// <param name="week">Selected week</param>
+        /// <returns>Object for displaying data</returns>
+        private PAndLSummarySection CalculateRevenue(PeriodMarker period, WeekMarker week)
+        {
+            CancellationToken cancelToken = _cts.Token;
+
+            List<DailySale> periodSales = _models.DailySales.Where(x => period.StartDate <= x.Date && x.Date <= period.EndDate).ToList();
+
+            DateTime lastUpdated = GetLastUpdated(period, periodSales);
+            List<SquareSale>[] dailySales = GetDailySales(period, lastUpdated, cancelToken);
 
             // destroy period sale records that are partial days
             foreach (DailySale sale in periodSales.Where(x => lastUpdated <= x.Date && x.Date <= period.EndDate))
             {
                 sale.Destroy();
             }
+            periodSales = periodSales.Where(x => x.Date <= lastUpdated).ToList();
 
-            periodSales = periodSales.Where(x => period.StartDate <= x.Date && x.Date <= lastUpdated).ToList();
+            // dictionary mapping sale category to revenue in that category for the period
+            Dictionary<string, float> periodRevenueDict = new Dictionary<string, float>();
+            // ditto the week
+            Dictionary<string, float> weekRevenueDict = new Dictionary<string, float>();
+            // dictionary mapping sale category to revenue in that category for period up to the week 
+            Dictionary<string, float> prevPeriodRevenueDict = new Dictionary<string, float>();
+            // dictionary mapping item name to category
+            Dictionary<string, string> itemCategoryCache = new Dictionary<string, string>();
+
             foreach (DailySale sale in periodSales)
             {
                 if (!itemCategoryCache.ContainsKey(sale.Name))
                     itemCategoryCache[sale.Name] = sale.Category;
                 if (!periodRevenueDict.ContainsKey(sale.Category))
+                {
                     periodRevenueDict[sale.Category] = 0;
+                    weekRevenueDict[sale.Category] = 0;
+                    prevPeriodRevenueDict[sale.Category] = 0;
+                }
                 periodRevenueDict[sale.Category] += sale.NetTotal;
 
                 if(week.StartDate <= sale.Date && sale.Date <= week.EndDate)
-                {
-                    if (!weekRevenueDict.ContainsKey(sale.Category))
-                        weekRevenueDict[sale.Category] = 0;
                     weekRevenueDict[sale.Category] += sale.NetTotal;
-                }
-                else
-                {
-                    if (!prevPeriodRevenueDict.ContainsKey(sale.Category))
-                        prevPeriodRevenueDict[sale.Category] = 0;
+                if(sale.Date < week.StartDate)
                     prevPeriodRevenueDict[sale.Category] += sale.NetTotal;
-                }
             }
 
             List<Recipe> soldItems = _models.RContainer.Items.Where(x => !x.IsBatch).ToList();
@@ -209,6 +249,7 @@ namespace BuddhaBowls
 
             for (int i = 0; i < dailySales.Length; i++)
             {
+                cancelToken.ThrowIfCancellationRequested();
                 salesToSave[i] = new List<DailySale>();
 
                 if (dailySales[i] != null)
@@ -217,6 +258,7 @@ namespace BuddhaBowls
                     {
                         foreach (SquareItemization itemization in sale.Itemizations)
                         {
+                            cancelToken.ThrowIfCancellationRequested();
                             if (!itemCategoryCache.ContainsKey(itemization.Name))
                             {
                                 Recipe matchingRec = soldItems.FirstOrDefault(x => x.Name == itemization.Name);
@@ -235,7 +277,7 @@ namespace BuddhaBowls
                                     weekRevenueDict[itemCategoryCache[itemization.Name]] = 0;
                                 weekRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
                             }
-                            else
+                            if(sale.TransactionTime < week.StartDate)
                             {
                                 if (!prevPeriodRevenueDict.ContainsKey(itemCategoryCache[itemization.Name]))
                                     prevPeriodRevenueDict[itemCategoryCache[itemization.Name]] = 0;
@@ -265,7 +307,7 @@ namespace BuddhaBowls
                 }
             }
 
-            // save the results to disk
+            // save the results
             foreach (List<DailySale> sales in salesToSave)
             {
                 foreach(DailySale sale in sales)
@@ -275,6 +317,8 @@ namespace BuddhaBowls
                 }
             }
 
+            //List<SquareSale> debugSales = new SquareService().ListTransactions(period.StartDate, period.EndDate);
+            List<SquareSale> debugWeekSales = new SquareService().ListTransactions(week.StartDate, week.EndDate);
             float weekTotal = weekRevenueDict.Sum(x => x.Value);
             float prevPeriodTotal = prevPeriodRevenueDict.Sum(x => x.Value);
 
@@ -301,7 +345,7 @@ namespace BuddhaBowls
                 PeriodPBudget = 1
             });
 
-            e.Result = new PAndLSummarySection("Sales", week.Period, revenueItems);
+            return new PAndLSummarySection("Sales", week.Period, revenueItems);
         }
 
         private void _worker_RunWorkerCompletedPayroll(object sender, RunWorkerCompletedEventArgs e)

@@ -128,8 +128,15 @@ namespace BuddhaBowls
 
         private void GoToCurWeek(object obj)
         {
+            // temporarily disable on change delegate so it does not get fired twice
+            WeekChange tempOnChage = OnChangeWeek;
+            OnChangeWeek = DummyOnChange;
             SelectedPeriod = PeriodList.FirstOrDefault(x => x.StartDate < DateTime.Now && DateTime.Now <= x.EndDate);
             SelectedWeek = WeekList.FirstOrDefault(x => x.StartDate < DateTime.Now && DateTime.Now <= x.EndDate);
+            OnChangeWeek = tempOnChage;
+            OnChangeWeek(SelectedPeriod, SelectedWeek);
         }
+
+        private void DummyOnChange(PeriodMarker period, WeekMarker week) { }
     }
 }

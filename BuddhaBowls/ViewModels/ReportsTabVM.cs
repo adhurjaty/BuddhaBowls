@@ -16,7 +16,7 @@ namespace BuddhaBowls
     public class ReportsTabVM : ChangeableTabVM
     {
         private CogsVM _cogsVM;
-        //private ProfitLossVM _plVM;
+        private ProfitLossVM _plVM;
 
         public List<CogsCategory> WeekCogs
         {
@@ -39,7 +39,7 @@ namespace BuddhaBowls
         public ReportsTabVM() : base()
         {
             InitSwitchButtons(new string[] { "COGS", "P & L" });
-            //_plVM = new ProfitLossVM(this);
+            _plVM = new ProfitLossVM(this);
             if(DBConnection)
                 PeriodSelector = new PeriodSelectorVM(_models, SwitchedPeriod, hasShowAll: false);
         }
@@ -74,8 +74,8 @@ namespace BuddhaBowls
         public void SwitchedPeriod(PeriodMarker period, WeekMarker week)
         {
             _cogsVM.CalculateCogs(week);
-            //PeriodCogs = _cogsVM.GetCogs(period).ToList();
-            //_plVM.CalculatePAndL(period, week);
+            PeriodCogs = _cogsVM.GetCogs(period).ToList();
+            _plVM.CalculatePAndL(period, week);
         }
 
         #endregion
@@ -94,7 +94,7 @@ namespace BuddhaBowls
                     break;
                 case 1:
                     Header = "Profit & Loss";
-                    //TabControl = _tabCache[1] ?? new PAndLControl(_plVM);
+                    TabControl = _tabCache[1] ?? new PAndLControl(_plVM);
                     break;
                 case -1:
                     //DisplayItemsNotFound();
