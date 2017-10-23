@@ -1,6 +1,7 @@
 ﻿using BuddhaBowls.Helpers;
 using Squirrel;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
@@ -21,11 +22,16 @@ namespace BuddhaBowls
 
         public MainClass()
         {
-            //using (var mgr = new UpdateManager("C:\\Projects\\MyApp\\Releases"))
-            //{
-            //    mgr.UpdateApp().Wait();
-            //}
+            string procName = Process.GetCurrentProcess().ProcessName;
 
+            // get the list of all processes by the "procName"       
+            Process[] processes = Process.GetProcessesByName(procName);
+
+            if (processes.Length > 1)
+            {
+                MessageBox.Show(procName + " already running");
+                Current.Shutdown();
+            }
         }
 
         protected override void OnStartup(StartupEventArgs e)

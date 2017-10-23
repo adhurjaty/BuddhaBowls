@@ -176,7 +176,7 @@ namespace BuddhaBowls.Models
         {
             if (SelectedVendor != null)
             {
-                InventoryItem item = _vendorDict[_vendorDict.Keys.First(x => x.Id == SelectedVendor.Id)];
+                InventoryItem item = _vendorDict.First(x => x.Key.Id == SelectedVendor.Id).Value;
                 LastPurchasedPrice = item.LastPurchasedPrice;
                 Conversion = item.Conversion;
                 PurchasedUnit = item.PurchasedUnit;

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System;
+using BuddhaBowls.Helpers;
 
 namespace BuddhaBowls
 {
@@ -14,16 +15,8 @@ namespace BuddhaBowls
     /// <summary>
     /// VM for a part of the View Order tab. Handles all of the things that an individual order breakdown needs
     /// </summary>
-    public class OrderBreakdownVM : INotifyPropertyChanged
+    public class OrderBreakdownVM : TabVM
     {
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         private ObservableCollection<BreakdownCategoryItem> _breakdownList;
         public ObservableCollection<BreakdownCategoryItem> BreakdownList
         {
@@ -145,9 +138,21 @@ namespace BuddhaBowls
         {
             BreakdownCategoryItem bdItem = BreakdownList.FirstOrDefault(x => x.Category == item.Category);
             if (bdItem == null)
-                BreakdownList.Add(new BreakdownCategoryItem(new List<InventoryItem>() { item }));
+            {
+                BreakdownList.Add(new BreakdownCategoryItem(new List<InventoryItem>() { item })
+                {
+                    Background = _models.GetCategoryColorHex(item.Category),
+                    OrderVendor = OrderVendor,
+                    IsReadOnly = true
+                });
+                BreakdownList = new ObservableCollection<BreakdownCategoryItem>(BreakdownList.OrderBy(x => _models.SortCategory(x.Category)));
+            }
             else
+            {
                 bdItem.UpdateOrderItem(item);
+                if (bdItem.Items.Count == 0)
+                    BreakdownList.Remove(bdItem);
+            }
             UpdateTotal();
             NotifyPropertyChanged("BreakdownList");
             //BreakdownList = new ObservableCollection<BreakdownCategoryItem>(BreakdownList);
@@ -209,7 +214,6 @@ namespace BuddhaBowls
         {
             Items = new ObservableCollection<InventoryItem>(items);
             Category = Items.First().Category;
-
         }
 
         public BreakdownCategoryItem(IEnumerable<InventoryItem> items, BreakdownUpdate valueChanged, bool readOnly) : this(items)
@@ -228,10 +232,20 @@ namespace BuddhaBowls
                 InventoryItem listItem = Items.FirstOrDefault(x => x.Id == item.Id);
                 if (listItem != null)
                 {
-                    int idx = Items.IndexOf(listItem);
-                    Items[idx] = item;
+                    if (listItem.LastOrderAmount == 0)
+                        Items.Remove(listItem);
+                    else
+                    {
+                        int idx = Items.IndexOf(listItem);
+                        Items[idx] = item;
+                    }
+                    Items = new ObservableCollection<InventoryItem>(Items);
                 }
-                Items = new ObservableCollection<InventoryItem>(Items);
+                else if(item.LastOrderAmount != 0)
+                {
+                    Items.Add(item);
+                    Items = new ObservableCollection<InventoryItem>(MainHelper.SortItems(Items));
+                }
             }
 
             NotifyPropertyChanged("TotalAmount");

@@ -89,7 +89,19 @@ namespace BuddhaBowls
         }
 
         // vendors in the Vendor dropdown
-        public ObservableCollection<Vendor> VendorList { get; set; }
+        private ObservableCollection<Vendor> _vendorList;
+        public ObservableCollection<Vendor> VendorList
+        {
+            get
+            {
+                return _vendorList;
+            }
+            set
+            {
+                _vendorList = value;
+                NotifyPropertyChanged("VendorList");
+            }
+        }
 
         public DateTime OrderDate { get; set; } = DateTime.Today;
 
@@ -155,9 +167,10 @@ namespace BuddhaBowls
             //RefreshInventoryList();
             //SetLastOrderBreakdown();
             ShowSelectVendor();
-            VendorList = new ObservableCollection<Vendor>(_models.VContainer.Items);
+            RefreshVendors();
             PurchasedUnitList = _models.GetPurchasedUnits();
             _itemsContainer = _models.VIContainer.Copy();
+            _models.VContainer.AddUpdateBinding(RefreshVendors);
         }
 
         #region ICommand Helpers
@@ -209,7 +222,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void ClearOrderAmounts(object obj)
         {
-            foreach (InventoryItem item in _itemsContainer.Items)
+            foreach (VendorInventoryItem item in _itemsContainer.Items)
             {
                 item.LastOrderAmount = 0;
             }
@@ -290,6 +303,11 @@ namespace BuddhaBowls
                 FilteredOrderItems = MainHelper.FilterInventoryItems(FilterText, _itemsContainer.Items);
                 NotifyPropertyChanged("FilteredOrderItems");
             }
+        }
+
+        private void RefreshVendors()
+        {
+            VendorList = new ObservableCollection<Vendor>(_models.VContainer.Items);
         }
 
         /// <summary>
