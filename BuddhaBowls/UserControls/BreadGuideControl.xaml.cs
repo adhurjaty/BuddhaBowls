@@ -255,9 +255,10 @@ namespace BuddhaBowls.UserControls
 
             Grid thisGrid = (Grid)t.Parent;
 
+            // not sure if this is an error or WPF calls T_EditValue too frequently
             if(thisGrid == null)
             {
-                MessageBox.Show("Parent Grid is null");
+                //MessageBox.Show("Parent Grid is null");
                 return;
             }
 

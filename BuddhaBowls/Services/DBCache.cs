@@ -143,6 +143,20 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
+        /// Method used to put categories in the inventory order
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
+        public int SortCategory(string category)
+        {
+            List<string> categories = GetInventoryCategories();
+            int position = categories.IndexOf(category);
+            if (position == -1)
+                return categories.Count;
+            return position;
+        }
+
+        /// <summary>
         /// Get all of the count units that currently exist in inventory items
         /// </summary>
         /// <returns></returns>
@@ -223,15 +237,15 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public List<string> GetInventoryCategories()
         {
-            HashSet<string> categories = new HashSet<string>();
+            //HashSet<string> categories = new HashSet<string>();
 
-            foreach (VendorInventoryItem item in VIContainer.Items)
-            {
-                if (!string.IsNullOrWhiteSpace(item.Category))
-                    categories.Add(item.Category);
-            }
+            //foreach (VendorInventoryItem item in VIContainer.Items)
+            //{
+            //    if (!string.IsNullOrWhiteSpace(item.Category))
+            //        categories.Add(item.Category);
+            //}
 
-            return categories.ToList();
+            return VIContainer.Items.Select(x => x.Category).Distinct().ToList();
         }
 
         /// <summary>
