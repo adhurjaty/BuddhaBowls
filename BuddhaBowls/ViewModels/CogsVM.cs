@@ -388,6 +388,13 @@ namespace BuddhaBowls
         public float RecValue { get; set; }
         public float EndCount { get; set; }
         public float EndValue { get; set; }
+        public float Usage
+        {
+            get
+            {
+                return StartCount - EndCount + RecCount;
+            }
+        }
 
         public CatItem(string name, InventoryItem startItem, InventoryItem endItem, IEnumerable<InventoryItem> purchasedItem)
         {

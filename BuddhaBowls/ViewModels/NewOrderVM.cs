@@ -320,7 +320,6 @@ namespace BuddhaBowls
             if (OrderVendor != null)
             {
                 _itemsContainer.SetItems(_itemsContainer.Items.Where(x => x.Vendors.Select(y => y.Id).Contains(OrderVendor.Id)).ToList());
-                //_shownInvItems = _sortedInvtems.Where(x => x.Vendors.Select(y => y.Id).Contains(OrderVendor.Id)).ToList();
             }
 
             if (_itemsContainer != null && _itemsContainer.Items.Count > 0)
@@ -335,7 +334,6 @@ namespace BuddhaBowls
             else
             {
                 ShowMissingVendorItems();
-                //_shownInvItems = null;
                 UnitVisibility = Visibility.Hidden;
             }
             SetLastOrderBreakdown();

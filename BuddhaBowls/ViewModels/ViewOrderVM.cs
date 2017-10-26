@@ -147,12 +147,12 @@ namespace BuddhaBowls
         private void OrderEdited(InventoryItem item)
         {
             _order.UpdateItem(item);
+            BreakdownContext.UpdateTotal();
 
             // check whether the item being edited is the latest order from this vendor. If so, then change the properties of the current
             // inventory item (last order price, last order qty...)
             PurchaseOrder latestOrderFromVendor = _models.POContainer.Items.Where(x => x.VendorName == _order.VendorName)
                                                                         .OrderByDescending(x => x.OrderDate).First();
-            BreakdownContext.UpdateTotal();
             if (latestOrderFromVendor.Id == _order.Id)
             {
                 Vendor vend = _models.VContainer.Items.First(x => x.Name == _order.VendorName);

@@ -98,7 +98,7 @@ namespace BuddhaBowls.Models
 
         public void Receive()
         {
-            ReceivedDate = DateTime.Now;
+            ReceivedDate = DateTime.Today;
             Update();
             _orderChanged = true;
         }

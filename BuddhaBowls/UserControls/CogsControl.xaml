@@ -55,6 +55,7 @@
                     <DataGridTextColumn Header="Rec Value" Binding="{Binding Path=RecValue, StringFormat=c}" Width="1*" />
                     <DataGridTextColumn Header="End Count" Binding="{Binding EndCount}" Width="1*" />
                     <DataGridTextColumn Header="End Value" Binding="{Binding Path=EndValue, StringFormat=c}" Width="1*" />
+                    <DataGridTextColumn Header="Usage" Binding="{Binding Path=Usage}" Width="1*" />
                 </DataGrid.Columns>
             </DataGrid>
             <!--<DataGrid Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding StartInv}"

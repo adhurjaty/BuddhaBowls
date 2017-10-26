@@ -251,6 +251,22 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
+        /// Updates the last vendor and selected vendor for VendorInventoryItems in the order
+        /// </summary>
+        /// <param name="order"></param>
+        public void UpdateSelectedVendor(PurchaseOrder order)
+        {
+            Vendor vend = _vendorsContainer.Items.First(x => x.Name == order.VendorName);
+            foreach (int id in order.GetPOItems().Select(x => x.Id))
+            {
+                VendorInventoryItem item = Items.First(x => x.Id == id);
+                item.SelectedVendor = vend;
+                item.LastVendorId = vend.Id;
+                item.Update();
+            }
+        }
+
+        /// <summary>
         /// Convert to an InventoryItemsContainer with empty update bindings
         /// </summary>
         /// <returns></returns>
