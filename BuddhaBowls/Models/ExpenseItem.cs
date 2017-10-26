@@ -67,14 +67,14 @@ namespace BuddhaBowls.Models
         public DateTime Date { get; set; }
         public string ExpenseType { get; set; }
 
-        public ExpenseItem()
+        public ExpenseItem() : base()
         {
-            Date = DateTime.Now;
+            Date = MainHelper.GetThisWeek().StartDate;
+            _tableName = "ExpenseItem";
         }
 
-        public ExpenseItem(string expenseType, string name, DateTime date)
+        public ExpenseItem(string expenseType, string name, DateTime date) : this()
         {
-            _tableName = "ExpenseItem";
             Date = date;
             Name = name;
             ExpenseType = expenseType;

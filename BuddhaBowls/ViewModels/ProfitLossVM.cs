@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -101,34 +103,42 @@ namespace BuddhaBowls
 
         public async void CalculatePAndL(PeriodMarker period, WeekMarker week)
         {
-            SquareProgMessage = "Updating from Square...";
-
-            if (_cts != null)
+            if (GetLastUpdated(period, _models.DailySales) < period.EndDate || 
+                _models.ExpenseItems.FirstOrDefault(x => x.Date == week.StartDate) == null)
             {
-                _cts.Cancel();
-            }
-            _cts = new CancellationTokenSource();
+                SquareProgMessage = "Updating from Square...";
 
-            try
-            {
-                Task<PAndLSummarySection> revenueTask = new Task<PAndLSummarySection>(() => CalculateRevenue(period, week));
-                revenueTask.Start();
+                if (_cts != null)
+                {
+                    _cts.Cancel();
+                }
+                _cts = new CancellationTokenSource();
 
-                SummarySections[0] = await revenueTask;
-            }
-            catch (OperationCanceledException e)
-            {
-                return;
-            }
-            finally
-            {
-                _cts = null;
-            }
+                try
+                {
+                    Task<PAndLSummarySection> revenueTask = new Task<PAndLSummarySection>(() => CalculateRevenue(period, week));
+                    revenueTask.Start();
 
-            SummarySections[1] = new PAndLSummarySection("Cost of Sales", week.Period, GetCogsSummaryItems());
-            SummarySections[2] = new PAndLSummarySection("Payroll", week.Period, GetPayrollSummaryItems(period, week));
-            SummarySections[3] = new PAndLSummarySection("Overhead Expense", week.Period, GetOverheadSummaryItems(period, week));
-            SquareProgMessage = "";
+                    SummarySections[0] = await revenueTask;
+                }
+                catch (OperationCanceledException e)
+                {
+                    return;
+                }
+                finally
+                {
+                    _cts = null;
+                }
+
+                SummarySections[1] = new PAndLSummarySection("Cost of Sales", week.Period, GetCogsSummaryItems());
+                SummarySections[2] = new PAndLSummarySection("Payroll", week.Period, GetPayrollSummaryItems(period, week), true);
+                SummarySections[3] = new PAndLSummarySection("Overhead Expense", week.Period, GetOverheadSummaryItems(period, week), true);
+                SquareProgMessage = "";
+            }
+            else
+            {
+                SectionsFromDB(week);
+            }
 
             // TODO: populate payroll
             //_payrollWorker = new BackgroundWorker();
@@ -143,6 +153,17 @@ namespace BuddhaBowls
         }
 
         #endregion
+
+        private void SectionsFromDB(WeekMarker week)
+        {
+            Dictionary<string, List<ExpenseItem>> sectionDict = _models.ExpenseItems.GroupBy(x => x.ExpenseType)
+                                                                       .ToDictionary(x => x.Key, x => x.OrderByDescending(y => y.WeekBudget).ToList());
+            string[] labels = new string[] { "Sales", "Cost of Sales", "Payroll", "Overhead Expense" };
+            for (int i = 0; i < labels.Length; i++)
+            {
+                SummarySections[i] = new PAndLSummarySection(labels[i], week.Period, sectionDict[labels[i]]);
+            }
+        }
 
         /// <summary>
         /// Gets the date when the last record was retrieved from API
@@ -204,18 +225,28 @@ namespace BuddhaBowls
         private PAndLSummarySection CalculateRevenue(PeriodMarker period, WeekMarker week)
         {
             CancellationToken cancelToken = _cts.Token;
+            //List<DailySale> periodSales = _models.DailySales.Where(x => period.StartDate <= x.Date && x.Date <= period.EndDate).ToList();
 
-            List<DailySale> periodSales = _models.DailySales.Where(x => period.StartDate <= x.Date && x.Date <= period.EndDate).ToList();
+            List<ExpenseItem> revenueItems = new List<ExpenseItem>();
 
-            DateTime lastUpdated = GetLastUpdated(period, periodSales);
+            DateTime lastUpdated = GetLastUpdated(period, _models.DailySales);
+
             List<SquareSale>[] dailySales = GetDailySales(period, lastUpdated, cancelToken);
 
+            _models.ClearPrevDailySales(period.StartDate);
+
             // destroy period sale records that are partial days
-            foreach (DailySale sale in periodSales.Where(x => lastUpdated <= x.Date && x.Date <= period.EndDate))
+            foreach (DailySale sale in _models.DailySales.Where(x => x.Date == lastUpdated))
             {
                 sale.Destroy();
             }
-            periodSales = periodSales.Where(x => x.Date <= lastUpdated).ToList();
+
+            //periodSales = periodSales.Where(x => x.Date <= lastUpdated).ToList();
+            //List<SquareSale> debugWeekSales = new SquareService().ListTransactions(week.StartDate, week.EndDate);
+            //List<string> debugGroupedList = debugWeekSales.Where(x => x.TransactionTime.Date == DateTime.Today.AddDays(-1))
+            //                                              .SelectMany(x => x.Itemizations)
+            //                                              .GroupBy(x => x.Name)
+            //                                              .Select(x => x.Key + " " + x.Sum(y => y.NetTotal).ToString()).ToList();
 
             // dictionary mapping sale category to revenue in that category for the period
             Dictionary<string, float> periodRevenueDict = new Dictionary<string, float>();
@@ -226,7 +257,8 @@ namespace BuddhaBowls
             // dictionary mapping item name to category
             Dictionary<string, string> itemCategoryCache = new Dictionary<string, string>();
 
-            foreach (DailySale sale in periodSales)
+            // fill dictionaries with historical data from database
+            foreach (DailySale sale in _models.DailySales.Where(x => x.Date < lastUpdated))
             {
                 if (!itemCategoryCache.ContainsKey(sale.Name))
                     itemCategoryCache[sale.Name] = sale.Category;
@@ -238,9 +270,9 @@ namespace BuddhaBowls
                 }
                 periodRevenueDict[sale.Category] += sale.NetTotal;
 
-                if(week.StartDate <= sale.Date && sale.Date <= week.EndDate)
+                if (week.StartDate <= sale.Date && sale.Date <= week.EndDate)
                     weekRevenueDict[sale.Category] += sale.NetTotal;
-                if(sale.Date < week.StartDate)
+                if (sale.Date < week.StartDate)
                     prevPeriodRevenueDict[sale.Category] += sale.NetTotal;
             }
 
@@ -277,7 +309,7 @@ namespace BuddhaBowls
                                     weekRevenueDict[itemCategoryCache[itemization.Name]] = 0;
                                 weekRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
                             }
-                            if(sale.TransactionTime < week.StartDate)
+                            if (sale.TransactionTime < week.StartDate)
                             {
                                 if (!prevPeriodRevenueDict.ContainsKey(itemCategoryCache[itemization.Name]))
                                     prevPeriodRevenueDict[itemCategoryCache[itemization.Name]] = 0;
@@ -285,7 +317,7 @@ namespace BuddhaBowls
                             }
 
                             DailySale existingSale = salesToSave[i].FirstOrDefault(x => x.Name == itemization.Name);
-                            if(existingSale != null)
+                            if (existingSale != null)
                             {
                                 existingSale.Quantity += itemization.Quantity;
                                 existingSale.NetTotal += itemization.NetTotal;
@@ -310,31 +342,33 @@ namespace BuddhaBowls
             // save the results
             foreach (List<DailySale> sales in salesToSave)
             {
-                foreach(DailySale sale in sales)
+                foreach (DailySale sale in sales)
                 {
-                    lock(_lock)
+                    lock (_lock)
                         sale.Insert();
                 }
             }
 
             //List<SquareSale> debugSales = new SquareService().ListTransactions(period.StartDate, period.EndDate);
-            List<SquareSale> debugWeekSales = new SquareService().ListTransactions(week.StartDate, week.EndDate);
             float weekTotal = weekRevenueDict.Sum(x => x.Value);
             float prevPeriodTotal = prevPeriodRevenueDict.Sum(x => x.Value);
 
-            List<ExpenseItem> revenueItems = new List<ExpenseItem>();
+            ExpenseItem ei;
             foreach (string key in periodRevenueDict.Keys)
             {
-                revenueItems.Add(new ExpenseItem()
+                ei = new ExpenseItem()
                 {
                     Name = key,
                     WeekSales = weekRevenueDict[key],
                     WeekPSales = weekRevenueDict[key] / weekTotal,
                     PrevPeriodSales = prevPeriodRevenueDict.ContainsKey(key) ? prevPeriodRevenueDict[key] : 0,
-                    PeriodPSales = periodRevenueDict[key] / weekTotal
-                });
+                    PeriodPSales = periodRevenueDict[key] / weekTotal,
+                    Date = week.StartDate
+                };
+                revenueItems.Add(ei);
+                ei.Insert();
             }
-            revenueItems.Add(new ExpenseItem()
+            ei = new ExpenseItem()
             {
                 Name = "Total",
                 WeekSales = weekRevenueDict.Sum(x => x.Value),
@@ -342,30 +376,33 @@ namespace BuddhaBowls
                 WeekPBudget = 1,
                 PrevPeriodSales = prevPeriodRevenueDict.Sum(x => x.Value),
                 PeriodPSales = 1,
-                PeriodPBudget = 1
-            });
+                PeriodPBudget = 1,
+                Date = week.StartDate
+            };
+            revenueItems.Add(ei);
+            ei.Insert();
 
             return new PAndLSummarySection("Sales", week.Period, revenueItems);
         }
 
-        private void _worker_RunWorkerCompletedPayroll(object sender, RunWorkerCompletedEventArgs e)
+        //private void _worker_RunWorkerCompletedPayroll(object sender, RunWorkerCompletedEventArgs e)
+        //{
+        //    //SummarySections[2] = (PAndLSummarySection)e.Result;
+        //}
+
+        //private void _worker_DoWorkPayroll(object sender, DoWorkEventArgs e)
+        //{
+        //    PeriodMarker period = (PeriodMarker)((object[])e.Argument)[0];
+        //    WeekMarker week = (WeekMarker)((object[])e.Argument)[1];
+
+        //    //e.Result = new PAndLSummarySection("Payroll", PeriodSelector.SelectedWeek.Period, );
+        //}
+
+
+        public void FillEditableItem(PAndLSummarySection section, ExpenseItem item)
         {
-            //SummarySections[2] = (PAndLSummarySection)e.Result;
-        }
-
-        private void _worker_DoWorkPayroll(object sender, DoWorkEventArgs e)
-        {
-            PeriodMarker period = (PeriodMarker)((object[])e.Argument)[0];
-            WeekMarker week = (WeekMarker)((object[])e.Argument)[1];
-
-            //e.Result = new PAndLSummarySection("Payroll", PeriodSelector.SelectedWeek.Period, );
-        }
-
-
-        public void FillEditableItem(ExpenseItem item)
-        {
-            ExpenseItem totalSales = SummarySections[0].Summaries.Last();
-            if(totalSales.WeekSales != 0)
+            ExpenseItem totalSales = section.Summaries.Last();
+            if (totalSales.WeekSales != 0)
                 item.WeekPSales = item.WeekSales / totalSales.WeekSales;
             else
                 item.WeekPSales = 0;
@@ -397,13 +434,15 @@ namespace BuddhaBowls
 
             float foodCogs = _reportsTab.WeekCogs.First(x => x.Name == "Food Total").CogsCost;
             float perFoodCogs = _reportsTab.PeriodCogs.First(x => x.Name == "Food Total").CogsCost;
+            DateTime weekStart = _reportsTab.PeriodSelector.SelectedWeek.StartDate;
             summary.Add(new ExpenseItem()
             {
                 Name = "Food",
                 WeekPSales = foodCogs / totalWeekCogs,
                 WeekSales = foodCogs,
                 PeriodPSales = perFoodCogs / totalPerCogs,
-                PrevPeriodSales = perFoodCogs - foodCogs
+                PrevPeriodSales = perFoodCogs - foodCogs,
+                Date = weekStart
             });
             float bevCogs = _reportsTab.WeekCogs.First(x => x.Name == "Beverage").CogsCost;
             float perBevCogs = _reportsTab.PeriodCogs.First(x => x.Name == "Beverage").CogsCost;
@@ -413,7 +452,8 @@ namespace BuddhaBowls
                 WeekPSales = bevCogs / totalWeekCogs,
                 WeekSales = bevCogs,
                 PeriodPSales = perBevCogs / totalPerCogs,
-                PrevPeriodSales = perBevCogs - bevCogs
+                PrevPeriodSales = perBevCogs - bevCogs,
+                Date = weekStart
             });
             float paperCogs = _reportsTab.WeekCogs.First(x => x.Name == "Paper Goods").CogsCost;
             float perPaperCogs = _reportsTab.PeriodCogs.First(x => x.Name == "Paper Goods").CogsCost;
@@ -423,7 +463,8 @@ namespace BuddhaBowls
                 WeekPSales = paperCogs / totalWeekCogs,
                 WeekSales = paperCogs,
                 PeriodPSales = perPaperCogs / totalPerCogs,
-                PrevPeriodSales = perPaperCogs - paperCogs
+                PrevPeriodSales = perPaperCogs - paperCogs,
+                Date = weekStart
             });
 
             return summary;
@@ -525,15 +566,15 @@ namespace BuddhaBowls
     {
         public string SummaryType { get; set; }
         public int WeekNumber { get; set; }
-        public bool ReadOnly { get; set; }
+        public bool CanEdit { get; set; }
         public ObservableCollection<ExpenseItem> Summaries { get; set; }
 
-        public PAndLSummarySection(string sumType, int weekNum, IEnumerable<ExpenseItem> items, bool readOnly = true)
+        public PAndLSummarySection(string sumType, int weekNum, IEnumerable<ExpenseItem> items, bool canEdit = false)
         {
             SummaryType = sumType;
             WeekNumber = weekNum;
             Summaries = new ObservableCollection<ExpenseItem>(items);
-            ReadOnly = ReadOnly;
+            CanEdit = canEdit;
         }
     }
 }

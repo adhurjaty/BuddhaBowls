@@ -34,8 +34,8 @@ namespace BuddhaBowls.UserControls
         private void dataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
             ExpenseItem item = (ExpenseItem)e.Row.Item;
-            //string sectionName = ((PAndLSummarySection)((DataGrid)e.Row.Parent).DataContext).SummaryType;
-            ((ProfitLossVM)DataContext).FillEditableItem(item);
+            PAndLSummarySection section = (PAndLSummarySection)((DataGrid)e.Row.Parent).DataContext;
+            ((ProfitLossVM)DataContext).FillEditableItem(section, item);
         }
     }
 }

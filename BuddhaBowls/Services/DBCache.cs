@@ -184,6 +184,20 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
+        /// Clears all daily sale records before the startDate
+        /// </summary>
+        /// <param name="startDate"></param>
+        public void ClearPrevDailySales(DateTime startDate)
+        {
+            // may need to speed this up
+            foreach (DailySale sale in DailySales.Where(x => x.Date < startDate).ToList())
+            {
+                sale.Destroy();
+            }
+            DailySales = DailySales.Where(x => x.Date >= startDate).ToList();
+        }
+
+        /// <summary>
         /// Get all of the purchased units that currently exist in inventory items
         /// </summary>
         /// <returns></returns>

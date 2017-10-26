@@ -21,27 +21,38 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <DataGrid x:Name="dataGrid" ItemsSource="{Binding Summaries}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                  CanUserReorderColumns="False" IsReadOnly="True" AutoGenerateColumns="False" CanUserSortColumns="False"
+                                  CanUserReorderColumns="False" AutoGenerateColumns="False" CanUserSortColumns="False"
                                   CanUserAddRows="False" Margin="0, 0, 0, 20" RowEditEnding="dataGrid_RowEditEnding">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Binding="{Binding Name}" Width="1*">
+                                <DataGridTextColumn Binding="{Binding Name}" Width="1*" IsReadOnly="True">
                                     <DataGridTextColumn.HeaderTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding DataContext.SummaryType, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
                                         </DataTemplate>
                                     </DataGridTextColumn.HeaderTemplate>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="% of Sales" Binding="{Binding Path=WeekPSales, StringFormat=p}" Width="1*" />
-                                <DataGridTextColumn Binding="{Binding Path=WeekSales, StringFormat=c}" Width="1*">
-                                    <DataGridTextColumn.HeaderTemplate>
+                                <DataGridTextColumn Header="% of Sales" Binding="{Binding Path=WeekPSales, StringFormat=p}" Width="1*" IsReadOnly="True"/>
+                                <DataGridTemplateColumn Width="1*">
+                                    <DataGridTemplateColumn.HeaderTemplate>
                                         <DataTemplate>
                                             <TextBlock>
                                                 <Run Text="Week:" />
                                                 <Run Text="{Binding DataContext.WeekNumber, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
                                             </TextBlock>
                                         </DataTemplate>
-                                    </DataGridTextColumn.HeaderTemplate>
-                                </DataGridTextColumn>
+                                    </DataGridTemplateColumn.HeaderTemplate>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Path=WeekSales, StringFormat=c}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <DataGridTemplateColumn.CellEditingTemplate>
+                                        <DataTemplate>
+                                            <TextBox Text="{Binding Path=WeekSales}"
+                                                     IsEnabled="{Binding DataContext.CanEdit, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="% of Sales" Binding="{Binding Path=WeekPBudget, StringFormat=p}" Width="1*" IsReadOnly="True"/>
                                 <DataGridTextColumn Header="Budget" Binding="{Binding Path=WeekBudget, StringFormat=c}" Width="1*" />
                                 <DataGridTextColumn Header="Var $" Binding="{Binding Path=WeekVar, StringFormat=c}" Width="1*" IsReadOnly="True"/>
@@ -49,7 +60,7 @@
                                 <DataGridTextColumn Header="% of Sales" Binding="{Binding Path=PeriodPSales, StringFormat=p}" Width="1*" IsReadOnly="True"/>
                                 <DataGridTextColumn Header="PTD" Binding="{Binding Path=PeriodSales, StringFormat=c}" Width="1*" IsReadOnly="True"/>
                                 <DataGridTextColumn Header="% of Sales" Binding="{Binding Path=PeriodPBudget, StringFormat=p}" Width="1*" IsReadOnly="True"/>
-                                <DataGridTextColumn Header="Budget" Binding="{Binding Path=PeriodBudget, StringFormat=c}" Width="1*" />
+                                <DataGridTextColumn Header="Budget" Binding="{Binding Path=PeriodBudget, StringFormat=c}" Width="1*" IsReadOnly="True"/>
                                 <DataGridTextColumn Header="Var $" Binding="{Binding Path=PeriodVar, StringFormat=c}" Width="1*" IsReadOnly="True"/>
                                 <DataGridTextColumn Header="Var %" Binding="{Binding Path=PeriodPVar, StringFormat=p}" Width="1*" IsReadOnly="True"/>
                             </DataGrid.Columns>
