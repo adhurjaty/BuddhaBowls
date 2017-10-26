@@ -132,6 +132,20 @@ namespace BuddhaBowls
                 NotifyPropertyChanged("UnitVisibility");
             }
         }
+
+        private bool _isReceipt = false;
+        public bool IsReceipt
+        {
+            get
+            {
+                return _isReceipt;
+            }
+            set
+            {
+                _isReceipt = value;
+                NotifyPropertyChanged("IsReceipt");
+            }
+        }
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -180,24 +194,29 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void SaveOrder(object obj)
         {
+            FilterText = "";
             // close at top so the copy gets removed in dbcache and there are fewer updates to run
             Close();
 
-            List<VendorInventoryItem> purchasedVItems = _itemsContainer.Items.Where(x => x.LastOrderAmount > 0).ToList();
+            List<VendorInventoryItem> purchasedVItems = FilteredOrderItems.Where(x => x.LastOrderAmount > 0).ToList();
 
             List<InventoryItem> purchasedItems = purchasedVItems.Select(x => x.ToInventoryItem()).ToList();
             PurchaseOrder po = new PurchaseOrder(OrderVendor, purchasedItems, OrderDate);
 
-            GenerateAfterOrderSaved(po, OrderVendor);
+            if (IsReceipt)
+                po.Receive();
+
+            GenerateAfterOrderSaved(po, OrderVendor, !IsReceipt);
 
             _models.POContainer.AddItem(po);
 
-            _models.VIContainer.Update(purchasedVItems);
+            //_models.VIContainer.Update(purchasedVItems);
             foreach (VendorInventoryItem item in purchasedVItems)
             {
-                item.Update();
+                //item.Update();
+                item.SetVendorItem(OrderVendor, purchasedItems.First(x => x.Id == item.Id));
             }
-
+            OrderVendor.Update(purchasedItems);
         }
 
         /// <summary>
@@ -222,7 +241,9 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void ClearOrderAmounts(object obj)
         {
-            foreach (VendorInventoryItem item in _itemsContainer.Items)
+            FilterText = "";
+
+            foreach (VendorInventoryItem item in FilteredOrderItems)
             {
                 item.LastOrderAmount = 0;
             }
@@ -317,18 +338,14 @@ namespace BuddhaBowls
         {
             FilterText = "";
 
-            if (OrderVendor != null)
+            if (OrderVendor != null && _itemsContainer != null && _itemsContainer.Items.Count > 0)
             {
-                _itemsContainer.SetItems(_itemsContainer.Items.Where(x => x.Vendors.Select(y => y.Id).Contains(OrderVendor.Id)).ToList());
-            }
-
-            if (_itemsContainer != null && _itemsContainer.Items.Count > 0)
-            {
-                foreach (VendorInventoryItem item in _itemsContainer.Items)
+                List<VendorInventoryItem> displayItems = _itemsContainer.Items.Where(x => x.Vendors.Select(y => y.Id).Contains(OrderVendor.Id)).ToList();
+                foreach (VendorInventoryItem item in displayItems)
                 {
                     item.SelectedVendor = OrderVendor;
                 }
-                FilteredOrderItems = new ObservableCollection<VendorInventoryItem>(_itemsContainer.Items);
+                FilteredOrderItems = new ObservableCollection<VendorInventoryItem>(displayItems);
                 UnitVisibility = Visibility.Visible;
             }
             else
@@ -372,7 +389,7 @@ namespace BuddhaBowls
             LoadVendorItems();
         }
 
-        private void GenerateAfterOrderSaved(PurchaseOrder po, Vendor vendor)
+        private void GenerateAfterOrderSaved(PurchaseOrder po, Vendor vendor, bool openExcel)
         {
             new Thread(delegate ()
             {
@@ -380,7 +397,8 @@ namespace BuddhaBowls
                 string xlsPath = generator.GenerateOrder(po, vendor);
                 generator.GenerateReceivingList(po, vendor);
                 generator.Close();
-                System.Diagnostics.Process.Start(xlsPath);
+                if(openExcel)
+                    System.Diagnostics.Process.Start(xlsPath);
             }).Start();
         }
     }

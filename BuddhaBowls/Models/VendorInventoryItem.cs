@@ -149,7 +149,8 @@ namespace BuddhaBowls.Models
                 _vendorDict[v] = item;
                 UpdateVendorParams();
             }
-            _invItem = item;
+            if(v.Id == SelectedVendor.Id)
+                _invItem = item;
         }
 
         public void NotifyAllChanges()

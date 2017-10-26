@@ -93,12 +93,12 @@ namespace BuddhaBowls.Models
             ModelHelper.CreateTable(inventoryItems, GetOrderTableName());
 
             // update the vendor table last order amounts and prices
-            vendor.Update(inventoryItems);
+            //vendor.Update(inventoryItems);
         }
 
         public void Receive()
         {
-            ReceivedDate = DateTime.Today;
+            ReceivedDate = DateTime.Now;
             Update();
             _orderChanged = true;
         }
