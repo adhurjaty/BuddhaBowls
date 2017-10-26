@@ -401,6 +401,14 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
+        /// Gets a BreadWeekContainer by the specified date
+        /// </summary>
+        public BreadWeekContainer GetBreadWeek(DateTime date)
+        {
+            return GetBreadWeek(MainHelper.GetWeek(date));
+        }
+
+        /// <summary>
         /// Gets a BreadWeekContainer by the specified week
         /// </summary>
         public BreadWeekContainer GetBreadWeek(WeekMarker week)

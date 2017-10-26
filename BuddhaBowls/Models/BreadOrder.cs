@@ -133,6 +133,15 @@ namespace BuddhaBowls.Models
             return Path.Combine(Properties.Settings.Default.DBLocation, _tableName + ".csv");
         }
 
+        /// <summary>
+        /// Check whether the inventory of bread for all types is 0
+        /// </summary>
+        /// <returns></returns>
+        public bool IsEmpty()
+        {
+            return BreadDescDict.Select(x => x.Value.BeginInventory + x.Value.FreezerCount).Sum() == 0;
+        }
+
         private Dictionary<string, BreadDescriptor> ReadDbDescriptors()
         {
             if (string.IsNullOrWhiteSpace(BreadDescDBString))

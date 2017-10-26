@@ -48,10 +48,11 @@ namespace BuddhaBowls
             set
             {
                 _invDate = value;
+                ChangeBreadCount();
                 NotifyPropertyChanged("InvDate");
             }
         }
-        
+
         private InventoryListControl _inventoryControl;
         public InventoryListControl InventoryControl
         {
@@ -206,6 +207,30 @@ namespace BuddhaBowls
             _models.VIContainer.RemoveCopy(InvListVM.GetItemsContainer());
             base.Close();
         }
+
+        /// <summary>
+        /// Set the inventory count to whatever the bread order guide has for that day for each type of bread
+        /// </summary>
+        private void ChangeBreadCount()
+        {
+            BreadWeekContainer breadWeek = _models.GetBreadWeek(InvDate);
+            List<BreadOrder> populatedBreadOrders = breadWeek.Items.Where(x => !x.IsEmpty()).ToList();
+
+            BreadOrder breadDay;
+            if (populatedBreadOrders.Count == 0)    // if there are no inventory entries for this week, get Sunday's count
+                breadDay = _models.GetBreadWeek(InvDate.AddDays(-7)).Items[6];
+            else
+                breadDay = populatedBreadOrders.FirstOrDefault(x => x.Date.Date == InvDate) ??
+                           populatedBreadOrders.Where(x => x.Date.Date < InvDate).Last();
+
+            VendorInvItemsContainer listVmContainer = InvListVM.GetItemsContainer();
+            foreach (VendorInventoryItem item in listVmContainer.Items.Where(x => x.Category == "Bread"))
+            {
+                item.Count = breadDay.BreadDescDict[item.Name].BeginInventory + breadDay.BreadDescDict[item.Name].FreezerCount;
+            }
+            listVmContainer.PushChange();
+        }
+
         #endregion
     }
 }
