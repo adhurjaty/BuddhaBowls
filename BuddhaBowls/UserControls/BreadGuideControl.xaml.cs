@@ -22,11 +22,11 @@ namespace BuddhaBowls.UserControls
     public partial class BreadGuideControl : UserControl
     {
         private string[] _topHeaders = new string[] { "GrossSales", "SalesForecast" };
-        private string[] _typeHeaders = new string[] { "Kitchen Rack", "Freezer Count", "Delivery", "Backup", "{0}-Par", "Buffer",
+        private string[] _typeHeaders = new string[] { "Kitchen Rack", "Freezer Count", "Delivery", "{0}-Par", "Buffer",
                                                        "Projected Order", "Freezer Adj", "Useage" };
-        private string[] _breadDescProps = new string[] { "BeginInventory", "FreezerCount", "Delivery", "Backup", "Par", "Buffer",
+        private string[] _breadDescProps = new string[] { "BeginInventory", "FreezerCount", "Delivery", "Par", "Buffer",
                                                           "ProjectedOrder", "WalkIn", "Useage" };
-        private string[] _editableFields = new string[] { "BeginInventory", "Delivery", "Backup", "FreezerCount" };
+        private string[] _editableFields = new string[] { "BeginInventory", "Delivery", "FreezerCount" };
 
         private TextBlock _editingTextBlock;
 
@@ -333,22 +333,22 @@ namespace BuddhaBowls.UserControls
             ((BreadGuideVM)DataContext).UpdateValue(Grid.GetColumn(box) - 1);
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox box = (TextBox)sender;
-            int outInt = 0;
-            if (int.TryParse(box.Text, out outInt))
-            {
-                box.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-                for (int i = 0; i < 7; i++)
-                {
-                    ((BreadGuideVM)DataContext).UpdateValue(i);
-                }
-            }
-            else if(box.Text.Length > 0)
-            {
-                box.Text = box.Text.Substring(0, box.Text.Length);
-            }
-        }
+        //private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    TextBox box = (TextBox)sender;
+        //    int outInt = 0;
+        //    if (int.TryParse(box.Text, out outInt))
+        //    {
+        //        box.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+        //        for (int i = 0; i < 7; i++)
+        //        {
+        //            ((BreadGuideVM)DataContext).UpdateValue(i);
+        //        }
+        //    }
+        //    else if(box.Text.Length > 0)
+        //    {
+        //        box.Text = box.Text.Substring(0, box.Text.Length);
+        //    }
+        //}
     }
 }

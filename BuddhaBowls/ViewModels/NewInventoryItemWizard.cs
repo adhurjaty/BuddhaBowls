@@ -138,6 +138,7 @@ namespace BuddhaBowls
         {
             if (ValidateInputs())
             {
+                Item.Yield = Yield / 100.0f;
                 InventoryItem invItem = Item;
 
                 // save desired inventory order

@@ -269,6 +269,14 @@ namespace BuddhaBowls
             }
         }
 
+        public float TotalCost
+        {
+            get
+            {
+                return _recipe.TotalCost;
+            }
+        }
+
         public List<CategoryProportion> ProportionDetails
         {
             get

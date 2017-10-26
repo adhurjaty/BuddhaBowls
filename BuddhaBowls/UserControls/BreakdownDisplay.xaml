@@ -15,7 +15,7 @@
         <Border Grid.RowSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="Black" />
         <TextBlock x:Name="textBlock1" Grid.Row="0" HorizontalAlignment="Center" Margin="0,5,0,0" TextWrapping="NoWrap" Text="{Binding Header}"
                                            VerticalAlignment="Top" FontSize="18"/>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="1, 0, 1, 0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />

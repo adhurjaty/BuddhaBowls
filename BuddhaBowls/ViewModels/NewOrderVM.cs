@@ -20,6 +20,7 @@ namespace BuddhaBowls
     public class NewOrderVM : TempTabVM
     {
         private VendorInvItemsContainer _itemsContainer;
+        private List<VendorInventoryItem> _displayItems;
         //private RefreshDel RefreshOrder;
         // stores vendor inventory offering
         //private List<VendorInventoryItem> _sortedInvtems;
@@ -157,6 +158,10 @@ namespace BuddhaBowls
         public ICommand ClearOrderCommand { get; set; }
         // Auto-Select Vendor button at top of form
         public ICommand AutoSelectVendorCommand { get; set; }
+        // Adds item to vendor's sold items
+        public ICommand AddNewItemCommand { get; set; }
+        // Deletes item from vendor's sold items
+        public ICommand DeleteItemCommand { get; set; }
 
         public bool SaveOrderCanExecute
         {
@@ -177,6 +182,8 @@ namespace BuddhaBowls
             CancelNewOrderCommand = new RelayCommand(CancelOrder);
             ClearOrderCommand = new RelayCommand(ClearOrderAmounts);
             AutoSelectVendorCommand = new RelayCommand(AutoSelectVendor);
+            AddNewItemCommand = new RelayCommand(AddVendorItem, x => OrderVendor != null);
+            DeleteItemCommand = new RelayCommand(DeleteVendorItem, x => OrderVendor != null);
 
             //RefreshInventoryList();
             //SetLastOrderBreakdown();
@@ -185,6 +192,7 @@ namespace BuddhaBowls
             PurchasedUnitList = _models.GetPurchasedUnits();
             _itemsContainer = _models.VIContainer.Copy();
             _models.VContainer.AddUpdateBinding(RefreshVendors);
+            _models.VContainer.AddUpdateBinding(LoadVendorItems);
         }
 
         #region ICommand Helpers
@@ -198,10 +206,8 @@ namespace BuddhaBowls
             // close at top so the copy gets removed in dbcache and there are fewer updates to run
             Close();
 
-            List<VendorInventoryItem> purchasedVItems = FilteredOrderItems.Where(x => x.LastOrderAmount > 0).ToList();
-
-            List<InventoryItem> purchasedItems = purchasedVItems.Select(x => x.ToInventoryItem()).ToList();
-            PurchaseOrder po = new PurchaseOrder(OrderVendor, purchasedItems, OrderDate);
+            List<InventoryItem> purchasedItems = _displayItems.Select(x => x.ToInventoryItem()).ToList();
+            PurchaseOrder po = new PurchaseOrder(OrderVendor, purchasedItems.Where(x => x.LastOrderAmount > 0).ToList(), OrderDate);
 
             if (IsReceipt)
                 po.Receive();
@@ -211,10 +217,12 @@ namespace BuddhaBowls
             _models.POContainer.AddItem(po);
 
             //_models.VIContainer.Update(purchasedVItems);
-            foreach (VendorInventoryItem item in purchasedVItems)
+            foreach (VendorInventoryItem item in _displayItems)
             {
                 //item.Update();
-                item.SetVendorItem(OrderVendor, purchasedItems.First(x => x.Id == item.Id));
+                VendorInventoryItem masterItem = _models.VIContainer.Items.First(x => x.Id == item.Id);
+                masterItem.SetVendorItem(OrderVendor, purchasedItems.First(x => x.Id == item.Id));
+                //masterItem.Update();
             }
             OrderVendor.Update(purchasedItems);
         }
@@ -225,7 +233,7 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void CancelOrder(object obj)
         {
-            foreach (InventoryItem item in _itemsContainer.Items)
+            foreach (InventoryItem item in _displayItems)
             {
                 item.LastOrderAmount = item.GetPrevOrderAmount();
             }
@@ -254,6 +262,26 @@ namespace BuddhaBowls
         private void AutoSelectVendor(object obj)
         {
             throw new NotImplementedException();
+        }
+
+        private void AddVendorItem(object obj)
+        {
+            List<InventoryItem> remainingItems = _models.VIContainer.Items.Where(x => !_displayItems.Select(y => y.Id).Contains(x.Id))
+                                                                          .Select(x => x.ToInventoryItem()).ToList();
+            ModalVM<InventoryItem> modal = new ModalVM<InventoryItem>("Add Inv Item", remainingItems, AddInvItemToVendor);
+            ParentContext.ModalContext = modal;
+        }
+
+        private void DeleteVendorItem(object obj)
+        {
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to remove " + SelectedOrderItem.Name + " from " + OrderVendor.Name + "?",
+                                                      "Remove " + SelectedOrderItem.Name + "?", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                _models.VIContainer.RemoveFromVendor(SelectedOrderItem, OrderVendor);
+                OrderVendor.Update();
+                LoadVendorItems();
+            }
         }
 
         #endregion
@@ -295,7 +323,7 @@ namespace BuddhaBowls
             float oTotal = 0;
             BreakdownContext = new OrderBreakdownVM()
             {
-                BreakdownList = GetOrderBreakdown(_itemsContainer.Items, out oTotal),
+                BreakdownList = GetOrderBreakdown(_displayItems, out oTotal),
                 OrderVendor = OrderVendor,
                 Header = "Price Breakdown"
             };
@@ -319,9 +347,9 @@ namespace BuddhaBowls
         /// </summary>
         public void FilterInventoryItems()
         {
-            if (_itemsContainer != null)
+            if (_displayItems != null)
             {
-                FilteredOrderItems = MainHelper.FilterInventoryItems(FilterText, _itemsContainer.Items);
+                FilteredOrderItems = MainHelper.FilterInventoryItems(FilterText, _displayItems);
                 NotifyPropertyChanged("FilteredOrderItems");
             }
         }
@@ -340,12 +368,12 @@ namespace BuddhaBowls
 
             if (OrderVendor != null && _itemsContainer != null && _itemsContainer.Items.Count > 0)
             {
-                List<VendorInventoryItem> displayItems = _itemsContainer.Items.Where(x => x.Vendors.Select(y => y.Id).Contains(OrderVendor.Id)).ToList();
-                foreach (VendorInventoryItem item in displayItems)
+                _displayItems = _itemsContainer.Items.Where(x => x.Vendors.Select(y => y.Id).Contains(OrderVendor.Id)).ToList();
+                foreach (VendorInventoryItem item in _displayItems)
                 {
                     item.SelectedVendor = OrderVendor;
                 }
-                FilteredOrderItems = new ObservableCollection<VendorInventoryItem>(displayItems);
+                FilteredOrderItems = new ObservableCollection<VendorInventoryItem>(_displayItems);
                 UnitVisibility = Visibility.Visible;
             }
             else
@@ -386,6 +414,13 @@ namespace BuddhaBowls
 
         private void RefreshInventoryList()
         {
+            LoadVendorItems();
+        }
+
+        private void AddInvItemToVendor(InventoryItem item)
+        {
+            _models.VIContainer.UpdateItem(item, OrderVendor);
+            OrderVendor.Update();
             LoadVendorItems();
         }
 
