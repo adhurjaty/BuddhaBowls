@@ -269,14 +269,36 @@ namespace BuddhaBowls
             }
         }
 
+        public float TotalCost
+        {
+            get
+            {
+                return _recipe.TotalCost;
+            }
+        }
+
         public List<CategoryProportion> ProportionDetails
         {
             get
             {
-                List<IItem> totalItems = _recipe.GetRecipeItems().Select(x => x.GetIItem()).ToList();
-                float total = totalItems.Sum(x => x.RecipeCost);
-                return totalItems.GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x)
-                                 .Select(x => new CategoryProportion(x.Value.ToList(), total)).ToList();
+                //List<IItem> totalItems = _recipe.GetRecipeItems().Select(x => x.GetIItem()).ToList();
+                //float total = totalItems.Sum(x => x.RecipeCost);
+                //return totalItems.GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x)
+                //                 .Select(x => new CategoryProportion(x.Value.ToList(), total)).ToList();
+                List<Dictionary<string, float>> catCosts = _recipe.GetRecipeItems().Select(x => x.GetIItem().GetCategoryCosts()).ToList();
+                Dictionary<string, float> combinedCatCosts = new Dictionary<string, float>();
+                foreach (Dictionary<string, float> dict in catCosts)
+                {
+                    foreach (KeyValuePair<string, float> kvp in dict)
+                    {
+                        if (!combinedCatCosts.ContainsKey(kvp.Key))
+                            combinedCatCosts[kvp.Key] = 0;
+                        combinedCatCosts[kvp.Key] += kvp.Value;
+                    }
+                }
+                float total = combinedCatCosts.Sum(x => x.Value);
+                return combinedCatCosts.Select(x => new CategoryProportion(x.Key, x.Value, total))
+                                       .OrderByDescending(x => x.CostProportion).ToList();
             }
         }
 
@@ -301,6 +323,16 @@ namespace BuddhaBowls
         {
             Name = items[0].Category;
             Cost = items.Sum(x => x.RecipeCost);
+            if (total > 0)
+                CostProportion = Cost / total;
+            else
+                CostProportion = 0;
+        }
+
+        public CategoryProportion(string name, float cost, float total)
+        {
+            Name = name;
+            Cost = cost;
             if (total > 0)
                 CostProportion = Cost / total;
             else

@@ -59,7 +59,7 @@ namespace BuddhaBowls.Services
             VContainer = new VendorsContainer(ModelHelper.InstantiateList<Vendor>("Vendor"));
             VIContainer = new VendorInvItemsContainer(invItems.Select(x => new VendorInventoryItem(x, GetVendorsFromItem(x))).ToList(),
                                                        VContainer);
-            POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder"));
+            POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder"), VIContainer);
             InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory"));
             RContainer = new RecipesContainer(ModelHelper.InstantiateList<Recipe>("Recipe"));
             //AddRecipeItems();
@@ -412,6 +412,14 @@ namespace BuddhaBowls.Services
                     yield return item;
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets a BreadWeekContainer by the specified date
+        /// </summary>
+        public BreadWeekContainer GetBreadWeek(DateTime date)
+        {
+            return GetBreadWeek(MainHelper.GetWeek(date));
         }
 
         /// <summary>

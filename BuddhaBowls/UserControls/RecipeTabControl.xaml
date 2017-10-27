@@ -46,7 +46,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Cost/RU" Binding="{Binding CostPerRU, StringFormat=c}" Width="1*" IsReadOnly="True" />
-                <DataGridTextColumn Header="Total Cost" Binding="{Binding Path=RecipeCost, StringFormat=c}" Width="1*" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Total Cost" Binding="{Binding Path=TotalCost, StringFormat=c}" Width="1*" IsReadOnly="True"/>
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>

@@ -19,8 +19,8 @@
 
         <Label Content="Open Orders" Grid.Row="0" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="-80, 0, 0, 0" />
         <DataGrid x:Name="dataGrid1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding OpenOrders}"
-                                SelectedItem="{Binding SelectedOpenOrder}" AutoGenerateColumns="False" CanUserAddRows="False">
+                  ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding OpenOrders}" SelectedItem="{Binding SelectedOpenOrder}"
+                  AutoGenerateColumns="False" CanUserAddRows="False" CellEditEnding="dataGrid_CellEditEnding">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Width="35">
                     <DataGridTemplateColumn.CellTemplate>
@@ -32,8 +32,18 @@
                 <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Vendor" Binding="{Binding VendorName}" Width="2*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Total Cost" Binding="{Binding Path=TotalCost, StringFormat=c}" Width="2*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Order Date" Binding="{Binding Path=OrderDate, StringFormat={}{0:MM/dd/yy}}"
-                                                Width="2*" IsReadOnly="True" />
+                <DataGridTemplateColumn Header="Order Date" Width="2*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding OrderDate, StringFormat={}{0:MM/dd/yy}}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding OrderDate, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
                 <DataGridCheckBoxColumn Header="Received" Binding="{Binding ReceivedCheck}" Width="1*"/>
             </DataGrid.Columns>
 
@@ -97,7 +107,7 @@
         <Label Content="Invoice Log" Grid.Row="3" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="120, 0, 0, 0" />
         <DataGrid x:Name="dataGrid2" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ReceivedOrders}" SelectedItem="{Binding SelectedReceivedOrder}"
-                    AutoGenerateColumns="False" CanUserAddRows="False" RowEditEnding="dataGrid2_RowEditEnding" BeginningEdit="dataGrid2_BeginningEdit"
+                    AutoGenerateColumns="False" CanUserAddRows="False" CellEditEnding="dataGrid_CellEditEnding"
                     ScrollViewer.CanContentScroll="False" RowDetailsVisibilityMode="Collapsed">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Width="35">
@@ -110,14 +120,29 @@
                 <DataGridTextColumn Header="Order #" Binding="{Binding Id}" Width="1*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Vendor" Binding="{Binding VendorName}" Width="2*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Total Cost" Binding="{Binding Path=TotalCost, StringFormat=c}" Width="2*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Order Date" Binding="{Binding Path=OrderDate, StringFormat={}{0:MM/dd/yy}}"
-                                                Width="2*" IsReadOnly="True" />
+                <DataGridTemplateColumn x:Name="OrderedColumn" Header="Order Date" Width="2*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding OrderDate, StringFormat={}{0:MM/dd/yy}}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding OrderDate, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTemplateColumn x:Name="ReceivedColumn" Header="Received Date" Width="2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding ReceivedDate}" />
+                            <TextBlock Text="{Binding ReceivedDate, StringFormat={}{0:MM/dd/yy}}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding ReceivedDate, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
 

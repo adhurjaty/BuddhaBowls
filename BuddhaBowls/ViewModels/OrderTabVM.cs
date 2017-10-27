@@ -319,13 +319,10 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void MoveToReceivedOrders(object obj)
         {
-            foreach (PurchaseOrder order in OpenOrders.Where(x => x.ReceivedCheck))
-            {
-                order.Receive();
-            }
+            _models.POContainer.ReceiveOrders(OpenOrders.Where(x => x.ReceivedCheck).ToList());
             SelectedOpenOrder = null;
 
-            RefreshOrderList();
+            //RefreshOrderList();
             //ParentContext.ReportTab.Refresh();
         }
 
@@ -511,30 +508,16 @@ namespace BuddhaBowls
         #endregion
 
         #region Update UI
-        public void MoveOrderToReceived(PurchaseOrder po)
-        {
-            po.ReceivedDate = DateTime.Now;
-            RefreshOrderList();
-            ParentContext.ReportTab.Refresh();
-        }
 
         public void RefreshOrderList()
         {
             LoadPreviousOrders(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
         }
 
-        //public void OrderEdited()
-        //{
-        //    RefreshOrderList();
-        //    ParentContext.ReportTab.Refresh();
-        //}
-
-        public void UpdateRecDate(PurchaseOrder order)
+        public void RecOrderChanged(PurchaseOrder order)
         {
+            _models.POContainer.Update(order);
             order.Update();
-            //ReceivedOrders = new ObservableCollection<PurchaseOrder>(_models.PurchaseOrders.Where(x => x.Received)
-            //                                                            .OrderByDescending(x => x.ReceivedDate));
-            LoadPreviousOrders(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
         }
         #endregion
 

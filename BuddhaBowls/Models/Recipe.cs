@@ -23,7 +23,7 @@ namespace BuddhaBowls.Models
             {
                 try
                 {
-                    return GetItems().Sum(x => x.RecipeCost);
+                    return CostPerRU * Count;
                 }
                 catch (Exception e)
                 {
@@ -38,7 +38,15 @@ namespace BuddhaBowls.Models
             {
                 if (RecipeUnitConversion == null || RecipeUnitConversion == 0)
                     return 0;
-                return (float)(RecipeCost / RecipeUnitConversion);
+                return (float)(TotalCost / RecipeUnitConversion);
+            }
+        }
+
+        public float TotalCost
+        {
+            get
+            {
+                return GetItems().Sum(x => x.RecipeCost);
             }
         }
 

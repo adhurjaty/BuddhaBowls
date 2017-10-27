@@ -149,7 +149,8 @@ namespace BuddhaBowls.Models
                 _vendorDict[v] = item;
                 UpdateVendorParams();
             }
-            _invItem = item;
+            if(v.Id == SelectedVendor.Id)
+                _invItem = item;
         }
 
         public void NotifyAllChanges()
@@ -165,6 +166,7 @@ namespace BuddhaBowls.Models
             NotifyPropertyChanged("RecipeUnitConversion");
             NotifyPropertyChanged("Yield");
             NotifyPropertyChanged("LastPurchasedPrice");
+            NotifyPropertyChanged("LastOrderAmount");
             NotifyPropertyChanged("PurchasedUnit");
             NotifyPropertyChanged("Conversion");
         }
@@ -178,6 +180,7 @@ namespace BuddhaBowls.Models
             {
                 InventoryItem item = _vendorDict.First(x => x.Key.Id == SelectedVendor.Id).Value;
                 LastPurchasedPrice = item.LastPurchasedPrice;
+                LastOrderAmount = item.LastOrderAmount;
                 Conversion = item.Conversion;
                 PurchasedUnit = item.PurchasedUnit;
                 LastVendorId = SelectedVendor.Id;

@@ -31,37 +31,6 @@ namespace BuddhaBowls.UserControls
             DataContext = viewModel;
         }
 
-        private void dataGrid2_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
-        {
-            if (dataGrid2.SelectedItem != null)
-            {
-                ((DataGrid)sender).RowEditEnding -= dataGrid2_RowEditEnding;
-                ((DataGrid)sender).CommitEdit();
-                ((DataGrid)sender).RowEditEnding += dataGrid2_RowEditEnding;
-                ((OrderTabVM)DataContext).UpdateRecDate((PurchaseOrder)e.Row.Item);
-            }
-
-            FrameworkElementFactory factory = new FrameworkElementFactory(typeof(TextBlock));
-            Binding bind = new Binding("ReceivedDate");
-            bind.Mode = BindingMode.OneWay;
-            factory.SetBinding(TextBlock.TextProperty, bind);
-            DataTemplate cellTemplate = new DataTemplate();
-            cellTemplate.VisualTree = factory;
-            ReceivedColumn.CellTemplate = cellTemplate;
-        }
-
-        private void dataGrid2_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
-        {
-            FrameworkElementFactory factory = new FrameworkElementFactory(typeof(DatePicker));
-            Binding bind = new Binding("ReceivedDate");
-            bind.Mode = BindingMode.TwoWay;
-            factory.SetBinding(DatePicker.SelectedDateProperty, bind);
-            factory.Name = "recDatePicker";
-            DataTemplate cellTemplate = new DataTemplate();
-            cellTemplate.VisualTree = factory;
-            ReceivedColumn.CellTemplate = cellTemplate;
-        }
-
         private void Expander_Clicked(object sender, RoutedEventArgs e)
         {
             for (var vis = sender as Visual; vis != null; vis = VisualTreeHelper.GetParent(vis) as Visual)
@@ -72,6 +41,17 @@ namespace BuddhaBowls.UserControls
                     row.DetailsVisibility = row.DetailsVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
                     break;
                 }
+            }
+        }
+
+        private void dataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (dataGrid2.SelectedItem != null || (dataGrid1.SelectedItem != null && e.Column.Header.ToString() == "Order Date"))
+            {
+                ((DataGrid)sender).CellEditEnding -= dataGrid_CellEditEnding;
+                ((DataGrid)sender).CommitEdit();
+                ((DataGrid)sender).CellEditEnding += dataGrid_CellEditEnding;
+                ((OrderTabVM)DataContext).RecOrderChanged((PurchaseOrder)e.Row.Item);
             }
         }
     }

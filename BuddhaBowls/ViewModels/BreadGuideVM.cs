@@ -68,6 +68,32 @@ namespace BuddhaBowls
             }
         }
 
+        public int Backup
+        {
+            get
+            {
+                if (BreadOrderList != null)
+                    return BreadOrderList[0].BreadDescDict.First().Value.Backup;
+                return 0;
+            }
+            set
+            {
+                if(BreadOrderList != null)
+                {
+                    foreach (KeyValuePair<string, BreadDescriptor> kvp in BreadOrderList[0].BreadDescDict)
+                    {
+                        kvp.Value.Backup = value;
+                    }
+
+                    for (int i = 0; i < 7; i++)
+                    {
+                        BreadOrderList[i].Update();
+                        UpdateValue(i);
+                    }
+                }
+                NotifyPropertyChanged("Backup");
+            }
+        }
         #endregion
 
         #region ICommand and CanExecute
@@ -185,6 +211,15 @@ namespace BuddhaBowls
                 }
             });
             ((BreadOrderTotal)BreadOrderList[7]).UpdateDetails();
+        }
+
+        public void UpdateBackup()
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                BreadOrderList[i].Update();
+                UpdateValue(i);
+            }
         }
     }
 }

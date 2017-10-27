@@ -25,13 +25,13 @@ namespace BuddhaBowls
             string procName = Process.GetCurrentProcess().ProcessName;
 
             // get the list of all processes by the "procName"       
-            Process[] processes = Process.GetProcessesByName(procName);
+            //Process[] processes = Process.GetProcessesByName(procName);
 
-            if (processes.Length > 1)
-            {
-                MessageBox.Show(procName + " already running");
-                Current.Shutdown();
-            }
+            //if (processes.Length > 1)
+            //{
+            //    MessageBox.Show(procName + " already running");
+            //    Current.Shutdown();
+            //}
         }
 
         protected override void OnStartup(StartupEventArgs e)
