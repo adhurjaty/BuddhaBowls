@@ -333,22 +333,23 @@ namespace BuddhaBowls.UserControls
             ((BreadGuideVM)DataContext).UpdateValue(Grid.GetColumn(box) - 1);
         }
 
-        //private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    TextBox box = (TextBox)sender;
-        //    int outInt = 0;
-        //    if (int.TryParse(box.Text, out outInt))
-        //    {
-        //        box.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-        //        for (int i = 0; i < 7; i++)
-        //        {
-        //            ((BreadGuideVM)DataContext).UpdateValue(i);
-        //        }
-        //    }
-        //    else if(box.Text.Length > 0)
-        //    {
-        //        box.Text = box.Text.Substring(0, box.Text.Length);
-        //    }
-        //}
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ((BreadGuideVM)DataContext).UpdateBackup();
+            //TextBox box = (TextBox)sender;
+            //int outInt = 0;
+            //if (int.TryParse(box.Text, out outInt))
+            //{
+            //    box.GetBindingExpression(TextBox.TextProperty).UpdateSource();
+            //    for (int i = 0; i < 7; i++)
+            //    {
+            //        ((BreadGuideVM)DataContext).UpdateValue(i);
+            //    }
+            //}
+            //else if (box.Text.Length > 0)
+            //{
+            //    box.Text = box.Text.Substring(0, box.Text.Length);
+            //}
+        }
     }
 }

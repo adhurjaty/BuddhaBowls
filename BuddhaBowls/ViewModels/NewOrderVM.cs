@@ -251,12 +251,13 @@ namespace BuddhaBowls
         {
             FilterText = "";
 
-            foreach (VendorInventoryItem item in FilteredOrderItems)
+            foreach (VendorInventoryItem item in _displayItems)
             {
                 item.LastOrderAmount = 0;
             }
 
-            LoadVendorItems();
+            SetLastOrderBreakdown();
+            //LoadVendorItems();
         }
 
         private void AutoSelectVendor(object obj)
@@ -368,6 +369,10 @@ namespace BuddhaBowls
 
             if (OrderVendor != null && _itemsContainer != null && _itemsContainer.Items.Count > 0)
             {
+                // want to preserve counts while loading different vendors - more challenging than anticipated. May come back
+                //if(_displayItems != null)
+                //    _itemsContainer.Update(_displayItems);
+
                 _displayItems = _itemsContainer.Items.Where(x => x.Vendors.Select(y => y.Id).Contains(OrderVendor.Id)).ToList();
                 foreach (VendorInventoryItem item in _displayItems)
                 {

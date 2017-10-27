@@ -395,6 +395,7 @@ namespace BuddhaBowls
                 return StartCount - EndCount + RecCount;
             }
         }
+        public float UsageValue { get; set; }
 
         public CatItem(string name, InventoryItem startItem, InventoryItem endItem, IEnumerable<InventoryItem> purchasedItem)
         {
@@ -412,6 +413,8 @@ namespace BuddhaBowls
                 RecCount = purchasedItem.Sum(x => x.LastOrderAmount) * purchasedItem.First().Conversion;
                 RecValue = purchasedItem.Sum(x => x.PurchaseExtension);
             }
+
+            UsageValue = Usage * endItem.CountPrice;
         }
     }
 }

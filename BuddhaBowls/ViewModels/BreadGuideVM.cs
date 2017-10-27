@@ -212,5 +212,14 @@ namespace BuddhaBowls
             });
             ((BreadOrderTotal)BreadOrderList[7]).UpdateDetails();
         }
+
+        public void UpdateBackup()
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                BreadOrderList[i].Update();
+                UpdateValue(i);
+            }
+        }
     }
 }

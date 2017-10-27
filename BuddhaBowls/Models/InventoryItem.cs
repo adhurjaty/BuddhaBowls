@@ -74,7 +74,7 @@ namespace BuddhaBowls.Models
             {
                 if (RecipeUnitConversion == null || RecipeUnitConversion == 0)
                     return 0;
-                return (float)(CountPrice / RecipeUnitConversion);
+                return (float)(CountPrice / (RecipeUnitConversion * Yield));
             }
         }
 
@@ -151,6 +151,11 @@ namespace BuddhaBowls.Models
         public IItem Copy()
         {
             return Copy<InventoryItem>();
+        }
+
+        public Dictionary<string, float> GetCategoryCosts()
+        {
+            return new Dictionary<string, float>() { { Category, RecipeCost } };
         }
     }
 }

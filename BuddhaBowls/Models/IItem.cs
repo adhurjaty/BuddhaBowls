@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace BuddhaBowls.Models
 {
     public interface IItem : ISortable
@@ -16,5 +18,6 @@ namespace BuddhaBowls.Models
         float GetCost();
         void Destroy();
         IItem Copy();
+        Dictionary<string, float> GetCategoryCosts();
     }
 }

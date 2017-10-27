@@ -48,14 +48,15 @@
                       ScrollViewer.VerticalScrollBarVisibility="Auto" AutoGenerateColumns="False" CanUserAddRows="False" Margin="-1,0,1,0"
                       IsReadOnly="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*" />
-                    <DataGridTextColumn Header="Start Count" Binding="{Binding StartCount}" Width="1*" />
-                    <DataGridTextColumn Header="Start Value" Binding="{Binding Path=StartValue, StringFormat=c}" Width="1*" />
-                    <DataGridTextColumn Header="Rec Count" Binding="{Binding Path=RecCount}" Width="1*" />
-                    <DataGridTextColumn Header="Rec Value" Binding="{Binding Path=RecValue, StringFormat=c}" Width="1*" />
-                    <DataGridTextColumn Header="End Count" Binding="{Binding EndCount}" Width="1*" />
-                    <DataGridTextColumn Header="End Value" Binding="{Binding Path=EndValue, StringFormat=c}" Width="1*" />
-                    <DataGridTextColumn Header="Usage" Binding="{Binding Path=Usage}" Width="1*" />
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="3*" />
+                    <DataGridTextColumn Header="Start Count" Binding="{Binding StartCount}" Width="2*" />
+                    <DataGridTextColumn Header="Start Value" Binding="{Binding Path=StartValue, StringFormat=c}" Width="2*" />
+                    <DataGridTextColumn Header="Rec Count" Binding="{Binding Path=RecCount}" Width="2*" />
+                    <DataGridTextColumn Header="Rec Value" Binding="{Binding Path=RecValue, StringFormat=c}" Width="2*" />
+                    <DataGridTextColumn Header="End Count" Binding="{Binding EndCount}" Width="2*" />
+                    <DataGridTextColumn Header="End Value" Binding="{Binding Path=EndValue, StringFormat=c}" Width="2*" />
+                    <DataGridTextColumn Header="Usage" Binding="{Binding Path=Usage}" Width="2*" />
+                    <DataGridTextColumn Header="Usage Value" Binding="{Binding Path=UsageValue, StringFormat=c}" Width="2*" />
                 </DataGrid.Columns>
             </DataGrid>
             <!--<DataGrid Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding StartInv}"
