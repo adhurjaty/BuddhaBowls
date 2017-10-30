@@ -103,8 +103,9 @@ namespace BuddhaBowls
 
         public async void CalculatePAndL(PeriodMarker period, WeekMarker week)
         {
-            if (GetLastUpdated(period, _models.DailySales) < period.EndDate || 
-                _models.ExpenseItems.FirstOrDefault(x => x.Date == week.StartDate) == null)
+            DateTime lastUpdated = GetLastUpdated(period, _models.DailySales);
+            ExpenseItem existingItem = _models.ExpenseItems.FirstOrDefault(x => x.Date == week.StartDate);
+            if (existingItem == null || (lastUpdated < period.EndDate && existingItem != null))
             {
                 SquareProgMessage = "Updating from Square...";
 
@@ -133,6 +134,12 @@ namespace BuddhaBowls
                 SummarySections[1] = new PAndLSummarySection("Cost of Sales", week.Period, GetCogsSummaryItems());
                 SummarySections[2] = new PAndLSummarySection("Payroll", week.Period, GetPayrollSummaryItems(period, week), true);
                 SummarySections[3] = new PAndLSummarySection("Overhead Expense", week.Period, GetOverheadSummaryItems(period, week), true);
+
+                foreach (PAndLSummarySection section in SummarySections)
+                {
+                    if (section != null)
+                        section.Insert();
+                }
                 SquareProgMessage = "";
             }
             else
@@ -229,7 +236,8 @@ namespace BuddhaBowls
 
             List<ExpenseItem> revenueItems = new List<ExpenseItem>();
 
-            DateTime lastUpdated = GetLastUpdated(period, _models.DailySales);
+            DateTime lastUpdated = GetLastUpdated(period, _models.DailySales.Where(x => period.StartDate <= x.Date && x.Date < period.EndDate)
+                                                                 .ToList());
 
             List<SquareSale>[] dailySales = GetDailySales(period, lastUpdated, cancelToken);
 
@@ -353,10 +361,9 @@ namespace BuddhaBowls
             float weekTotal = weekRevenueDict.Sum(x => x.Value);
             float prevPeriodTotal = prevPeriodRevenueDict.Sum(x => x.Value);
 
-            ExpenseItem ei;
             foreach (string key in periodRevenueDict.Keys)
             {
-                ei = new ExpenseItem()
+                revenueItems.Add(new ExpenseItem()
                 {
                     Name = key,
                     WeekSales = weekRevenueDict[key],
@@ -364,11 +371,9 @@ namespace BuddhaBowls
                     PrevPeriodSales = prevPeriodRevenueDict.ContainsKey(key) ? prevPeriodRevenueDict[key] : 0,
                     PeriodPSales = periodRevenueDict[key] / weekTotal,
                     Date = week.StartDate
-                };
-                revenueItems.Add(ei);
-                ei.Insert();
+                });
             }
-            ei = new ExpenseItem()
+            revenueItems.Add(new ExpenseItem()
             {
                 Name = "Total",
                 WeekSales = weekRevenueDict.Sum(x => x.Value),
@@ -378,9 +383,7 @@ namespace BuddhaBowls
                 PeriodPSales = 1,
                 PeriodPBudget = 1,
                 Date = week.StartDate
-            };
-            revenueItems.Add(ei);
-            ei.Insert();
+            });
 
             return new PAndLSummarySection("Sales", week.Period, revenueItems);
         }
@@ -575,6 +578,22 @@ namespace BuddhaBowls
             WeekNumber = weekNum;
             Summaries = new ObservableCollection<ExpenseItem>(items);
             CanEdit = canEdit;
+        }
+
+        public void Insert()
+        {
+            foreach (ExpenseItem item in Summaries)
+            {
+                item.Insert();
+            }
+        }
+
+        public void Update()
+        {
+            foreach (ExpenseItem item in Summaries)
+            {
+                item.Update();
+            }
         }
     }
 }

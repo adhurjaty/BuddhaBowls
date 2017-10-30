@@ -281,10 +281,6 @@ namespace BuddhaBowls
         {
             get
             {
-                //List<IItem> totalItems = _recipe.GetRecipeItems().Select(x => x.GetIItem()).ToList();
-                //float total = totalItems.Sum(x => x.RecipeCost);
-                //return totalItems.GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x)
-                //                 .Select(x => new CategoryProportion(x.Value.ToList(), total)).ToList();
                 List<Dictionary<string, float>> catCosts = _recipe.GetRecipeItems().Select(x => x.GetIItem().GetCategoryCosts()).ToList();
                 Dictionary<string, float> combinedCatCosts = new Dictionary<string, float>();
                 foreach (Dictionary<string, float> dict in catCosts)
