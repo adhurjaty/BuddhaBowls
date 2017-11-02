@@ -82,9 +82,9 @@ namespace BuddhaBowls.Models
 
         public override string[] GetPropertiesDB(string[] omit = null)
         {
-            //string[] theseOmissions = new string[] { "PrevPeriodSales", "PrevPeriodBudget" };
-            //return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
-            return base.GetPropertiesDB(omit);
+            string[] theseOmissions = new string[] { "PeriodBudget", "PeriodPBudget", "PeriodSales", "PeriodPSales" };
+            return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
+            //return base.GetPropertiesDB(omit);
         }
 
         public override int Insert()

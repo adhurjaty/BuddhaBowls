@@ -16,7 +16,8 @@
                 Command="{Binding SquareCommand}" />
         <TextBlock Text="{Binding SquareProgMessage}" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0, 0, 150, 0" />
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                      IsEnabled="{Binding NotUpdating}">
             <ItemsControl ItemsSource="{Binding SummarySections}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
