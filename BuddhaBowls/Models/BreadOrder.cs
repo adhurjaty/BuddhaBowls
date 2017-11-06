@@ -200,8 +200,18 @@ namespace BuddhaBowls.Models
         {
             if (BreadDescDict != null)
                 BreadDescDBString = BreadDescToStr();
-            if(File.Exists(GetTableLocation()))
+            if (File.Exists(GetTableLocation()))
+            {
+                // if there exists a record with the same date, update instead of inserting
+                BreadOrder existingRecord = new BreadOrder(new Dictionary<string, string>() { { "Date", Date.ToString() } });
+                if (existingRecord.Id != -1)
+                {
+                    Id = existingRecord.Id;
+                    base.Update();
+                    return Id;
+                }
                 return base.Insert();
+            }
             return -1;
         }
         

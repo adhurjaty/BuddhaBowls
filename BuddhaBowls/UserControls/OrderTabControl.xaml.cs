@@ -46,7 +46,7 @@ namespace BuddhaBowls.UserControls
 
         private void dataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            if (dataGrid2.SelectedItem != null || (dataGrid1.SelectedItem != null && e.Column.Header.ToString() == "Order Date"))
+            if (dataGrid2.SelectedItem != null && e.Row != null || (dataGrid1.SelectedItem != null && e.Column.Header.ToString() == "Order Date"))
             {
                 ((DataGrid)sender).CellEditEnding -= dataGrid_CellEditEnding;
                 ((DataGrid)sender).CommitEdit();

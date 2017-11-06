@@ -94,6 +94,8 @@ namespace BuddhaBowls
 
             SquareCommand = new RelayCommand(UpdateSquare);
             SummarySections = new ObservableCollection<PAndLSummarySection>(new PAndLSummarySection[5]);
+            _models.InContainer.AddUpdateBinding(PopulateCogs);
+            _models.POContainer.AddUpdateBinding(PopulateCogs);
         }
 
         #region ICommand Helpers
@@ -134,7 +136,6 @@ namespace BuddhaBowls
                 {
                     Task<PAndLSummarySection> revenueTask = new Task<PAndLSummarySection>(() => CalculateRevenue(period, week));
                     revenueTask.Start();
-
                     SummarySections[0] = await revenueTask;
                 }
                 catch (OperationCanceledException e)
@@ -146,7 +147,7 @@ namespace BuddhaBowls
                     _cts = null;
                 }
 
-                SummarySections[1] = new CogsPAndL(week.Period, GetCogsSummaryItems(), SummarySections[0].TotalSalesItem);
+                PopulateCogs();
                 SummarySections[2] = new PayrollPAndL(week.Period, GetPayrollSummaryItems(period, week),
                                                       SummarySections[0].TotalSalesItem, SummarySections[1].Summaries.First(x => x.Name == "Total"));
                 SummarySections[3] = new OverheadPAndL(week.Period, GetOverheadSummaryItems(period, week), SummarySections[0].TotalSalesItem);
@@ -189,6 +190,12 @@ namespace BuddhaBowls
         }
 
         #endregion
+
+        public void PopulateCogs()
+        {
+            SummarySections[1] = new CogsPAndL(PeriodSelector.SelectedWeek.Period, GetCogsSummaryItems(), SummarySections[0].TotalSalesItem);
+            NotifyPropertyChanged("SummarySections");
+        }
 
         /// <summary>
         /// Sets item with previous sales and budget values from database
@@ -494,8 +501,10 @@ namespace BuddhaBowls
         {
             List<ExpenseItem> summary = new List<ExpenseItem>();
 
-            ExpenseItem foodSalesItem = SummarySections[0].Summaries.First(x => x.Name == "Food");
-            ExpenseItem bevSalesItem = SummarySections[0].Summaries.First(x => x.Name == "Beverage");
+            ExpenseItem foodSalesItem = SummarySections[0].Summaries.FirstOrDefault(x => x.Name == "Food") ??
+                                        new ExpenseItem("Cost of Sales", "Food", PeriodSelector.SelectedWeek.StartDate);
+            ExpenseItem bevSalesItem = SummarySections[0].Summaries.FirstOrDefault(x => x.Name == "Beverage") ??
+                                        new ExpenseItem("Cost of Sales", "Beverage", PeriodSelector.SelectedWeek.StartDate);
             ExpenseItem totalSalesItem = SummarySections[0].Summaries.First(x => x.Name == "Total");
             float foodWeekSales = foodSalesItem.WeekSales;
 

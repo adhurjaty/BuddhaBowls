@@ -28,7 +28,7 @@ namespace BuddhaBowls.UserControls
                 ((DataGrid)sender).Items.Refresh();
                 ((DataGrid)sender).RowEditEnding += OrderList_RowEditEnding;
             }
-            ((NewOrderVM)DataContext).RowEdited((VendorInventoryItem)((DataGrid)sender).CurrentItem);
+            ((NewOrderVM)DataContext).RowEdited((VendorInventoryItem)e.Row.Item);
         }
 
         private void SetBlankToZero(TextBox tb)

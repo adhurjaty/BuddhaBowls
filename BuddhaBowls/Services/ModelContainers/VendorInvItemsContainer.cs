@@ -88,6 +88,7 @@ namespace BuddhaBowls.Services
             foreach (VendorInventoryItem item in items)
             {
                 int idx = Items.FindIndex(x => x.Id == item.Id);
+                item.SetVendorItem(item.SelectedVendor, item.ToInventoryItem());
                 Items[idx] = item;
             }
             PushChange();

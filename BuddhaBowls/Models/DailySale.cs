@@ -33,6 +33,14 @@ namespace BuddhaBowls.Models
         public override int Insert()
         {
             LastUpdated = DateTime.Now;
+            // if there is an existing record with the same date and name, update instead of inserting
+            DailySale existingRecord = new DailySale(new Dictionary<string, string>() { { "Date", Date.Date.ToString() }, { "Name", Name } });
+            if (existingRecord.Id != -1)
+            {
+                Id = existingRecord.Id;
+                base.Update();
+                return Id;
+            }
             return base.Insert();
         }
 

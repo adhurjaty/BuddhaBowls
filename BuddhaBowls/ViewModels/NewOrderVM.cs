@@ -280,6 +280,7 @@ namespace BuddhaBowls
             if (result == MessageBoxResult.Yes)
             {
                 _models.VIContainer.RemoveFromVendor(SelectedOrderItem, OrderVendor);
+                _itemsContainer.RemoveItem(SelectedOrderItem);
                 OrderVendor.Update();
                 LoadVendorItems();
             }
@@ -369,6 +370,8 @@ namespace BuddhaBowls
 
             if (OrderVendor != null && _itemsContainer != null && _itemsContainer.Items.Count > 0)
             {
+                if(_displayItems != null)
+                    _itemsContainer.Update(_displayItems);
                 // want to preserve counts while loading different vendors - more challenging than anticipated. May come back
                 //if(_displayItems != null)
                 //    _itemsContainer.Update(_displayItems);
