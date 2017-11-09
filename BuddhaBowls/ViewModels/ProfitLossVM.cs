@@ -113,11 +113,6 @@ namespace BuddhaBowls
 
         #region UI Updaters
 
-        //public void SwitchedPeriod(PeriodMarker period, WeekMarker week)
-        //{
-        //    CalculatePAndL(period, week);
-        //}
-
         public async void CalculatePAndL(PeriodMarker period, WeekMarker week)
         {
             DateTime lastUpdated = GetLastUpdated(period, _models.DailySales);
@@ -151,6 +146,7 @@ namespace BuddhaBowls
                 SummarySections[2] = new PayrollPAndL(week.Period, GetPayrollSummaryItems(period, week),
                                                       SummarySections[0].TotalSalesItem, SummarySections[1].Summaries.First(x => x.Name == "Total"));
                 SummarySections[3] = new OverheadPAndL(week.Period, GetOverheadSummaryItems(period, week), SummarySections[0].TotalSalesItem);
+                PopulateTakeaway(GetTakeawaySummaryItems(period, week));
 
                 foreach (PAndLSummarySection section in SummarySections)
                 {
@@ -189,11 +185,21 @@ namespace BuddhaBowls
             // TODO: populate payroll
         }
 
+
         #endregion
 
         public void PopulateCogs()
         {
             SummarySections[1] = new CogsPAndL(PeriodSelector.SelectedWeek.Period, GetCogsSummaryItems(), SummarySections[0].TotalSalesItem);
+            NotifyPropertyChanged("SummarySections");
+        }
+
+        private void PopulateTakeaway(List<ExpenseItem> items)
+        {
+            SummarySections[4] = new TakeawayPAndL(PeriodSelector.SelectedWeek.Period, items,
+                                                    SummarySections[0].Summaries.First(x => x.Name == "Total"),
+                                                    SummarySections[2].Summaries.First(x => x.Name == "Prime Cost"),
+                                                    SummarySections[3].Summaries.First(x => x.Name.Contains("Total")));
             NotifyPropertyChanged("SummarySections");
         }
 
@@ -224,11 +230,13 @@ namespace BuddhaBowls
                                                   SummarySections[1].Summaries.First(x => x.Name == "Total"));
             SummarySections[3] = new OverheadPAndL(week.Period, sectionDict["Overhead Expense"], sales.TotalSalesItem);
 
-            //foreach (PAndLSummarySection section in SummarySections)
-            //{
-            //    section.RefreshPercentages();
-            //}
-            for (int i = 0; i < 4; i++)
+            // temporary check to create blank takeaway in case the other records exist and this type does not
+            if (!sectionDict.ContainsKey("Takeaway"))
+                sectionDict["Takeaway"] = GetTakeawaySummaryItems(period, week);
+
+            PopulateTakeaway(sectionDict["Takeaway"]);
+
+            for (int i = 0; i < SummarySections.Count; i++)
             {
                 for (int j = 0; j < SummarySections[i].Summaries.Count; j++)
                 {
@@ -568,11 +576,10 @@ namespace BuddhaBowls
             return summary;
         }
 
-        private IEnumerable<ExpenseItem> GetPayrollSummaryItems(PeriodMarker period, PeriodMarker week)
+        private IEnumerable<ExpenseItem> GetPayrollSummaryItems(PeriodMarker period, WeekMarker week)
         {
             ExpenseItem totalSales = SummarySections[0].Summaries.First(x => x.Name == "Total");
-            List<ExpenseItem> periodPayrolls = _models.ExpenseItems.Where(x => x.ExpenseType == "Payroll" &&
-                                                                            x.Date < week.EndDate).ToList();
+            List<ExpenseItem> periodPayrolls = GetPeriodItems("Payroll", period, week);
 
             List<ExpenseItem> summary = new List<ExpenseItem>();
 
@@ -648,12 +655,11 @@ namespace BuddhaBowls
             return summary;
         }
 
-        private IEnumerable<ExpenseItem> GetOverheadSummaryItems(PeriodMarker period, PeriodMarker week)
+        private IEnumerable<ExpenseItem> GetOverheadSummaryItems(PeriodMarker period, WeekMarker week)
         {
             string expenseType = "Overhead Expense";
             ExpenseItem totalSales = SummarySections[0].Summaries.First(x => x.Name == "Total");
-            List<ExpenseItem> periodOverhead = _models.ExpenseItems.Where(x => x.ExpenseType == expenseType &&
-                                                                            x.Date < week.EndDate).ToList();
+            List<ExpenseItem> periodOverhead = GetPeriodItems(expenseType, period, week);
 
             List<ExpenseItem> summary = new List<ExpenseItem>();
 
@@ -693,6 +699,58 @@ namespace BuddhaBowls
             return summary;
         }
 
+        private List<ExpenseItem> GetTakeawaySummaryItems(PeriodMarker period, WeekMarker week)
+        {
+            string expenseType = "Takeaway";
+            ExpenseItem totalSales = SummarySections[0].Summaries.First(x => x.Name == "Total");
+            ExpenseItem payrollPrime = SummarySections[2].Summaries.First(x => x.Name == "Prime Cost");
+            ExpenseItem overheadTotal = SummarySections[3].Summaries.First(x => x.Name.Contains("Total"));
+
+            List<ExpenseItem> periodTakeaways = GetPeriodItems(expenseType, period, week);
+
+            List<ExpenseItem> summary = new List<ExpenseItem>();
+
+            string[] userDefFields = new string[] { "Owners Draws", "Loan Payment", "Loan Tax" };
+            foreach (string key in userDefFields)
+            {
+                // if a current record for this date exists, set the item to it
+                IEnumerable<ExpenseItem> pastItems = periodTakeaways.Where(x => x.Name == key).OrderByDescending(x => x.Date);
+                ExpenseItem latestItem = pastItems.FirstOrDefault() ?? new ExpenseItem(expenseType, key, week.StartDate);
+                IEnumerable<ExpenseItem> prevWeeks = pastItems.Skip(1);
+                latestItem.PrevPeriodSales = prevWeeks.Sum(x => x.WeekSales);
+                latestItem.PrevPeriodBudget = prevWeeks.Sum(x => x.WeekBudget);
+
+                if (totalSales.PeriodPSales != 0)
+                    latestItem.PeriodPSales = latestItem.PeriodSales / totalSales.PeriodSales;
+                else
+                    latestItem.PeriodPSales = 0;
+                if (totalSales.PeriodPBudget != 0)
+                    latestItem.PeriodPBudget = latestItem.PeriodBudget / totalSales.PeriodBudget;
+                else
+                    latestItem.PeriodPBudget = 0;
+
+                summary.Add(latestItem);
+            }
+
+            ExpenseItem totalTakeaway = new ExpenseItem(expenseType, "Net Operating Income", week.StartDate);
+            totalTakeaway.WeekSales = totalSales.WeekSales - summary.Sum(x => x.WeekSales) - payrollPrime.WeekSales - overheadTotal.WeekSales;
+            totalTakeaway.WeekBudget = totalSales.WeekBudget - summary.Sum(x => x.WeekBudget) - payrollPrime.WeekBudget - overheadTotal.WeekBudget;
+            totalTakeaway.PrevPeriodSales = totalSales.PrevPeriodSales - summary.Sum(x => x.PrevPeriodSales) -
+                                payrollPrime.PrevPeriodSales - overheadTotal.PrevPeriodSales;
+            totalTakeaway.PrevPeriodBudget = totalSales.PrevPeriodBudget - summary.Sum(x => x.PrevPeriodBudget) -
+                                   payrollPrime.PrevPeriodBudget - overheadTotal.PrevPeriodBudget;
+            totalTakeaway.PeriodPSales = totalSales.PeriodSales != 0 ? totalTakeaway.PeriodSales / totalSales.PeriodSales : 0;
+            totalTakeaway.PeriodPBudget = totalSales.PeriodPBudget != 0 ? totalTakeaway.PeriodPBudget / totalSales.PeriodPBudget : 0;
+            summary.Add(totalTakeaway);
+
+            return summary;
+        }
+
+        private List<ExpenseItem> GetPeriodItems(string expenseType, PeriodMarker period, WeekMarker week)
+        {
+            return _models.ExpenseItems.Where(x => x.ExpenseType == expenseType && x.Date >= period.StartDate &&
+                                                   x.Date < week.EndDate).ToList();
+        }
     }
 
     public class PAndLSummarySection : INotifyPropertyChanged
@@ -908,6 +966,38 @@ namespace BuddhaBowls
             ExpenseItem totalItem = Summaries.First(x => x.Name.Contains("Total"));
             totalItem.WeekSales = Summaries.Take(Summaries.Count - 1).Sum(x => x.WeekSales);
             totalItem.WeekBudget = Summaries.Take(Summaries.Count - 1).Sum(x => x.WeekBudget);
+        }
+    }
+
+    public class TakeawayPAndL : PAndLSummarySection
+    {
+        private ExpenseItem _payrollPrime;
+        private ExpenseItem _totalOverhead;
+
+        public TakeawayPAndL(int weekNum, IEnumerable<ExpenseItem> items, ExpenseItem totalSales,
+                                          ExpenseItem payrollPrime, ExpenseItem totalOverhead) : base("Takeaway", weekNum, items, totalSales, true)
+        {
+            TotalSalesItem = totalSales;
+            _payrollPrime = payrollPrime;
+            _totalOverhead = totalOverhead;
+        }
+
+        public override void UpdateItem(ExpenseItem item)
+        {
+            UpdateTotal();
+            if(item.Name != "Net Operating Income")
+                base.UpdateItem(item);
+        }
+
+        public override void UpdateTotal()
+        {
+            ExpenseItem totalItem = Summaries.First(x => x.Name == "Net Operating Income");
+            List<ExpenseItem> sumItems = Summaries.Where(x => x != totalItem).Concat(new List<ExpenseItem>()
+            {
+                _payrollPrime, _totalOverhead
+            }).ToList();
+            totalItem.WeekSales = TotalSalesItem.WeekSales - sumItems.Sum(x => x.WeekSales);
+            totalItem.WeekBudget = TotalSalesItem.WeekBudget - sumItems.Sum(x => x.WeekBudget);
         }
     }
 }

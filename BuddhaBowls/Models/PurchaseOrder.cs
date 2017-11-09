@@ -185,6 +185,17 @@ namespace BuddhaBowls.Models
         }
         #endregion
 
+        /// <summary>
+        /// Updates the PO setting items as entire list of PO items
+        /// </summary>
+        /// <param name="items"></param>
+        public void Update(List<InventoryItem> items)
+        {
+            ModelHelper.CreateTable(items, GetOrderTableName());
+            _orderChanged = true;
+            base.Update();
+        }
+
         private List<InventoryItem> RemoveDuplicates(List<InventoryItem> inventoryItems, bool showMessage = true)
         {
             List<InventoryItem> outList = new List<InventoryItem>();
