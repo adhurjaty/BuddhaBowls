@@ -12,13 +12,13 @@ namespace BuddhaBowls
 {
     public class DirectOpExpenseVM : ExpenseDetailVM
     {
-        private ExpenseItem _item;
         private PeriodMarker _period;
 
-        public DirectOpExpenseVM(ExpenseItem item, PeriodMarker period, WeekMarker week) : base(week)
+        public DirectOpExpenseVM(PAndLSummarySection section, ExpenseItem item, PeriodMarker period, WeekMarker week) : base(section, item, week)
         {
             _tabControl = new ExpenseDetailControl(this);
-            _item = item;
+            Header = "Direct Operating Expenses";
+
             _period = period;
 
             InitSections();
@@ -27,7 +27,10 @@ namespace BuddhaBowls
 
         protected override void SaveExpenses(object obj)
         {
-            // gonna need to transition _models.ExpenseItems to ItemsContainer
+            _item.WeekSales = TotalWeek;
+            _section.RefreshPercentages();
+            _section.CommitChange();
+            _section.Update();
             base.SaveExpenses(obj);
         }
 
@@ -75,11 +78,11 @@ namespace BuddhaBowls
 
         private PAndLSummarySection GetSumSection(string expenseType, string[] labels)
         {
-            List<ExpenseItem> expenses = _models.ExpenseItems.Where(x => x.Date == _week.StartDate && x.ExpenseType == expenseType).ToList();
+            List<ExpenseItem> expenses = _models.EIContainer.Items.Where(x => x.Date == _week.StartDate && x.ExpenseType == expenseType).ToList();
             _newExpenses = expenses.Count == 0;
             if (_newExpenses)
             {
-                List<ExpenseItem> prevExpenses = _models.ExpenseItems.Where(x => x.Date >= _period.StartDate && x.Date < _week.StartDate &&
+                List<ExpenseItem> prevExpenses = _models.EIContainer.Items.Where(x => x.Date >= _period.StartDate && x.Date < _week.StartDate &&
                                                                              x.ExpenseType == expenseType).OrderByDescending(x => x.Date).ToList();
                 foreach (string label in labels)
                 {
@@ -106,7 +109,9 @@ namespace BuddhaBowls
                 PrevPeriodSales = expenses.Sum(x => x.PrevPeriodSales)
             });
 
-            return new PAndLSummarySection(expenseType, _week.Period, expenses, new ExpenseItem(), true);
+            PAndLSummarySection section = new PAndLSummarySection(expenseType, _week.Period, expenses, new ExpenseItem(), true);
+            section.SetTotalRows(new List<string>() { "Total " + expenseType });
+            return section;
         }
     }
 }

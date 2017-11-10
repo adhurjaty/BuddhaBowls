@@ -43,6 +43,12 @@ namespace BuddhaBowls.Services
             return item;
         }
 
+        public virtual void AddItems(List<T> items)
+        {
+            Items.AddRange(items);
+            PushChange();
+        }
+
         public virtual void RemoveItem(T item)
         {
             _items.RemoveAll(x => x.Id == item.Id);
@@ -53,6 +59,17 @@ namespace BuddhaBowls.Services
         {
             int idx = Items.FindIndex(x => x.Id == item.Id);
             Items[idx] = item;
+            PushChange();
+        }
+
+        public virtual void UpdateMultiple(IEnumerable<T> items)
+        {
+            foreach (T item in items)
+            {
+                int idx = Items.FindIndex(x => x.Id == item.Id);
+                if(idx != -1)
+                    Items[idx] = item;
+            }
             PushChange();
         }
 

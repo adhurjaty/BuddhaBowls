@@ -21,15 +21,15 @@ namespace BuddhaBowls.Services
         // Cache of bread info by week. Key is the start date of the week
         private Dictionary<DateTime, BreadWeekContainer> _breadWeekDict;
 
-        // TODO: Get rid of these 3 and create containers
+        // TODO: Get rid of this and create container
         public List<DailySale> DailySales { get; set; }
-        public List<ExpenseItem> ExpenseItems { get; set; }
 
         public VendorInvItemsContainer VIContainer { get; private set; }
         public PurchaseOrdersContainer POContainer { get; private set; }
         public VendorsContainer VContainer { get; private set; }
         public InventoriesContainer InContainer { get; private set; }
         public RecipesContainer RContainer { get; private set; }
+        public ExpenseItemsContainer EIContainer { get; private set; }
 
         /// <summary>
         /// Constructor. Initialize containers, settings and ordering information
@@ -52,7 +52,6 @@ namespace BuddhaBowls.Services
         {
             Logger.Info("Loading models");
             DailySales = ModelHelper.InstantiateList<DailySale>("DailySale");
-            ExpenseItems = ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem");
 
             List<InventoryItem> invItems = MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem")).ToList();
 
@@ -62,6 +61,7 @@ namespace BuddhaBowls.Services
             POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder"), VIContainer);
             InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory"));
             RContainer = new RecipesContainer(ModelHelper.InstantiateList<Recipe>("Recipe"));
+            EIContainer = new ExpenseItemsContainer(ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem"));
             //AddRecipeItems();
 
             _breadWeekDict = new Dictionary<DateTime, BreadWeekContainer>();

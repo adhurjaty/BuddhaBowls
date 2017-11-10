@@ -47,8 +47,9 @@ namespace BuddhaBowls.UserControls
         private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             ExpenseItem item = (ExpenseItem)((DataGrid)sender).SelectedItem;
-            if (item != null)
-                ((ProfitLossVM)DataContext).OpenDetails(item);
+            PAndLSummarySection section = (PAndLSummarySection)((DataGrid)sender).DataContext;
+            if (item != null && section != null)
+                ((ProfitLossVM)DataContext).OpenDetails(section, item);
             e.Handled = true;
         }
     }

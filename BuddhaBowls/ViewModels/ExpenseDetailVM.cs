@@ -14,6 +14,8 @@ namespace BuddhaBowls
     {
         protected WeekMarker _week;
         protected bool _newExpenses = true;
+        protected ExpenseItem _item;
+        protected PAndLSummarySection _section;
 
         #region Content Binders
 
@@ -77,10 +79,11 @@ namespace BuddhaBowls
 
         #endregion
 
-        public ExpenseDetailVM(WeekMarker week) : base()
+        public ExpenseDetailVM(PAndLSummarySection section, ExpenseItem item, WeekMarker week) : base()
         {
-            Header = "Direct Operating Expenses";
             _week = week;
+            _section = section;
+            _item = item;
             DateStr = string.Format("Date: {0} - {1}", week.StartDate.ToString("MM/dd"), week.EndDate.ToString("MM/dd"));
 
             SaveCommand = new RelayCommand(SaveExpenses);
@@ -96,16 +99,12 @@ namespace BuddhaBowls
                 if (_newExpenses)
                 {
                     section.Insert();
-                    _models.ExpenseItems.AddRange(section.Summaries);
+                    _models.EIContainer.AddItems(section.Summaries.ToList());
                 }
                 else
                 {
                     section.Update();
-                    foreach (ExpenseItem item in section.Summaries)
-                    {
-                        int idx = _models.ExpenseItems.FindIndex(x => x.Id == item.Id);
-                        _models.ExpenseItems[idx] = item;
-                    }
+                    _models.EIContainer.UpdateMultiple(section.Summaries.Where(x => x.Id != -1));
                 }
             }
             Close();
@@ -120,14 +119,15 @@ namespace BuddhaBowls
 
         public virtual void EditedItem(PAndLSummarySection section, ExpenseItem item)
         {
+            section.UpdateItem(item);
             section.CommitChange();
             CalculateTotals();
         }
 
         protected virtual void CalculateTotals()
         {
-            _totalPrevPeriod = ExpenseSections.SelectMany(x => x.Summaries).Sum(x => x.PrevPeriodSales);
-            TotalWeek = ExpenseSections.SelectMany(x => x.Summaries).Sum(x => x.WeekSales);
+            _totalPrevPeriod = ExpenseSections.SelectMany(x => x.GetItemsNotTotals()).Sum(x => x.PrevPeriodSales);
+            TotalWeek = ExpenseSections.SelectMany(x => x.GetItemsNotTotals()).Sum(x => x.WeekSales);
         }
     }
 }

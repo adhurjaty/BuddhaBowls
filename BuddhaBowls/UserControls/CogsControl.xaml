@@ -9,7 +9,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
-            <RowDefinition Height="1*" MaxHeight="210" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="5" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <local:PeriodSelectorControl Grid.Row="0" DataContext="{Binding PeriodSelector}" VerticalAlignment="Center" Margin="0,2,0,2"/>
@@ -27,7 +28,8 @@
                 <DataGridTextColumn Header="Category %" Binding="{Binding Path=CatPercent, StringFormat=p}" IsReadOnly="True" Width="1*" />
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Row="2" Visibility="{Binding CogInfoVisibility}">
+        <GridSplitter Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+        <Grid Grid.Row="3" Visibility="{Binding CogInfoVisibility}">
             <!--<Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="3*" />
