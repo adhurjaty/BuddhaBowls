@@ -23,6 +23,8 @@ namespace BuddhaBowls
         private ReportsTabVM _reportsTab;
         private CancellationTokenSource _cts;
         private object _lock = new object();
+        private Dictionary<string, float> _otherWeekSquare;
+        private Dictionary<string, float> _otherPeriodSquare;
 
         #region Content Binders
 
@@ -96,6 +98,9 @@ namespace BuddhaBowls
             SummarySections = new ObservableCollection<PAndLSummarySection>(new PAndLSummarySection[5]);
             _models.InContainer.AddUpdateBinding(PopulateCogs);
             _models.POContainer.AddUpdateBinding(PopulateCogs);
+
+            _otherWeekSquare = new Dictionary<string, float>();
+            _otherPeriodSquare = new Dictionary<string, float>();
         }
 
         #region ICommand Helpers
@@ -152,7 +157,7 @@ namespace BuddhaBowls
                 {
                     if (section != null)
                     {
-                        if (existingItems.Count == 0)
+                        if (existingItems.Where(x => x.ExpenseType == section.SummaryType).Count() == 0)
                         {
                             section.Insert();
                             _models.ExpenseItems.AddRange(section.Summaries);
@@ -232,9 +237,14 @@ namespace BuddhaBowls
 
             // temporary check to create blank takeaway in case the other records exist and this type does not
             if (!sectionDict.ContainsKey("Takeaway"))
-                sectionDict["Takeaway"] = GetTakeawaySummaryItems(period, week);
-
-            PopulateTakeaway(sectionDict["Takeaway"]);
+            {
+                PopulateTakeaway(GetTakeawaySummaryItems(period, week));
+                SummarySections[4].Insert();
+            }
+            else
+            {
+                PopulateTakeaway(sectionDict["Takeaway"]);
+            }
 
             for (int i = 0; i < SummarySections.Count; i++)
             {
@@ -352,6 +362,8 @@ namespace BuddhaBowls
             // dictionary mapping item name to category
             Dictionary<string, string> itemCategoryCache = new Dictionary<string, string>();
 
+            _otherWeekSquare["Credit Card Processing"] = 0;
+            _otherPeriodSquare["Credit Card Processing"] = 0;
             // fill dictionaries with historical data from database
             foreach (DailySale sale in _models.DailySales.Where(x => x.Date < lastUpdated))
             {
@@ -363,12 +375,18 @@ namespace BuddhaBowls
                     weekRevenueDict[sale.Category] = 0;
                     prevPeriodRevenueDict[sale.Category] = 0;
                 }
-                periodRevenueDict[sale.Category] += sale.NetTotal;
+                periodRevenueDict[sale.Category] += sale.GrossTotal;
 
                 if (week.StartDate <= sale.Date && sale.Date <= week.EndDate)
-                    weekRevenueDict[sale.Category] += sale.NetTotal;
+                {
+                    weekRevenueDict[sale.Category] += sale.GrossTotal;
+                    _otherWeekSquare["Credit Card Processing"] += sale.ChargeFee;
+                }
                 if (sale.Date < week.StartDate)
-                    prevPeriodRevenueDict[sale.Category] += sale.NetTotal;
+                {
+                    prevPeriodRevenueDict[sale.Category] += sale.GrossTotal;
+                    _otherPeriodSquare["Credit Card Processing"] += sale.ChargeFee;
+                }
             }
 
             List<Recipe> soldItems = _models.RContainer.Items.Where(x => !x.IsBatch).ToList();
@@ -385,6 +403,10 @@ namespace BuddhaBowls
                     {
                         foreach (SquareItemization itemization in sale.Itemizations)
                         {
+                            // average the charge fee per itemization
+                            float chargeFee = sale.ChargeFee / sale.Itemizations.Count;
+                            _otherWeekSquare["Credit Card Processing"] += chargeFee;
+
                             cancelToken.ThrowIfCancellationRequested();
                             if (!itemCategoryCache.ContainsKey(itemization.Name))
                             {
@@ -415,7 +437,8 @@ namespace BuddhaBowls
                             if (existingSale != null)
                             {
                                 existingSale.Quantity += itemization.Quantity;
-                                existingSale.NetTotal += itemization.NetTotal;
+                                existingSale.GrossTotal += itemization.NetTotal;
+                                existingSale.ChargeFee += chargeFee;
                                 existingSale.Date = sale.TransactionTime;
                             }
                             else
@@ -425,7 +448,8 @@ namespace BuddhaBowls
                                     Name = itemization.Name,
                                     Category = itemCategoryCache[itemization.Name],
                                     Quantity = itemization.Quantity,
-                                    NetTotal = itemization.NetTotal,
+                                    GrossTotal = itemization.NetTotal,
+                                    ChargeFee = chargeFee,
                                     Date = sale.TransactionTime
                                 });
                             }
@@ -490,6 +514,15 @@ namespace BuddhaBowls
             item.Update();
             //if (section.SummaryType == "Sales")
             //    section.TotalSalesItem.Update();
+        }
+
+        public void OpenDetails(ExpenseItem item)
+        {
+            if (item.Name == "Direct Operating")
+            {
+                DirectOpExpenseVM tabVM = new DirectOpExpenseVM(item, PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
+                tabVM.Add("Edit Expenses");
+            }
         }
 
         private void RefreshAllSummaries()
@@ -682,6 +715,12 @@ namespace BuddhaBowls
                     latestItem.PeriodPBudget = latestItem.PeriodBudget / totalSales.PeriodBudget;
                 else
                     latestItem.PeriodPBudget = 0;
+
+                if (_otherWeekSquare.ContainsKey(key))
+                {
+                    latestItem.WeekSales = _otherWeekSquare[key];
+                    latestItem.PrevPeriodSales = _otherPeriodSquare[key];
+                }
 
                 summary.Add(latestItem);
             }

@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="BuddhaBowls.UserControls.ExpenseDetailControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BuddhaBowls.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{Binding Header}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 5, 0, 0" FontSize="24" />
+        <TextBlock Grid.Row="0" Text="{Binding DateStr}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0, 45, 0, 0" FontSize="24" />
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="30" />
+            </Grid.RowDefinitions>
+            <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ItemsControl ItemsSource="{Binding ExpenseSections}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <DataGrid x:Name="dataGrid" ItemsSource="{Binding Summaries}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                  CanUserReorderColumns="False" AutoGenerateColumns="False" CanUserSortColumns="False"
+                                  CanUserAddRows="False" Margin="0, 0, 0, 20" RowEditEnding="dataGrid_RowEditEnding">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Binding="{Binding Name}" Width="4*" IsReadOnly="True">
+                                        <DataGridTextColumn.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding DataContext.SummaryType, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                                            </DataTemplate>
+                                        </DataGridTextColumn.HeaderTemplate>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Width="1*" Binding="{Binding Path=WeekSales, StringFormat=c}">
+                                        <DataGridTextColumn.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock>
+                                                <Run Text="Week:" />
+                                                <Run Text="{Binding DataContext.WeekNumber, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </DataGridTextColumn.HeaderTemplate>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="PTD" Binding="{Binding Path=PeriodSales, StringFormat=c}" Width="1*" IsReadOnly="True"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 0, 300, 0" FontSize="18">
+                <Run Text="Week Total: " />
+                <Run Text="{Binding TotalWeek, StringFormat=c}" FontWeight="Bold"/>
+            </TextBlock>
+            <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0, 0, 80, 0" FontSize="18">
+                <Run Text="Period Total: " />
+                <Run Text="{Binding TotalPeriod, StringFormat=c, Mode=OneWay}" FontWeight="Bold"/>
+            </TextBlock>
+        </Grid>
+        <Button Content="Save" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0, 0, 5,0" Grid.Row="2" Width="75"
+                Command="{Binding SaveCommand}" />
+        <Button Content="Cancel" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0, 0, 85,0" Grid.Row="2" Width="75"
+                Command="{Binding CancelCommand}" />
+    </Grid>
+</UserControl>

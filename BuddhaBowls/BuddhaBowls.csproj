@@ -236,6 +236,9 @@
     <Compile Include="Models\Recipe.cs" />
     <Compile Include="Models\InventoryItem.cs" />
     <Compile Include="Models\PurchaseOrder.cs" />
+    <Compile Include="UserControls\ExpenseDetailControl.xaml.cs">
+      <DependentUpon>ExpenseDetailControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\InventoryListControl.xaml.cs">
       <DependentUpon>InventoryListControl.xaml</DependentUpon>
     </Compile>
@@ -289,6 +292,8 @@
     </Compile>
     <Compile Include="ViewModels\BreadGuideVM.cs" />
     <Compile Include="ViewModels\ChangeableTabVM.cs" />
+    <Compile Include="ViewModels\DirectOpExpenseVM.cs" />
+    <Compile Include="ViewModels\ExpenseDetailVM.cs" />
     <Compile Include="ViewModels\ProfitLossVM.cs" />
     <Compile Include="ViewModels\CogsVM.cs" />
     <Compile Include="ViewModels\ReportsTabVM.cs" />
@@ -369,6 +374,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControls\ExpenseDetailControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\InventoryListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

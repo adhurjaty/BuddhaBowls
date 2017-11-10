@@ -23,7 +23,8 @@
                     <DataTemplate>
                         <DataGrid x:Name="dataGrid" ItemsSource="{Binding Summaries}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                   CanUserReorderColumns="False" AutoGenerateColumns="False" CanUserSortColumns="False"
-                                  CanUserAddRows="False" Margin="0, 0, 0, 20" RowEditEnding="dataGrid_RowEditEnding">
+                                  CanUserAddRows="False" Margin="0, 0, 0, 20" RowEditEnding="dataGrid_RowEditEnding"
+                                  MouseDoubleClick="dataGrid_MouseDoubleClick">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Binding="{Binding Name}" Width="1*" IsReadOnly="True">
                                     <DataGridTextColumn.HeaderTemplate>

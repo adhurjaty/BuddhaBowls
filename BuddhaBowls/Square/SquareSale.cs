@@ -15,6 +15,7 @@ namespace BuddhaBowls.Square
         public float GrossSales { get; set; }
         public float Tax { get; set; }
         public float Tip { get; set; }
+        public float ChargeFee { get; set; }
         public List<SquareItemization> Itemizations { get; set; }
 
         public SquareSale(dynamic sale)
@@ -35,6 +36,9 @@ namespace BuddhaBowls.Square
             int tip;
             int.TryParse(sale.tip_money.amount.ToString(), out tip);
             Tip = tip / 100f;
+            int fee;
+            int.TryParse(sale.processing_fee_money.amount.ToString(), out fee);
+            ChargeFee = -fee / 100f;
 
             Itemizations = new List<SquareItemization>();
             foreach (dynamic item in sale.itemizations)

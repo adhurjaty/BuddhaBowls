@@ -17,16 +17,16 @@ using System.Windows.Shapes;
 namespace BuddhaBowls.UserControls
 {
     /// <summary>
-    /// Interaction logic for PAndLControl.xaml
+    /// Interaction logic for ExpenseDetail.xaml
     /// </summary>
-    public partial class PAndLControl : UserControl
+    public partial class ExpenseDetailControl : UserControl
     {
-        public PAndLControl()
+        public ExpenseDetailControl()
         {
             InitializeComponent();
         }
 
-        public PAndLControl(ProfitLossVM context) : this()
+        public ExpenseDetailControl(ExpenseDetailVM context) : this()
         {
             DataContext = context;
         }
@@ -40,16 +40,8 @@ namespace BuddhaBowls.UserControls
                 ((DataGrid)sender).RowEditEnding += dataGrid_RowEditEnding;
                 ExpenseItem item = (ExpenseItem)e.Row.Item;
                 PAndLSummarySection section = (PAndLSummarySection)((DataGrid)sender).DataContext;
-                ((ProfitLossVM)DataContext).FillEditableItem(section, item);
+                ((ExpenseDetailVM)DataContext).EditedItem(section, item);
             }
-        }
-
-        private void dataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            ExpenseItem item = (ExpenseItem)((DataGrid)sender).SelectedItem;
-            if (item != null)
-                ((ProfitLossVM)DataContext).OpenDetails(item);
-            e.Handled = true;
         }
     }
 }
