@@ -519,10 +519,21 @@ namespace BuddhaBowls
 
         public void OpenDetails(PAndLSummarySection section, ExpenseItem item)
         {
-            if (item.Name == "Direct Operating")
+            ExpenseDetailVM tabVM;
+            switch (item.Name)
             {
-                DirectOpExpenseVM tabVM = new DirectOpExpenseVM(section, item, PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
-                tabVM.Add("Edit Expenses");
+                case "Direct Operating":
+                    tabVM = new DirectOpExpenseVM(section, item, PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
+                    tabVM.Add("Edit Expenses");
+                    break;
+                case "Administrative":
+                    tabVM = new AdminExpenseVM(section, item, PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
+                    tabVM.Add("Edit Expenses");
+                    break;
+                case "Advertising and Promotion":
+                    tabVM = new AdvertisingExpenseVM(section, item, PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
+                    tabVM.Add("Edit Expenses");
+                    break;
             }
         }
 

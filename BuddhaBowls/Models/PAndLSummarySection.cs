@@ -248,7 +248,7 @@ namespace BuddhaBowls.Models
 
         public override void UpdateTotal()
         {
-            ExpenseItem totalItem = Summaries.First(x => !_totalRows.Contains(x.Name));
+            ExpenseItem totalItem = Summaries.First(x => _totalRows.Contains(x.Name));
             totalItem.WeekSales = Summaries.Take(Summaries.Count - 1).Sum(x => x.WeekSales);
             totalItem.WeekBudget = Summaries.Take(Summaries.Count - 1).Sum(x => x.WeekBudget);
         }
@@ -277,7 +277,7 @@ namespace BuddhaBowls.Models
 
         public override void UpdateTotal()
         {
-            ExpenseItem totalItem = Summaries.First(x => !_totalRows.Contains(x.Name));
+            ExpenseItem totalItem = Summaries.First(x => _totalRows.Contains(x.Name));
             List<ExpenseItem> sumItems = Summaries.Where(x => x != totalItem).Concat(new List<ExpenseItem>()
             {
                 _payrollPrime, _totalOverhead

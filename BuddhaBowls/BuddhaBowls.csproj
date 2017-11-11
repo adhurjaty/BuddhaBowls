@@ -292,8 +292,10 @@
     <Compile Include="UserControls\WizardControl.xaml.cs">
       <DependentUpon>WizardControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\AdvertisingExpenseVM.cs" />
     <Compile Include="ViewModels\BreadGuideVM.cs" />
     <Compile Include="ViewModels\ChangeableTabVM.cs" />
+    <Compile Include="ViewModels\AdminExpenseVM.cs" />
     <Compile Include="ViewModels\DirectOpExpenseVM.cs" />
     <Compile Include="ViewModels\ExpenseDetailVM.cs" />
     <Compile Include="ViewModels\ProfitLossVM.cs" />

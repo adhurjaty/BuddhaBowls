@@ -12,9 +12,11 @@ namespace BuddhaBowls
 {
     public class ExpenseDetailVM : TempTabVM
     {
+        protected PeriodMarker _period;
         protected WeekMarker _week;
         protected bool _newExpenses = true;
         protected ExpenseItem _item;
+        protected ExpenseItemsContainer _itemsContainer;
         protected PAndLSummarySection _section;
 
         #region Content Binders
@@ -79,21 +81,32 @@ namespace BuddhaBowls
 
         #endregion
 
-        public ExpenseDetailVM(PAndLSummarySection section, ExpenseItem item, WeekMarker week) : base()
+        public ExpenseDetailVM(PAndLSummarySection section, ExpenseItem item, PeriodMarker period, WeekMarker week) : base()
         {
+            _period = period;
             _week = week;
             _section = section;
             _item = item;
+            _itemsContainer = _models.EIContainer.Copy();
             DateStr = string.Format("Date: {0} - {1}", week.StartDate.ToString("MM/dd"), week.EndDate.ToString("MM/dd"));
 
             SaveCommand = new RelayCommand(SaveExpenses);
             CancelCommand = new RelayCommand(CancelExpenses);
+
+            InitSections();
+            CalculateTotals();
         }
 
         #region ICommand Helpers
 
         protected virtual void SaveExpenses(object obj)
         {
+            _item.WeekSales = TotalWeek;
+            _section.RefreshPercentages();
+            _section.CommitChange();
+            _item.Update();
+            _models.EIContainer.SetItems(_itemsContainer.Items);
+
             foreach (PAndLSummarySection section in ExpenseSections)
             {
                 if (_newExpenses)
@@ -116,6 +129,46 @@ namespace BuddhaBowls
         }
 
         #endregion
+
+        protected PAndLSummarySection GetSumSection(string expenseType, string[] labels)
+        {
+            List<ExpenseItem> expenses = _itemsContainer.Items.Where(x => x.Date == _week.StartDate && x.ExpenseType == expenseType).ToList();
+            _newExpenses = expenses.Count == 0;
+            if (_newExpenses)
+            {
+                List<ExpenseItem> prevExpenses = _itemsContainer.Items.Where(x => x.Date >= _period.StartDate && x.Date < _week.StartDate &&
+                                                                             x.ExpenseType == expenseType).OrderByDescending(x => x.Date).ToList();
+                foreach (string label in labels)
+                {
+                    ExpenseItem newItem = new ExpenseItem(expenseType, label, _week.StartDate);
+                    List<ExpenseItem> existingItems = prevExpenses.Where(x => x.Name == label).ToList();
+                    if (existingItems.Count > 0)
+                    {
+                        ExpenseItem newestExisting = existingItems.First();
+                        newItem.WeekSales = newestExisting.WeekSales;
+
+                        // if there are missing previous records (very likely) just fill them in with the latest value
+                        newItem.PrevPeriodSales = existingItems.Sum(x => x.WeekSales);
+                        if (existingItems.Count < _week.Period - 1)
+                            newItem.PrevPeriodSales += (_week.Period - 1 - existingItems.Count) * newestExisting.WeekSales;
+                    }
+                    expenses.Add(newItem);
+                }
+            }
+
+            // add a total row at the end
+            expenses.Add(new ExpenseItem(expenseType, "Total " + expenseType, _week.StartDate)
+            {
+                WeekSales = expenses.Sum(x => x.WeekSales),
+                PrevPeriodSales = expenses.Sum(x => x.PrevPeriodSales)
+            });
+
+            PAndLSummarySection section = new PAndLSummarySection(expenseType, _week.Period, expenses, new ExpenseItem(), true);
+            section.SetTotalRows(new List<string>() { "Total " + expenseType });
+            return section;
+        }
+
+        protected virtual void InitSections() { }
 
         public virtual void EditedItem(PAndLSummarySection section, ExpenseItem item)
         {
