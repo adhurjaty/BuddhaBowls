@@ -147,11 +147,11 @@ namespace BuddhaBowls
                     _cts = null;
                 }
 
-                PopulateCogs();
+                PopulateCogs(week);
                 SummarySections[2] = new PayrollPAndL(week.Period, GetPayrollSummaryItems(period, week),
                                                       SummarySections[0].TotalSalesItem, SummarySections[1].Summaries.First(x => x.Name == "Total"));
                 SummarySections[3] = new OverheadPAndL(week.Period, GetOverheadSummaryItems(period, week), SummarySections[0].TotalSalesItem);
-                PopulateTakeaway(GetTakeawaySummaryItems(period, week));
+                PopulateTakeaway(GetTakeawaySummaryItems(period, week), week);
 
                 foreach (PAndLSummarySection section in SummarySections)
                 {
@@ -193,15 +193,20 @@ namespace BuddhaBowls
 
         #endregion
 
-        public void PopulateCogs()
+        public void PopulateCogs(WeekMarker week)
         {
-            SummarySections[1] = new CogsPAndL(PeriodSelector.SelectedWeek.Period, GetCogsSummaryItems(), SummarySections[0].TotalSalesItem);
+            SummarySections[1] = new CogsPAndL(week.Period, GetCogsSummaryItems(week), SummarySections[0].TotalSalesItem);
             NotifyPropertyChanged("SummarySections");
         }
 
-        private void PopulateTakeaway(List<ExpenseItem> items)
+        public void PopulateCogs()
         {
-            SummarySections[4] = new TakeawayPAndL(PeriodSelector.SelectedWeek.Period, items,
+            PopulateCogs(PeriodSelector.SelectedWeek);
+        }
+
+        private void PopulateTakeaway(List<ExpenseItem> items, WeekMarker week)
+        {
+            SummarySections[4] = new TakeawayPAndL(week.Period, items,
                                                     SummarySections[0].Summaries.First(x => x.Name == "Total"),
                                                     SummarySections[2].Summaries.First(x => x.Name == "Prime Cost"),
                                                     SummarySections[3].Summaries.First(x => x.Name.Contains("Total")));
@@ -230,7 +235,10 @@ namespace BuddhaBowls
                                                                                         .ToList());
             SalesPAndL sales = new SalesPAndL(week.Period, sectionDict["Sales"]);
             SummarySections[0] = sales;
-            SummarySections[1] = new CogsPAndL(week.Period, sectionDict["Cost of Sales"], sales.TotalSalesItem);
+            if (sectionDict.ContainsKey("Cost of Sales"))
+                SummarySections[1] = new CogsPAndL(week.Period, sectionDict["Cost of Sales"], sales.TotalSalesItem);
+            else
+                PopulateCogs(week);
             SummarySections[2] = new PayrollPAndL(week.Period, sectionDict["Payroll"], sales.TotalSalesItem,
                                                   SummarySections[1].Summaries.First(x => x.Name == "Total"));
             SummarySections[3] = new OverheadPAndL(week.Period, sectionDict["Overhead Expense"], sales.TotalSalesItem);
@@ -238,12 +246,12 @@ namespace BuddhaBowls
             // temporary check to create blank takeaway in case the other records exist and this type does not
             if (!sectionDict.ContainsKey("Takeaway"))
             {
-                PopulateTakeaway(GetTakeawaySummaryItems(period, week));
+                PopulateTakeaway(GetTakeawaySummaryItems(period, week), week);
                 SummarySections[4].Insert();
             }
             else
             {
-                PopulateTakeaway(sectionDict["Takeaway"]);
+                PopulateTakeaway(sectionDict["Takeaway"], week);
             }
 
             for (int i = 0; i < SummarySections.Count; i++)
@@ -550,14 +558,14 @@ namespace BuddhaBowls
             }
         }
 
-        private List<ExpenseItem> GetCogsSummaryItems()
+        private List<ExpenseItem> GetCogsSummaryItems(WeekMarker week)
         {
             List<ExpenseItem> summary = new List<ExpenseItem>();
 
             ExpenseItem foodSalesItem = SummarySections[0].Summaries.FirstOrDefault(x => x.Name == "Food") ??
-                                        new ExpenseItem("Cost of Sales", "Food", PeriodSelector.SelectedWeek.StartDate);
+                                        new ExpenseItem("Cost of Sales", "Food", week.StartDate);
             ExpenseItem bevSalesItem = SummarySections[0].Summaries.FirstOrDefault(x => x.Name == "Beverage") ??
-                                        new ExpenseItem("Cost of Sales", "Beverage", PeriodSelector.SelectedWeek.StartDate);
+                                        new ExpenseItem("Cost of Sales", "Beverage", week.StartDate);
             ExpenseItem totalSalesItem = SummarySections[0].Summaries.First(x => x.Name == "Total");
             float foodWeekSales = foodSalesItem.WeekSales;
 
@@ -566,7 +574,7 @@ namespace BuddhaBowls
 
             float foodCogs = _reportsTab.WeekCogs.First(x => x.Name == "Food Total").CogsCost;
             float perFoodCogs = _reportsTab.PeriodCogs.First(x => x.Name == "Food Total").CogsCost;
-            DateTime weekStart = _reportsTab.PeriodSelector.SelectedWeek.StartDate;
+            DateTime weekStart = week.StartDate;
             summary.Add(new ExpenseItem()
             {
                 Name = "Food",

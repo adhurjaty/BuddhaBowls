@@ -36,10 +36,10 @@
         <Label Grid.Column="0" Grid.Row="4" Content="Count-Recipe Unit&#10;Conversion:" HorizontalAlignment="Right" VerticalAlignment="Center"
                     HorizontalContentAlignment="Right" />
         <Controls:NumericUpDown Grid.Column="1" Grid.Row="4" Minimum="0" StringFormat="0.##" Value="{Binding Item.RecipeUnitConversion}"
-                                HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Height="25" Margin="10, 0"/>
+                                HorizontalAlignment="Left" VerticalAlignment="Center" Width="140" Height="25" Margin="10, 0"/>
         <Label Grid.Column="0" Grid.Row="5" Content="Yield (%):" HorizontalAlignment="Right" VerticalAlignment="Center"/>
         <Controls:NumericUpDown Grid.Column="1" Grid.Row="5" Minimum="0" StringFormat="{}{0}%"
-                                Value="{Binding Yield}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100"
+                                Value="{Binding Yield}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="140"
                                 Height="25" Margin="10, 0"/>
     </Grid>
 </UserControl>
