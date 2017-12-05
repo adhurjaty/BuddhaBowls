@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.Square;
 using System;
@@ -236,12 +237,12 @@ namespace BuddhaBowls
             SalesPAndL sales = new SalesPAndL(week.Period, sectionDict["Sales"]);
             SummarySections[0] = sales;
             if (sectionDict.ContainsKey("Cost of Sales"))
-                SummarySections[1] = new CogsPAndL(week.Period, sectionDict["Cost of Sales"], sales.TotalSalesItem);
+                SummarySections[1] = new CogsPAndL(week.Period, sectionDict["Cost of Sales"], sales.FoodTotal);
             else
                 PopulateCogs(week);
-            SummarySections[2] = new PayrollPAndL(week.Period, sectionDict["Payroll"], sales.TotalSalesItem,
+            SummarySections[2] = new PayrollPAndL(week.Period, sectionDict["Payroll"], sales.FoodTotal,
                                                   SummarySections[1].Summaries.First(x => x.Name == "Total"));
-            SummarySections[3] = new OverheadPAndL(week.Period, sectionDict["Overhead Expense"], sales.TotalSalesItem);
+            SummarySections[3] = new OverheadPAndL(week.Period, sectionDict["Overhead Expense"], sales.FoodTotal);
 
             // temporary check to create blank takeaway in case the other records exist and this type does not
             if (!sectionDict.ContainsKey("Takeaway"))
@@ -419,7 +420,7 @@ namespace BuddhaBowls
                             cancelToken.ThrowIfCancellationRequested();
                             if (!itemCategoryCache.ContainsKey(itemization.Name))
                             {
-                                Recipe matchingRec = soldItems.FirstOrDefault(x => x.Name == itemization.Name);
+                                Recipe matchingRec = soldItems.FirstOrDefault(x => MainHelper.CompareStrings(x.Name, itemization.Name));
                                 if (matchingRec != null)
                                     itemCategoryCache[itemization.Name] = matchingRec.Category;
                                 else

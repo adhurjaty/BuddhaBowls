@@ -28,7 +28,7 @@ namespace BuddhaBowls.Services
             }
             else
             {
-                StartDate = startDate;
+                StartDate = startDate.AddHours(4);
                 EndDate = StartDate.AddDays(duration).AddSeconds(-1);
                 if (EndDate.Year > StartDate.Year)
                     EndDate = new DateTime(EndDate.Year, 1, 1).AddSeconds(-1);

@@ -223,6 +223,11 @@ namespace BuddhaBowls.Helpers
             return set.Comparer == StringComparer.OrdinalIgnoreCase
                    ? set : new HashSet<string>(set, StringComparer.OrdinalIgnoreCase);
         }
+
+        public static bool CompareStrings(string a, string b)
+        {
+            return a.ToUpper().Replace(" ", "") == b.ToUpper().Replace(" ", "");
+        }
     }
 
     public class BindingProxy : Freezable

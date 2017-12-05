@@ -47,6 +47,7 @@ namespace BuddhaBowls.Models
             {
                 item.ExpenseType = sumType;
             }
+
             TotalSalesItem = totalSalesItem;
             CanEdit = canEdit;
         }
@@ -148,9 +149,16 @@ namespace BuddhaBowls.Models
 
     public class SalesPAndL : PAndLSummarySection
     {
+        public ExpenseItem FoodTotal { get; set; }
 
-        public SalesPAndL(int weekNum, IEnumerable<ExpenseItem> items) : base("Sales", weekNum, items, items.First(x => x.Name == "Total"))
+        public SalesPAndL(int weekNum, IEnumerable<ExpenseItem> items) : base("Sales", weekNum, items, items.FirstOrDefault(x => x.Name == "Total"))
         {
+            if (TotalSalesItem == null)
+            {
+                TotalSalesItem = new ExpenseItem("Sales", "Total", DateTime.Now);
+                UpdateTotal();
+            }
+            FoodTotal = items.First(x => x.Name == "Food");
             _totalRows = new List<string>() { "Total" };
         }
 

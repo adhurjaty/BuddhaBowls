@@ -203,10 +203,11 @@ namespace BuddhaBowls.Models
             if (File.Exists(GetTableLocation()))
             {
                 // if there exists a record with the same date, update instead of inserting
-                BreadOrder existingRecord = new BreadOrder(new Dictionary<string, string>() { { "Date", Date.ToString() } });
-                if (existingRecord.Id != -1)
+                IEnumerable<BreadOrder> existingRecords = ModelHelper.InstantiateList<BreadOrder>(
+                                                            new Dictionary<string, string>() { { "Date", Date.ToString() } }, "BreadOrder");
+                if (existingRecords != null)
                 {
-                    Id = existingRecord.Id;
+                    Id = existingRecords.First().Id;
                     base.Update();
                     return Id;
                 }
