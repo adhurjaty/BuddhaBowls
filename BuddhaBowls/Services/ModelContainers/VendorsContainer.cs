@@ -19,10 +19,7 @@ namespace BuddhaBowls.Services
         /// <param name="items"></param>
         public VendorsContainer(List<Vendor> items) : base(items)
         {
-            //foreach (Vendor vend in items)
-            //{
-            //    vend.InitItems();
-            //}
+
         }
 
         /// <summary>
@@ -36,24 +33,17 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
-        /// Adds or updates vendor and sets the items sold to the invItems parameter
-        /// </summary>
-        /// <param name="vend"></param>
-        /// <param name="invItems"></param>
-        public void AddItem(Vendor vend, List<InventoryItem> invItems)
-        {
-
-        }
-
-        /// <summary>
         /// Removes the inventory item from all the vendors' lists that contain it
         /// </summary>
         /// <param name="item"></param>
         public void RemoveItemFromVendors(VendorInventoryItem item)
         {
-            foreach (Vendor v in item.Vendors)
+            if (_isMaster)
             {
-                v.RemoveInvItem(item);
+                foreach (Vendor v in item.Vendors)
+                {
+                    v.RemoveInvItem(item);
+                }
             }
         }
     }

@@ -16,7 +16,8 @@ namespace BuddhaBowls.Services
     /// <typeparam name="T"></typeparam>
     public class ModelContainer<T> where T : Model, new()
     {
-        protected HashSet<UpdateBinding> _updateFncs;
+        protected List<ModelContainer<T>> _copies;
+        protected bool _isMaster;
 
         protected List<T> _items;
         public List<T> Items
@@ -30,6 +31,12 @@ namespace BuddhaBowls.Services
         public ModelContainer(List<T> items)
         {
             _items = items;
+            _copies = new List<ModelContainer<T>>();
+        }
+
+        public ModelContainer(List<T> items, bool isMaster) : this(items)
+        {
+            _isMaster = true;
         }
 
         public virtual T AddItem(T item)
@@ -37,7 +44,8 @@ namespace BuddhaBowls.Services
             if (!Contains(item))
             {
                 _items.Add(item);
-                PushChange();
+                if (_isMaster)
+                    item.Insert();
             }
 
             return item;
@@ -46,20 +54,22 @@ namespace BuddhaBowls.Services
         public virtual void AddItems(List<T> items)
         {
             Items.AddRange(items);
-            PushChange();
         }
 
         public virtual void RemoveItem(T item)
         {
             _items.RemoveAll(x => x.Id == item.Id);
-            PushChange();
+            if (_isMaster)
+                item.Destroy();
         }
 
         public virtual void Update(T item)
         {
             int idx = Items.FindIndex(x => x.Id == item.Id);
             Items[idx] = item;
-            PushChange();
+
+            if (_isMaster)
+                item.Update();
         }
 
         public virtual void UpdateMultiple(IEnumerable<T> items)
@@ -69,8 +79,9 @@ namespace BuddhaBowls.Services
                 int idx = Items.FindIndex(x => x.Id == item.Id);
                 if(idx != -1)
                     Items[idx] = item;
+                if (_isMaster)
+                    item.Update();
             }
-            PushChange();
         }
 
         public virtual bool Contains(T item)
@@ -83,32 +94,66 @@ namespace BuddhaBowls.Services
         //    return _items.Select(x => x.Copy()).ToList();
         //}
 
-        public void AddUpdateBinding(UpdateBinding ub)
-        {
-            if (_updateFncs == null)
-                _updateFncs = new HashSet<UpdateBinding>();
-            _updateFncs.Add(ub);
-        }
+        //public void AddUpdateBinding(UpdateBinding ub)
+        //{
+        //    if (_updateFncs == null)
+        //        _updateFncs = new HashSet<UpdateBinding>();
+        //    _updateFncs.Add(ub);
+        //}
 
-        public virtual void RemoveUpdateBinding(UpdateBinding ub)
-        {
-            _updateFncs.Remove(ub);
-        }
+        //public virtual void RemoveUpdateBinding(UpdateBinding ub)
+        //{
+        //    _updateFncs.Remove(ub);
+        //}
 
         public void SetItems(List<T> items)
         {
+            if (_isMaster)
+            {
+                List<int> ids = _items.Select(x => x.Id).ToList();
+                foreach (T item in items)
+                {
+                    if (ids.Contains(item.Id))
+                        item.Update();
+                    else
+                        item.Insert();
+                }
+            }
             _items = items;
-            PushChange();
+            UpdateCopies();
         }
 
-        public virtual void PushChange()
+        public void SyncCopy(ModelContainer<T> copy)
         {
-            if (_updateFncs != null)
+            SetItems(copy.Items);
+        }
+
+        protected virtual U Copy<U>() where U : ModelContainer<T>, new()
+        {
+            throw new InvalidOperationException("Cannot call base copy method");
+        }
+
+        /// <summary>
+        /// Method to update copies of this ModelContainer to match it at its current state
+        /// </summary>
+        protected virtual void UpdateCopies()
+        {
+            
+        }
+
+        /// <summary>
+        /// Method to update copies of this ModelContainer to match its item
+        /// </summary>
+        /// <param name="item">Item to synchronize the copies</param>
+        protected virtual void UpdateCopies(T item)
+        {
+            foreach (ModelContainer<T> copy in _copies)
             {
-                foreach (UpdateBinding ub in _updateFncs)
-                {
-                    ub();
-                }
+                int idx = copy.Items.FindIndex(x => x.Id == item.Id);
+                if(idx == -1)
+                    copy.AddItem(item);
+                else
+                    copy.Update(item);
             }
         }
     }

@@ -59,12 +59,14 @@ namespace BuddhaBowls.Services
 
         public void ReceiveOrders(List<PurchaseOrder> orders)
         {
-            foreach (PurchaseOrder order in orders)
+            if (_isMaster)
             {
-                order.Receive();
-                _viContainer.UpdateSelectedVendor(order);
+                foreach (PurchaseOrder order in orders)
+                {
+                    order.Receive();
+                    _viContainer.UpdateSelectedVendor(order);
+                }
             }
-            PushChange();
         }
     }
 }

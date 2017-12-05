@@ -13,5 +13,20 @@ namespace BuddhaBowls.Services
         {
 
         }
+
+        public InventoryItemsContainer Copy()
+        {
+            InventoryItemsContainer iic = new InventoryItemsContainer(_items.Select(x => x.Copy<InventoryItem>()).ToList());
+            _copies.Add(iic);
+            return iic;
+        }
+
+        protected override void UpdateCopies()
+        {
+            for (int i = 0; i < _copies.Count; i++)
+            {
+                _copies[i] = Copy();
+            }
+        }
     }
 }

@@ -12,20 +12,22 @@ namespace BuddhaBowls.Services
     /// <summary>
     /// Class to hold the inventory items associated with which vendors sell them
     /// </summary>
-    public class VendorInvItemsContainer : ModelContainer<VendorInventoryItem>
+    public class VendorInvItemsContainer
     {
         // tracks vendors, necessary for each item to reference
         private VendorsContainer _vendorsContainer;
+        private InventoryItemsContainer _itemsContainer;
         // tracks the open copies of this object for use in master -> copy updating
-        private List<VendorInvItemsContainer> _copies;
+        //private List<VendorInvItemsContainer> _copies;
 
         /// <summary>
         /// Instantiate the container. Should only be called in the DBCache class
         /// </summary>
         /// <param name="items">List of vendor inventory items to contain</param>
         /// <param name="vContainer">Vendor container</param>
-        public VendorInvItemsContainer(List<VendorInventoryItem> items, VendorsContainer vContainer) : base(items)
+        public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer)
         {
+            _itemsContainer = items;
             _vendorsContainer = vContainer;
         }
 

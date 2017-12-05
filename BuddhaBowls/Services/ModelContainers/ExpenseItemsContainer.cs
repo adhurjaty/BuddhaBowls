@@ -9,9 +9,6 @@ namespace BuddhaBowls.Services
 {
     public class ExpenseItemsContainer : ModelContainer<ExpenseItem>
     {
-        // tracks the open copies of this object for use in master -> copy updating
-        private List<ExpenseItemsContainer> _copies;
-
         public ExpenseItemsContainer(List<ExpenseItem> items) : base(items)
         {
 
@@ -24,10 +21,16 @@ namespace BuddhaBowls.Services
         public ExpenseItemsContainer Copy()
         {
             ExpenseItemsContainer eic = new ExpenseItemsContainer(_items.Select(x => x.Copy<ExpenseItem>()).ToList());
-            if (_copies == null)
-                _copies = new List<ExpenseItemsContainer>();
             _copies.Add(eic);
             return eic;
+        }
+
+        protected override void UpdateCopies()
+        {
+            for (int i = 0; i < _copies.Count; i++)
+            {
+                _copies[i] = Copy();
+            }
         }
     }
 }
