@@ -9,9 +9,9 @@ namespace BuddhaBowls.Services
 {
     public class ExpenseItemsContainer : ModelContainer<ExpenseItem>
     {
-        public ExpenseItemsContainer(List<ExpenseItem> items) : base(items)
+        public ExpenseItemsContainer(List<ExpenseItem> items, bool isMaster = false) : base(items, isMaster)
         {
-
+            
         }
 
         /// <summary>

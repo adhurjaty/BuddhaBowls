@@ -133,6 +133,11 @@ namespace BuddhaBowls.Services
             throw new InvalidOperationException("Cannot call base copy method");
         }
 
+        public void RemoveCopy<U>(U cpy) where U : ModelContainer<T>
+        {
+            _copies.Remove(cpy);
+        }
+
         /// <summary>
         /// Method to update copies of this ModelContainer to match it at its current state
         /// </summary>

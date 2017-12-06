@@ -13,12 +13,12 @@ namespace BuddhaBowls.Services
         private PurchaseOrder _latestRecOrder;
         private VendorInvItemsContainer _viContainer;
 
-        public PurchaseOrdersContainer(List<PurchaseOrder> items) : base(items)
+        public PurchaseOrdersContainer(List<PurchaseOrder> items, bool isMaster = false) : base(items, isMaster)
         {
             _latestRecOrder = items.OrderByDescending(x => x.ReceivedDate).FirstOrDefault();
         }
 
-        public PurchaseOrdersContainer(List<PurchaseOrder> items, VendorInvItemsContainer viContainer) : this(items)
+        public PurchaseOrdersContainer(List<PurchaseOrder> items, VendorInvItemsContainer viContainer) : this(items, true)
         {
             _viContainer = viContainer;
         }

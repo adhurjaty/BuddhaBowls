@@ -17,7 +17,7 @@ namespace BuddhaBowls.Services
         /// Instantiate container
         /// </summary>
         /// <param name="items"></param>
-        public VendorsContainer(List<Vendor> items) : base(items)
+        public VendorsContainer(List<Vendor> items, bool isMaster = false) : base(items, isMaster)
         {
 
         }
@@ -42,9 +42,21 @@ namespace BuddhaBowls.Services
             {
                 foreach (Vendor v in item.Vendors)
                 {
-                    v.RemoveInvItem(item);
+                    v.RemoveInvItem(item.ToInventoryItem());
                 }
             }
+        }
+
+        public VendorsContainer Copy()
+        {
+            VendorsContainer cpy = new VendorsContainer(Items.Select(x => x.Copy()).ToList());
+            _copies.Add(cpy);
+            return cpy;
+        }
+
+        protected override void UpdateCopies()
+        {
+            base.UpdateCopies();
         }
     }
 }

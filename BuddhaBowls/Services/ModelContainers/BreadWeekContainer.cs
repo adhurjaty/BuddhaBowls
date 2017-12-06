@@ -25,9 +25,8 @@ namespace BuddhaBowls.Services
             }
         }
 
-        public BreadWeekContainer(List<BreadOrder> items) : base(items)
+        public BreadWeekContainer(List<BreadOrder> items) : base(items, true)
         {
-
         }
     }
 }

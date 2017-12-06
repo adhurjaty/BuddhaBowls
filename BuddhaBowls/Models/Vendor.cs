@@ -10,6 +10,8 @@ namespace BuddhaBowls.Models
 {
     public class Vendor : Model
     {
+
+
         public string Name { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
@@ -139,6 +141,14 @@ namespace BuddhaBowls.Models
         public override int GetHashCode()
         {
             return Id;
+        }
+
+        public Vendor Copy()
+        {
+            Vendor v = base.Copy<Vendor>();
+            if (ItemList != null)
+                v.ItemList = ItemList.Select(x => (InventoryItem)x.Copy()).ToList();
+            return v;
         }
 
         /// <summary>

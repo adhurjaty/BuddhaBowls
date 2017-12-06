@@ -140,7 +140,7 @@ namespace BuddhaBowls
                 Inv.Date = InvDate;
                 Inv.DestroyTable();
 
-                Inv.SetInvItemsContainer(InvListVM.GetItemsContainer().ToInvContainer());
+                Inv.SetInvItemsContainer(InvListVM.GetItemsContainer().GetInvItemsContainer());
                 Inv = _models.InContainer.AddItem(Inv);
 
                 if (Inv.Id == -1)

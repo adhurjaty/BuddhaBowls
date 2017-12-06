@@ -16,7 +16,7 @@ namespace BuddhaBowls.Services
         /// Instantiate the container
         /// </summary>
         /// <param name="items"></param>
-        public InventoriesContainer(List<Inventory> items) : base(items)
+        public InventoriesContainer(List<Inventory> items, bool isMaster = false) : base(items, isMaster)
         {
 
         }

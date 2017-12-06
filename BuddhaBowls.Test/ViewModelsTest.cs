@@ -1336,7 +1336,7 @@ namespace BuddhaBowls.Test
 
             newInvVM.NextCommand.Execute(null);
 
-            newInvVM.InvOrderList = new ObservableCollection<InventoryItem>(_vm.GetModelContainer().VIContainer.ToInvContainer().Items);
+            newInvVM.InvOrderList = new ObservableCollection<InventoryItem>(_vm.GetModelContainer().VIContainer.GetInvItemsContainer().Items);
 
             newInvVM.FinishCommand.Execute(null);
 

@@ -16,9 +16,22 @@ namespace BuddhaBowls.Services
     {
         // tracks vendors, necessary for each item to reference
         private VendorsContainer _vendorsContainer;
-        private InventoryItemsContainer _itemsContainer;
-        // tracks the open copies of this object for use in master -> copy updating
-        //private List<VendorInvItemsContainer> _copies;
+        private InventoryItemsContainer _invItemsContainer;
+        private bool _isMaster = false;
+        private List<VendorInvItemsContainer> _copies;
+
+        private List<VendorInventoryItem> _items;
+        public List<VendorInventoryItem> Items
+        {
+            get
+            {
+                return _items;
+            }
+            private set
+            {
+                _items = value;
+            }
+        }
 
         /// <summary>
         /// Instantiate the container. Should only be called in the DBCache class
@@ -27,8 +40,20 @@ namespace BuddhaBowls.Services
         /// <param name="vContainer">Vendor container</param>
         public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer)
         {
-            _itemsContainer = items;
+            _invItemsContainer = items;
             _vendorsContainer = vContainer;
+            _copies = new List<VendorInvItemsContainer>();
+        }
+
+        public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer, bool isMaster) : this(items, vContainer)
+        {
+            _isMaster = isMaster;
+        }
+
+        public void SetItems(InventoryItemsContainer itemsCont)
+        {
+            _invItemsContainer = itemsCont;
+            Items = _invItemsContainer.Items.Select(x => new VendorInventoryItem(GetVendorsFromItem(x))).ToList();
         }
 
         /// <summary>
@@ -38,47 +63,40 @@ namespace BuddhaBowls.Services
         /// <param name="vendors">List of vendors that sell it</param>
         public VendorInventoryItem AddItem(InventoryItem item, List<VendorInfo> vendors)
         {
+            _invItemsContainer.AddItem(item);
+            VendorInventoryItem vItem;
+
             int idx = Items.FindIndex(x => x.Id == item.Id);
             if (idx != -1)
             {
                 _items[idx].SetVendorDict(vendors);
-                _items[idx].InvItem = item;
-                PushChange();
-                return _items[idx];
+                //_items[idx].InvItem = item;
+                vItem = _items[idx];
             }
             else
             {
-                VendorInventoryItem vItem = new VendorInventoryItem(item);
-
-                vItem.SetVendorDict(vendors);
-
+                vItem = new VendorInventoryItem(item, vendors);
                 int insertIdx = Properties.Settings.Default.InventoryOrder.IndexOf(item.Name);
                 if (insertIdx == -1)
                     _items.Add(vItem);
                 else
                     _items.Insert(insertIdx, vItem);
-
-                PushChange();
-                return vItem;
             }
+
+            UpdateCopies(vItem);
+            return vItem;
         }
 
         /// <summary>
         /// Removes item from current inventory list and all vendor lists
         /// </summary>
         /// <param name="item"></param>
-        public override void RemoveItem(VendorInventoryItem item)
+        public void RemoveItem(VendorInventoryItem item)
         {
             _vendorsContainer.RemoveItemFromVendors(item);
-
-            base.RemoveItem(item);
-        }
-
-
-        public override void PushChange()
-        {
+            _invItemsContainer.RemoveItem(item.ToInventoryItem());
+            Items.Remove(item);
             UpdateCopies();
-            base.PushChange();
         }
 
         /// <summary>
@@ -92,8 +110,8 @@ namespace BuddhaBowls.Services
                 int idx = Items.FindIndex(x => x.Id == item.Id);
                 item.SetVendorItem(item.SelectedVendor, item.ToInventoryItem());
                 Items[idx] = item;
+                UpdateCopies(item);
             }
-            PushChange();
         }
 
         /// <summary>
@@ -102,23 +120,18 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public VendorInvItemsContainer Copy()
         {
-            VendorInvItemsContainer viic = new VendorInvItemsContainer(_items.Select(x => x.Copy()).ToList(), _vendorsContainer);
-            if (_copies == null)
-                _copies = new List<VendorInvItemsContainer>();
+            VendorInvItemsContainer viic = new VendorInvItemsContainer(_invItemsContainer.Copy(), _vendorsContainer.Copy());
             _copies.Add(viic);
             return viic;
         }
 
         public void UpdateCopies()
         {
-            if (_copies == null)
-                return;
-
             for (int i = 0; i < _copies.Count; i++)
             {
                 // don't want to change count values for the copies, so re-assign count value (bit of a hack)
                 Dictionary<int, float> countDict = _copies[i].Items.ToDictionary(x => x.Id, y => y.Count);
-                _copies[i].SetItems(_items.Select(x => x.Copy()).ToList());
+                _copies[i].SetItems(GetInvItemsContainer());
 
                 foreach (VendorInventoryItem item in _copies[i].Items)
                 {
@@ -126,20 +139,15 @@ namespace BuddhaBowls.Services
                         item.Count = countDict[item.Id];
                 }
 
-                _copies[i].PushChange();
             }
         }
 
         public void UpdateCopies(VendorInventoryItem item)
         {
-            if (_copies == null)
-                return;
-
             for (int i = 0; i < _copies.Count; i++)
             {
                 int idx = _copies[i].Items.FindIndex(x => x.Id == item.Id);
-                _copies[i].Items[idx] = item.Copy();
-                _copies[i].PushChange();
+                _copies[i].Items[idx] = (VendorInventoryItem)item.Copy();
             }
         }
 
@@ -153,9 +161,10 @@ namespace BuddhaBowls.Services
             vend.SetItemList(invItems);
             foreach (InventoryItem item in invItems)
             {
-                Items.First(x => x.Id == item.Id).AddVendor(vend, item);
+                VendorInventoryItem vItem = Items.First(x => x.Id == item.Id);
+                vItem.AddVendor(vend, item);
+                UpdateCopies(vItem);
             }
-            PushChange();
         }
 
         /// <summary>
@@ -168,15 +177,21 @@ namespace BuddhaBowls.Services
             List<InventoryItem> vendItems = new List<InventoryItem>(vend.ItemList);
             foreach (InventoryItem item in vendItems)
             {
-                Items.First(x => x.Id == item.Id).DeleteVendor(vend);
+                VendorInventoryItem vItem = Items.First(x => x.Id == item.Id);
+                vItem.DeleteVendor(vend);
+                UpdateCopies(vItem);
             }
-            PushChange();
         }
 
+        /// <summary>
+        /// Remove copy from _copies. Used when closing a temp tab that holds a copy
+        /// </summary>
+        /// <param name="viContainer"></param>
         public void RemoveCopy(VendorInvItemsContainer viContainer)
         {
-            if(_copies != null)
-                _copies.Remove(viContainer);
+            _invItemsContainer.RemoveCopy(viContainer.GetInvItemsContainer());
+            _vendorsContainer.RemoveCopy(viContainer.GetVendorsContainer());
+            _copies.Remove(viContainer);
         }
 
         /// <summary>
@@ -211,13 +226,13 @@ namespace BuddhaBowls.Services
         /// <summary>
         /// Update (push to DB) all of the items in the container
         /// </summary>
-        public void UpdateContainer()
-        {
-            foreach (VendorInventoryItem item in Items)
-            {
-                item.Update();
-            }
-        }
+        //public void UpdateContainer()
+        //{
+        //    foreach (VendorInventoryItem item in Items)
+        //    {
+        //        item.Update();
+        //    }
+        //}
 
         /// <summary>
         /// Associates item with vendor and updates vendor
@@ -230,7 +245,7 @@ namespace BuddhaBowls.Services
             vItem.SetVendorItem(vend, item);
             vend.AddInvItem(item);
             _vendorsContainer.Update(vend);
-            PushChange();
+            UpdateCopies(vItem);
         }
 
         public void RemoveFromVendor(InventoryItem item, Vendor vend)
@@ -239,7 +254,7 @@ namespace BuddhaBowls.Services
             VendorInventoryItem vItem = Items.First(x => x.Id == item.Id);
             vItem.DeleteVendor(vend);
             _vendorsContainer.Update(vend);
-            PushChange();
+            UpdateCopies(vItem);
         }
 
         /// <summary>
@@ -269,13 +284,31 @@ namespace BuddhaBowls.Services
             }
         }
 
-        /// <summary>
-        /// Convert to an InventoryItemsContainer with empty update bindings
-        /// </summary>
-        /// <returns></returns>
-        public InventoryItemsContainer ToInvContainer()
+        public InventoryItemsContainer GetInvItemsContainer()
         {
-            return new InventoryItemsContainer(Items.Select(x => x.ToInventoryItem()).ToList());
+            return _invItemsContainer;
+        }
+
+        public VendorsContainer GetVendorsContainer()
+        {
+            return _vendorsContainer;
+        }
+
+        /// <summary>
+        /// Gets a dictionary of vendors that offer the passed-in inventory item. The inventory item value is the vendor-specific inventory
+        /// item associated with that vendor (not the one from the model container, which is passed in).
+        /// </summary>
+        public Dictionary<Vendor, InventoryItem> GetVendorsFromItem(InventoryItem item)
+        {
+            Dictionary<Vendor, InventoryItem> vendorDict = new Dictionary<Vendor, InventoryItem>();
+            foreach (Vendor v in _vendorsContainer.Items)
+            {
+                InventoryItem vendorItem = v.ItemList.FirstOrDefault(x => x.Id == item.Id);
+                if (vendorItem != null)
+                    vendorDict[v] = _isMaster ? vendorItem : (InventoryItem)vendorItem.Copy();
+            }
+
+            return vendorDict;
         }
 
         /// <summary>

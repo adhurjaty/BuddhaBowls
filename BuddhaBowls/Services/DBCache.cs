@@ -53,15 +53,14 @@ namespace BuddhaBowls.Services
             Logger.Info("Loading models");
             DailySales = ModelHelper.InstantiateList<DailySale>("DailySale");
 
-            List<InventoryItem> invItems = MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem")).ToList();
+            InventoryItemsContainer invItems = new InventoryItemsContainer(ModelHelper.InstantiateList<InventoryItem>("InventoryItem"), true);
 
             VContainer = new VendorsContainer(ModelHelper.InstantiateList<Vendor>("Vendor"));
-            VIContainer = new VendorInvItemsContainer(invItems.Select(x => new VendorInventoryItem(x, GetVendorsFromItem(x))).ToList(),
-                                                       VContainer);
+            VIContainer = new VendorInvItemsContainer(invItems, VContainer, true);
             POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder"), VIContainer);
-            InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory"));
-            RContainer = new RecipesContainer(ModelHelper.InstantiateList<Recipe>("Recipe"));
-            EIContainer = new ExpenseItemsContainer(ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem"));
+            InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory"), true);
+            RContainer = new RecipesContainer(ModelHelper.InstantiateList<Recipe>("Recipe"), true);
+            EIContainer = new ExpenseItemsContainer(ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem"), true);
             //AddRecipeItems();
 
             _breadWeekDict = new Dictionary<DateTime, BreadWeekContainer>();
@@ -216,24 +215,6 @@ namespace BuddhaBowls.Services
         {
             List<InventoryItem> items = MainHelper.SortItems(inv.GetInvItems()).ToList();
             inv.SetInvItemsContainer(new InventoryItemsContainer(items));
-        }
-
-        /// <summary>
-        /// Gets a dictionary of vendors that offer the passed-in inventory item. The inventory item value is the vendor-specific inventory
-        /// item associated with that vendor (not the one from the model container, which is passed in). Really should be in VendorInvItemsContainer
-        /// but cannot put it in due to build error problems
-        /// </summary>
-        public Dictionary<Vendor, InventoryItem> GetVendorsFromItem(InventoryItem item)
-        {
-            Dictionary<Vendor, InventoryItem> vendorDict = new Dictionary<Vendor, InventoryItem>();
-            foreach(Vendor v in VContainer.Items)
-            {
-                InventoryItem vendorItem = v.ItemList.FirstOrDefault(x => x.Id == item.Id);
-                if (vendorItem != null)
-                    vendorDict[v] = vendorItem;
-            }
-
-            return vendorDict;
         }
 
         /// <summary>

@@ -9,7 +9,7 @@ namespace BuddhaBowls.Services
 {
     public class RecipesContainer : ModelContainer<Recipe>
     {
-        public RecipesContainer(List<Recipe> items) : base(items)
+        public RecipesContainer(List<Recipe> items, bool isMaster = false) : base(items, isMaster)
         {
 
         }

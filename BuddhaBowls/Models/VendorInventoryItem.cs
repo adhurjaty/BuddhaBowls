@@ -9,35 +9,116 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class VendorInventoryItem : InventoryItem
+    public class VendorInventoryItem : Model, IItem
     {
         // dictionary relating the vendor to the inventory item (differ in conversion, price, and purchased unit)
         private Dictionary<Vendor, InventoryItem> _vendorDict;
 
         private InventoryItem _invItem;
-        public InventoryItem InvItem
+
+        public string Name
         {
             get
             {
-                return _invItem;
+                return _invItem.Name;
             }
             set
             {
-                _invItem = value;
-                Name = _invItem.Name;
-                Category = _invItem.Category;
-                Count = _invItem.Count;
-                CountUnit = _invItem.CountUnit;
-                RecipeUnit = _invItem.RecipeUnit;
-                RecipeUnitConversion = _invItem.RecipeUnitConversion;
-                Yield = _invItem.Yield;
-                LastVendorId = _invItem.LastVendorId;
-                Conversion = _invItem.Conversion;
-                LastPurchasedPrice = _invItem.LastPurchasedPrice;
-                LastOrderAmount = _invItem.LastOrderAmount;
-                PurchasedUnit = _invItem.PurchasedUnit;
-                Id = _invItem.Id;
-                NotifyAllChanges();
+                _invItem.Name = value;
+            }
+        }
+
+        public string Category
+        {
+            get
+            {
+                return _invItem.Category;
+            }
+            set
+            {
+                _invItem.Category = value;
+            }
+        }
+
+        public float Count
+        {
+            get
+            {
+                return _invItem.Count;
+            }
+            set
+            {
+                _invItem.Count = value;
+            }
+        }
+
+        public string CountUnit
+        {
+            get { return _invItem.CountUnit ; }
+            set { _invItem.CountUnit = value; }
+        }
+
+        public string RecipeUnit
+        {
+            get { return _invItem.RecipeUnit; }
+            set { _invItem.RecipeUnit = value; }
+        }
+
+        public float? RecipeUnitConversion
+        {
+            get { return _invItem.RecipeUnitConversion; }
+            set { _invItem.RecipeUnitConversion = value; }
+        }
+
+        public float? Yield
+        {
+            get { return _invItem.Yield; }
+            set { _invItem.Yield = value; }
+        }
+
+        public int? LastVendorId
+        {
+            get { return _invItem.LastVendorId; }
+            set { _invItem.LastVendorId = value; }
+        }
+
+        public float Conversion
+        {
+            get { return _invItem.Conversion; }
+            set { _invItem.Conversion = value; }
+        }
+
+        public float LastPurchasedPrice
+        {
+            get { return _invItem.LastPurchasedPrice; }
+            set { _invItem.LastPurchasedPrice = value; }
+        }
+
+        public float LastOrderAmount
+        {
+            get { return _invItem.LastOrderAmount; }
+            set { _invItem.LastOrderAmount = value; }
+        }
+
+        public string PurchasedUnit
+        {
+            get { return _invItem.PurchasedUnit; }
+            set { _invItem.PurchasedUnit = value; }
+        }
+
+        public float PurchaseExtension
+        {
+            get
+            {
+                return _invItem.PurchaseExtension;
+            }
+        }
+
+        public float PriceExtension
+        {
+            get
+            {
+                return _invItem.PriceExtension;
             }
         }
 
@@ -55,7 +136,7 @@ namespace BuddhaBowls.Models
             get
             {
                 if (_selectedVendor == null && _vendorDict != null && Vendors.Count > 0)
-                    _selectedVendor = Vendors[0];
+                    SelectedVendor = Vendors[0];
                 return _selectedVendor;
             }
             set
@@ -63,8 +144,24 @@ namespace BuddhaBowls.Models
                 _selectedVendor = value;
                 if (value != null)
                 {
-                    UpdateVendorParams();
+                    _invItem = GetInvItemFromVendor(_selectedVendor);
                 }
+            }
+        }
+
+        public float CostPerRU
+        {
+            get
+            {
+                return _invItem.CostPerRU;
+            }
+        }
+
+        public float RecipeCost
+        {
+            get
+            {
+                return _invItem.RecipeCost;
             }
         }
 
@@ -93,10 +190,9 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public VendorInventoryItem(InventoryItem item, Dictionary<Vendor, InventoryItem> vendorDict = null)
+        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict)
         {
-            InvItem = item;
-            _vendorDict = vendorDict ?? new Dictionary<Vendor, InventoryItem>();
+            _vendorDict = vendorDict;
 
             if (LastVendorId != null)
                 SelectedVendor = _vendorDict.Keys.FirstOrDefault(x => x.Id == LastVendorId);
@@ -106,8 +202,9 @@ namespace BuddhaBowls.Models
             //CopyInvItem(item);
         }
 
-        public VendorInventoryItem(InventoryItem item, IEnumerable<VendorInfo> vInfo) : this(item)
+        public VendorInventoryItem(InventoryItem item, IEnumerable<VendorInfo> vInfo)
         {
+            _invItem = item;
             SetVendorDict(vInfo.ToList());
 
             if (LastVendorId != null)
@@ -122,13 +219,14 @@ namespace BuddhaBowls.Models
         /// <returns></returns>
         public InventoryItem ToInventoryItem()
         {
-            InventoryItem item = new InventoryItem();
-            foreach(string property in item.GetPropertiesDB())
-            {
-                item.SetProperty(property, GetPropertyValue(property));
-            }
-            item.Id = Id;
-            return item;
+            //InventoryItem item = new InventoryItem();
+            //foreach(string property in item.GetPropertiesDB())
+            //{
+            //    item.SetProperty(property, GetPropertyValue(property));
+            //}
+            //item.Id = Id;
+            //return item;
+            return _invItem;
         }
 
         public InventoryItem GetInvItemFromVendor(Vendor v)
@@ -136,7 +234,7 @@ namespace BuddhaBowls.Models
             if (_vendorDict.Keys.Contains(v))
             {
                 InventoryItem item = _vendorDict[v];
-                item.NotifyChanges();
+                //item.NotifyChanges();
                 return item;
             }
             return null;
@@ -147,47 +245,29 @@ namespace BuddhaBowls.Models
             if (v != null)
             {
                 _vendorDict[v] = item;
-                UpdateVendorParams();
+                if (v.Id == SelectedVendor.Id)
+                    _invItem = item;
             }
-            if(v.Id == SelectedVendor.Id)
-                _invItem = item;
-        }
-
-        public void NotifyAllChanges()
-        {
-            NotifyPropertyChanged("SelectedVendor");
-            NotifyPropertyChanged("PriceExtension");
-            NotifyPropertyChanged("CountPrice");
-            NotifyPropertyChanged("Vendors");
-            NotifyPropertyChanged("Name");
-            NotifyPropertyChanged("Count");
-            NotifyPropertyChanged("CountUnit");
-            NotifyPropertyChanged("RecipeUnit");
-            NotifyPropertyChanged("RecipeUnitConversion");
-            NotifyPropertyChanged("Yield");
-            NotifyPropertyChanged("LastPurchasedPrice");
-            NotifyPropertyChanged("LastOrderAmount");
-            NotifyPropertyChanged("PurchasedUnit");
-            NotifyPropertyChanged("Conversion");
+            
         }
 
         /// <summary>
         /// Displays different property values to datagrid when the user changes the vendor on the datagrid
         /// </summary>
-        private void UpdateVendorParams()
-        {
-            if (SelectedVendor != null)
-            {
-                InventoryItem item = _vendorDict.First(x => x.Key.Id == SelectedVendor.Id).Value;
-                LastPurchasedPrice = item.LastPurchasedPrice;
-                LastOrderAmount = item.LastOrderAmount;
-                Conversion = item.Conversion;
-                PurchasedUnit = item.PurchasedUnit;
-                LastVendorId = SelectedVendor.Id;
-            }
+        //private void UpdateVendorParams()
+        //{
+        //    if (SelectedVendor != null)
+        //    {
+        //        InventoryItem item = _vendorDict.First(x => x.Key.Id == SelectedVendor.Id).Value;
+        //        LastPurchasedPrice = item.LastPurchasedPrice;
+        //        LastOrderAmount = item.LastOrderAmount;
+        //        Conversion = item.Conversion;
+        //        PurchasedUnit = item.PurchasedUnit;
+        //        LastVendorId = SelectedVendor.Id;
+        //    }
 
-            NotifyAllChanges();
-        }
+        //    //NotifyAllChanges();
+        //}
 
         public void AddVendor(Vendor v, InventoryItem item)
         {
@@ -197,7 +277,7 @@ namespace BuddhaBowls.Models
                 _vendorDict.Remove(existingVendor);
             }
             _vendorDict[v] = item;
-            NotifyAllChanges();
+            //NotifyAllChanges();
         }
 
         public void DeleteVendor(Vendor vendor)
@@ -206,7 +286,7 @@ namespace BuddhaBowls.Models
             vendor.RemoveInvItem(ToInventoryItem());
             if (SelectedVendor != null && SelectedVendor.Id == vendor.Id)
                 SelectedVendor = Vendors.FirstOrDefault();
-            NotifyAllChanges();
+            //NotifyAllChanges();
         }
 
         public void SetVendorDict(Dictionary<Vendor, InventoryItem> vDict)
@@ -240,7 +320,7 @@ namespace BuddhaBowls.Models
                 SelectedVendor.Update(item);
                 _vendorDict[SelectedVendor] = item;
             }
-            NotifyAllChanges();
+            //NotifyAllChanges();
             item.Update();
         }
 
@@ -265,10 +345,10 @@ namespace BuddhaBowls.Models
             return ToInventoryItem().GetPropertiesDB();
         }
 
-        public new VendorInventoryItem Copy()
+        public IItem Copy()
         {
-            VendorInventoryItem cpy = base.Copy<VendorInventoryItem>();
-            cpy.SetVendorDict(_vendorDict);
+            // copy the values of the dictionary and set as the vendor dict
+            VendorInventoryItem cpy = new VendorInventoryItem(_vendorDict.ToDictionary(x => x.Key, x => (InventoryItem)x.Value.Copy()));
             cpy.SelectedVendor = SelectedVendor;
 
             return cpy;
@@ -276,12 +356,11 @@ namespace BuddhaBowls.Models
 
         public void SetVendorDict(List<VendorInfo> vInfo)
         {
-            InventoryItem invItem = ToInventoryItem();
             List<Vendor> removedVendors = _vendorDict != null ? _vendorDict.Keys.Where(x => !vInfo.Select(y => y.Name).Contains(x.Name)).ToList() :
                                           new List<Vendor>();
             foreach (VendorInfo v in vInfo)
             {
-                invItem = ToInventoryItem();
+                InventoryItem invItem = (InventoryItem)_invItem.Copy();
                 invItem.LastPurchasedPrice = v.Price;
                 invItem.Conversion = v.Conversion;
                 invItem.PurchasedUnit = v.PurchasedUnit;
@@ -292,11 +371,21 @@ namespace BuddhaBowls.Models
 
             foreach (Vendor remVend in removedVendors)
             {
-                remVend.RemoveInvItem(invItem);
+                remVend.RemoveInvItem(_invItem);
                 DeleteVendor(remVend);
             }
 
-            UpdateVendorParams();
+            //UpdateVendorParams();
+        }
+
+        public float GetCost()
+        {
+            return _invItem.GetCost();
+        }
+
+        public Dictionary<string, float> GetCategoryCosts()
+        {
+            return _invItem.GetCategoryCosts();
         }
     }
 }

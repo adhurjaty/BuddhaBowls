@@ -9,7 +9,7 @@ namespace BuddhaBowls.Services
 {
     public class InventoryItemsContainer : ModelContainer<InventoryItem>
     {
-        public InventoryItemsContainer(List<InventoryItem> items) : base(items)
+        public InventoryItemsContainer(List<InventoryItem> items, bool isMaster = false) : base(items, isMaster)
         {
 
         }

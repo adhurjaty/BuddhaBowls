@@ -11,19 +11,196 @@ namespace BuddhaBowls.Models
 {
     public class InventoryItem : Model, IItem, INotifyPropertyChanged
     {
-        public string Name { get; set; }
-        public string Category { get; set; }
-        public string PurchasedUnit { get; set; }
-        public float Count { get; set; }
-        public string CountUnit { get; set; }
-        public float Conversion { get; set; }
-        public string RecipeUnit { get; set; }
-        public float? RecipeUnitConversion { get; set; }
-        public float? Yield { get; set; }
-        public float LastPurchasedPrice { get; set; }
-        public float LastOrderAmount { get; set; }
-        public DateTime? LastPurchasedDate { get; set; }
-        public int? LastVendorId { get; set; }
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+                NotifyPropertyChanged("Name");
+            }
+        }
+
+        private string _category;
+        public string Category
+        {
+            get
+            {
+                return _category;
+            }
+            set
+            {
+                _category = value;
+                NotifyPropertyChanged("Category");
+            }
+        }
+
+        private string _purchasedUnit;
+        public string PurchasedUnit
+        {
+            get
+            {
+                return _purchasedUnit;
+            }
+            set
+            {
+                _purchasedUnit = value;
+                NotifyPropertyChanged("PurchasedUnit");
+            }
+        }
+
+        private float _count;
+        public float Count
+        {
+            get
+            {
+                return _count;
+            }
+            set
+            {
+                _count = value;
+                NotifyPropertyChanged("Count");
+                NotifyPropertyChanged("PriceExtension");
+                NotifyPropertyChanged("RecipeCost");
+            }
+        }
+
+        private string _countUnit;
+        public string CountUnit
+        {
+            get
+            {
+                return _countUnit;
+            }
+            set
+            {
+                _countUnit = value;
+                NotifyPropertyChanged("CountUnit");
+            }
+        }
+
+        private float _conversion;
+        public float Conversion
+        {
+            get
+            {
+                return _conversion;
+            }
+            set
+            {
+                _conversion = value;
+                NotifyPropertyChanged("Conversion");
+                NotifyPropertyChanged("PriceExtension");
+                NotifyPropertyChanged("CountPrice");
+            }
+        }
+
+        private string _recipeUnit;
+        public string RecipeUnit
+        {
+            get
+            {
+                return _recipeUnit;
+            }
+            set
+            {
+                _recipeUnit = value;
+                NotifyPropertyChanged("RecipeUnit");
+            }
+        }
+
+        private float? _recipeUnitConversion;
+        public float? RecipeUnitConversion
+        {
+            get
+            {
+                return _recipeUnitConversion;
+            }
+            set
+            {
+                _recipeUnitConversion = value;
+                NotifyPropertyChanged("RecipeUnitConversion");
+                NotifyPropertyChanged("RecipeCost");
+            }
+        }
+
+        private float? _yield;
+        public float? Yield
+        {
+            get
+            {
+                return _yield;
+            }
+            set
+            {
+                _yield = value;
+                NotifyPropertyChanged("Yield");
+            }
+        }
+
+        private float _lastPurchasedPrice;
+        public float LastPurchasedPrice
+        {
+            get
+            {
+                return _lastPurchasedPrice;
+            }
+            set
+            {
+                _lastPurchasedPrice = value;
+                NotifyPropertyChanged("LastPurchasedPrice");
+                NotifyPropertyChanged("PriceExtension");
+                NotifyPropertyChanged("CountPrice");
+                NotifyPropertyChanged("PurchaseExtension");
+            }
+        }
+
+        private float _lastOrderAmount;
+        public float LastOrderAmount
+        {
+            get
+            {
+                return _lastOrderAmount;
+            }
+            set
+            {
+                _lastOrderAmount = value;
+                NotifyPropertyChanged("LastOrderAmount");
+                NotifyPropertyChanged("PurchaseExtension");
+            }
+        }
+
+        private DateTime? _lastPurchasedDate;
+        public DateTime? LastPurchasedDate
+        {
+            get
+            {
+                return _lastPurchasedDate;
+            }
+            set
+            {
+                _lastPurchasedDate = value;
+                NotifyPropertyChanged("LastPurchasedDate");
+            }
+        }
+
+        private int? _lastVendorId;
+        public int? LastVendorId
+        {
+            get
+            {
+                return _lastVendorId;
+            }
+            set
+            {
+                _lastVendorId = value;
+                NotifyPropertyChanged("LastVendorId");
+            }
+        }
 
         /// <summary>
         /// Total price of inventory on-hand
@@ -128,13 +305,6 @@ namespace BuddhaBowls.Models
         public float GetPrevOrderAmount()
         {
             return new InventoryItem(new Dictionary<string, string>() { { "Id", Id.ToString() } }).LastOrderAmount;
-        }
-
-        public void NotifyChanges()
-        {
-            NotifyPropertyChanged("LastPurchasedPrice");
-            NotifyPropertyChanged("PurchasedUnit");
-            NotifyPropertyChanged("Conversion");
         }
 
         /// <summary>
