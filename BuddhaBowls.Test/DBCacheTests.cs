@@ -72,7 +72,9 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void GetIngredientsTest()
         {
-            _models.VIContainer.SetItems(_models.VIContainer.Items.Take(5).ToList());
+            InventoryItemsContainer invCont = _models.VIContainer.GetInvItemsContainer();
+            invCont.SetItems(invCont.Items.Take(5).ToList());
+            _models.VIContainer.SetItems(invCont);
             _models.RContainer.SetItems(_models.RContainer.Items.Take(4).ToList());
 
             List<IItem> allItems = _models.GetAllIItems();

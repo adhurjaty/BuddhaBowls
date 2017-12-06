@@ -43,6 +43,7 @@ namespace BuddhaBowls.Services
             _invItemsContainer = items;
             _vendorsContainer = vContainer;
             _copies = new List<VendorInvItemsContainer>();
+            SetItems(_invItemsContainer);
         }
 
         public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer, bool isMaster) : this(items, vContainer)
@@ -54,6 +55,7 @@ namespace BuddhaBowls.Services
         {
             _invItemsContainer = itemsCont;
             Items = _invItemsContainer.Items.Select(x => new VendorInventoryItem(GetVendorsFromItem(x))).ToList();
+            UpdateCopies();
         }
 
         /// <summary>
@@ -99,6 +101,16 @@ namespace BuddhaBowls.Services
             UpdateCopies();
         }
 
+        public void Update(VendorInventoryItem item)
+        {
+            int idx = Items.FindIndex(x => x.Id == item.Id);
+            item.SetVendorItem(item.SelectedVendor, item.ToInventoryItem());
+            Items[idx] = item;
+            if (_isMaster)
+                item.Update();
+            UpdateCopies(item);
+        }
+
         /// <summary>
         /// Updates the items in the list. Does not remove any items from the master list
         /// </summary>
@@ -107,10 +119,7 @@ namespace BuddhaBowls.Services
         {
             foreach (VendorInventoryItem item in items)
             {
-                int idx = Items.FindIndex(x => x.Id == item.Id);
-                item.SetVendorItem(item.SelectedVendor, item.ToInventoryItem());
-                Items[idx] = item;
-                UpdateCopies(item);
+                Update(item);
             }
         }
 
@@ -152,13 +161,24 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
+        /// Brings this container to the same state as the copy. Removes the copy from _copies
+        /// </summary>
+        /// <param name="container"></param>
+        public void SyncCopy(VendorInvItemsContainer container)
+        {
+            _invItemsContainer = container.GetInvItemsContainer();
+            _vendorsContainer = container.GetVendorsContainer();
+            RemoveCopy(container);
+        }
+
+        /// <summary>
         /// Adds vendor to vendor container and associates items with new vendor
         /// </summary>
         /// <param name="vend"></param>
         public void AddVendor(Vendor vend, List<InventoryItem> invItems)
         {
             _vendorsContainer.AddItem(vend);
-            vend.SetItemList(invItems);
+            vend.SetItemsContainer(new InventoryItemsContainer(invItems));
             foreach (InventoryItem item in invItems)
             {
                 VendorInventoryItem vItem = Items.First(x => x.Id == item.Id);
@@ -316,11 +336,10 @@ namespace BuddhaBowls.Services
         /// </summary>
         /// <param name="v"></param>
         /// <returns></returns>
-        //public List<InventoryItem> GetVendorItems(Vendor v)
-        //{
-        //    List<InventoryItem> items = Items.Where(x => x.Vendors.Select(y => y.Id).Contains(v.Id)).Select(x => x.GetInvItemFromVendor(v)).ToList();
-        //    v.SetItemList(items);
-        //    return items;
-        //}
+        public List<InventoryItem> GetVendorItems(Vendor v)
+        {
+            List<InventoryItem> items = Items.Where(x => x.Vendors.Select(y => y.Id).Contains(v.Id)).Select(x => x.GetInvItemFromVendor(v)).ToList();
+            return items;
+        }
     }
 }

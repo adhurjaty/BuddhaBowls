@@ -94,6 +94,12 @@ namespace BuddhaBowls.Models
             set { _invItem.LastPurchasedPrice = value; }
         }
 
+        public DateTime? LastPurchasedDate
+        {
+            get { return _invItem.LastPurchasedDate; }
+            set { _invItem.LastPurchasedDate = value; }
+        }
+
         public float LastOrderAmount
         {
             get { return _invItem.LastOrderAmount; }
@@ -194,10 +200,9 @@ namespace BuddhaBowls.Models
         {
             _vendorDict = vendorDict;
 
+            SelectedVendor = _vendorDict.Keys.FirstOrDefault();
             if (LastVendorId != null)
                 SelectedVendor = _vendorDict.Keys.FirstOrDefault(x => x.Id == LastVendorId);
-            else
-                SelectedVendor = _vendorDict.Keys.FirstOrDefault();
 
             //CopyInvItem(item);
         }
@@ -387,5 +392,16 @@ namespace BuddhaBowls.Models
         {
             return _invItem.GetCategoryCosts();
         }
+
+        public float GetLastCount()
+        {
+            return _invItem.GetLastCount();
+        }
+
+        public float GetPrevOrderAmount()
+        {
+            return _invItem.GetPrevOrderAmount();
+        }
+
     }
 }

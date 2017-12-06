@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +11,7 @@ namespace BuddhaBowls.Models
 {
     public class Vendor : Model
     {
-
+        private InventoryItemsContainer _invItemsContainer;
 
         public string Name { get; set; }
         public string Email { get; set; }
@@ -18,18 +19,14 @@ namespace BuddhaBowls.Models
         public string Contact { get; set; }
         public float ShippingCost { get; set; }
 
-        private List<InventoryItem> _itemList;
+        //private List<InventoryItem> _itemList;
         public List<InventoryItem> ItemList
         {
             get
             {
-                if (_itemList == null)
-                    _itemList = GetInventoryItems();
-                return _itemList;
-            }
-            private set
-            {
-                _itemList = value;
+                if (_invItemsContainer == null)
+                    SetItemsContainer();
+                return _invItemsContainer.Items;
             }
         }
 
@@ -69,7 +66,7 @@ namespace BuddhaBowls.Models
         {
             if(items != null && items.Count > 0)
                 ModelHelper.CreateTable(items, GetPriceTableName());
-            ItemList = items;
+            _invItemsContainer = new InventoryItemsContainer(items);
 
             return base.Insert();
         }
@@ -87,10 +84,12 @@ namespace BuddhaBowls.Models
         /// <param name="items"></param>
         public void Update(List<InventoryItem> items)
         {
-            foreach (InventoryItem item in items)
-            {
-                ItemList[ItemList.FindIndex(x => x.Id == item.Id)] = item;
-            }
+            _invItemsContainer.UpdateMultiple(items);
+            //foreach (InventoryItem item in items)
+            //{
+                
+            //    ItemList[ItemList.FindIndex(x => x.Id == item.Id)] = item;
+            //}
 
             Update();
         }
@@ -128,7 +127,7 @@ namespace BuddhaBowls.Models
             {
                 File.Delete(priceListPath);
             }
-            ItemList = null;
+            _invItemsContainer = null;
             base.Destroy();
         }
 
@@ -146,8 +145,7 @@ namespace BuddhaBowls.Models
         public Vendor Copy()
         {
             Vendor v = base.Copy<Vendor>();
-            if (ItemList != null)
-                v.ItemList = ItemList.Select(x => (InventoryItem)x.Copy()).ToList();
+            v.SetItemsContainer(v.CopyItems());
             return v;
         }
 
@@ -209,7 +207,7 @@ namespace BuddhaBowls.Models
         public void RemoveInvItem(InventoryItem item)
         {
             _dbInt.DeleteRecord(GetPriceTableName(), new Dictionary<string, string>() { { "Id", item.Id.ToString() } });
-            ItemList.RemoveAll(x => x.Id == item.Id);
+            _invItemsContainer.RemoveItem(item);
         }
 
         /// <summary>
@@ -222,6 +220,24 @@ namespace BuddhaBowls.Models
             return new List<InventoryItem>();
         }
 
+        private void SetItemsContainer()
+        {
+            if (_dbInt.TableExists(GetPriceTableName()))
+                _invItemsContainer = new InventoryItemsContainer(MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>(GetPriceTableName(), false)).ToList());
+            else
+                _invItemsContainer = new InventoryItemsContainer(new List<InventoryItem>());
+        }
+
+        public void SetItemsContainer(InventoryItemsContainer cont)
+        {
+            _invItemsContainer = cont;
+        }
+
+        public InventoryItemsContainer CopyItems()
+        {
+            return _invItemsContainer.Copy();
+        }
+
         /// <summary>
         /// Adds or updates inventory item on vendor items sold list
         /// </summary>
@@ -232,26 +248,17 @@ namespace BuddhaBowls.Models
             //{
             //    _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict(), item.Id);
             //}
-
-            InventoryItem existingItem = ItemList.FirstOrDefault(x => x.Id == item.Id);
-            if(existingItem == null)
-            {
-                ItemList.Add(item);
-                ItemList = MainHelper.SortItems(ItemList).ToList();
-            }
-            else
-            {
-                ItemList[ItemList.IndexOf(existingItem)] = item;
-            }
-        }
-
-        /// <summary>
-        /// Sets the item list
-        /// </summary>
-        /// <param name="invItems"></param>
-        public void SetItemList(List<InventoryItem> invItems)
-        {
-            ItemList = MainHelper.SortItems(invItems).ToList();
+            _invItemsContainer.AddItem(item);
+            //InventoryItem existingItem = ItemList.FirstOrDefault(x => x.Id == item.Id);
+            //if(existingItem == null)
+            //{
+            //    ItemList.Add(item);
+            //    ItemList = MainHelper.SortItems(ItemList).ToList();
+            //}
+            //else
+            //{
+            //    ItemList[ItemList.IndexOf(existingItem)] = item;
+            //}
         }
 
         /// <summary>

@@ -99,7 +99,7 @@ namespace BuddhaBowls
             EditItemCommand = new RelayCommand(EditRecipe, x => SelectedItemCanExecute && DBConnection);
 
             RecipeUnitList = _models.GetRecipeUnits();
-            _models.RContainer.AddUpdateBinding(RefreshList);
+            //_models.RContainer.AddUpdateBinding(RefreshList);
         }
 
         #region ICommand Helpers

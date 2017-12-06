@@ -387,17 +387,14 @@ namespace BuddhaBowls
                 }
                 else
                 {
-                    VendorInvItemsContainer vContainer = new VendorInvItemsContainer(_inventory.InvItemsContainer.Items
-                                                                                    .Select(x => new VendorInventoryItem(x,
-                                                                                            _models.GetVendorsFromItem(x))).ToList(),
-                                                                                    _models.VContainer);
-                    _invItemsContainer = vContainer;
+                    _invItemsContainer = new VendorInvItemsContainer(_inventory.InvItemsContainer, _models.VContainer);
                 }
             }
-            _invItemsContainer.AddUpdateBinding(CollectionChanged);
-            _invItemsContainer.AddUpdateBinding(UpdateInvValue);
             FilterText = "";
-            _invItemsContainer.PushChange();
+            CollectionChanged();
+            //_invItemsContainer.AddUpdateBinding(CollectionChanged);
+            //_invItemsContainer.AddUpdateBinding(UpdateInvValue);
+            //_invItemsContainer.PushChange();
         }
 
         public void CollectionChanged()
@@ -419,21 +416,21 @@ namespace BuddhaBowls
         //    }
         //}
 
-        public void MoveDown(InventoryItem item)
+        public void MoveDown(VendorInventoryItem item)
         {
             MoveInList(item, false);
         }
 
-        public void MoveUp(InventoryItem item)
+        public void MoveUp(VendorInventoryItem item)
         {
             MoveInList(item, true);
         }
 
-        private void MoveInList(InventoryItem item, bool up)
+        private void MoveInList(VendorInventoryItem item, bool up)
         {
-            List<InventoryItem> newItemInList = MainHelper.MoveInList(item, up, FilteredItems.Select(x => (InventoryItem)x).ToList());
+            List<VendorInventoryItem> newItemInList = MainHelper.MoveInList(item, up, FilteredItems.ToList());
 
-            FilteredItems = new ObservableCollection<VendorInventoryItem>(newItemInList.Select(x => (VendorInventoryItem)x));
+            FilteredItems = new ObservableCollection<VendorInventoryItem>(newItemInList);
         }
 
         private void SaveInvOrder()
@@ -450,12 +447,13 @@ namespace BuddhaBowls
         /// <param name="item"></param>
         public void RowEdited(VendorInventoryItem item)
         {
-            if (IsMasterList)
-            {
-                item.Update();
-                _models.VIContainer.UpdateCopies(item);
-            }
-            item.NotifyAllChanges();
+            //if (IsMasterList)
+            //{
+            //    item.Update();
+            //    _models.VIContainer.UpdateCopies(item);
+            //}
+            _invItemsContainer.UpdateCopies(item);
+            //item.NotifyAllChanges();
             UpdateInvValue();
         }
 

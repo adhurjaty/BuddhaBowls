@@ -290,7 +290,7 @@ namespace BuddhaBowls
                 WeekCostTotal = new OrderStat() { Label = "Total Cost for Week" };
 
                 PeriodSelector = new PeriodSelectorVM(_models, LoadPreviousOrders);
-                _models.POContainer.AddUpdateBinding(RefreshOrderList);
+                //_models.POContainer.AddUpdateBinding(RefreshOrderList);
             }
             else
             {

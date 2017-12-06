@@ -151,8 +151,8 @@ namespace BuddhaBowls
                 // if this is the latest date inventory, change item counts for current inv items
                 if (Inv.Date >= _models.InContainer.Items.Max(x => x.Date))
                 {
-                    _models.VIContainer.SetItems(InvListVM.GetItemsContainer().Items);
-                    _models.VIContainer.UpdateContainer();
+                    //_models.VIContainer.SetItems(InvListVM.GetItemsContainer().GetInvItemsContainer());
+                    _models.VIContainer.SyncCopy(InvListVM.GetItemsContainer());
                 }
             }
         }
@@ -228,7 +228,7 @@ namespace BuddhaBowls
             {
                 item.Count = breadDay.BreadDescDict[item.Name].BeginInventory + breadDay.BreadDescDict[item.Name].FreezerCount;
             }
-            listVmContainer.PushChange();
+            //listVmContainer.PushChange();
         }
 
         #endregion

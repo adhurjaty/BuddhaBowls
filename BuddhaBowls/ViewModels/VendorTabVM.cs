@@ -165,7 +165,7 @@ namespace BuddhaBowls
             //_vItemsCache = new Dictionary<int, ObservableCollection<InventoryItem>>();
             PurchasedUnitsList = _models.GetPurchasedUnits();
             InitVendors();
-            _models.VIContainer.AddUpdateBinding(Refresh);
+            //_models.VIContainer.AddUpdateBinding(Refresh);
         }
 
         #region ICommand Helpers

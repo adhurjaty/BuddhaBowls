@@ -97,8 +97,8 @@ namespace BuddhaBowls
 
             SquareCommand = new RelayCommand(UpdateSquare);
             SummarySections = new ObservableCollection<PAndLSummarySection>(new PAndLSummarySection[5]);
-            _models.InContainer.AddUpdateBinding(PopulateCogs);
-            _models.POContainer.AddUpdateBinding(PopulateCogs);
+            //_models.InContainer.AddUpdateBinding(PopulateCogs);
+            //_models.POContainer.AddUpdateBinding(PopulateCogs);
 
             _otherWeekSquare = new Dictionary<string, float>();
             _otherPeriodSquare = new Dictionary<string, float>();

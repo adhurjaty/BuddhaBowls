@@ -57,12 +57,12 @@ namespace BuddhaBowls.UserControls
 
         private void MoveUp_Click(object sender, RoutedEventArgs e)
         {
-            ((InventoryListVM)DataContext).MoveUp((InventoryItem)((Button)sender).CommandParameter);
+            ((InventoryListVM)DataContext).MoveUp((VendorInventoryItem)((Button)sender).CommandParameter);
         }
 
         private void MoveDown_Click(object sender, RoutedEventArgs e)
         {
-            ((InventoryListVM)DataContext).MoveDown((InventoryItem)((Button)sender).CommandParameter);
+            ((InventoryListVM)DataContext).MoveDown((VendorInventoryItem)((Button)sender).CommandParameter);
 
         }
 

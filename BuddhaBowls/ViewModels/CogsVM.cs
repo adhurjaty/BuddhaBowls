@@ -112,8 +112,8 @@ namespace BuddhaBowls
             StartInvCommand = new RelayCommand(OpenStartInv);
             EndInvCommand = new RelayCommand(OpenEndInv);
 
-            _models.InContainer.AddUpdateBinding(delegate () { CalculateCogs(PeriodSelector.SelectedWeek); });
-            _models.POContainer.AddUpdateBinding(delegate () { CalculateCogs(PeriodSelector.SelectedWeek); });
+            //_models.InContainer.AddUpdateBinding(delegate () { CalculateCogs(PeriodSelector.SelectedWeek); });
+            //_models.POContainer.AddUpdateBinding(delegate () { CalculateCogs(PeriodSelector.SelectedWeek); });
         }
 
         #region ICommand Helpers

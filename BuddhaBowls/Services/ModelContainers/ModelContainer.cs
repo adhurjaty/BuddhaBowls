@@ -41,7 +41,11 @@ namespace BuddhaBowls.Services
 
         public virtual T AddItem(T item)
         {
-            if (!Contains(item))
+            if (Contains(item))
+            {
+                Update(item);
+            }
+            else
             {
                 _items.Add(item);
                 if (_isMaster)

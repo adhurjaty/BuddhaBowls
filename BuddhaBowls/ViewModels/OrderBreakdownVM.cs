@@ -139,7 +139,7 @@ namespace BuddhaBowls
             BreakdownCategoryItem bdItem = BreakdownList.FirstOrDefault(x => x.Category == item.Category);
             if (bdItem == null)
             {
-                BreakdownList.Add(new BreakdownCategoryItem(new List<InventoryItem>() { item })
+                BreakdownList.Add(new BreakdownCategoryItem(new List<InventoryItem>() { item.ToInventoryItem() })
                 {
                     Background = _models.GetCategoryColorHex(item.Category),
                     OrderVendor = OrderVendor,
@@ -149,7 +149,7 @@ namespace BuddhaBowls
             }
             else
             {
-                bdItem.UpdateOrderItem(item);
+                bdItem.UpdateOrderItem(item.ToInventoryItem());
                 if (bdItem.Items.Count == 0)
                     BreakdownList.Remove(bdItem);
             }

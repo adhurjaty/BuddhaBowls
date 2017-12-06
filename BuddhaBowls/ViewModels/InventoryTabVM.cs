@@ -144,7 +144,7 @@ namespace BuddhaBowls
             //DeletePrepCommand = new RelayCommand(DeletePrepItem, x => SelectedPrepItem != null);
             //EditPrepCommand = new RelayCommand(EditPrepItem, x => SelectedPrepItem != null);
 
-            _models.InContainer.AddUpdateBinding(Refresh);
+            //_models.InContainer.AddUpdateBinding(Refresh);
 
             if (DBConnection)
                 PeriodSelector = new PeriodSelectorVM(_models, ShowSelectedWeek);

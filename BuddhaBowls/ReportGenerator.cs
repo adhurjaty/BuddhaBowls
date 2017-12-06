@@ -255,7 +255,7 @@ namespace BuddhaBowls
                 // items in category
                 float categoryTotal = 0;
                 float extension;
-                foreach (InventoryItem item in invGroup)
+                foreach (VendorInventoryItem item in invGroup)
                 {
                     sheet.Cells[currentRow, 1] = item.Name;
                     sheet.Cells[currentRow, 2] = item.PurchasedUnit;
@@ -313,7 +313,7 @@ namespace BuddhaBowls
             string curCategory = "";
             float categoryCost = 0;
 
-            foreach (InventoryItem item in categorizedInvItems)
+            foreach (VendorInventoryItem item in categorizedInvItems)
             {
                 if(item.Category != curCategory)
                 {

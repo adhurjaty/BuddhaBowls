@@ -171,7 +171,7 @@ namespace BuddhaBowls
                 if (bo != null && bo.BreadDescDict.ContainsKey(item.Name))
                 {
                     BreadDescriptor bread = bo.BreadDescDict[item.Name];
-                    InventoryItem newItem = item;
+                    VendorInventoryItem newItem = item;
                     newItem.Count = bread.BeginInventory + bread.FreezerCount;
                     //_models.AddUpdateInventoryItem(ref newItem);
                 }
