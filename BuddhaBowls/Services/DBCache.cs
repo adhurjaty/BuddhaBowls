@@ -53,7 +53,9 @@ namespace BuddhaBowls.Services
             Logger.Info("Loading models");
             DailySales = ModelHelper.InstantiateList<DailySale>("DailySale");
 
-            InventoryItemsContainer invItems = new InventoryItemsContainer(ModelHelper.InstantiateList<InventoryItem>("InventoryItem"), true);
+            InventoryItemsContainer invItems = new InventoryItemsContainer(
+                                                    MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem")).ToList(),
+                                                    true);
 
             VContainer = new VendorsContainer(ModelHelper.InstantiateList<Vendor>("Vendor"));
             VIContainer = new VendorInvItemsContainer(invItems, VContainer, true);

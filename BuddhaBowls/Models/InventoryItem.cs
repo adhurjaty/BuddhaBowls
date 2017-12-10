@@ -139,6 +139,7 @@ namespace BuddhaBowls.Models
             {
                 _yield = value;
                 NotifyPropertyChanged("Yield");
+                NotifyPropertyChanged("CostPerRU");
             }
         }
 

@@ -152,7 +152,6 @@ namespace BuddhaBowls
                 //else
                 //    vItem.Update();
 
-                // call is under Insert for some reason...
                 _models.VIContainer.AddItem(invItem, VendorList.ToList());
 
                 Close();

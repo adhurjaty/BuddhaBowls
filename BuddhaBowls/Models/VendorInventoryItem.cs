@@ -9,8 +9,16 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class VendorInventoryItem : Model, IItem
+    public class VendorInventoryItem : Model, IItem, INotifyPropertyChanged
     {
+        // INotifyPropertyChanged event and method
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         // dictionary relating the vendor to the inventory item (differ in conversion, price, and purchased unit)
         private Dictionary<Vendor, InventoryItem> _vendorDict;
 
@@ -25,6 +33,7 @@ namespace BuddhaBowls.Models
             set
             {
                 _invItem.Name = value;
+                NotifyPropertyChanged("Name");
             }
         }
 
@@ -37,6 +46,7 @@ namespace BuddhaBowls.Models
             set
             {
                 _invItem.Category = value;
+                NotifyPropertyChanged("Category");
             }
         }
 
@@ -49,67 +59,100 @@ namespace BuddhaBowls.Models
             set
             {
                 _invItem.Count = value;
+                NotifyPropertyChanged("Count");
+                NotifyPropertyChanged("PriceExtension");
+                NotifyPropertyChanged("RecipeCost");
             }
         }
 
         public string CountUnit
         {
             get { return _invItem.CountUnit ; }
-            set { _invItem.CountUnit = value; }
+            set
+            {
+                _invItem.CountUnit = value;
+                NotifyPropertyChanged("CountUnit");
+            }
         }
 
         public string RecipeUnit
         {
             get { return _invItem.RecipeUnit; }
-            set { _invItem.RecipeUnit = value; }
+            set { _invItem.RecipeUnit = value;
+                NotifyPropertyChanged("RecipeUnit");
+            }
         }
 
         public float? RecipeUnitConversion
         {
             get { return _invItem.RecipeUnitConversion; }
-            set { _invItem.RecipeUnitConversion = value; }
+            set { _invItem.RecipeUnitConversion = value;
+                NotifyPropertyChanged("RecipeUnitConversion");
+                NotifyPropertyChanged("RecipeCost");
+            }
         }
 
         public float? Yield
         {
             get { return _invItem.Yield; }
-            set { _invItem.Yield = value; }
+            set { _invItem.Yield = value;
+                NotifyPropertyChanged("Yield");
+                NotifyPropertyChanged("CostPerRU");
+            }
         }
 
         public int? LastVendorId
         {
             get { return _invItem.LastVendorId; }
-            set { _invItem.LastVendorId = value; }
+            set { _invItem.LastVendorId = value;
+                NotifyPropertyChanged("LastVendorId");
+            }
         }
 
         public float Conversion
         {
             get { return _invItem.Conversion; }
-            set { _invItem.Conversion = value; }
+            set { _invItem.Conversion = value;
+                NotifyPropertyChanged("Conversion");
+                NotifyPropertyChanged("PriceExtension");
+                NotifyPropertyChanged("CountPrice");
+            }
         }
 
         public float LastPurchasedPrice
         {
             get { return _invItem.LastPurchasedPrice; }
-            set { _invItem.LastPurchasedPrice = value; }
+            set { _invItem.LastPurchasedPrice = value;
+                NotifyPropertyChanged("LastPurchasedPrice");
+                NotifyPropertyChanged("PriceExtension");
+                NotifyPropertyChanged("CountPrice");
+                NotifyPropertyChanged("PurchaseExtension");
+            }
         }
 
         public DateTime? LastPurchasedDate
         {
             get { return _invItem.LastPurchasedDate; }
-            set { _invItem.LastPurchasedDate = value; }
+            set { _invItem.LastPurchasedDate = value;
+                NotifyPropertyChanged("LastPurchasedDate");
+            }
         }
 
         public float LastOrderAmount
         {
             get { return _invItem.LastOrderAmount; }
-            set { _invItem.LastOrderAmount = value; }
+            set { _invItem.LastOrderAmount = value;
+                NotifyPropertyChanged("LastOrderAmount");
+                NotifyPropertyChanged("PurchaseExtension");
+            }
         }
 
         public string PurchasedUnit
         {
             get { return _invItem.PurchasedUnit; }
-            set { _invItem.PurchasedUnit = value; }
+            set { _invItem.PurchasedUnit = value;
+                NotifyPropertyChanged("PurchasedUnit");
+            }
         }
 
         public float PurchaseExtension
@@ -151,6 +194,7 @@ namespace BuddhaBowls.Models
                 if (value != null)
                 {
                     _invItem = GetInvItemFromVendor(_selectedVendor);
+                    NotifyAllChanges();
                 }
             }
         }
@@ -196,20 +240,27 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict)
+        public VendorInventoryItem(Dictionary<Vendor, InventoryItem> vendorDict, InventoryItem backupItem = null)
         {
             _vendorDict = vendorDict;
 
-            SelectedVendor = _vendorDict.Keys.FirstOrDefault();
-            if (LastVendorId != null)
-                SelectedVendor = _vendorDict.Keys.FirstOrDefault(x => x.Id == LastVendorId);
-
-            //CopyInvItem(item);
+            if (_vendorDict.Keys.Count > 0)
+            {
+                SelectedVendor = _vendorDict.Keys.FirstOrDefault();
+                if (LastVendorId != null)
+                    SelectedVendor = _vendorDict.Keys.FirstOrDefault(x => x.Id == LastVendorId);
+            }
+            else
+            {
+                _invItem = backupItem;
+            }
+            Id = _invItem.Id;
         }
 
         public VendorInventoryItem(InventoryItem item, IEnumerable<VendorInfo> vInfo)
         {
             _invItem = item;
+            _vendorDict = new Dictionary<Vendor, InventoryItem>();
             SetVendorDict(vInfo.ToList());
 
             if (LastVendorId != null)
@@ -232,6 +283,14 @@ namespace BuddhaBowls.Models
             //item.Id = Id;
             //return item;
             return _invItem;
+        }
+
+        public void NotifyAllChanges()
+        {
+            foreach (string prop in GetProperties())
+            {
+                NotifyPropertyChanged(prop);
+            }
         }
 
         public InventoryItem GetInvItemFromVendor(Vendor v)
@@ -301,7 +360,7 @@ namespace BuddhaBowls.Models
 
         public override int Insert()
         {
-            Id = ToInventoryItem().Insert();
+            Id = _invItem.Insert();
 
             foreach (KeyValuePair<Vendor, InventoryItem> vi in _vendorDict)
             {
@@ -314,19 +373,20 @@ namespace BuddhaBowls.Models
 
         public override void Update()
         {
-            InventoryItem item = ToInventoryItem();
+            //InventoryItem item = ToInventoryItem();
 
-            foreach (Vendor v in Vendors)
-            {
-                v.Update();
-            }
-            if (SelectedVendor != null)
-            {
-                SelectedVendor.Update(item);
-                _vendorDict[SelectedVendor] = item;
-            }
+            //foreach (Vendor v in Vendors)
+            //{
+            //    v.Update();
+            //}
+            //if (SelectedVendor != null)
+            //{
+            //    SelectedVendor.Update(item);
+            //    _vendorDict[SelectedVendor] = item;
+            //}
             //NotifyAllChanges();
-            item.Update();
+            //item.Update();
+            _invItem.Update();
         }
 
         public void Update(List<VendorInfo> vInfoList)

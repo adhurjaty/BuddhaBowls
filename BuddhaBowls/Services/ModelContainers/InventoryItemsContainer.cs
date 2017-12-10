@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Messengers;
+using BuddhaBowls.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,21 @@ namespace BuddhaBowls.Services
             return iic;
         }
 
+        public override InventoryItem AddItem(InventoryItem item)
+        {
+            Messenger.Instance.NotifyColleagues(MessageTypes.INVENTORY_ITEM_ADDED, item);
+            return base.AddItem(item);
+        }
+
+        public override void RemoveItem(InventoryItem item)
+        {
+            if(_isMaster)
+                Properties.Settings.Default.InventoryOrder.Remove(item.Name);
+
+            Messenger.Instance.NotifyColleagues(MessageTypes.INVENTORY_ITEM_REMOVED, item);
+            base.RemoveItem(item);
+        }
+
         protected override void UpdateCopies()
         {
             for (int i = 0; i < _copies.Count; i++)
@@ -28,5 +44,7 @@ namespace BuddhaBowls.Services
                 _copies[i] = Copy();
             }
         }
+
+
     }
 }

@@ -78,6 +78,12 @@ namespace BuddhaBowls.Models
             base.Update();
         }
 
+        public void Update(InventoryItem item)
+        {
+            _invItemsContainer.AddItem(item);
+            Update();
+        }
+
         /// <summary>
         /// Update the vendor record and only update the items in the vendor price table
         /// </summary>
@@ -85,12 +91,6 @@ namespace BuddhaBowls.Models
         public void Update(List<InventoryItem> items)
         {
             _invItemsContainer.UpdateMultiple(items);
-            //foreach (InventoryItem item in items)
-            //{
-                
-            //    ItemList[ItemList.FindIndex(x => x.Id == item.Id)] = item;
-            //}
-
             Update();
         }
 
@@ -107,15 +107,15 @@ namespace BuddhaBowls.Models
         //    base.Update();
         //}
 
-        public void Update(InventoryItem item)
-        {
-            if (!File.Exists(_dbInt.FilePath(GetPriceTableName())))
-                ModelHelper.CreateTable(new List<InventoryItem>() { item }, GetPriceTableName());
-            else
-                AddInvItem(item);
+        //public void Update(InventoryItem item)
+        //{
+        //    if (!File.Exists(_dbInt.FilePath(GetPriceTableName())))
+        //        ModelHelper.CreateTable(new List<InventoryItem>() { item }, GetPriceTableName());
+        //    else
+        //        AddInvItem(item);
 
-            base.Update();
-        }
+        //    base.Update();
+        //}
 
         /// <summary>
         /// Remove the vendor record and price table

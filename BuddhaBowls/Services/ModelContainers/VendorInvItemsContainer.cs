@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,9 @@ namespace BuddhaBowls.Services
             _vendorsContainer = vContainer;
             _copies = new List<VendorInvItemsContainer>();
             SetItems(_invItemsContainer);
+            //Messenger.Instance.Register(MessageTypes.INVENTORY_ITEM_ADDED, new Action<Message>(OnInventoryItemAdded));
+            //Messenger.Instance.Register(MessageTypes.INVENTORY_ITEM_REMOVED, new Action<Message>(OnInventoryItemRemoved));
+            //Messenger.Instance.Register(MessageTypes.INVENTORY_ITEM_CHANGED, new Action<Message>(OnInventoryItemChanged));
         }
 
         public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer, bool isMaster) : this(items, vContainer)
@@ -54,7 +58,7 @@ namespace BuddhaBowls.Services
         public void SetItems(InventoryItemsContainer itemsCont)
         {
             _invItemsContainer = itemsCont;
-            Items = _invItemsContainer.Items.Select(x => new VendorInventoryItem(GetVendorsFromItem(x))).ToList();
+            Items = _invItemsContainer.Items.Select(x => new VendorInventoryItem(GetVendorsFromItem(x), x)).ToList();
             UpdateCopies();
         }
 
@@ -86,6 +90,7 @@ namespace BuddhaBowls.Services
             }
 
             UpdateCopies(vItem);
+            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, vItem);
             return vItem;
         }
 
@@ -98,16 +103,18 @@ namespace BuddhaBowls.Services
             _vendorsContainer.RemoveItemFromVendors(item);
             _invItemsContainer.RemoveItem(item.ToInventoryItem());
             Items.Remove(item);
+            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
             UpdateCopies();
         }
 
         public void Update(VendorInventoryItem item)
         {
-            int idx = Items.FindIndex(x => x.Id == item.Id);
-            item.SetVendorItem(item.SelectedVendor, item.ToInventoryItem());
-            Items[idx] = item;
+            //int idx = Items.FindIndex(x => x.Id == item.Id);
+            //item.SetVendorItem(item.SelectedVendor, item.ToInventoryItem());
+            //Items[idx] = item;
             if (_isMaster)
                 item.Update();
+            _vendorsContainer.UpdateItem(item);
             UpdateCopies(item);
         }
 
@@ -340,6 +347,21 @@ namespace BuddhaBowls.Services
         {
             List<InventoryItem> items = Items.Where(x => x.Vendors.Select(y => y.Id).Contains(v.Id)).Select(x => x.GetInvItemFromVendor(v)).ToList();
             return items;
+        }
+
+        private void OnInventoryItemAdded(Message msg)
+        {
+
+        }
+
+        private void OnInventoryItemRemoved(Message msg)
+        {
+
+        }
+
+        private void OnInventoryItemChanged(Message msg)
+        {
+
         }
     }
 }

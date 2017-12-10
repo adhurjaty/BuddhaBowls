@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
@@ -263,6 +264,8 @@ namespace BuddhaBowls
             UpdateInvValue();
 
             SetCommandsAndControl();
+            Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(DatasetChanged));
+
         }
 
         /// <summary>
@@ -277,6 +280,8 @@ namespace BuddhaBowls
             InitContainer();
             UpdateInvValue();
             SetCommandsAndControl();
+            Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(DatasetChanged));
+
         }
 
         /// <summary>
@@ -294,6 +299,8 @@ namespace BuddhaBowls
             InitContainer();
             UpdateInvValue();
             SetCommandsAndControl();
+            Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(DatasetChanged));
+
         }
 
         #region ICommand Helpers
@@ -310,8 +317,6 @@ namespace BuddhaBowls
                                                       "Delete " + SelectedInventoryItem.Name + "?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                SelectedInventoryItem.Destroy();
-                Properties.Settings.Default.InventoryOrder.Remove(SelectedInventoryItem.Name);
                 _invItemsContainer.RemoveItem(SelectedInventoryItem);
                 SelectedInventoryItem = null;
             }
@@ -382,13 +387,9 @@ namespace BuddhaBowls
             else
             {
                 if (_inventory == null)
-                {
                     _invItemsContainer = _models.VIContainer.Copy();
-                }
                 else
-                {
                     _invItemsContainer = new VendorInvItemsContainer(_inventory.InvItemsContainer, _models.VContainer);
-                }
             }
             FilterText = "";
             CollectionChanged();
@@ -452,9 +453,16 @@ namespace BuddhaBowls
             //    item.Update();
             //    _models.VIContainer.UpdateCopies(item);
             //}
-            _invItemsContainer.UpdateCopies(item);
+            //_invItemsContainer.UpdateCopies(item);
             //item.NotifyAllChanges();
+            _invItemsContainer.Update(item);
             UpdateInvValue();
+        }
+
+        private void DatasetChanged(Message msg)
+        {
+            FilteredItems = new ObservableCollection<VendorInventoryItem>(_invItemsContainer.Items);
+            FilterItems(FilterText);
         }
 
         /// <summary>

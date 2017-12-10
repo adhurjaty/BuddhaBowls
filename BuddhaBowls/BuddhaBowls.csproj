@@ -170,6 +170,9 @@
     </ApplicationDefinition>
     <Compile Include="Helpers\ErrorHandler.cs" />
     <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Messengers\Message.cs" />
+    <Compile Include="Messengers\MessageTypes.cs" />
+    <Compile Include="Messengers\Messenger.cs" />
     <Compile Include="Models\BreadOrder.cs" />
     <Compile Include="Models\BreadOrderTotal.cs" />
     <Compile Include="Models\DailySale.cs" />
@@ -521,6 +524,7 @@
   <ItemGroup>
     <Resource Include="buddhabowls_icon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

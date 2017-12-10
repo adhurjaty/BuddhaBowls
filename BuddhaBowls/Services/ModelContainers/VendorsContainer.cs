@@ -58,5 +58,10 @@ namespace BuddhaBowls.Services
         {
             base.UpdateCopies();
         }
+
+        public void UpdateItem(VendorInventoryItem item)
+        {
+            item.SelectedVendor.Update(item.ToInventoryItem());
+        }
     }
 }

@@ -39,6 +39,11 @@ namespace BuddhaBowls.Services
             _isMaster = true;
         }
 
+        /// <summary>
+        /// Adds or updates item in container
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public virtual T AddItem(T item)
         {
             if (Contains(item))
@@ -64,7 +69,9 @@ namespace BuddhaBowls.Services
         {
             _items.RemoveAll(x => x.Id == item.Id);
             if (_isMaster)
+            {
                 item.Destroy();
+            }
         }
 
         public virtual void Update(T item)
@@ -88,9 +95,14 @@ namespace BuddhaBowls.Services
             }
         }
 
+        /// <summary>
+        /// Checks container to see if item exists in it. Compared by Id
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public virtual bool Contains(T item)
         {
-            return Items.Contains(item);
+            return Items.FirstOrDefault(x => x.Id == item.Id) != null;
         }
 
         //public List<T> GetItemsCopy()
