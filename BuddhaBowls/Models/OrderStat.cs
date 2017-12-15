@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuddhaBowls.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,17 +9,8 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class OrderStat : INotifyPropertyChanged
+    public class OrderStat : ObservableObject
     {
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-
         private string _label;
         public string Label
         {

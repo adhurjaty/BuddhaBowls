@@ -36,7 +36,7 @@ namespace BuddhaBowls.Services
 
         public ModelContainer(List<T> items, bool isMaster) : this(items)
         {
-            _isMaster = true;
+            _isMaster = isMaster;
         }
 
         /// <summary>

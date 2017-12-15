@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
@@ -166,6 +167,7 @@ namespace BuddhaBowls
             PurchasedUnitsList = _models.GetPurchasedUnits();
             InitVendors();
             //_models.VIContainer.AddUpdateBinding(Refresh);
+            Messenger.Instance.Register<Message>(MessageTypes.VENDORS_CHANGED, (msg) => Refresh());
         }
 
         #region ICommand Helpers

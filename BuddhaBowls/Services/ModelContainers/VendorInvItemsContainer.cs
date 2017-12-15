@@ -63,6 +63,16 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
+        /// Adds item to the list (no DB insert)
+        /// </summary>
+        /// <param name="item"></param>
+        public void AddItem(VendorInventoryItem item)
+        {
+            Items.Add(item);
+            _items = MainHelper.SortItems(_items).ToList();
+        }
+
+        /// <summary>
         /// Adds a new item with a list of which vendors sell the item
         /// </summary>
         /// <param name="item">New item</param>
@@ -100,7 +110,9 @@ namespace BuddhaBowls.Services
         /// <param name="item"></param>
         public void RemoveItem(VendorInventoryItem item)
         {
-            _vendorsContainer.RemoveItemFromVendors(item);
+            if(_isMaster)
+                _vendorsContainer.RemoveItemFromVendors(item);
+
             _invItemsContainer.RemoveItem(item.ToInventoryItem());
             Items.Remove(item);
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
@@ -163,7 +175,10 @@ namespace BuddhaBowls.Services
             for (int i = 0; i < _copies.Count; i++)
             {
                 int idx = _copies[i].Items.FindIndex(x => x.Id == item.Id);
-                _copies[i].Items[idx] = (VendorInventoryItem)item.Copy();
+                if (idx == -1)
+                    _copies[i].AddItem((VendorInventoryItem)item.Copy());
+                else
+                    _copies[i].Items[idx] = (VendorInventoryItem)item.Copy();
             }
         }
 
@@ -185,7 +200,17 @@ namespace BuddhaBowls.Services
         public void AddVendor(Vendor vend, List<InventoryItem> invItems)
         {
             _vendorsContainer.AddItem(vend);
-            vend.SetItemsContainer(new InventoryItemsContainer(invItems));
+            //vend.SetItemsContainer(new InventoryItemsContainer(invItems));
+            AddVendorAssociations(vend, invItems);
+        }
+
+        /// <summary>
+        /// Associates items with the vendor (only adds associations)
+        /// </summary>
+        /// <param name="vend"></param>
+        /// <param name="invItems"></param>
+        public void AddVendorAssociations(Vendor vend, List<InventoryItem> invItems)
+        {
             foreach (InventoryItem item in invItems)
             {
                 VendorInventoryItem vItem = Items.First(x => x.Id == item.Id);
@@ -201,6 +226,15 @@ namespace BuddhaBowls.Services
         public void RemoveVendor(Vendor vend)
         {
             _vendorsContainer.RemoveItem(vend);
+            RemoveVendorAssociations(vend);   
+        }
+
+        /// <summary>
+        /// Removes all links from inventory items to the vendor param
+        /// </summary>
+        /// <param name="vend"></param>
+        public void RemoveVendorAssociations(Vendor vend)
+        {
             List<InventoryItem> vendItems = new List<InventoryItem>(vend.ItemList);
             foreach (InventoryItem item in vendItems)
             {
@@ -291,8 +325,8 @@ namespace BuddhaBowls.Services
         /// <param name="list"></param>
         public void UpdateVendorItems(Vendor vendor, List<InventoryItem> invItems)
         {
-            RemoveVendor(vendor);
-            AddVendor(vendor, invItems);
+            RemoveVendorAssociations(vendor);
+            AddVendorAssociations(vendor, invItems);
         }
 
         /// <summary>

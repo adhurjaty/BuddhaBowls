@@ -170,6 +170,7 @@
     </ApplicationDefinition>
     <Compile Include="Helpers\ErrorHandler.cs" />
     <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Helpers\ObservableObject.cs" />
     <Compile Include="Messengers\Message.cs" />
     <Compile Include="Messengers\MessageTypes.cs" />
     <Compile Include="Messengers\Messenger.cs" />

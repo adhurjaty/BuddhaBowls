@@ -13,11 +13,78 @@ namespace BuddhaBowls.Models
     {
         private InventoryItemsContainer _invItemsContainer;
 
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Contact { get; set; }
-        public float ShippingCost { get; set; }
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+                // HACK: set _invItemsContainer as soon as program can get name of table
+                if (!string.IsNullOrEmpty(_name) && _invItemsContainer == null)
+                    SetItemsContainer();
+                NotifyPropertyChanged("Name");
+            }
+        }
+
+        private string _email;
+        public string Email
+        {
+            get
+            {
+                return _email;
+            }
+            set
+            {
+                _email = value;
+                NotifyPropertyChanged("Email");
+            }
+        }
+
+        private string _phoneNumber;
+        public string PhoneNumber
+        {
+            get
+            {
+                return _phoneNumber;
+            }
+            set
+            {
+                _phoneNumber = value;
+                NotifyPropertyChanged("PhoneNumber");
+            }
+        }
+
+        private string _contact;
+        public string Contact
+        {
+            get
+            {
+                return _contact;
+            }
+            set
+            {
+                _contact = value;
+                NotifyPropertyChanged("Contact");
+            }
+        }
+
+        private float _shippingCost;
+        public float ShippingCost
+        {
+            get
+            {
+                return _shippingCost;
+            }
+            set
+            {
+                _shippingCost = value;
+                NotifyPropertyChanged("ShippingCost");
+            }
+        }
 
         //private List<InventoryItem> _itemList;
         public List<InventoryItem> ItemList
@@ -44,6 +111,7 @@ namespace BuddhaBowls.Models
                 InitializeObject(record);
                 //InitItems();
             }
+            SetItemsContainer();
         }
 
         /// <summary>
@@ -208,6 +276,7 @@ namespace BuddhaBowls.Models
         {
             _dbInt.DeleteRecord(GetPriceTableName(), new Dictionary<string, string>() { { "Id", item.Id.ToString() } });
             _invItemsContainer.RemoveItem(item);
+            NotifyPropertyChanged("ItemList");
         }
 
         /// <summary>
@@ -223,14 +292,15 @@ namespace BuddhaBowls.Models
         private void SetItemsContainer()
         {
             if (_dbInt.TableExists(GetPriceTableName()))
-                _invItemsContainer = new InventoryItemsContainer(MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>(GetPriceTableName(), false)).ToList());
+                SetItemsContainer(new InventoryItemsContainer(MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>(GetPriceTableName(), false)).ToList()));
             else
-                _invItemsContainer = new InventoryItemsContainer(new List<InventoryItem>());
+                SetItemsContainer(new InventoryItemsContainer(new List<InventoryItem>()));
         }
 
         public void SetItemsContainer(InventoryItemsContainer cont)
         {
             _invItemsContainer = cont;
+            NotifyPropertyChanged("ItemList");
         }
 
         public InventoryItemsContainer CopyItems()
@@ -244,21 +314,8 @@ namespace BuddhaBowls.Models
         /// <param name="item"></param>
         public void AddInvItem(InventoryItem item)
         {
-            //if (!_dbInt.UpdateRecord(GetPriceTableName(), item.FieldsToDict(), item.Id))
-            //{
-            //    _dbInt.WriteRecord(GetPriceTableName(), item.FieldsToDict(), item.Id);
-            //}
             _invItemsContainer.AddItem(item);
-            //InventoryItem existingItem = ItemList.FirstOrDefault(x => x.Id == item.Id);
-            //if(existingItem == null)
-            //{
-            //    ItemList.Add(item);
-            //    ItemList = MainHelper.SortItems(ItemList).ToList();
-            //}
-            //else
-            //{
-            //    ItemList[ItemList.IndexOf(existingItem)] = item;
-            //}
+            NotifyPropertyChanged("ItemList");
         }
 
         /// <summary>

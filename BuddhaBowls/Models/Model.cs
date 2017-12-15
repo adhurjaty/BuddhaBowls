@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class Model
+    public class Model : ObservableObject
     {
         protected string _tableName;
         protected DatabaseInterface _dbInt;

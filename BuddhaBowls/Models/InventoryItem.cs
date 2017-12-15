@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class InventoryItem : Model, IItem, INotifyPropertyChanged
+    public class InventoryItem : Model, IItem
     {
         private string _name;
         public string Name
@@ -254,14 +254,6 @@ namespace BuddhaBowls.Models
                     return 0;
                 return (float)(CountPrice / (RecipeUnitConversion * Yield));
             }
-        }
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public InventoryItem() : base()

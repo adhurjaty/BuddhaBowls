@@ -461,7 +461,7 @@ namespace BuddhaBowls
 
         private void DatasetChanged(Message msg)
         {
-            FilteredItems = new ObservableCollection<VendorInventoryItem>(_invItemsContainer.Items);
+            CollectionChanged();
             FilterItems(FilterText);
         }
 

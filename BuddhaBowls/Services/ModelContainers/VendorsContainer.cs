@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Messengers;
+using BuddhaBowls.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,28 @@ namespace BuddhaBowls.Services
 
         }
 
+        public override Vendor AddItem(Vendor item)
+        {
+            Vendor vend = base.AddItem(item);
+            if (_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDORS_CHANGED);
+            return vend;
+        }
+
+        public override void Update(Vendor item)
+        {
+            base.Update(item);
+            if (_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDORS_CHANGED);
+        }
+
+        public override void RemoveItem(Vendor item)
+        {
+            base.RemoveItem(item);
+            if (_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDORS_CHANGED);
+        }
+
         /// <summary>
         /// Check to see if the vendor name already exists (case and space insensitive)
         /// </summary>
@@ -33,17 +56,14 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
-        /// Removes the inventory item from all the vendors' lists that contain it
+        /// Removes the inventory item from all the vendors' lists and tables that contain it
         /// </summary>
         /// <param name="item"></param>
         public void RemoveItemFromVendors(VendorInventoryItem item)
         {
-            if (_isMaster)
+            foreach (Vendor v in item.Vendors)
             {
-                foreach (Vendor v in item.Vendors)
-                {
-                    v.RemoveInvItem(item.ToInventoryItem());
-                }
+                v.RemoveInvItem(item.ToInventoryItem());
             }
         }
 
@@ -61,7 +81,8 @@ namespace BuddhaBowls.Services
 
         public void UpdateItem(VendorInventoryItem item)
         {
-            item.SelectedVendor.Update(item.ToInventoryItem());
+            if(item.SelectedVendor != null)
+                item.SelectedVendor.Update(item.ToInventoryItem());
         }
     }
 }

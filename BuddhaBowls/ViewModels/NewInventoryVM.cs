@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
@@ -143,17 +144,13 @@ namespace BuddhaBowls
                 Inv.SetInvItemsContainer(InvListVM.GetItemsContainer().GetInvItemsContainer());
                 Inv = _models.InContainer.AddItem(Inv);
 
-                if (Inv.Id == -1)
-                    Inv.Insert();
-                else
-                    Inv.Update();
-
                 // if this is the latest date inventory, change item counts for current inv items
                 if (Inv.Date >= _models.InContainer.Items.Max(x => x.Date))
                 {
                     //_models.VIContainer.SetItems(InvListVM.GetItemsContainer().GetInvItemsContainer());
                     _models.VIContainer.SyncCopy(InvListVM.GetItemsContainer());
                 }
+                Messenger.Instance.NotifyColleagues(MessageTypes.INVENTORY_CHANGED);
             }
         }
 
@@ -226,7 +223,7 @@ namespace BuddhaBowls
             VendorInvItemsContainer listVmContainer = InvListVM.GetItemsContainer();
             foreach (VendorInventoryItem item in listVmContainer.Items.Where(x => x.Category == "Bread"))
             {
-                item.Count = breadDay.BreadDescDict[item.Name].BeginInventory + breadDay.BreadDescDict[item.Name].FreezerCount;
+                item.Count = breadDay.GetBreadDescriptor(item.Name).BeginInventory + breadDay.BreadDescDict[item.Name].FreezerCount;
             }
             //listVmContainer.PushChange();
         }

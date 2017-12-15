@@ -11,16 +11,8 @@ using System.Windows.Media;
 
 namespace BuddhaBowls.Models
 {
-    public class BreadOrder : Model, INotifyPropertyChanged
+    public class BreadOrder : Model
     {
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         public DateTime Date { get; set; }
 
@@ -73,6 +65,8 @@ namespace BuddhaBowls.Models
             {
                 if (_breadDescDict == null)
                     _breadDescDict = ReadDbDescriptors();
+                if (_breadDescDict == null)
+                    _breadDescDict = new Dictionary<string, BreadDescriptor>();
                 return _breadDescDict;
             }
             set
@@ -219,17 +213,9 @@ namespace BuddhaBowls.Models
         #endregion
     }
 
-    public class BreadDescriptor : Model, INotifyPropertyChanged
+    public class BreadDescriptor : Model
     {
         private BreadOrder _order;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         private string _name;
         public string Name

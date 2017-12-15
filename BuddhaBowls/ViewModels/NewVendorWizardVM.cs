@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.UserControls;
 using System;
@@ -168,7 +169,6 @@ namespace BuddhaBowls
             if (result == MessageBoxResult.Yes)
             {
                 _models.VIContainer.RemoveVendor(Vend);
-                Vend.Destroy();
                 Close();
                 //ParentContext.Refresh();
             }
@@ -226,14 +226,12 @@ namespace BuddhaBowls
             if (ValidateInputs())
             {
                 Vendor vendor = Vend;
-                //_models.AddUpdateVendor(ref vendor, InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList());
-                //_models.VContainer.AddItem(vendor);
-                _models.VIContainer.UpdateVendorItems(vendor, InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList());
+                List<InventoryItem> items = InventoryList.Where(x => x.IsSold).Select(x => x.ToInventoryItem()).ToList();
 
                 if (_newVendor)
-                    vendor.Insert();
+                    _models.VIContainer.AddVendor(vendor, items);
                 else
-                    vendor.Update();
+                    _models.VIContainer.UpdateVendorItems(vendor, items);
 
                 Close();
                 //ParentContext.Refresh();

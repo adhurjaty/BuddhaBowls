@@ -57,7 +57,7 @@ namespace BuddhaBowls.Services
                                                     MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem")).ToList(),
                                                     true);
 
-            VContainer = new VendorsContainer(ModelHelper.InstantiateList<Vendor>("Vendor"));
+            VContainer = new VendorsContainer(ModelHelper.InstantiateList<Vendor>("Vendor"), true);
             VIContainer = new VendorInvItemsContainer(invItems, VContainer, true);
             POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder"), VIContainer);
             InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory"), true);

@@ -260,6 +260,7 @@ namespace BuddhaBowls.Models
         public VendorInventoryItem(InventoryItem item, IEnumerable<VendorInfo> vInfo)
         {
             _invItem = item;
+            Id = item.Id;
             _vendorDict = new Dictionary<Vendor, InventoryItem>();
             SetVendorDict(vInfo.ToList());
 
@@ -337,10 +338,10 @@ namespace BuddhaBowls.Models
         {
             Vendor existingVendor = Vendors.FirstOrDefault(x => x.Id == v.Id);
             if (existingVendor != null)
-            {
                 _vendorDict.Remove(existingVendor);
-            }
+
             _vendorDict[v] = item;
+            v.ItemList.Add(item);
             //NotifyAllChanges();
         }
 

@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
@@ -70,34 +71,6 @@ namespace BuddhaBowls
 
         public InventoryListVM InvListVM { get; set; }
 
-        private ObservableCollection<PrepItem> _prepItemList;
-        public ObservableCollection<PrepItem> PrepItemList
-        {
-            get
-            {
-                return _prepItemList;
-            }
-            set
-            {
-                _prepItemList = value;
-                NotifyPropertyChanged("PrepItemList");
-            }
-        }
-
-        private PrepItem _selectedPrepItem;
-        public PrepItem SelectedPrepItem
-        {
-            get
-            {
-                return _selectedPrepItem;
-            }
-            set
-            {
-                _selectedPrepItem = value;
-                NotifyPropertyChanged("SelectedPrepItem");
-            }
-        }
-
         #endregion
 
         #region ICommand Bindings and Can Execute
@@ -132,19 +105,14 @@ namespace BuddhaBowls
         {
             Header = "Inventory";
 
-            //InitSwitchButtons(new string[] { "Master", "Prep", "History" });
             InitSwitchButtons(new string[] { "Master", "History" });
 
             AddCommand = new RelayCommand(StartNewInventory, x => DBConnection);
             DeleteCommand = new RelayCommand(DeleteInventory, x => DeleteEditCanExecute && DBConnection);
             ViewCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute && DBConnection);
-            //CompareCommand = new RelayCommand(CompareInventories, x => CompareCanExecute && DBConnection);
             InvListCommand = new RelayCommand(GenerateInvList, x => DBConnection);
-            //AddPrepCommand = new RelayCommand(NewPrepItem);
-            //DeletePrepCommand = new RelayCommand(DeletePrepItem, x => SelectedPrepItem != null);
-            //EditPrepCommand = new RelayCommand(EditPrepItem, x => SelectedPrepItem != null);
 
-            //_models.InContainer.AddUpdateBinding(Refresh);
+            Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_CHANGED, (msg) => ShowSelectedWeek(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek));
 
             if (DBConnection)
                 PeriodSelector = new PeriodSelectorVM(_models, ShowSelectedWeek);
@@ -233,36 +201,6 @@ namespace BuddhaBowls
                     "Excel Warning", MessageBoxButton.OK);
             }
         }
-
-        //private void NewPrepItem(object obj)
-        //{
-        //    NewPrepItemVM tabVM = new NewPrepItemVM(AddPrepItem);
-        //    tabVM.Add("New Prep Item");
-        //}
-
-        //private void DeletePrepItem(object obj)
-        //{
-        //    MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this record?", "Delete record?", MessageBoxButton.YesNo);
-        //    if (result == MessageBoxResult.Yes)
-        //    {
-        //        _models.PrepItems.Remove(SelectedPrepItem);
-        //        SelectedPrepItem.Destroy();
-        //        SelectedPrepItem = null;
-        //        PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderBy(x => x.Name));
-        //    }
-        //}
-
-        //private void EditPrepItem(object obj)
-        //{
-        //    NewPrepItemVM tabVM = new NewPrepItemVM(SelectedPrepItem, AddPrepItem);
-        //    tabVM.Add("Edit Prep Item");
-        //}
-
-        //public void PrepRowEdited(PrepItem item)
-        //{
-        //    item.NotifyChanges();
-        //    item.Update();
-        //}
 
         #endregion
 
