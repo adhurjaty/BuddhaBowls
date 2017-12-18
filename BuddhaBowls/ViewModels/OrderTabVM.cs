@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Messengers;
+using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
 using System;
@@ -290,6 +291,7 @@ namespace BuddhaBowls
                 WeekCostTotal = new OrderStat() { Label = "Total Cost for Week" };
 
                 PeriodSelector = new PeriodSelectorVM(_models, LoadPreviousOrders);
+                Messenger.Instance.Register<Message>(MessageTypes.PO_CHANGED, (msg) => RefreshOrderList());
                 //_models.POContainer.AddUpdateBinding(RefreshOrderList);
             }
             else

@@ -915,23 +915,23 @@ namespace BuddhaBowls.Test
                 new Recipe(new Dictionary<string, string>() { { "Name", "New England Clam Chowder" } })
             };
 
-            List<RecipeItem> recipeItems = baseItems.Select(x => new Ingredient(x).GetRecipeItem()).ToList();
+            List<RecipeItem> recipeItems = baseItems.Select(x => x.ToRecipeItem()).ToList();
 
             RecipeTabVM recipeTab = CreateTestBatchRecipe(name, recipeItems);
-            DisplayRecipe newRecipe = recipeTab.FilteredItems.FirstOrDefault(x => x.Name == name);
+            Recipe newRecipe = recipeTab.FilteredItems.FirstOrDefault(x => x.Name == name);
             recipeTab.SelectedItem = newRecipe;
 
             try
             {
                 Assert.AreEqual(name, newRecipe.Name);
-                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), newRecipe.GetRecipe().GetItems().Select(x => x.Name).ToList());
+                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), newRecipe.ItemList.Select(x => x.Name).ToList());
             }
             finally
             {
                 recipeTab.DeleteItemCommand.Execute(null);
             }
 
-            DisplayRecipe emptyRecipe = recipeTab.FilteredItems.FirstOrDefault(x => x.Name == name);
+            Recipe emptyRecipe = recipeTab.FilteredItems.FirstOrDefault(x => x.Name == name);
             Assert.IsNull(emptyRecipe);
         }
 
@@ -947,10 +947,10 @@ namespace BuddhaBowls.Test
                 new Recipe(new Dictionary<string, string>() { { "Name", "New England Clam Chowder" } })
             };
 
-            List<RecipeItem> recipeItems = baseItems.Select(x => new Ingredient(x).GetRecipeItem()).ToList();
+            List<RecipeItem> recipeItems = baseItems.Select(x => x.ToRecipeItem()).ToList();
 
             RecipeTabVM recipeTab = CreateTestBatchRecipe(name, recipeItems);
-            DisplayRecipe newRecipe = recipeTab.FilteredItems.FirstOrDefault(x => x.Name == name);
+            Recipe newRecipe = recipeTab.FilteredItems.FirstOrDefault(x => x.Name == name);
             recipeTab.SelectedItem = newRecipe;
 
             try
@@ -959,22 +959,22 @@ namespace BuddhaBowls.Test
                 NewRecipeVM editRecipeTab = GetOpenTempTabVM<NewRecipeVM>();
                 Assert.AreEqual(name, editRecipeTab.Item.Name);
 
-                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), editRecipeTab.Ingredients.Select(x => x.Name).ToList());
+                CollectionAssert.AreEquivalent(recipeItems.Select(x => x.Name).ToList(), editRecipeTab.Item.ItemList.Select(x => x.Name).ToList());
 
                 editRecipeTab.ItemToAdd = new InventoryItem(new Dictionary<string, string>() { { "Name", "Butter" } });
                 editRecipeTab.ModalOkCommand.Execute(null);
 
-                editRecipeTab.Ingredients.First(x => x.Name == "Avocado").Count = 42;
+                editRecipeTab.Item.ItemList.First(x => x.Name == "Avocado").Count = 42;
 
                 editRecipeTab.FinishCommand.Execute(null);
 
-                DisplayRecipe editedRecipe = recipeTab.FilteredItems.First(x => x.Name == name);
-                CollectionAssert.Contains(newRecipe.GetRecipe().GetItems().Select(x => x.Name).ToList(), "Butter");
-                Assert.AreEqual(42, newRecipe.GetRecipe().GetItems().First(x => x.Name == "Avocado").Count);
+                Recipe editedRecipe = recipeTab.FilteredItems.First(x => x.Name == name);
+                CollectionAssert.Contains(newRecipe.ItemList.Select(x => x.Name).ToList(), "Butter");
+                Assert.AreEqual(42, newRecipe.ItemList.First(x => x.Name == "Avocado").Count);
             }
             finally
             {
-                newRecipe.GetRecipe().Destroy();
+                newRecipe.Destroy();
             }
         }
 
@@ -1219,36 +1219,36 @@ namespace BuddhaBowls.Test
 
             VendorInventoryItem item = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
 
-            //try
-            //{
-            //    _vm.OrderTab.AddNewOrderCommand.Execute(null);
-            //    NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
+            try
+            {
+                _vm.OrderTab.AddNewOrderCommand.Execute(null);
+                NewOrderVM newOrderTab = GetOpenTempTabVM<NewOrderVM>();
 
-            //    listVM.SelectedInventoryItem = item;
-            //    item.SelectedVendor = v1;
-            //    item.Conversion = 10;
-            //    item.LastPurchasedPrice = 10f;
-            //    listVM.RowEdited(item);
+                listVM.SelectedInventoryItem = item;
+                item.SelectedVendor = v1;
+                item.Conversion = 10;
+                item.LastPurchasedPrice = 10f;
+                listVM.RowEdited(item);
 
-            //    item.SelectedVendor = v2;
-            //    item.Conversion = 5;
-            //    item.LastPurchasedPrice = 5f;
-            //    listVM.RowEdited(item);
+                item.SelectedVendor = v2;
+                item.Conversion = 5;
+                item.LastPurchasedPrice = 5f;
+                listVM.RowEdited(item);
 
-            //    newOrderTab.OrderVendor = v1;
-            //    VendorInventoryItem vendItem = newOrderTab.FilteredOrderItems.First(x => x.Name == name);
-            //    Assert.AreEqual(10, vendItem.Conversion);
-            //    Assert.AreEqual(10f, vendItem.LastPurchasedPrice);
+                newOrderTab.OrderVendor = v1;
+                InventoryItem invItem = newOrderTab.FilteredOrderItems.First(x => x.Name == name);
+                Assert.AreEqual(10, invItem.Conversion);
+                Assert.AreEqual(10f, invItem.LastPurchasedPrice);
 
-            //    newOrderTab.OrderVendor = v2;
-            //    vendItem = newOrderTab.FilteredOrderItems.First(x => x.Name == name);
-            //    Assert.AreEqual(5, vendItem.Conversion);
-            //    Assert.AreEqual(5f, vendItem.LastPurchasedPrice);
-            //}
-            //finally
-            //{
-            //    item.Destroy();
-            //}
+                newOrderTab.OrderVendor = v2;
+                invItem = newOrderTab.FilteredOrderItems.First(x => x.Name == name);
+                Assert.AreEqual(5, invItem.Conversion);
+                Assert.AreEqual(5f, invItem.LastPurchasedPrice);
+            }
+            finally
+            {
+                item.Destroy();
+            }
         }
 
         [TestMethod]
@@ -1263,46 +1263,45 @@ namespace BuddhaBowls.Test
 
             VendorInventoryItem masterItem = listVM.FilteredItems.FirstOrDefault(x => x.Name == name);
 
-            //try
-            //{
-            //    _vm.OrderTab.AddNewOrderCommand.Execute(null);
-            //    NewOrderVM newOrder = GetOpenTempTabVM<NewOrderVM>();
-            //    newOrder.OrderVendor = v1;
-            //    VendorInventoryItem orderItem = newOrder.FilteredOrderItems.First(x => x.Name == name);
-            //    newOrder.SelectedOrderItem = orderItem;
+            try
+            {
+                _vm.OrderTab.AddNewOrderCommand.Execute(null);
+                NewOrderVM newOrder = GetOpenTempTabVM<NewOrderVM>();
+                newOrder.OrderVendor = v1;
+                InventoryItem orderItem = newOrder.FilteredOrderItems.First(x => x.Name == name);
+                newOrder.SelectedOrderItem = orderItem;
 
-            //    listVM.SelectedInventoryItem = masterItem;
-            //    masterItem.SelectedVendor = v1;
+                listVM.SelectedInventoryItem = masterItem;
+                masterItem.SelectedVendor = v1;
 
-            //    VendorTabVM vendorTab = _vm.VendorTab;
-            //    orderItem.SelectedVendor = v1;
-            //    float v1conv = orderItem.Conversion;
-            //    float v1price = orderItem.LastPurchasedPrice;
+                VendorTabVM vendorTab = _vm.VendorTab;
+                float v1conv = orderItem.Conversion;
+                float v1price = orderItem.LastPurchasedPrice;
 
-            //    orderItem.Conversion = 10;
-            //    orderItem.LastPurchasedPrice = 10f;
-            //    newOrder.RowEdited(orderItem);
+                orderItem.Conversion = 10;
+                orderItem.LastPurchasedPrice = 10f;
+                newOrder.RowEdited(orderItem);
 
-            //    newOrder.OrderVendor = v2;
-            //    float v2conv = orderItem.Conversion;
-            //    float v2price = orderItem.LastPurchasedPrice;
+                newOrder.OrderVendor = v2;
+                float v2conv = orderItem.Conversion;
+                float v2price = orderItem.LastPurchasedPrice;
 
-            //    orderItem.Conversion = 5;
-            //    orderItem.LastPurchasedPrice = 5f;
-            //    newOrder.RowEdited(orderItem);
+                orderItem.Conversion = 5;
+                orderItem.LastPurchasedPrice = 5f;
+                newOrder.RowEdited(orderItem);
 
-            //    Assert.AreEqual(v1.Id, listVM.SelectedInventoryItem.SelectedVendor.Id);
-            //    Assert.AreEqual(v1conv, listVM.SelectedInventoryItem.Conversion);
-            //    Assert.AreEqual(v1price, listVM.SelectedInventoryItem.LastPurchasedPrice);
+                Assert.AreEqual(v1.Id, listVM.SelectedInventoryItem.SelectedVendor.Id);
+                Assert.AreEqual(v1conv, listVM.SelectedInventoryItem.Conversion);
+                Assert.AreEqual(v1price, listVM.SelectedInventoryItem.LastPurchasedPrice);
 
-            //    listVM.SelectedInventoryItem.SelectedVendor = v2;
-            //    Assert.AreEqual(v2conv, listVM.SelectedInventoryItem.Conversion);
-            //    Assert.AreEqual(v2price, listVM.SelectedInventoryItem.LastPurchasedPrice);
-            //}
-            //finally
-            //{
-            //    masterItem.Destroy();
-            //}
+                listVM.SelectedInventoryItem.SelectedVendor = v2;
+                Assert.AreEqual(v2conv, listVM.SelectedInventoryItem.Conversion);
+                Assert.AreEqual(v2price, listVM.SelectedInventoryItem.LastPurchasedPrice);
+            }
+            finally
+            {
+                masterItem.Destroy();
+            }
         }
 
         #endregion
@@ -1402,7 +1401,7 @@ namespace BuddhaBowls.Test
 
             NewRecipeVM newRecipeTab = GetOpenTempTabVM<NewRecipeVM>();
             newRecipeTab.Item.Name = recipeName;
-            newRecipeTab.Ingredients = new ObservableCollection<Ingredient>(items.Select(x => new Ingredient(x)));
+            newRecipeTab.Item.SetRecipeItems(items);
 
             newRecipeTab.FinishCommand.Execute(null);
 

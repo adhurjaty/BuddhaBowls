@@ -320,5 +320,10 @@ namespace BuddhaBowls.Models
         {
             return new Dictionary<string, float>() { { Category, RecipeCost } };
         }
+
+        public RecipeItem ToRecipeItem()
+        {
+            return new RecipeItem() { InventoryItemId = Id, Name = Name, Quantity = Count };
+        }
     }
 }

@@ -9,15 +9,8 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class VendorInventoryItem : Model, IItem, INotifyPropertyChanged
+    public class VendorInventoryItem : Model, IItem
     {
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         // dictionary relating the vendor to the inventory item (differ in conversion, price, and purchased unit)
         private Dictionary<Vendor, InventoryItem> _vendorDict;
@@ -341,7 +334,7 @@ namespace BuddhaBowls.Models
                 _vendorDict.Remove(existingVendor);
 
             _vendorDict[v] = item;
-            v.ItemList.Add(item);
+            v.AddInvItem(item);
             //NotifyAllChanges();
         }
 
@@ -464,5 +457,9 @@ namespace BuddhaBowls.Models
             return _invItem.GetPrevOrderAmount();
         }
 
+        public RecipeItem ToRecipeItem()
+        {
+            return _invItem.ToRecipeItem();
+        }
     }
 }

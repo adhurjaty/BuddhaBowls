@@ -81,26 +81,24 @@ namespace BuddhaBowls.Test
         public void AddVendorInvItemTest()
         {
             string name = "New Test Item";
-            VendorInventoryItem testItem = new VendorInventoryItem() { Name = name };
             int origSize = _models.VIContainer.Items.Count;
-            //UpdateBinding insertBinding = delegate () { testItem.Id = testItem.Insert(); };
-            //_models.VIContainer.AddUpdateBinding(insertBinding);
+            VendorInventoryItem testItem = null;
 
             InventoryItem dbItem;
             try
             {
-                //Vendor v = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
-                //testItem = _models.VIContainer.AddItem(testItem, new List<VendorInfo>() { new VendorInfo() { Vend = v, Conversion = 1, Price = 12.5f,
-                //                                                                                  PurchasedUnit = "EACH" } });
-                //testItem.Id = testItem.Insert();
+                Vendor v = new Vendor(new Dictionary<string, string>() { { "Name", "Sysco" } });
+                InventoryItem item = new InventoryItem() { Name = name };
+                testItem = _models.VIContainer.AddItem(item, new List<VendorInfo>() { new VendorInfo()
+                                                                            { Vend = v, Conversion = 1, Price = 12.5f, PurchasedUnit = "EACH" } });
 
-                //Assert.AreEqual(origSize, testItem.Id);
-                //CollectionAssert.Contains(_models.VIContainer.Items, testItem);
-                //dbItem = ModelHelper.InstantiateList<InventoryItem>("InventoryItem").First(x => x.Name == name);
-                //Assert.AreEqual(origSize, dbItem.Id);
+                Assert.AreEqual(origSize, testItem.Id);
+                CollectionAssert.Contains(_models.VIContainer.Items, testItem);
+                dbItem = ModelHelper.InstantiateList<InventoryItem>("InventoryItem").First(x => x.Name == name);
+                Assert.AreEqual(origSize, dbItem.Id);
 
-                //List<InventoryItem> syscoItems = _models.VContainer.Items.First(x => x.Name == "Sysco").GetInventoryItems();
-                //CollectionAssert.Contains(syscoItems.Select(x => x.Name).ToList(), testItem.Name);
+                List<InventoryItem> syscoItems = _models.VContainer.Items.First(x => x.Name == "Sysco").GetInventoryItems();
+                CollectionAssert.Contains(syscoItems.Select(x => x.Name).ToList(), testItem.Name);
             }
             finally
             {
@@ -156,7 +154,6 @@ namespace BuddhaBowls.Test
             try
             {
                 _models.VContainer.AddItem(testVendor);
-                testVendor.Id = testVendor.Insert();
 
                 CollectionAssert.Contains(_models.VContainer.Items.Select(x => x.Name).ToList(), testVendor.Name);
                 Assert.AreEqual(5, testVendor.Id);

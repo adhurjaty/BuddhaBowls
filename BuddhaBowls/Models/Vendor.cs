@@ -135,6 +135,7 @@ namespace BuddhaBowls.Models
             if(items != null && items.Count > 0)
                 ModelHelper.CreateTable(items, GetPriceTableName());
             _invItemsContainer = new InventoryItemsContainer(items);
+            NotifyPropertyChanged("ItemList");
 
             return base.Insert();
         }
@@ -149,6 +150,7 @@ namespace BuddhaBowls.Models
         public void Update(InventoryItem item)
         {
             _invItemsContainer.AddItem(item);
+            NotifyPropertyChanged("ItemList");
             Update();
         }
 
@@ -159,6 +161,7 @@ namespace BuddhaBowls.Models
         public void Update(List<InventoryItem> items)
         {
             _invItemsContainer.UpdateMultiple(items);
+            NotifyPropertyChanged("ItemList");
             Update();
         }
 
@@ -196,6 +199,7 @@ namespace BuddhaBowls.Models
                 File.Delete(priceListPath);
             }
             _invItemsContainer = null;
+            NotifyPropertyChanged("ItemList");
             base.Destroy();
         }
 

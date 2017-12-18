@@ -265,7 +265,6 @@ namespace BuddhaBowls
 
             SetCommandsAndControl();
             Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(DatasetChanged));
-
         }
 
         /// <summary>

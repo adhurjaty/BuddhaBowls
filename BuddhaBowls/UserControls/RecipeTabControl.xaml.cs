@@ -41,13 +41,13 @@ namespace BuddhaBowls.UserControls
                 ((DataGrid)sender).RowEditEnding -= dataGrid1_RowEditEnding;
                 ((DataGrid)sender).CommitEdit();
                 ((DataGrid)sender).RowEditEnding += dataGrid1_RowEditEnding;
-                ((RecipeTabVM)DataContext).RowEdited(((DisplayRecipe)e.Row.Item));
+                ((RecipeTabVM)DataContext).RowEdited(((Recipe)e.Row.Item));
             }
         }
 
         private void ComboBox_Selected(object sender, RoutedEventArgs e)
         {
-            DisplayRecipe item = (DisplayRecipe)((ComboBox)sender).DataContext;
+            Recipe item = (Recipe)((ComboBox)sender).DataContext;
             item.RecipeUnit = (string)((ComboBox)sender).SelectedItem;
             ((RecipeTabVM)DataContext).RowEdited(item);
         }

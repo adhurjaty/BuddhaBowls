@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Messengers;
+using BuddhaBowls.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,17 @@ namespace BuddhaBowls.Services
                 return inv;
             }
 
-            return base.AddItem(inv);
+            inv = base.AddItem(inv);
+            if(_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.INVENTORY_CHANGED);
+            return inv;
+        }
+
+        public override void RemoveItem(Inventory item)
+        {
+            base.RemoveItem(item);
+            if (_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.INVENTORY_CHANGED);
         }
 
         /// <summary>

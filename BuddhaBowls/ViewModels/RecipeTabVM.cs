@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
@@ -20,11 +21,11 @@ namespace BuddhaBowls
     /// </summary>
     public class RecipeTabVM : ChangeableTabVM
     {
-        private List<DisplayRecipe> _recipeItems;
+        //private List<DisplayRecipe> _recipeItems;
 
         #region Content Binders
-        private ObservableCollection<DisplayRecipe> _filteredItems;
-        public ObservableCollection<DisplayRecipe> FilteredItems
+        private ObservableCollection<Recipe> _filteredItems;
+        public ObservableCollection<Recipe> FilteredItems
         {
             get
             {
@@ -37,7 +38,7 @@ namespace BuddhaBowls
             }
         }
 
-        public DisplayRecipe SelectedItem { get; set; }
+        public Recipe SelectedItem { get; set; }
 
         private string _filterText;
         public string FilterText
@@ -99,7 +100,7 @@ namespace BuddhaBowls
             EditItemCommand = new RelayCommand(EditRecipe, x => SelectedItemCanExecute && DBConnection);
 
             RecipeUnitList = _models.GetRecipeUnits();
-            //_models.RContainer.AddUpdateBinding(RefreshList);
+            Messenger.Instance.Register<Message>(MessageTypes.RECIPE_CHANGED, (msg) => RefreshList());
         }
 
         #region ICommand Helpers
@@ -117,9 +118,9 @@ namespace BuddhaBowls
                                                       "Delete " + SelectedItem.Name + "?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                Recipe rec = SelectedItem.GetRecipe();
-                _models.RContainer.RemoveItem(rec);
-                rec.Destroy();
+                //Recipe rec = SelectedItem.GetRecipe();
+                _models.RContainer.RemoveItem(SelectedItem);
+                //rec.Destroy();
                 SelectedItem = null;
                 RefreshList();
             }
@@ -128,7 +129,7 @@ namespace BuddhaBowls
         private void EditRecipe(object obj)
         {
             //NewRecipeVM tabVM = new NewRecipeVM(SelectedItem.GetRecipe(), SaveRecipeHandler);
-            NewRecipeVM tabVM = new NewRecipeVM(SelectedItem.GetRecipe());
+            NewRecipeVM tabVM = new NewRecipeVM(SelectedItem);
             tabVM.Add("Edit Recipe");
         }
 
@@ -146,7 +147,7 @@ namespace BuddhaBowls
         /// <param name="filterStr"></param>
         public override void FilterItems(string filterStr)
         {
-            FilteredItems = MainHelper.FilterInventoryItems(filterStr, _recipeItems);
+            FilteredItems = MainHelper.FilterInventoryItems(filterStr, _models.RContainer.Items);
         }
 
         public void RefreshList()
@@ -159,10 +160,11 @@ namespace BuddhaBowls
             ChangePageState(_pageIndex);
         }
 
-        public void RowEdited(DisplayRecipe item)
+        public void RowEdited(Recipe item)
         {
             int idx = FilteredItems.IndexOf(item);
-            item.GetRecipe().Update();
+            _models.RContainer.Update(item);
+            //SelectedItem.Update();
         }
         #endregion
 
@@ -173,139 +175,17 @@ namespace BuddhaBowls
             switch (pageIdx)
             {
                 case 0:
-                    _recipeItems = _models.RContainer.Items.Where(x => x.IsBatch).Select(x => new DisplayRecipe(x)).ToList();
+                    FilteredItems = new ObservableCollection<Recipe>(_models.RContainer.Items.Where(x => x.IsBatch));
                     break;
                 case 1:
-                    _recipeItems = _models.RContainer.Items.Where(x => !x.IsBatch).Select(x => new DisplayRecipe(x)).ToList();
+                    FilteredItems = new ObservableCollection<Recipe>(_models.RContainer.Items.Where(x => !x.IsBatch));
                     break;
                 case -1:
-                    _recipeItems = new List<DisplayRecipe>() { new DisplayRecipe(new Recipe { Name = "DB not found" }) };
+                    FilteredItems = new ObservableCollection<Recipe>() { new Recipe() { Name = "DB not found" } };
                     break;
             }
 
             FilterText = "";
-            FilteredItems = new ObservableCollection<DisplayRecipe>(_recipeItems);
-        }
-    }
-
-    public class DisplayRecipe : INotifyPropertyChanged, ISortable
-    {
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private Recipe _recipe;
-
-        public string Name
-        {
-            get
-            {
-                return _recipe.Name;
-            }
-            set
-            {
-                _recipe.Name = value;
-                NotifyPropertyChanged("Name");
-            }
-        }
-
-        public string Category
-        {
-            get
-            {
-                return _recipe.Category;
-            }
-            set
-            {
-                _recipe.Category = value;
-                NotifyPropertyChanged("Category");
-            }
-        }
-
-        public string RecipeUnit
-        {
-            get
-            {
-                return _recipe.RecipeUnit;
-            }
-            set
-            {
-                _recipe.RecipeUnit = value;
-                NotifyPropertyChanged("RecipeUnit");
-            }
-        }
-
-        public float? RecipeUnitConversion
-        {
-            get
-            {
-                return _recipe.RecipeUnitConversion;
-            }
-            set
-            {
-                _recipe.RecipeUnitConversion = value;
-                NotifyPropertyChanged("RecipeUnitConversion");
-                NotifyPropertyChanged("CostPerRU");
-            }
-        }
-
-        public float CostPerRU
-        {
-            get
-            {
-                return _recipe.CostPerRU;
-            }
-        }
-
-        public float RecipeCost
-        {
-            get
-            {
-                return _recipe.RecipeCost;
-            }
-        }
-
-        public float TotalCost
-        {
-            get
-            {
-                return _recipe.TotalCost;
-            }
-        }
-
-        public List<CategoryProportion> ProportionDetails
-        {
-            get
-            {
-                List<Dictionary<string, float>> catCosts = _recipe.GetRecipeItems().Select(x => x.GetIItem().GetCategoryCosts()).ToList();
-                Dictionary<string, float> combinedCatCosts = new Dictionary<string, float>();
-                foreach (Dictionary<string, float> dict in catCosts)
-                {
-                    foreach (KeyValuePair<string, float> kvp in dict)
-                    {
-                        if (!combinedCatCosts.ContainsKey(kvp.Key))
-                            combinedCatCosts[kvp.Key] = 0;
-                        combinedCatCosts[kvp.Key] += kvp.Value;
-                    }
-                }
-                float total = combinedCatCosts.Sum(x => x.Value);
-                return combinedCatCosts.Select(x => new CategoryProportion(x.Key, x.Value, total))
-                                       .OrderByDescending(x => x.CostProportion).ToList();
-            }
-        }
-
-        public DisplayRecipe(Recipe rec)
-        {
-            _recipe = rec;
-        }
-
-        public Recipe GetRecipe()
-        {
-            return _recipe;
         }
     }
 

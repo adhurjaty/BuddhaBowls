@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,20 +10,75 @@ namespace BuddhaBowls.Models
 {
     public class PurchaseOrder : Model
     {
-        public string VendorName { get; set; }
-        public DateTime OrderDate { get; set; }
-        public DateTime? ReceivedDate { get; set; }
-        bool _orderChanged = true;  // bool to track whether the order/order items have changed. Used to speed up calls to RecCategoryItemsDict
+        private InventoryItemsContainer _invItemsContainer;
 
-        public DateTime Date
+        private string _vendorName;
+        public string VendorName
         {
             get
             {
-                return ReceivedDate ?? default(DateTime);
+                return _vendorName;
+            }
+            set
+            {
+                _vendorName = value;
+                NotifyPropertyChanged("VendorName");
             }
         }
 
-        public bool ReceivedCheck { get; set; }
+        private DateTime _orderDate;
+        public DateTime OrderDate
+        {
+            get
+            {
+                return _orderDate;
+            }
+            set
+            {
+                _orderDate = value;
+                NotifyPropertyChanged("OrderDate");
+            }
+        }
+
+        private DateTime? _receivedDate;
+        public DateTime? ReceivedDate
+        {
+            get
+            {
+                return _receivedDate;
+            }
+            set
+            {
+                _receivedDate = value;
+                NotifyPropertyChanged("ReceivedDate");
+                NotifyPropertyChanged("Received");
+            }
+        }
+
+        private bool _receivedCheck;
+        public bool ReceivedCheck
+        {
+            get
+            {
+                return _receivedCheck;
+            }
+            set
+            {
+                _receivedCheck = value;
+                NotifyPropertyChanged("ReceivedCheck");
+            }
+        }
+
+        public List<InventoryItem> ItemList
+        {
+            get
+            {
+                if (_invItemsContainer == null)
+                    SetItemsContainer();
+                return _invItemsContainer.Items;
+            }
+        }
+
         public bool Received
         {
             get
@@ -78,9 +134,6 @@ namespace BuddhaBowls.Models
         {
             VendorName = vendor.Name;
             OrderDate = orderDate;
-
-            // need to insert here to get the ID, though I don't like it
-            Insert();
 
             // double check that there are no duplicates in the inventory items. Correct this and notify user that there has been a problem if so
             // Remove this when I find the cause of the problem
@@ -153,6 +206,11 @@ namespace BuddhaBowls.Models
         public string GetOrderPath()
         {
             return Path.Combine(Properties.Settings.Default.DBLocation, GetOrderTableName() + ".csv");
+        }
+
+        private void SetItemsContainer()
+        {
+            throw new NotImplementedException();
         }
 
         private string GetOrderTableName()

@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
@@ -21,10 +22,6 @@ namespace BuddhaBowls
     {
         private VendorInvItemsContainer _itemsContainer;
         private List<InventoryItem> _displayItems;
-        //private RefreshDel RefreshOrder;
-        // stores vendor inventory offering
-        //private List<VendorInventoryItem> _sortedInvtems;
-        //private List<VendorInventoryItem> _shownInvItems;
 
         #region Content Binders
         private OrderBreakdownVM _breakdownContext;
@@ -174,9 +171,7 @@ namespace BuddhaBowls
 
         public NewOrderVM() : base()
         {
-            //RefreshOrder = refresh;
             _tabControl = new NewOrder(this);
-            //_sortedInvtems = _models.VendorInvItems.Select(x => x.Copy()).ToList();
 
             SaveNewOrderCommand = new RelayCommand(SaveOrder, x => SaveOrderCanExecute);
             CancelNewOrderCommand = new RelayCommand(CancelOrder);
@@ -185,14 +180,12 @@ namespace BuddhaBowls
             AddNewItemCommand = new RelayCommand(AddVendorItem, x => OrderVendor != null);
             DeleteItemCommand = new RelayCommand(DeleteVendorItem, x => OrderVendor != null);
 
-            //RefreshInventoryList();
-            //SetLastOrderBreakdown();
             ShowSelectVendor();
             RefreshVendors();
             PurchasedUnitList = _models.GetPurchasedUnits();
             _itemsContainer = _models.VIContainer.Copy();
-            //_models.VContainer.AddUpdateBinding(RefreshVendors);
-            //_models.VContainer.AddUpdateBinding(LoadVendorItems);
+            Messenger.Instance.Register<Message>(MessageTypes.VENDORS_CHANGED, (msg) => RefreshVendors());
+            Messenger.Instance.Register<Message>(MessageTypes.VENDOR_INV_ITEMS_CHANGED, (msg) => LoadVendorItems());
         }
 
         #region ICommand Helpers
@@ -338,12 +331,11 @@ namespace BuddhaBowls
         /// <summary>
         /// Called when New Order is edited
         /// </summary>
-        public void RowEdited(VendorInventoryItem item)
+        public void RowEdited(InventoryItem item)
         {
             NotifyPropertyChanged("FilteredOrderItems");
             BreakdownContext.UpdateItem(item);
             NotifyPropertyChanged("BreakdownContext");
-            //SetLastOrderBreakdown();
         }
 
         /// <summary>

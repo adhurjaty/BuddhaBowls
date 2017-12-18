@@ -31,6 +31,12 @@ namespace BuddhaBowls.Services
             return vend;
         }
 
+        public Vendor AddItem(Vendor vend, List<InventoryItem> invItems)
+        {
+            vend.SetItemsContainer(new InventoryItemsContainer(new List<InventoryItem>(invItems)));
+            return AddItem(vend);
+        }
+
         public override void Update(Vendor item)
         {
             base.Update(item);
@@ -84,5 +90,6 @@ namespace BuddhaBowls.Services
             if(item.SelectedVendor != null)
                 item.SelectedVendor.Update(item.ToInventoryItem());
         }
+
     }
 }

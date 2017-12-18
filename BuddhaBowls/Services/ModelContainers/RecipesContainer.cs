@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Messengers;
+using BuddhaBowls.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,28 @@ namespace BuddhaBowls.Services
             }
 
             return categories.ToList();
+        }
+
+        public RecipesContainer Copy()
+        {
+            RecipesContainer rc = new RecipesContainer(_items.Select(x => (Recipe)x.Copy()).ToList());
+            _copies.Add(rc);
+            return rc;
+        }
+
+        public override Recipe AddItem(Recipe item)
+        {
+            Recipe rec = base.AddItem(item);
+            if (_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED);
+            return rec;
+        }
+
+        public override void RemoveItem(Recipe item)
+        {
+            base.RemoveItem(item);
+            if (_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED);
         }
     }
 }

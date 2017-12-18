@@ -48,6 +48,8 @@ namespace BuddhaBowls.Services
             //Messenger.Instance.Register(MessageTypes.INVENTORY_ITEM_ADDED, new Action<Message>(OnInventoryItemAdded));
             //Messenger.Instance.Register(MessageTypes.INVENTORY_ITEM_REMOVED, new Action<Message>(OnInventoryItemRemoved));
             //Messenger.Instance.Register(MessageTypes.INVENTORY_ITEM_CHANGED, new Action<Message>(OnInventoryItemChanged));
+            Messenger.Instance.Register<Message>(MessageTypes.VENDORS_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
+            Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_ITEM_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
         }
 
         public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer, bool isMaster) : this(items, vContainer)
@@ -121,9 +123,6 @@ namespace BuddhaBowls.Services
 
         public void Update(VendorInventoryItem item)
         {
-            //int idx = Items.FindIndex(x => x.Id == item.Id);
-            //item.SetVendorItem(item.SelectedVendor, item.ToInventoryItem());
-            //Items[idx] = item;
             if (_isMaster)
                 item.Update();
             _vendorsContainer.UpdateItem(item);
@@ -180,6 +179,7 @@ namespace BuddhaBowls.Services
                 else
                     _copies[i].Items[idx] = (VendorInventoryItem)item.Copy();
             }
+            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
         }
 
         /// <summary>
@@ -199,9 +199,10 @@ namespace BuddhaBowls.Services
         /// <param name="vend"></param>
         public void AddVendor(Vendor vend, List<InventoryItem> invItems)
         {
-            _vendorsContainer.AddItem(vend);
-            //vend.SetItemsContainer(new InventoryItemsContainer(invItems));
+            _vendorsContainer.AddItem(vend, invItems);
             AddVendorAssociations(vend, invItems);
+            if (_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
         }
 
         /// <summary>
@@ -225,8 +226,11 @@ namespace BuddhaBowls.Services
         /// <param name="vend"></param>
         public void RemoveVendor(Vendor vend)
         {
+            RemoveVendorAssociations(vend);
             _vendorsContainer.RemoveItem(vend);
-            RemoveVendorAssociations(vend);   
+            UpdateCopies();
+            if (_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
         }
 
         /// <summary>
@@ -240,7 +244,6 @@ namespace BuddhaBowls.Services
             {
                 VendorInventoryItem vItem = Items.First(x => x.Id == item.Id);
                 vItem.DeleteVendor(vend);
-                UpdateCopies(vItem);
             }
         }
 

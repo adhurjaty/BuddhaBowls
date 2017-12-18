@@ -19,5 +19,6 @@ namespace BuddhaBowls.Models
         void Destroy();
         IItem Copy();
         Dictionary<string, float> GetCategoryCosts();
+        RecipeItem ToRecipeItem();
     }
 }

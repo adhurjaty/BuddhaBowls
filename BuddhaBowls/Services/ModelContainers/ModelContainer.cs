@@ -56,7 +56,7 @@ namespace BuddhaBowls.Services
                 if (_isMaster)
                     item.Insert();
             }
-
+            UpdateCopies(item);
             return item;
         }
 
@@ -72,6 +72,7 @@ namespace BuddhaBowls.Services
             {
                 item.Destroy();
             }
+            UpdateCopies(item);
         }
 
         public virtual void Update(T item)
@@ -81,6 +82,7 @@ namespace BuddhaBowls.Services
 
             if (_isMaster)
                 item.Update();
+            UpdateCopies(item);
         }
 
         public virtual void UpdateMultiple(IEnumerable<T> items)
@@ -93,6 +95,7 @@ namespace BuddhaBowls.Services
                 if (_isMaster)
                     item.Update();
             }
+            UpdateCopies();
         }
 
         /// <summary>

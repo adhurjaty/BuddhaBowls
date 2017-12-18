@@ -150,7 +150,6 @@ namespace BuddhaBowls
                     //_models.VIContainer.SetItems(InvListVM.GetItemsContainer().GetInvItemsContainer());
                     _models.VIContainer.SyncCopy(InvListVM.GetItemsContainer());
                 }
-                Messenger.Instance.NotifyColleagues(MessageTypes.INVENTORY_CHANGED);
             }
         }
 
