@@ -94,14 +94,6 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public int? LastVendorId
-        {
-            get { return _invItem.LastVendorId; }
-            set { _invItem.LastVendorId = value;
-                NotifyPropertyChanged("LastVendorId");
-            }
-        }
-
         public float Conversion
         {
             get { return _invItem.Conversion; }
@@ -112,9 +104,29 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public int? LastVendorId
+        {
+            get
+            {
+                if (_vendorDict != null && _vendorDict.Keys.Count > 0)
+                    return _vendorDict.OrderByDescending(x => x.Value.LastPurchasedDate).First().Key.Id;
+                return _invItem.LastVendorId;
+            }
+            set
+            {
+                _invItem.LastVendorId = value;
+                NotifyPropertyChanged("LastVendorId");
+            }
+        }
+
         public float LastPurchasedPrice
         {
-            get { return _invItem.LastPurchasedPrice; }
+            get
+            {
+                if (_vendorDict != null && _vendorDict.Keys.Count > 0)
+                    return _vendorDict.Values.OrderByDescending(x => x.LastPurchasedDate).First().LastPurchasedPrice;
+                return _invItem.LastPurchasedPrice;
+            }
             set { _invItem.LastPurchasedPrice = value;
                 NotifyPropertyChanged("LastPurchasedPrice");
                 NotifyPropertyChanged("PriceExtension");
@@ -125,7 +137,12 @@ namespace BuddhaBowls.Models
 
         public DateTime? LastPurchasedDate
         {
-            get { return _invItem.LastPurchasedDate; }
+            get
+            {
+                if (_vendorDict != null && _vendorDict.Keys.Count > 0)
+                    return _vendorDict.Values.Max(x => x.LastPurchasedDate);
+                return _invItem.LastPurchasedDate;
+            }
             set { _invItem.LastPurchasedDate = value;
                 NotifyPropertyChanged("LastPurchasedDate");
             }
@@ -133,7 +150,12 @@ namespace BuddhaBowls.Models
 
         public float LastOrderAmount
         {
-            get { return _invItem.LastOrderAmount; }
+            get
+            {
+                if(_vendorDict != null && _vendorDict.Keys.Count > 0)
+                    return _vendorDict.Values.OrderByDescending(x => x.LastPurchasedDate).First().LastOrderAmount;
+                return _invItem.LastOrderAmount;
+            }
             set { _invItem.LastOrderAmount = value;
                 NotifyPropertyChanged("LastOrderAmount");
                 NotifyPropertyChanged("PurchaseExtension");
@@ -289,9 +311,10 @@ namespace BuddhaBowls.Models
 
         public InventoryItem GetInvItemFromVendor(Vendor v)
         {
-            if (_vendorDict.Keys.Contains(v))
+            Vendor matchingKey = _vendorDict.Keys.FirstOrDefault(x => x.Id == v.Id);
+            if (matchingKey != null)
             {
-                InventoryItem item = _vendorDict[v];
+                InventoryItem item = _vendorDict[matchingKey];
                 //item.NotifyChanges();
                 return item;
             }

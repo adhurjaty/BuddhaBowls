@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Services;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +12,7 @@ namespace BuddhaBowls
 {
     public delegate void RefreshDel();
 
-    public class TabVM : INotifyPropertyChanged
+    public class TabVM : ObservableObject
     {
         protected static DBCache _models;
 
@@ -24,14 +25,6 @@ namespace BuddhaBowls
             {
                 return IsDBConnected;
             }
-        }
-        
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public TabVM()

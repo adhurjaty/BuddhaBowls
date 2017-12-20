@@ -105,17 +105,11 @@ namespace BuddhaBowls.Models
             }
         }
 
-        private Dictionary<string, List<InventoryItem>> _recCategoryItemsDict;
         public Dictionary<string, List<InventoryItem>> RecCategoryItemsDict
         {
             get
             {
-                if (_orderChanged)
-                {
-                    _recCategoryItemsDict = GetPOItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
-                    _orderChanged = false;
-                }
-                return _recCategoryItemsDict;
+                return ItemList.GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
             }
         }
 
@@ -135,47 +129,43 @@ namespace BuddhaBowls.Models
             VendorName = vendor.Name;
             OrderDate = orderDate;
 
-            // double check that there are no duplicates in the inventory items. Correct this and notify user that there has been a problem if so
-            // Remove this when I find the cause of the problem
-            inventoryItems = RemoveDuplicates(inventoryItems);
-
+            // update the items' last purchased date if the orderDate is the latest
             foreach (InventoryItem item in inventoryItems)
             {
                 item.LastPurchasedDate = item.LastPurchasedDate == null || item.LastPurchasedDate < orderDate ? orderDate : item.LastPurchasedDate;
             }
-            ModelHelper.CreateTable(inventoryItems, GetOrderTableName());
+            _invItemsContainer = new InventoryItemsContainer(inventoryItems);
+        }
 
-            // update the vendor table last order amounts and prices
-            //vendor.Update(inventoryItems);
+        public InventoryItemsContainer GetItemsContainer()
+        {
+            return _invItemsContainer;
         }
 
         public void Receive()
         {
             ReceivedDate = DateTime.Now;
             Update();
-            _orderChanged = true;
         }
 
         public void ReOpen()
         {
             ReceivedDate = null;
             Update();
-            _orderChanged = true;
         }
 
         /// <summary>
-        /// Get the ordered inventory items - { open items, received items }
+        /// Get the ordered inventory items
         /// </summary>
         /// <returns></returns>
-        public List<InventoryItem> GetPOItems()
+        private List<InventoryItem> GetPOItems()
         {
-            return ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), isModel: false);
+            return MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>(GetOrderTableName(), isModel: false)).ToList();
         }
 
         public float GetTotalCost()
         {
-            List<InventoryItem> items = GetPOItems();
-            return items.Sum(x => x.PurchaseExtension);
+            return ItemList.Sum(x => x.PurchaseExtension);
         }
 
         public Dictionary<string, float> GetCategoryCosts()
@@ -185,16 +175,6 @@ namespace BuddhaBowls.Models
             catCosts["Food Total"] = catCosts.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key)).Sum(x => x.Value);
             catCosts["Total"] = total;
             return catCosts;
-        }
-
-        public void UpdateItem(InventoryItem item)
-        {
-            List<InventoryItem> invItems = GetPOItems();
-            int idx = invItems.FindIndex(x => x.Id == item.Id);
-            invItems[idx] = item;
-
-            ModelHelper.CreateTable(invItems, GetOrderTableName());
-            _orderChanged = true;
         }
 
         public string GetPOPath()
@@ -210,7 +190,7 @@ namespace BuddhaBowls.Models
 
         private void SetItemsContainer()
         {
-            throw new NotImplementedException();
+            _invItemsContainer = new InventoryItemsContainer(GetPOItems());
         }
 
         private string GetOrderTableName()
@@ -238,21 +218,26 @@ namespace BuddhaBowls.Models
         public override void Destroy()
         {
             _dbInt.DestroyTable(GetOrderTableName());
-            //_orderChanged = true;
             base.Destroy();
         }
-        #endregion
 
         /// <summary>
         /// Updates the PO setting items as entire list of PO items
         /// </summary>
         /// <param name="items"></param>
-        public void Update(List<InventoryItem> items)
+        public override void Update()
         {
-            ModelHelper.CreateTable(items, GetOrderTableName());
-            _orderChanged = true;
+            ModelHelper.CreateTable(ItemList, GetOrderTableName());
             base.Update();
         }
+
+        public override int Insert()
+        {
+            int id = base.Insert();
+            ModelHelper.CreateTable(ItemList, GetOrderTableName());
+            return id;
+        }
+        #endregion
 
         private List<InventoryItem> RemoveDuplicates(List<InventoryItem> inventoryItems, bool showMessage = true)
         {

@@ -20,30 +20,41 @@ namespace BuddhaBowls
     /// </summary>
     public class NewRecipeVM : WizardVM
     {
+        private Action Cleanup;
         private bool _newItem;
         //private AddItemDel<Recipe> SaveItem;
         //protected List<RecipeItem> _recipeItems;
 
         #region Content Binders
 
-        public string Name { get; set; }
 
-        //private ObservableCollection<IItem> _ingredients;
-        //public ObservableCollection<IItem> Ingredients
-        //{
-        //    get
-        //    {
-        //        return _ingredients;
-        //    }
-        //    set
-        //    {
-        //        _ingredients = value;
-        //        NotifyPropertyChanged("Ingredients");
-        //        NotifyPropertyChanged("RecipeCost");
-        //    }
-        //}
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+                NotifyPropertyChanged("Name");
+            }
+        }
 
-        public float Price { get; set; }
+        private float _price;
+        public float Price
+        {
+            get
+            {
+                return _price;
+            }
+            set
+            {
+                _price = value;
+                NotifyPropertyChanged("Price");
+            }
+        }
 
         private IItem _selectedItem;
         public IItem SelectedItem
@@ -189,8 +200,7 @@ namespace BuddhaBowls
         /// <summary>
         /// Default constructor
         /// </summary>
-        /// <param name="addDel"></param>
-        private NewRecipeVM(): base()        // AddItemDel<Recipe> addDel) : base()
+        private NewRecipeVM(): base()
         {
             AddItemCommand = new RelayCommand(AddItem);
             RemoveItemCommand = new RelayCommand(RemoveItem, x => RemoveCanExecute);
@@ -198,7 +208,6 @@ namespace BuddhaBowls
             ModalCancelCommand = new RelayCommand(ModalCancel);
 
             CategoryList = _models.RContainer.GetRecipeCategories();
-            //SaveItem = addDel;
             FinishVisibility = Visibility.Visible;
         }
 
@@ -206,14 +215,12 @@ namespace BuddhaBowls
         /// New recipe constructor
         /// </summary>
         /// <param name="isBatch"></param>
-        /// <param name="addDel"></param>
-        public NewRecipeVM(bool isBatch) : this()         //, AddItemDel<Recipe> addDel) : this(addDel)
+        public NewRecipeVM(bool isBatch) : this()
         {
             _newItem = true;
             IsBatch = isBatch;
 
             Header = "New " + (isBatch ? "Batch Recipe" : "Menu Item");
-            //_recipeItems = new List<RecipeItem>();
 
             Item = new Recipe();
             Item.IsBatch = isBatch;
@@ -231,9 +238,10 @@ namespace BuddhaBowls
             _newItem = false;
             IsBatch = recipe.IsBatch;
             Header = "Edit " + recipe.Name;
-            //_recipeItems = recipe.GetRecipeItems();
 
             Item = (Recipe)recipe.Copy();
+            // HACK: best way I could think to remove the recipe copies containers
+            Cleanup = new Action(() => recipe.RemoveCopy(Item));
             //Refresh();
         }
 
@@ -248,16 +256,12 @@ namespace BuddhaBowls
 
         private void RemoveItem(object obj)
         {
-            //_recipeItems.RemoveAll(x => x.Name == SelectedItem.Name);
             Item.RemoveItem(SelectedItem);
-            //Refresh();
         }
 
         private void ModalOk(object obj)
         {
-            //_recipeItems.Add(new Ingredient(ItemToAdd).GetRecipeItem());
             Item.AddItem(ItemToAdd);
-            //Refresh();
             ModalVisibility = Visibility.Hidden;
         }
 
@@ -299,11 +303,18 @@ namespace BuddhaBowls
             base.SetWizardStep();
         }
 
+        protected override void Cancel(object obj)
+        {
+            Cleanup?.Invoke();
+            base.Cancel(obj);
+        }
+
         protected override void FinishWizard(object obj)
         {
             if (ValidateInputs())
             {
                 _models.RContainer.AddItem(Item);
+                Cleanup?.Invoke();
                 Close();
             }
         }

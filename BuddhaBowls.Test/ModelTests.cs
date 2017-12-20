@@ -440,7 +440,7 @@ namespace BuddhaBowls.Test
             try
             {
                 List<InventoryItem> berryManItems = berryMan.ItemList;
-                List<InventoryItem> poItems = po.GetPOItems();
+                List<InventoryItem> poItems = po.ItemList;
 
                 foreach (KeyValuePair<string, float> kvp in updateOrderDict)
                 {
@@ -482,7 +482,7 @@ namespace BuddhaBowls.Test
             try
             {
                 po.Receive();
-                List<InventoryItem> receivedItems = po.GetPOItems();
+                List<InventoryItem> receivedItems = po.ItemList;
                 CollectionAssert.AreEquivalent(updateOrderDict.Keys, receivedItems.Select(x => x.Name).ToList());
                 Assert.AreEqual(DateTime.Today, ((DateTime)po.ReceivedDate).Date);
             }
@@ -515,7 +515,7 @@ namespace BuddhaBowls.Test
             {
                 po.Receive();
                 po.ReOpen();
-                List<InventoryItem> reopened = po.GetPOItems();
+                List<InventoryItem> reopened = po.ItemList;
                 CollectionAssert.AreEquivalent(updateOrderDict.Keys, reopened.Select(x => x.Name).ToList());
                 Assert.IsNull(po.ReceivedDate);
             }

@@ -250,7 +250,7 @@ namespace BuddhaBowls
 
             foreach (PurchaseOrder order in orders)
             {
-                foreach (InventoryItem item in order.GetPOItems())
+                foreach (InventoryItem item in order.ItemList)
                 {
                     if (invDict.ContainsKey(item.Id))
                     {

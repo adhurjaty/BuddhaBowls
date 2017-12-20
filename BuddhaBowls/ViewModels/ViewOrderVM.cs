@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
@@ -21,8 +22,9 @@ namespace BuddhaBowls
     public class ViewOrderVM : TempTabVM
     {
         private PurchaseOrder _order;
-        private List<InventoryItem> _displayedItems;
-        private List<InventoryItem> _editedItems;
+        private InventoryItemsContainer _invItemsContainer;
+        //private List<InventoryItem> _displayedItems;
+        //private List<InventoryItem> _editedItems;
         //private RefreshDel RefreshOrders;
 
         #region Content Binders
@@ -93,8 +95,9 @@ namespace BuddhaBowls
             AddNewItemCommand = new RelayCommand(AddVendorItem);
             DeleteItemCommand = new RelayCommand(DeleteVendorItem);
 
-            _displayedItems = po.GetPOItems();
-            _editedItems = new List<InventoryItem>();
+            _invItemsContainer = po.GetItemsContainer().Copy();
+            //_displayedItems = po.ItemList;
+            //_editedItems = new List<InventoryItem>();
             UpdateBreakdown();
         }
 
@@ -102,12 +105,14 @@ namespace BuddhaBowls
 
         private void CancelView(object obj)
         {
+            _order.GetItemsContainer().RemoveCopy(_invItemsContainer);
             Close();
         }
 
         private void SaveEdits(object obj)
         {
-            _order.Update(_displayedItems);
+            _order.GetItemsContainer().SyncCopy(_invItemsContainer);
+            _order.Update();
             UpdateLatestVendorOrder();
             Close();
         }
@@ -116,7 +121,7 @@ namespace BuddhaBowls
         {
             List<VendorInventoryItem> vendorItemIds = _models.VIContainer.Items.Where(x => x.Vendors.Select(y => y.Name)
                                                                                             .Contains(_order.VendorName)).ToList();
-            List<InventoryItem> remainingItems = vendorItemIds.Where(x => !_displayedItems.Select(y => y.Id).Contains(x.Id))
+            List<InventoryItem> remainingItems = vendorItemIds.Where(x => !_invItemsContainer.Items.Select(y => y.Id).Contains(x.Id))
                                                                           .Select(x => x.ToInventoryItem()).ToList();
             ModalVM<InventoryItem> modal = new ModalVM<InventoryItem>("Add Inv Item", remainingItems, AddInvItemToVendor);
             ParentContext.ModalContext = modal;
@@ -128,7 +133,7 @@ namespace BuddhaBowls
                                                       "Remove " + BreakdownContext.SelectedItem.Name + "?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                _displayedItems.Remove(BreakdownContext.SelectedItem);
+                _invItemsContainer.Items.Remove(BreakdownContext.SelectedItem);
                 UpdateBreakdown();
             }
         }
@@ -138,58 +143,58 @@ namespace BuddhaBowls
         private void UpdateBreakdown()
         {
             // check where duplicates are being formed. Remove this if I find the source
-            _displayedItems = _order.RemoveViewingDuplicates(_displayedItems);
+            //_displayedItems = _order.RemoveViewingDuplicates(_displayedItems);
 
             string header = _order.Received ? "Received Ordered Items" : "Open Ordered Items";
 
-            float oTotal = 0;
-            BreakdownContext = new OrderBreakdownVM()
-            {
-                BreakdownList = GetOrderBreakdown(_displayedItems, out oTotal),
-                //OrderTotal = oTotal,
-                OrderVendor = _models.VContainer.Items.First(x => x.Name == _order.VendorName),
-                Header = header
-            };
+            //float oTotal = 0;
+            BreakdownContext = new OrderBreakdownVM(_invItemsContainer.Items, header, false);
+            //{
+            //    BreakdownList = GetOrderBreakdown(_invItemsContainer.Items, out oTotal),
+            //    //OrderTotal = oTotal,
+            //    OrderVendor = _models.VContainer.Items.First(x => x.Name == _order.VendorName),
+            //    Header = header
+            //};
             
         }
         #endregion
 
-        public ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)
-        {
-            ObservableCollection<BreakdownCategoryItem> breakdown = new ObservableCollection<BreakdownCategoryItem>();
-            total = 0;
+        //public ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)
+        //{
+        //    ObservableCollection<BreakdownCategoryItem> breakdown = new ObservableCollection<BreakdownCategoryItem>();
+        //    total = 0;
 
-            if (orderedItems != null)
-            {
-                foreach (string category in _models.GetInventoryCategories())
-                {
-                    IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
-                    if (items.Count() > 0)
-                    {
-                        BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items, OrderEdited, false);
-                        bdItem.Background = _models.GetCategoryColorHex(category);
-                        bdItem.OrderVendor = _models.VContainer.Items.FirstOrDefault(x => x.Name == _order.VendorName);
-                        breakdown.Add(bdItem);
-                        total += bdItem.TotalAmount;
-                    }
-                }
-            }
+        //    if (orderedItems != null)
+        //    {
+        //        foreach (string category in _models.GetInventoryCategories())
+        //        {
+        //            IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
+        //            if (items.Count() > 0)
+        //            {
+        //                BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items, OrderEdited, false);
+        //                bdItem.Background = _models.GetCategoryColorHex(category);
+        //                bdItem.OrderVendor = _models.VContainer.Items.FirstOrDefault(x => x.Name == _order.VendorName);
+        //                breakdown.Add(bdItem);
+        //                total += bdItem.TotalAmount;
+        //            }
+        //        }
+        //    }
 
-            return breakdown;
-        }
+        //    return breakdown;
+        //}
 
         private void OrderEdited(InventoryItem item)
         {
             //_order.UpdateItem(item);
-            _displayedItems[_displayedItems.FindIndex(x => x.Id == item.Id)] = item;
+            //_displayedItems[_displayedItems.FindIndex(x => x.Id == item.Id)] = item;
 
-            int idx = _editedItems.FindIndex(x => x.Id == item.Id);
-            if (idx == -1)
-                _editedItems.Add(item);
-            else
-                _editedItems[idx] = item;
+            //int idx = _editedItems.FindIndex(x => x.Id == item.Id);
+            //if (idx == -1)
+            //    _editedItems.Add(item);
+            //else
+            //    _editedItems[idx] = item;
 
-            BreakdownContext.UpdateTotal();
+            BreakdownContext.UpdateDisplay();
 
             // check whether the item being edited is the latest order from this vendor. If so, then change the properties of the current
             // inventory item (last order price, last order qty...)
@@ -202,20 +207,18 @@ namespace BuddhaBowls
         /// </summary>
         private void UpdateLatestVendorOrder()
         {
-            PurchaseOrder latestOrderFromVendor = _models.POContainer.Items.Where(x => x.VendorName == _order.VendorName)
-                                                                        .OrderByDescending(x => x.OrderDate).First();
-            if (latestOrderFromVendor.Id == _order.Id)
+            Vendor vend = _models.VContainer.Items.First(x => x.Name == _order.VendorName);
+            foreach (InventoryItem item in _invItemsContainer.Items)
             {
-                Vendor vend = _models.VContainer.Items.First(x => x.Name == _order.VendorName);
-
-                foreach (InventoryItem item in _editedItems)
+                VendorInventoryItem vItem = _models.VIContainer.Items.FirstOrDefault(x => x.Id == item.Id);
+                if (_order.OrderDate > item.LastPurchasedDate && vItem != null)
                 {
-                    vend.Update(item);
-                    VendorInventoryItem vItem = _models.VIContainer.Items.FirstOrDefault(x => x.Id == item.Id);
-                    if (vItem != null)
-                        vItem.SetVendorItem(vend, item);
+                    vItem.SetVendorItem(vend, item);
+                    item.LastVendorId = vend.Id;
+                    item.Update();
                 }
             }
+            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
         }
 
         /// <summary>
@@ -225,9 +228,11 @@ namespace BuddhaBowls
         private void AddInvItemToVendor(InventoryItem item)
         {
             item.LastOrderAmount = 0;
-            _displayedItems.Add(item);
-            _displayedItems = MainHelper.SortItems(_displayedItems).ToList();
-            UpdateBreakdown();
+            _invItemsContainer.AddItem(item);
+            BreakdownContext.UpdateDisplay();
+            //_displayedItems.Add(item);
+            //_displayedItems = MainHelper.SortItems(_displayedItems).ToList();
+            //UpdateBreakdown();
         }
     }
 }

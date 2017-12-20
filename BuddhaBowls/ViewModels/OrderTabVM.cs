@@ -292,7 +292,6 @@ namespace BuddhaBowls
 
                 PeriodSelector = new PeriodSelectorVM(_models, LoadPreviousOrders);
                 Messenger.Instance.Register<Message>(MessageTypes.PO_CHANGED, (msg) => RefreshOrderList());
-                //_models.POContainer.AddUpdateBinding(RefreshOrderList);
             }
             else
             {
@@ -323,9 +322,6 @@ namespace BuddhaBowls
         {
             _models.POContainer.ReceiveOrders(OpenOrders.Where(x => x.ReceivedCheck).ToList());
             SelectedOpenOrder = null;
-
-            //RefreshOrderList();
-            //ParentContext.ReportTab.Refresh();
         }
 
         private void ReOpenOrder(object obj)
@@ -359,7 +355,6 @@ namespace BuddhaBowls
         private void RemoveReceivedOrder(object obj)
         {
             DeleteOrder(SelectedReceivedOrder);
-            //ParentContext.ReportTab.Refresh();
         }
 
         /// <summary>
@@ -377,9 +372,7 @@ namespace BuddhaBowls
                                                       "Delete PO# " + order.Id.ToString() + "?", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
-                order.Destroy();
                 _models.POContainer.RemoveItem(order);
-                RefreshOrderList();
             }
         }
 

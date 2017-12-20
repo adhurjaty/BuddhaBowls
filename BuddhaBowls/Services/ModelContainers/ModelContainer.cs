@@ -144,6 +144,7 @@ namespace BuddhaBowls.Services
 
         public void SyncCopy(ModelContainer<T> copy)
         {
+            RemoveCopy(copy);
             SetItems(copy.Items);
         }
 

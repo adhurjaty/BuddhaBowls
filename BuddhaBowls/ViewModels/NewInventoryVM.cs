@@ -155,6 +155,7 @@ namespace BuddhaBowls
 
         private void CancelInventory(object obj)
         {
+            _models.VIContainer.RemoveCopy(InvListVM.GetItemsContainer());
             Close();
         }
 

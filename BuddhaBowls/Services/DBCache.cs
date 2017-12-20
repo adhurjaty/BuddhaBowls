@@ -59,7 +59,7 @@ namespace BuddhaBowls.Services
 
             VContainer = new VendorsContainer(ModelHelper.InstantiateList<Vendor>("Vendor"), true);
             VIContainer = new VendorInvItemsContainer(invItems, VContainer, true);
-            POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder"), VIContainer);
+            POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder"), VIContainer, true);
             InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory"), true);
             RContainer = new RecipesContainer(ModelHelper.InstantiateList<Recipe>("Recipe"), true);
             EIContainer = new ExpenseItemsContainer(ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem"), true);

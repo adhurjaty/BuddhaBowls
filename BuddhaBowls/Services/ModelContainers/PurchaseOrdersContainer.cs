@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Messengers;
+using BuddhaBowls.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,9 @@ namespace BuddhaBowls.Services
 {
     public class PurchaseOrdersContainer : ModelContainer<PurchaseOrder>
     {
-        // used to figure out last order amount and vendor for vendor inventory items
-        private PurchaseOrder _latestRecOrder;
         private VendorInvItemsContainer _viContainer;
 
-        public PurchaseOrdersContainer(List<PurchaseOrder> items, bool isMaster = false) : base(items, isMaster)
-        {
-            _latestRecOrder = items.OrderByDescending(x => x.ReceivedDate).FirstOrDefault();
-        }
-
-        public PurchaseOrdersContainer(List<PurchaseOrder> items, VendorInvItemsContainer viContainer) : this(items, true)
+        public PurchaseOrdersContainer(List<PurchaseOrder> items, VendorInvItemsContainer viContainer, bool isMaster = false) : base(items, isMaster)
         {
             _viContainer = viContainer;
         }
@@ -26,23 +20,22 @@ namespace BuddhaBowls.Services
         public override PurchaseOrder AddItem(PurchaseOrder item)
         {
             PurchaseOrder order = base.AddItem(item);
-            _latestRecOrder = Items.OrderByDescending(x => x.ReceivedDate).FirstOrDefault();
-            if(_latestRecOrder.Id == item.Id)
+            if (_isMaster)
             {
-                _viContainer.UpdateSelectedVendor(_latestRecOrder);
+                Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
+                _viContainer.NewOrderAdded(item);
             }
+
             return order;
         }
 
         public override void RemoveItem(PurchaseOrder item)
         {
-            bool removingLatest = item.Id == _latestRecOrder.Id;
             base.RemoveItem(item);
-
-            _latestRecOrder = Items.OrderByDescending(x => x.ReceivedDate).FirstOrDefault();
-            if(removingLatest)
+            _viContainer.OrderRemoved(item, Items);
+            if (_isMaster)
             {
-                _viContainer.UpdateSelectedVendor(_latestRecOrder);
+                Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
             }
         }
 
@@ -50,11 +43,8 @@ namespace BuddhaBowls.Services
         {
             base.Update(order);
             PurchaseOrder newLatestOrder = Items.OrderByDescending(x => x.ReceivedDate).FirstOrDefault();
-            if (newLatestOrder != _latestRecOrder)
-            {
-                _viContainer.UpdateSelectedVendor(newLatestOrder);
-            }
-            _latestRecOrder = newLatestOrder;
+            _viContainer.OrderRemoved(order, Items);
+            _viContainer.NewOrderAdded(newLatestOrder);
         }
 
         public void ReceiveOrders(List<PurchaseOrder> orders)
@@ -64,7 +54,6 @@ namespace BuddhaBowls.Services
                 foreach (PurchaseOrder order in orders)
                 {
                     order.Receive();
-                    _viContainer.UpdateSelectedVendor(order);
                 }
             }
         }

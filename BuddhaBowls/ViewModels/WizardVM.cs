@@ -173,7 +173,7 @@ namespace BuddhaBowls
 
         #region ICommand Helpers
 
-        private void Cancel(object obj)
+        protected virtual void Cancel(object obj)
         {
             Close();
         }

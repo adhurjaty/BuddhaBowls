@@ -454,7 +454,7 @@ namespace BuddhaBowls
 
         public string GenerateOrder(PurchaseOrder po, Vendor vendor, string filepath = "")
         {
-            List<InventoryItem> items = po.GetPOItems();
+            List<InventoryItem> items = po.ItemList;
             Dictionary<string, float> categoryCosts = new Dictionary<string, float>();
             Excel.Worksheet sheet = _sheets.Add();
 
@@ -615,7 +615,7 @@ namespace BuddhaBowls
 
         public string GenerateReceivingList(PurchaseOrder po, Vendor vendor)
         {
-            List<InventoryItem> items = po.GetPOItems();
+            List<InventoryItem> items = po.ItemList;
             List<string> itemOrder = vendor.GetRecListOrder();
 
             Excel.Worksheet sheet = _sheets.Add();

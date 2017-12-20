@@ -237,6 +237,12 @@ namespace BuddhaBowls.Models
             return rec;
         }
 
+        public void RemoveCopy(Recipe item)
+        {
+            _invItemsContainer.RemoveCopy(item.GetInvContainer());
+            _recipesContainer.RemoveCopy(item.GetRecContainer());
+        }
+
         public void AddItem(IItem item)
         {
             if (item.GetType() == typeof(InventoryItem))
@@ -338,6 +344,16 @@ namespace BuddhaBowls.Models
             }
 
             return propDict;
+        }
+
+        public InventoryItemsContainer GetInvContainer()
+        {
+            return _invItemsContainer;
+        }
+
+        public RecipesContainer GetRecContainer()
+        {
+            return _recipesContainer;
         }
 
     }
