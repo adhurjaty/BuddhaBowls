@@ -156,7 +156,7 @@ namespace BuddhaBowls.Test
 
             InventoryItem sourdough = new InventoryItem(new Dictionary<string, string>() { { "Name", "Sourdough" } });
             sourdough.LastOrderAmount = 1;
-            InventoryItem wheat = new InventoryItem(new Dictionary<string, string>() { { "Name", "Wheat" } });
+            InventoryItem wheat = new InventoryItem(new Dictionary<string, string>() { { "Name", "Whole Wheat" } });
             wheat.LastOrderAmount = 2;
 
             List<InventoryItem> refItems = new List<InventoryItem>();

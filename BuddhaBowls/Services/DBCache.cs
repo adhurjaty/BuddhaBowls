@@ -423,10 +423,18 @@ namespace BuddhaBowls.Services
                     parFactors = latestDesc.ToDictionary(x => x.Key, y => y.Value.ParFactor);
             }
 
+            if(parFactors == null)
+            {
+                parFactors = new Dictionary<string, float>();
+                foreach (string breadType in VIContainer.Items.Where(x => x.Category == "Bread").Select(x => x.Name))
+                {
+                    parFactors[breadType] = 0;
+                }
+            }
+
             for (int i = 0; i < 7; i++)
             {
                 BreadOrder bo = new BreadOrder(week.StartDate.AddDays(i));
-                bo.Insert();
 
                 breadWeek[i] = bo;
                 if(i > 0 && breadWeek[i - 1] != null)
@@ -440,6 +448,7 @@ namespace BuddhaBowls.Services
                             breadWeek[i].BreadDescDict[breadType].ParFactor = parFactors[breadType];
                     }
                 }
+                bo.Insert();
             }
 
             BreadOrder[] tempBreadWeek = new BreadOrder[7];

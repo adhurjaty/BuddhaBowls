@@ -85,7 +85,7 @@ namespace BuddhaBowls.Test
         {
             Inventory inv = new Inventory(new DateTime(2017, 3, 1));
 
-            List<InventoryItem> history = inv.GetInvItems();
+            List<InventoryItem> history = inv.InvItemsContainer.Items;
 
             List<string> refHistory = new List<string>()
             {
@@ -143,7 +143,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void UpdateInventoryTest()
         {
-            Inventory inv = new Inventory(new DateTime(2017, 3, 20));
+            Inventory inv = new Inventory(new DateTime(2017, 3, 2));
             List<InventoryItem> oldList = inv.InvItemsContainer.Items;
 
             int itemId = oldList[0].Id;
@@ -694,13 +694,13 @@ namespace BuddhaBowls.Test
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Avocado" } }),
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Black Beans" } }),
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Cinnamon" } }),
-                new Recipe(new Dictionary<string, string>() { { "Name", "Chopped Clams" } })
+                new Recipe(new Dictionary<string, string>() { { "Name", "Cooked Spinach" } })
             };
 
             List<RecipeItem> recipeItems = baseItems.Select(x => new RecipeItem()
             {
                 Name = x.Name,
-                InventoryItemId = x.Id,
+                InventoryItemId = x.GetType() == typeof(InventoryItem) ? (int?)x.Id : null,
                 Quantity = 5,
                 Measure = "some measure"
             }).ToList();
@@ -763,13 +763,13 @@ namespace BuddhaBowls.Test
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Avocado" } }),
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Black Beans" } }),
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Cinnamon" } }),
-                new Recipe(new Dictionary<string, string>() { { "Name", "Chopped Clams" } })
+                new Recipe(new Dictionary<string, string>() { { "Name", "Chili" } })
             };
 
             List<RecipeItem> recipeItems = baseItems.Select(x => new RecipeItem()
             {
                 Name = x.Name,
-                InventoryItemId = x.Id,
+                InventoryItemId = x.GetType() == typeof(InventoryItem) ? (int?)x.Id : null,
                 Quantity = 5,
                 Measure = "some measure"
             }).ToList();
@@ -782,13 +782,13 @@ namespace BuddhaBowls.Test
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Eggs" } }),
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Feta" } }),
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Flour" } }),
-                new Recipe(new Dictionary<string, string>() { { "Name", "Granola" } })
+                new Recipe(new Dictionary<string, string>() { { "Name", "Hummus" } })
             };
 
             recipeItems = baseItems.Select(x => new RecipeItem()
             {
                 Name = x.Name,
-                InventoryItemId = x.Id,
+                InventoryItemId = x.GetType() == typeof(InventoryItem) ? (int?)x.Id : null,
                 Quantity = 5,
                 Measure = "some measure"
             }).ToList();
@@ -823,13 +823,13 @@ namespace BuddhaBowls.Test
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Avocado" } }),
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Black Beans" } }),
                 new InventoryItem(new Dictionary<string, string>() { { "Name", "Cinnamon" } }),
-                new Recipe(new Dictionary<string, string>() { { "Name", "Chopped Clams" } })
+                new Recipe(new Dictionary<string, string>() { { "Name", "Sauteed Mushrooms" } })
             };
 
             List<RecipeItem> recipeItems = baseItems.Select(x => new RecipeItem()
             {
                 Name = x.Name,
-                InventoryItemId = x.Id,
+                InventoryItemId = x.GetType() == typeof(InventoryItem) ? (int?)x.Id : null,
                 Quantity = 5,
                 Measure = "some measure"
             }).ToList();

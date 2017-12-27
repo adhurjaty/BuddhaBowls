@@ -9,6 +9,7 @@ using BuddhaBowls.Services;
 using BuddhaBowls.Helpers;
 using System.IO;
 using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace BuddhaBowls.Test
 {
@@ -99,7 +100,7 @@ namespace BuddhaBowls.Test
             _vm.InventoryTab.SwitchButtonList.First(x => x.PageName == "History").SwitchCommand.Execute(1);
 
             _vm.InventoryTab.PeriodSelector.SelectedPeriod = _vm.InventoryTab.PeriodSelector.PeriodList.First(x => x.ToString().Contains("All"));
-            Assert.AreEqual(DateTime.Parse("3/22/2017  8:28:00 PM"), new List<Inventory>(_vm.InventoryTab.InventoryList)[0].Date);
+            Assert.AreEqual(DateTime.Parse("3/7/2017 04:42 PM"), _vm.InventoryTab.InventoryList[0].Date);
             Assert.AreEqual("Another guy", _vm.VendorTab.FilteredVendorList[0].Name);
         }
 
@@ -160,7 +161,9 @@ namespace BuddhaBowls.Test
             NewInventoryVM newInvVM = GetOpenTempTabVM<NewInventoryVM>();
             newInvVM.InvDate = invDate;
             int randCount = new Random().Next(1, 1000);
-            newInvVM.InvListVM.FilteredItems.First(x => x.Name == "Mozzarella").Count = randCount;
+            VendorInventoryItem mozz = newInvVM.InvListVM.FilteredItems.First(x => x.Name == "Mozzarella");
+            mozz.Count = randCount;
+            newInvVM.InvListVM.RowEdited(mozz);
 
             try
             {
@@ -595,6 +598,8 @@ namespace BuddhaBowls.Test
 
                 orderTab.ViewReceivedOrderCommand.Execute(null);
                 ViewOrderVM viewOrderTab = GetOpenTempTabVM<ViewOrderVM>();
+                // wait a little for the OrderBreakdownVM to load
+                Thread.Sleep(2000);
                 OrderBreakdownVM breakdownContext = viewOrderTab.BreakdownContext;
 
                 BreakdownCategoryItem bdItem = breakdownContext.BreakdownList.First(x => x.Items.Select(y => y.Name).Contains("Vanilla"));
@@ -768,27 +773,6 @@ namespace BuddhaBowls.Test
                 newVendor.Destroy();
             }
         }
-
-        //[TestMethod]
-        //public void ResetVendorVMTest()
-        //{
-        //    VendorTabVM vendorTab = _vm.VendorTab;
-        //    Vendor berryMan = vendorTab.FilteredVendorList.FirstOrDefault(x => x.Name == "Berry Man");
-        //    vendorTab.SelectedVendor = berryMan;
-
-        //    VendorInventoryItem item = vendorTab.SelectedVendorItems[0];
-        //    float origConv = item.Conversion;
-        //    float origCount = item.Count;
-
-        //    item.Conversion = 666f;
-        //    item.Count = 123f;
-
-        //    vendorTab.ResetCommand.Execute(null);
-        //    item = vendorTab.SelectedVendorItems[0];
-
-        //    Assert.AreEqual(origConv, item.Conversion);
-        //    Assert.AreEqual(origCount, item.Count);
-        //}
 
         [TestMethod]
         public void RemoveVendorItemFromEditTest()
@@ -969,8 +953,8 @@ namespace BuddhaBowls.Test
                 editRecipeTab.FinishCommand.Execute(null);
 
                 Recipe editedRecipe = recipeTab.FilteredItems.First(x => x.Name == name);
-                CollectionAssert.Contains(newRecipe.ItemList.Select(x => x.Name).ToList(), "Butter");
-                Assert.AreEqual(42, newRecipe.ItemList.First(x => x.Name == "Avocado").Count);
+                CollectionAssert.Contains(newRecipe.GetAllItems().Select(x => x.Name).ToList(), "Butter");
+                Assert.AreEqual(42, editedRecipe.ItemList.First(x => x.Name == "Avocado").Count);
             }
             finally
             {
@@ -1283,6 +1267,7 @@ namespace BuddhaBowls.Test
                 newOrder.RowEdited(orderItem);
 
                 newOrder.OrderVendor = v2;
+                orderItem = newOrder.FilteredOrderItems.First(x => x.Name == name);
                 float v2conv = orderItem.Conversion;
                 float v2price = orderItem.LastPurchasedPrice;
 

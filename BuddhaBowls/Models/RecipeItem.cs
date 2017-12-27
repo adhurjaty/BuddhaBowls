@@ -25,6 +25,8 @@ namespace BuddhaBowls.Models
                 item = new InventoryItem(new Dictionary<string, string>() { { "Id", InventoryItemId.ToString() } });
             else
                 item = new Recipe(new Dictionary<string, string>() { { "Name", Name } });
+            if (item.Name == null)
+                return null;
             item.Count = Quantity;
             return item;
         }

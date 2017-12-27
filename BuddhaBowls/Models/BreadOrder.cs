@@ -65,8 +65,8 @@ namespace BuddhaBowls.Models
             {
                 if (_breadDescDict == null)
                     _breadDescDict = ReadDbDescriptors();
-                if (_breadDescDict == null)
-                    _breadDescDict = new Dictionary<string, BreadDescriptor>();
+                //if (_breadDescDict == null)
+                //    _breadDescDict = new Dictionary<string, BreadDescriptor>();
                 return _breadDescDict;
             }
             set

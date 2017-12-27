@@ -123,8 +123,6 @@ namespace BuddhaBowls.Models
         {
             get
             {
-                if (_vendorDict != null && _vendorDict.Keys.Count > 0)
-                    return _vendorDict.Values.OrderByDescending(x => x.LastPurchasedDate).First().LastPurchasedPrice;
                 return _invItem.LastPurchasedPrice;
             }
             set { _invItem.LastPurchasedPrice = value;
@@ -430,7 +428,7 @@ namespace BuddhaBowls.Models
         public IItem Copy()
         {
             // copy the values of the dictionary and set as the vendor dict
-            VendorInventoryItem cpy = new VendorInventoryItem(_vendorDict.ToDictionary(x => x.Key, x => (InventoryItem)x.Value.Copy()));
+            VendorInventoryItem cpy = new VendorInventoryItem(_vendorDict.ToDictionary(x => x.Key, x => (InventoryItem)x.Value.Copy()), _invItem);
             cpy.SelectedVendor = SelectedVendor;
 
             return cpy;

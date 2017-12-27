@@ -1,7 +1,7 @@
 Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Count,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate,LastVendorId
 0,Mozzarella,Dairy,CASE 30lb,5lb BAG,6,OZ-wt,480,634,1,59,0,2/27/2017 14:33,0
 1,Cheddar,Dairy,CASE 20lb,5lb BAG,4,OZ-wt,320,14,1,20,0,2/27/2017 14:33,0
-2,Feta,Dairy,CASE 10lb,5lb BAG,2,OZ-wt,160,4,1E+08,69.69,0,3/19/2017 22:37,4
+2,Feta,Dairy,CASE 10lb,5lb BAG,2,OZ-wt,160,4,1,69.69,5,3/19/2017 22:37,4
 3,Butter,Dairy,CASE 30lb,1lb,30,OZ-wt,480,32,1,76.99,0,2/27/2017 14:33,0
 4,Sour Cream,Dairy,CASE 10lb,5lb BUCKET,2,OZ-wt,160,4,0.95,32.4,0,3/19/2017 22:37,4
 5,Heavy Cream,Dairy,6 1/2 Gallon,1/2 GALLON,6,CUP,48,3,1,35.95,0,1/31/2017 18:10,2
@@ -16,7 +16,7 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 14,Black Beans,Dry Goods,6# CANS,CAN,6,EA,6,6,1,19.29,0,,2
 15,Garbanzo Beans,Dry Goods,6# CANS,CAN,6,EA,6,12,1,21.63,0,,2
 16,Pinto Beans,Dry Goods,6# CANS,CAN,6,EA,6,8,1,22.33,0,,2
-17,Artichoke Hearts,Dry Goods,6# CANS,CAN,0,OZ-wt,324,8,1,0,44,5/11/2017 0:00,1
+17,Artichoke Hearts,Dry Goods,6# CANS,CAN,0,OZ-wt,324,77,1,0,44,12/26/2017 12:00:00 AM,1
 18,BBQ Sauce,Dry Goods,CS 39.5lbs,JUG,4,OZ-wt,632,2,0.98,33.88,0,1/31/2017 18:10,2
 19,Macaroni,Dry Goods,2lb,BAG,2,EA,320,7,2.41,14.29,0,1/31/2017 18:10,2
 20,Granola,Dry Goods,CS 39.5lbs,6" PAN,0,OZ-wt,400,3,1,0,0,,2
@@ -26,7 +26,7 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 24,Clam Juice,Dry Goods,12x48oz CANS,CAN,12,EA,12,6,1,28.86,0,,2
 25,Nutella,Dry Goods,12x48oz CANS,JAR,0,OZ-wt,53,11,0.9,0,0,,2
 26,Honey,Dry Goods,12x48oz CANS,JUG,0,OZ-wt,80,1,0.95,0,0,,2
-27,Vanilla,Dry Goods,EA,5lb BUCKET,0,Oz-fl,16,0,100,69,11,7/14/2017 0:00,1
+27,Vanilla,Dry Goods,EA,5lb BUCKET,0,Oz-fl,16,0,100,69,11,12/26/2017 12:00:00 AM,1
 28,Tapatio,Dry Goods,EA,BOTTLE,0,EA,12,8,1,0,0,,1
 29,Sriracha,Dry Goods,EA,BOTTLE,0,EA,12,12,1,0,0,,1
 30,Chicken Broth,Dry Goods,4 EA,BOTTLE,0,,,4,0,0,0,,
@@ -58,8 +58,8 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 56,Mushrooms,Produce,10lb,FLAT,0,OZ-wt,160,1,0.95,0,0,,
 57,Cucumbers,Produce,10lb,CASE,0,OZ-wt,420,0.75,0.95,0,0,,2
 58,Tomatoes,Produce,25lb,CASE,0,OZ-wt,400,1,0.97,0,0,,
-59,Avocado,Produce,1/2 CASE,EACH,0,EA,24,24,1,0,22,5/11/2017 0:00,1
-60,Avocado,Produce,1/2 CASE,EACH,24,EA,24,66,1,38,4,5/11/2017 0:00,1
+59,Avocado,Produce,1/2 CASE,EACH,0,EA,24,77,1,0,22,12/26/2017 12:00:00 AM,1
+60,Avocado,Produce,1/2 CASE,EACH,24,EA,24,66,1,38,4,5/11/2017 12:00:00 AM,1
 61,Celery,Produce,1/2 CASE,1/2 CASE,1,BUNCH,12,5,1,2.05,4,2/27/2017 14:43,1
 62,Jalapenos,Produce,1lb,BAG,0,OZ-wt,32,8,0.95,0,0,,2
 63,Pineapple,Produce,1/2 CASE,EACH,0,OZ-wt,44,10,1,0,0,,1
@@ -71,7 +71,7 @@ Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConvers
 69,Chicken Breast,Poultry,40lb CASE,CASE,1,OZ-wt,640,3,0.85,68.7,0,1/31/2017 18:10,2
 70,Ground Beef,Meats,20lb CASE,LOG,2,EA,2,3,1,25.42,0,,2
 71,Italian Sausage,Meats,20lb CASE,BAG,0,OZ-wt,160,10,0.91,0,0,1/31/2017 18:10,2
-72,Bacon Bits,Meats,10lb CASE,BAG,2,OZ-wt,160,6,1,70,0,1/31/2017 18:10,2
+72,Bacon Bits,Meats,10lb CASE,BAG,2,OZ-wt,160,6,1,70,0,1/31/2017 6:10:00 PM,2
 73,Sourdough,Bread,10lb CASE,EACH,0,EA,1,183,1,0,0,,5
 74,Whole Wheat,Bread,10lb CASE,EACH,0,EA,1,84,1,0,0,,2
 75,Biopack #4,Paper Goods,10lb CASE,EACH,0,EA,4,8,1,0,0,,2

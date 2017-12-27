@@ -15,11 +15,11 @@
         Title="Buddha Bowls" Height="500" Width="800">
     <Grid>
         <TabControl Name="Tabs">
-            <!--<TabControl.ItemContainerStyle>
+            <TabControl.ItemContainerStyle>
                 <Style BasedOn="{StaticResource MetroTabItem}" TargetType="TabItem">
                     <Setter Property="Controls:ControlsHelper.HeaderFontSize" Value="20"></Setter>
                 </Style>
-            </TabControl.ItemContainerStyle>-->
+            </TabControl.ItemContainerStyle>
             <TabItem Header="Orders">
                 <uc:OrderTabControl DataContext="{Binding OrderTab}" />
             </TabItem>

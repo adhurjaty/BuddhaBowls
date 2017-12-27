@@ -206,14 +206,14 @@ namespace BuddhaBowls.Models
         public override void Update()
         {
             if (ItemList.Count > 0)
-                ModelHelper.CreateTable(ItemList.Select(x => x.ToRecipeItem()).ToList(), GetRecipeTableName());
+                ModelHelper.CreateTable(ConvToRecipeItems(ItemList.ToList()), GetRecipeTableName());
             base.Update();
         }
 
         public override int Insert()
         {
             if (ItemList.Count > 0)
-                ModelHelper.CreateTable(ItemList.Select(x => x.ToRecipeItem()).ToList(), GetRecipeTableName());
+                ModelHelper.CreateTable(ConvToRecipeItems(ItemList.ToList()).ToList(), GetRecipeTableName());
             return base.Insert();
         }
 
@@ -232,6 +232,8 @@ namespace BuddhaBowls.Models
         public IItem Copy()
         {
             Recipe rec = Copy<Recipe>();
+            if (_invItemsContainer == null || _recipesContainer == null)
+                SetContainers();
             rec.SetContainers(_invItemsContainer.Copy(), _recipesContainer.Copy());
 
             return rec;
@@ -280,6 +282,7 @@ namespace BuddhaBowls.Models
         public void SetRecipeItems(List<RecipeItem> items)
         {
             Dictionary<Type, List<IItem>> itemsByType = items.Select(x => x.GetIItem())
+                                                                 .Where(x => x != null)
                                                                  .GroupBy(x => x.GetType())
                                                                  .ToDictionary(x => x.Key, x => x.ToList());
             if (itemsByType.ContainsKey(typeof(InventoryItem)))
@@ -293,7 +296,7 @@ namespace BuddhaBowls.Models
 
         public RecipeItem ToRecipeItem()
         {
-            return new RecipeItem() { Name = Name, Quantity = Count };
+            return new RecipeItem() { Name = Name, Quantity = Count, InventoryItemId = null };
         }
 
         private void SetContainers()
@@ -318,6 +321,24 @@ namespace BuddhaBowls.Models
             }
 
             return recItems;
+        }
+
+        public IEnumerable<InventoryItem> GetAllItems()
+        {
+            if (_invItemsContainer == null || _recipesContainer == null)
+                SetContainers();
+            foreach (IItem item in ItemList)
+            {
+                if (item.GetType() == typeof(InventoryItem))
+                    yield return (InventoryItem)item;
+                else
+                {
+                    foreach (InventoryItem rItem in ((Recipe)item).GetAllItems())
+                    {
+                        yield return rItem;
+                    }
+                }
+            }
         }
 
         private string GetRecipeTableName()

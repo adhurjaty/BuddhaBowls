@@ -39,8 +39,8 @@ namespace BuddhaBowls
         public ReportsTabVM() : base()
         {
             InitSwitchButtons(new string[] { "COGS", "P & L" });
-            //_plVM = new ProfitLossVM(this);
-            if(DBConnection)
+            _plVM = new ProfitLossVM(this);
+            if (DBConnection)
                 PeriodSelector = new PeriodSelectorVM(_models, SwitchedPeriod, hasShowAll: false);
         }
 
@@ -75,7 +75,7 @@ namespace BuddhaBowls
         {
             _cogsVM.CalculateCogs(week);
             PeriodCogs = _cogsVM.GetCogs(period).ToList();
-            //_plVM.CalculatePAndL(period, week);
+            _plVM.CalculatePAndL(period, week);
         }
 
         #endregion

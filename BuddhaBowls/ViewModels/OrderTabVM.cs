@@ -320,8 +320,12 @@ namespace BuddhaBowls
         /// <param name="obj"></param>
         private void MoveToReceivedOrders(object obj)
         {
-            _models.POContainer.ReceiveOrders(OpenOrders.Where(x => x.ReceivedCheck).ToList());
+            foreach (PurchaseOrder order in OpenOrders.Where(x => x.ReceivedCheck))
+            {
+                order.Receive();
+            }
             SelectedOpenOrder = null;
+            RefreshOrderList();
         }
 
         private void ReOpenOrder(object obj)

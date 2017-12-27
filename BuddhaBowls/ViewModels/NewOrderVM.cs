@@ -207,7 +207,6 @@ namespace BuddhaBowls
                 po.Receive();
 
             _models.VIContainer.UpdateVendorItems(OrderVendor, _displayItems);
-            //UpdateLatestVendorOrder(_displayItems, po);
 
             Close();
         }
@@ -235,7 +234,6 @@ namespace BuddhaBowls
             }
 
             SetLastOrderBreakdown();
-            //LoadVendorItems();
         }
 
         private void AutoSelectVendor(object obj)
@@ -258,7 +256,6 @@ namespace BuddhaBowls
             if (result == MessageBoxResult.Yes)
             {
                 _models.VIContainer.RemoveFromVendor(SelectedOrderItem, OrderVendor);
-                //_itemsContainer.RemoveFromVendor(SelectedOrderItem, OrderVendor);
                 OrderVendor.Update();
                 LoadVendorItems();
             }
@@ -267,46 +264,10 @@ namespace BuddhaBowls
         #endregion
 
         #region Initializers
-        /// <summary>
-        /// Creates observable collection that is used to display the price breakdown by category of the current order
-        /// </summary>
-        /// <param name="orderedItems"></param>
-        /// <param name="total"></param>
-        /// <returns></returns>
-        //private ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)
-        //{
-        //    ObservableCollection<BreakdownCategoryItem> breakdown = new ObservableCollection<BreakdownCategoryItem>();
-        //    total = 0;
-
-        //    if (orderedItems != null)
-        //    {
-        //        foreach (string category in _models.GetInventoryCategories())
-        //        {
-        //            IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper() && x.LastOrderAmount > 0);
-        //            if (items.Count() > 0)
-        //            {
-        //                BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items);
-        //                bdItem.Background = _models.GetCategoryColorHex(category);
-        //                bdItem.OrderVendor = OrderVendor;
-        //                breakdown.Add(bdItem);
-
-        //                total += bdItem.TotalAmount;
-        //            }
-        //        }
-        //    }
-
-        //    return breakdown;
-        //}
 
         private void SetLastOrderBreakdown()
         {
-            //float oTotal = 0;
             BreakdownContext = new OrderBreakdownVM(_displayItems, "Price Breakdown", true);
-            //{
-            //    BreakdownList = GetOrderBreakdown(_displayItems, out oTotal),
-            //    OrderVendor = OrderVendor,
-            //    Header = "Price Breakdown"
-            //};
         }
         #endregion
 
@@ -317,7 +278,6 @@ namespace BuddhaBowls
         public void RowEdited(InventoryItem item)
         {
             NotifyPropertyChanged("FilteredOrderItems");
-            //BreakdownContext.UpdateItem(item);
             NotifyPropertyChanged("BreakdownContext");
             BreakdownContext.UpdateDisplay();
         }
@@ -348,18 +308,6 @@ namespace BuddhaBowls
 
             if (OrderVendor != null && _itemsContainer != null && _itemsContainer.Items.Count > 0)
             {
-                //if(_displayItems != null)
-                //    _itemsContainer.Update(_displayItems);
-                //// want to preserve counts while loading different vendors - more challenging than anticipated. May come back
-                ////if(_displayItems != null)
-                ////    _itemsContainer.Update(_displayItems);
-
-                ////_displayItems = _itemsContainer.Items.Where(x => x.Vendors.Select(y => y.Id).Contains(OrderVendor.Id)).ToList();
-                //_displayItems = _itemsContainer.GetVendorItems();
-                //foreach (VendorInventoryItem item in _displayItems)
-                //{
-                //    item.SelectedVendor = OrderVendor;
-                //}
                 _displayItems = _itemsContainer.GetVendorItems(OrderVendor);
                 FilteredOrderItems = new ObservableCollection<InventoryItem>(_displayItems);
                 UnitVisibility = Visibility.Visible;

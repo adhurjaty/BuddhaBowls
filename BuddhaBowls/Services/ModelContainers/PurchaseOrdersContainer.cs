@@ -46,16 +46,5 @@ namespace BuddhaBowls.Services
             _viContainer.OrderRemoved(order, Items);
             _viContainer.NewOrderAdded(newLatestOrder);
         }
-
-        public void ReceiveOrders(List<PurchaseOrder> orders)
-        {
-            if (_isMaster)
-            {
-                foreach (PurchaseOrder order in orders)
-                {
-                    order.Receive();
-                }
-            }
-        }
     }
 }

@@ -34,20 +34,21 @@ namespace BuddhaBowls.Services
             }
         }
 
+        private VendorInvItemsContainer()
+        {
+            _copies = new List<VendorInvItemsContainer>();
+        }
+
         /// <summary>
         /// Instantiate the container. Should only be called in the DBCache class
         /// </summary>
         /// <param name="items">List of vendor inventory items to contain</param>
         /// <param name="vContainer">Vendor container</param>
-        public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer)
+        public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer) : this()
         {
             _invItemsContainer = items;
             _vendorsContainer = vContainer;
-            _copies = new List<VendorInvItemsContainer>();
             SetItems(_invItemsContainer);
-            //Messenger.Instance.Register(MessageTypes.INVENTORY_ITEM_ADDED, new Action<Message>(OnInventoryItemAdded));
-            //Messenger.Instance.Register(MessageTypes.INVENTORY_ITEM_REMOVED, new Action<Message>(OnInventoryItemRemoved));
-            //Messenger.Instance.Register(MessageTypes.INVENTORY_ITEM_CHANGED, new Action<Message>(OnInventoryItemChanged));
             Messenger.Instance.Register<Message>(MessageTypes.VENDORS_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
             Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_ITEM_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
         }
@@ -62,6 +63,22 @@ namespace BuddhaBowls.Services
             _invItemsContainer = itemsCont;
             Items = _invItemsContainer.Items.Select(x => new VendorInventoryItem(GetVendorsFromItem(x), x)).ToList();
             UpdateCopies();
+        }
+
+        public void SetItems(List<VendorInventoryItem> items)
+        {
+            Items = items;
+            UpdateCopies();
+        }
+
+        private void SetVendorContainer(VendorsContainer vendorsContainer)
+        {
+            _vendorsContainer = vendorsContainer;
+        }
+
+        private void SetInventoryContainer(InventoryItemsContainer inventoryItemsContainer)
+        {
+            _invItemsContainer = inventoryItemsContainer;
         }
 
         /// <summary>
@@ -126,6 +143,8 @@ namespace BuddhaBowls.Services
             if (_isMaster)
                 item.Update();
             _vendorsContainer.UpdateItem(item);
+            _items[Items.FindIndex(x => x.Id == item.Id)] = item;
+
             UpdateCopies(item);
         }
 
@@ -147,7 +166,10 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public VendorInvItemsContainer Copy()
         {
-            VendorInvItemsContainer viic = new VendorInvItemsContainer(_invItemsContainer.Copy(), _vendorsContainer.Copy());
+            VendorInvItemsContainer viic = new VendorInvItemsContainer();
+            viic.SetInventoryContainer(_invItemsContainer.Copy());
+            viic.SetVendorContainer(_vendorsContainer.Copy());
+            viic.SetItems(Items.Select(x => (VendorInventoryItem)x.Copy()).ToList());
             _copies.Add(viic);
             return viic;
         }
@@ -190,7 +212,9 @@ namespace BuddhaBowls.Services
         {
             _invItemsContainer = container.GetInvItemsContainer();
             _vendorsContainer = container.GetVendorsContainer();
+            SetItems(container.Items);
             RemoveCopy(container);
+            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
         }
 
         /// <summary>
@@ -413,7 +437,7 @@ namespace BuddhaBowls.Services
             {
                 InventoryItem vendorItem = v.ItemList.FirstOrDefault(x => x.Id == item.Id);
                 if (vendorItem != null)
-                    vendorDict[v] = _isMaster ? vendorItem : (InventoryItem)vendorItem.Copy();
+                    vendorDict[v] = vendorItem; // _isMaster ? vendorItem : (InventoryItem)vendorItem.Copy();
             }
 
             return vendorDict;

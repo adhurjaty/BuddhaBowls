@@ -147,53 +147,12 @@ namespace BuddhaBowls
 
             string header = _order.Received ? "Received Ordered Items" : "Open Ordered Items";
 
-            //float oTotal = 0;
             BreakdownContext = new OrderBreakdownVM(_invItemsContainer.Items, header, false);
-            //{
-            //    BreakdownList = GetOrderBreakdown(_invItemsContainer.Items, out oTotal),
-            //    //OrderTotal = oTotal,
-            //    OrderVendor = _models.VContainer.Items.First(x => x.Name == _order.VendorName),
-            //    Header = header
-            //};
-            
         }
         #endregion
 
-        //public ObservableCollection<BreakdownCategoryItem> GetOrderBreakdown(IEnumerable<InventoryItem> orderedItems, out float total)
-        //{
-        //    ObservableCollection<BreakdownCategoryItem> breakdown = new ObservableCollection<BreakdownCategoryItem>();
-        //    total = 0;
-
-        //    if (orderedItems != null)
-        //    {
-        //        foreach (string category in _models.GetInventoryCategories())
-        //        {
-        //            IEnumerable<InventoryItem> items = orderedItems.Where(x => x.Category.ToUpper() == category.ToUpper());
-        //            if (items.Count() > 0)
-        //            {
-        //                BreakdownCategoryItem bdItem = new BreakdownCategoryItem(items, OrderEdited, false);
-        //                bdItem.Background = _models.GetCategoryColorHex(category);
-        //                bdItem.OrderVendor = _models.VContainer.Items.FirstOrDefault(x => x.Name == _order.VendorName);
-        //                breakdown.Add(bdItem);
-        //                total += bdItem.TotalAmount;
-        //            }
-        //        }
-        //    }
-
-        //    return breakdown;
-        //}
-
         private void OrderEdited(InventoryItem item)
         {
-            //_order.UpdateItem(item);
-            //_displayedItems[_displayedItems.FindIndex(x => x.Id == item.Id)] = item;
-
-            //int idx = _editedItems.FindIndex(x => x.Id == item.Id);
-            //if (idx == -1)
-            //    _editedItems.Add(item);
-            //else
-            //    _editedItems[idx] = item;
-
             BreakdownContext.UpdateDisplay();
 
             // check whether the item being edited is the latest order from this vendor. If so, then change the properties of the current
@@ -230,9 +189,6 @@ namespace BuddhaBowls
             item.LastOrderAmount = 0;
             _invItemsContainer.AddItem(item);
             BreakdownContext.UpdateDisplay();
-            //_displayedItems.Add(item);
-            //_displayedItems = MainHelper.SortItems(_displayedItems).ToList();
-            //UpdateBreakdown();
         }
     }
 }

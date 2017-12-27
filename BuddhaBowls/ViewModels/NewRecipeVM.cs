@@ -250,6 +250,8 @@ namespace BuddhaBowls
         private void AddItem(object obj)
         {
             ModalTitle = "Add Ingredient";
+            RemainingItems = new ObservableCollection<IItem>(_models.GetAllIItems().Where(x => Item.ItemList.FirstOrDefault(y => x.Name == y.Name) == null)
+                                                                                   .Where(x => x.Name != Item.Name));
             ParentContext.ModalContext = this;
             ModalVisibility = Visibility.Visible;
         }
