@@ -19,20 +19,10 @@ namespace BuddhaBowls.Services
         {
             _duration = duration;
             Period = period;
-            if (Period == 0)
-            {
-                DateTime theFirst = new DateTime(DateTime.Today.Year, 1, 1);
-                DateTime firstMonday = theFirst.AddDays(MainHelper.Mod(8 - (int)theFirst.DayOfWeek, 7));
-                StartDate = theFirst;
-                EndDate = firstMonday.AddSeconds(-1);
-            }
-            else
-            {
-                StartDate = startDate.AddHours(4);
-                EndDate = StartDate.AddDays(duration).AddSeconds(-1);
-                if (EndDate.Year > StartDate.Year)
-                    EndDate = new DateTime(EndDate.Year, 1, 1).AddSeconds(-1);
-            }
+            StartDate = startDate.AddHours(4);
+            EndDate = StartDate.AddDays(duration).AddSeconds(-1);
+            if (EndDate.Year > StartDate.Year)
+                EndDate = new DateTime(EndDate.Year, 1, 1).AddSeconds(-1);
         }
 
         public PeriodMarker GetPrevPeriod()

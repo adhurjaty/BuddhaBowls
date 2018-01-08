@@ -8,7 +8,7 @@ namespace BuddhaBowls.Services
 {
     public class WeekMarker : PeriodMarker
     {
-        public WeekMarker(DateTime startDate, int period) : base(startDate, period, 7)
+        public WeekMarker(DateTime startDate, int period, int duration = 7) : base(startDate, period, duration)
         {
         }
 

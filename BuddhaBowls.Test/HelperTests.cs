@@ -287,7 +287,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void WeekLabelsTest()
         {
-            List<string> labels = MainHelper.GetWeekLabels(13).Select(x => x.ToString()).ToList();
+            List<string> labels = MainHelper.GetWeekLabels(13, 2017).Select(x => x.ToString()).ToList();
 
             List<string> refLabels = new List<string>()
             {
@@ -303,7 +303,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void WeekLabelsGet0Test()
         {
-            List<string> labels = MainHelper.GetWeekLabels(0).Select(x => x.ToString()).ToList();
+            List<string> labels = MainHelper.GetWeekLabels(0, 2017).Select(x => x.ToString()).ToList();
 
             List<string> refLabels = new List<string>()
             {
@@ -316,7 +316,7 @@ namespace BuddhaBowls.Test
         [TestMethod]
         public void PeriodLabelsTest()
         {
-            List<string> labels = MainHelper.GetPeriodLabels().Select(x => x.ToString()).ToList();
+            List<string> labels = MainHelper.GetPeriodLabels(2017).Select(x => x.ToString()).ToList();
 
             List<string> refLabels = new List<string>()
             {

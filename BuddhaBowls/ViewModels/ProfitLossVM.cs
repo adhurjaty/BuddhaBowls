@@ -121,7 +121,7 @@ namespace BuddhaBowls
 
         public async void CalculatePAndL(PeriodMarker period, WeekMarker week)
         {
-            DateTime lastUpdated = GetLastUpdated(period, _models.DailySales);
+            DateTime lastUpdated = GetLastUpdated(period, _models.DSContainer.Items);
             List<ExpenseItem> existingItems = _models.EIContainer.Items.Where(x => x.Date == week.StartDate).ToList();
             if (existingItems.Count == 0 || (lastUpdated < week.EndDate && existingItems.Count > 0))
             {
@@ -342,18 +342,12 @@ namespace BuddhaBowls
 
             List<ExpenseItem> revenueItems = new List<ExpenseItem>();
 
-            DateTime lastUpdated = GetLastUpdated(period, _models.DailySales.Where(x => period.StartDate <= x.Date && x.Date < period.EndDate)
-                                                                 .ToList());
+            DateTime lastUpdated = GetLastUpdated(period, _models.DSContainer.GetSalesInPeriod(period));
 
             List<SquareSale>[] dailySales = GetDailySales(period, lastUpdated, cancelToken);
 
-            _models.ClearPrevDailySales(period.StartDate);
-
-            // destroy period sale records that are partial days
-            foreach (DailySale sale in _models.DailySales.Where(x => x.Date.Date == lastUpdated))
-            {
-                sale.Destroy();
-            }
+            _models.DSContainer.ClearPrevDailySales(period.StartDate);
+            _models.DSContainer.DestroyPartialDays(lastUpdated);
 
             // for debugging
             //periodSales = periodSales.Where(x => x.Date <= lastUpdated).ToList();
@@ -375,7 +369,7 @@ namespace BuddhaBowls
             _otherWeekSquare["Credit Card Processing"] = 0;
             _otherPeriodSquare["Credit Card Processing"] = 0;
             // fill dictionaries with historical data from database
-            foreach (DailySale sale in _models.DailySales.Where(x => x.Date < lastUpdated))
+            foreach (DailySale sale in _models.DSContainer.Items.Where(x => x.Date < lastUpdated))
             {
                 if (!itemCategoryCache.ContainsKey(sale.Name))
                     itemCategoryCache[sale.Name] = sale.Category;
@@ -427,19 +421,19 @@ namespace BuddhaBowls
                                     itemCategoryCache[itemization.Name] = "Other";
                             }
                             if (!periodRevenueDict.ContainsKey(itemCategoryCache[itemization.Name]))
+                            {
                                 periodRevenueDict[itemCategoryCache[itemization.Name]] = 0;
+                                weekRevenueDict[itemCategoryCache[itemization.Name]] = 0;
+                                prevPeriodRevenueDict[itemCategoryCache[itemization.Name]] = 0;
+                            }
                             periodRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
 
                             if (week.StartDate <= sale.TransactionTime && sale.TransactionTime <= week.EndDate)
                             {
-                                if (!weekRevenueDict.ContainsKey(itemCategoryCache[itemization.Name]))
-                                    weekRevenueDict[itemCategoryCache[itemization.Name]] = 0;
                                 weekRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
                             }
                             if (sale.TransactionTime < week.StartDate)
                             {
-                                if (!prevPeriodRevenueDict.ContainsKey(itemCategoryCache[itemization.Name]))
-                                    prevPeriodRevenueDict[itemCategoryCache[itemization.Name]] = 0;
                                 prevPeriodRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
                             }
 

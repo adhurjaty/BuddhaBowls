@@ -21,9 +21,7 @@ namespace BuddhaBowls.Services
         // Cache of bread info by week. Key is the start date of the week
         private Dictionary<DateTime, BreadWeekContainer> _breadWeekDict;
 
-        // TODO: Get rid of this and create container
-        public List<DailySale> DailySales { get; set; }
-
+        public DailySalesContainer DSContainer { get; set; }
         public VendorInvItemsContainer VIContainer { get; private set; }
         public PurchaseOrdersContainer POContainer { get; private set; }
         public VendorsContainer VContainer { get; private set; }
@@ -51,7 +49,6 @@ namespace BuddhaBowls.Services
         private void InitializeModels()
         {
             Logger.Info("Loading models");
-            DailySales = ModelHelper.InstantiateList<DailySale>("DailySale");
 
             InventoryItemsContainer invItems = new InventoryItemsContainer(
                                                     MainHelper.SortItems(ModelHelper.InstantiateList<InventoryItem>("InventoryItem")).ToList(),
@@ -63,6 +60,7 @@ namespace BuddhaBowls.Services
             InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory"), true);
             RContainer = new RecipesContainer(ModelHelper.InstantiateList<Recipe>("Recipe"), true);
             EIContainer = new ExpenseItemsContainer(ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem"), true);
+            DSContainer = new DailySalesContainer(ModelHelper.InstantiateList<DailySale>("DailySale"));
             //AddRecipeItems();
 
             _breadWeekDict = new Dictionary<DateTime, BreadWeekContainer>();
@@ -185,20 +183,6 @@ namespace BuddhaBowls.Services
         }
 
         /// <summary>
-        /// Clears all daily sale records before the startDate
-        /// </summary>
-        /// <param name="startDate"></param>
-        public void ClearPrevDailySales(DateTime startDate)
-        {
-            // may need to speed this up
-            foreach (DailySale sale in DailySales.Where(x => x.Date < startDate).ToList())
-            {
-                sale.Destroy();
-            }
-            DailySales = DailySales.Where(x => x.Date >= startDate).ToList();
-        }
-
-        /// <summary>
         /// Get all of the purchased units that currently exist in inventory items
         /// </summary>
         /// <returns></returns>
@@ -234,14 +218,6 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public List<string> GetInventoryCategories()
         {
-            //HashSet<string> categories = new HashSet<string>();
-
-            //foreach (VendorInventoryItem item in VIContainer.Items)
-            //{
-            //    if (!string.IsNullOrWhiteSpace(item.Category))
-            //        categories.Add(item.Category);
-            //}
-
             return VIContainer.Items.Select(x => x.Category).Distinct().ToList();
         }
 

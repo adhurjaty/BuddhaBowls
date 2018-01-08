@@ -485,7 +485,10 @@ namespace BuddhaBowls
                                                                                                       x.ReceivedDate < week.EndDate)
                                                                         .OrderByDescending(x => x.ReceivedDate));
                 TotalOrders.Value = ReceivedOrders.Count;
-                SetPeriodWeekTotals(week, period);
+                if (period.GetType() == typeof(ShowAllMarker))
+                    SetTotalsShowAll();
+                else
+                    SetPeriodWeekTotals(week, period);
             }
         }
 
@@ -497,6 +500,14 @@ namespace BuddhaBowls
             PeriodCostTotal.Value = GetPeriodTotal(period);
             float lastPeriodTotal = GetPeriodTotal(period.GetPrevPeriod());
             PeriodTrend = (PeriodCostTotal.Value - lastPeriodTotal) / lastPeriodTotal;
+        }
+
+        private void SetTotalsShowAll()
+        {
+            WeekCostTotal.Value = 0;
+            WeekTrend = 0;
+            PeriodCostTotal.Value = 0;
+            PeriodTrend = 0;
         }
 
         private void OrdersNotFound()

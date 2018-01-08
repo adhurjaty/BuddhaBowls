@@ -152,14 +152,19 @@ namespace BuddhaBowls.Helpers
             return (x % m + m) % m;
         }
 
-        public static IEnumerable<WeekMarker> GetWeekLabels(int period)
+        public static IEnumerable<WeekMarker> GetWeekLabels(PeriodMarker period)
         {
-            DateTime theFirst = new DateTime(DateTime.Today.Year, 1, 1);
-            DateTime firstMonday = theFirst.AddDays(MainHelper.Mod(8 - (int)theFirst.DayOfWeek, 7));
+            return GetWeekLabels(period.Period, period.StartDate.Year);
+        }
+
+        public static IEnumerable<WeekMarker> GetWeekLabels(int period, int year)
+        {
+            DateTime theFirst = new DateTime(year, 1, 1);
+            DateTime firstMonday = theFirst.AddDays(Mod(8 - (int)theFirst.DayOfWeek, 7));
 
             if (period == 0 && firstMonday != theFirst)
             {
-                yield return new WeekMarker(theFirst, 0);
+                yield return new WeekMarker(theFirst, 0, (int)firstMonday.Subtract(theFirst).TotalDays);
             }
             else
             {
@@ -176,27 +181,44 @@ namespace BuddhaBowls.Helpers
             if (period.GetType() == typeof(WeekMarker))
                 return new List<WeekMarker>() { (WeekMarker)period };
             else
-                return GetWeekLabels(period.Period);
+                return GetWeekLabels(period);
         }
 
-        public static IEnumerable<PeriodMarker> GetPeriodLabels()
+        public static IEnumerable<PeriodMarker> GetPeriodLabels(int year)
         {
-            DateTime theFirst = new DateTime(DateTime.Today.Year, 1, 1);
-            DateTime firstMonday = theFirst.AddDays(MainHelper.Mod(8 - (int)theFirst.DayOfWeek, 7));
+            DateTime theFirst = new DateTime(year, 1, 1);
+            int startDayDiff = Mod(8 - (int)theFirst.DayOfWeek, 7);
+            DateTime firstMonday = theFirst.AddDays(startDayDiff);
 
-            for (int i = 0; i < 14; i++)
+            if(startDayDiff == 0)
             {
-                if (!(i == 0 && theFirst == firstMonday))
-                    yield return new PeriodMarker(firstMonday.AddDays(28 * (i - 1)), i);
+                for (int i = 0; i < 13; i++)
+                {
+                    yield return new PeriodMarker(theFirst.AddDays(28 * i), i + 1);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 14; i++)
+                {
+                    if(i == 0)
+                    {
+                        yield return new PeriodMarker(theFirst, i, startDayDiff);
+                    }
+                    else
+                    {
+                        yield return new PeriodMarker(firstMonday.AddDays(28 * (i - 1)), i);
+                    }
+                }
             }
         }
 
         public static WeekMarker GetThisWeek()
         {
-            List<PeriodMarker> periods = GetPeriodLabels().ToList();
+            List<PeriodMarker> periods = GetPeriodLabels(DateTime.Today.Year).ToList();
             if (periods != null && periods.Count > 0)
             {
-                return GetWeekLabels(periods.First(x => x.StartDate <= DateTime.Now && DateTime.Now <= x.EndDate).Period)
+                return GetWeekLabels(periods.First(x => x.StartDate <= DateTime.Now && DateTime.Now <= x.EndDate))
                                             .First(x => x.StartDate <= DateTime.Now && DateTime.Now <= x.EndDate);
             }
             return null;
@@ -204,10 +226,10 @@ namespace BuddhaBowls.Helpers
 
         public static WeekMarker GetWeek(DateTime date)
         {
-            List<PeriodMarker> periods = GetPeriodLabels().ToList();
+            List<PeriodMarker> periods = GetPeriodLabels(date.Year).ToList();
             if (periods != null && periods.Count > 0)
             {
-                return GetWeekLabels(periods.First(x => x.StartDate <= date && date <= x.EndDate).Period)
+                return GetWeekLabels(periods.First(x => x.StartDate <= date && date <= x.EndDate))
                                             .First(x => x.StartDate <= date && date <= x.EndDate);
             }
             return null;

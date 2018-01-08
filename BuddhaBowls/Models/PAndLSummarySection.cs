@@ -158,7 +158,7 @@ namespace BuddhaBowls.Models
                 TotalSalesItem = new ExpenseItem("Sales", "Total", DateTime.Now);
                 UpdateTotal();
             }
-            FoodTotal = items.First(x => x.Name == "Food");
+            FoodTotal = items.FirstOrDefault(x => x.Name == "Food");
             _totalRows = new List<string>() { "Total" };
         }
 
