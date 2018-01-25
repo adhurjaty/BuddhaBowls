@@ -322,7 +322,7 @@ namespace BuddhaBowls
         {
             foreach (PurchaseOrder order in OpenOrders.Where(x => x.ReceivedCheck))
             {
-                order.Receive();
+                _models.POContainer.RecieveOrder(order);
             }
             SelectedOpenOrder = null;
             RefreshOrderList();
@@ -331,7 +331,7 @@ namespace BuddhaBowls
         private void ReOpenOrder(object obj)
         {
             SelectedReceivedOrder.ReceivedCheck = false;
-            SelectedReceivedOrder.ReOpen();
+            _models.POContainer.ReOpenOrder(SelectedReceivedOrder);
             SelectedReceivedOrder = null;
             RefreshOrderList();
         }
@@ -527,7 +527,6 @@ namespace BuddhaBowls
         public void RecOrderChanged(PurchaseOrder order)
         {
             _models.POContainer.Update(order);
-            order.Update();
         }
         #endregion
 

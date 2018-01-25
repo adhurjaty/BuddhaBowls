@@ -361,20 +361,56 @@ namespace BuddhaBowls.Services
         /// Updates the last vendor and selected vendor for VendorInventoryItems when a new order is created
         /// </summary>
         /// <param name="order"></param>
-        public void NewOrderAdded(PurchaseOrder order)
+        public void UpdateMasterItemOrderAdded(PurchaseOrder order)
         {
+            if (!order.Received)
+                return;
+
             Vendor vend = _vendorsContainer.Items.First(x => x.Name == order.VendorName);
             foreach (InventoryItem invItem in order.ItemList)
             {
                 VendorInventoryItem vItem = Items.First(x => x.Id == invItem.Id);
-                if (vItem.LastPurchasedDate < order.OrderDate)
+                if (vItem.LastPurchasedDate <= order.ReceivedDate)
                 {
                     vItem.SelectedVendor = vend;
                     vItem.LastVendorId = vend.Id;
-                    vItem.LastPurchasedDate = order.OrderDate;
+                    vItem.LastPurchasedDate = order.ReceivedDate;
                     vItem.LastOrderAmount = invItem.LastOrderAmount;
                     vItem.Update();
                 }
+            }
+
+            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
+        }
+
+        public void UpdateMasterItemOrderChanged(PurchaseOrder order, List<PurchaseOrder> allOrders)
+        {
+            if (!order.Received)
+                return;
+
+            Vendor vend = _vendorsContainer.Items.First(x => x.Name == order.VendorName);
+            List<PurchaseOrder> sortedOrders = allOrders.OrderByDescending(x => x.ReceivedDate).ToList();
+            foreach (InventoryItem invItem in order.ItemList)
+            {
+                VendorInventoryItem vItem = Items.First(x => x.Id == invItem.Id);
+                PurchaseOrder nextRecentOrder = sortedOrders.FirstOrDefault(x => x.ItemList.Select(y => y.Id).Contains(invItem.Id));
+                if(nextRecentOrder != null)
+                {
+                    Vendor nextRecentVendor = _vendorsContainer.Items.First(x => x.Name == nextRecentOrder.VendorName);
+                    InventoryItem nextOrderInvItem = nextRecentOrder.ItemList.First(x => x.Id == invItem.Id);
+                    vItem.LastVendorId = nextRecentVendor.Id;
+                    vItem.LastPurchasedDate = nextRecentOrder.ReceivedDate;
+                    vItem.LastOrderAmount = nextOrderInvItem.LastOrderAmount;
+                    vItem.SelectedVendor = nextRecentVendor;
+                }
+                else
+                {
+                    vItem.LastVendorId = null;
+                    vItem.LastOrderAmount = 0;
+                    vItem.LastPurchasedDate = null;
+                    vItem.SelectedVendor = null;
+                }
+                vItem.Update();
             }
 
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
@@ -384,23 +420,24 @@ namespace BuddhaBowls.Services
         /// Updates the last vendor and selected vendor when an order is deleted
         /// </summary>
         /// <param name="orders"></param>
-        public void OrderRemoved(PurchaseOrder removedOrder, List<PurchaseOrder> orders)
+        public void UpdateMasterItemOrderRemoved(PurchaseOrder removedOrder, List<PurchaseOrder> orders)
         {
             Vendor vend = _vendorsContainer.Items.First(x => x.Name == removedOrder.VendorName);
-            List<PurchaseOrder> sortedOrders = orders.OrderByDescending(x => x.OrderDate).ToList();
+            List<PurchaseOrder> sortedOrders = orders.OrderByDescending(x => x.ReceivedDate).ToList();
             foreach (InventoryItem invItem in removedOrder.ItemList)
             {
                 VendorInventoryItem vItem = Items.First(x => x.Id == invItem.Id);
-                if (vItem.LastPurchasedDate == removedOrder.OrderDate)
+                if (vItem.SelectedVendor == vend)
                 {
                     PurchaseOrder nextRecentOrder = sortedOrders.FirstOrDefault(x => x.ItemList.Select(y => y.Id).Contains(invItem.Id));
                     if(nextRecentOrder != null)
                     {
                         Vendor nextRecentVendor = _vendorsContainer.Items.First(x => x.Name == nextRecentOrder.VendorName);
-                        vItem.LastVendorId = vend.Id;
-                        vItem.LastPurchasedDate = nextRecentOrder.OrderDate;
-                        vItem.LastOrderAmount = invItem.LastOrderAmount;
-                        vItem.SelectedVendor = vend;
+                        InventoryItem nextOrderInvItem = nextRecentOrder.ItemList.First(x => x.Id == invItem.Id);
+                        vItem.LastVendorId = nextRecentVendor.Id;
+                        vItem.LastPurchasedDate = nextRecentOrder.ReceivedDate;
+                        vItem.LastOrderAmount = nextOrderInvItem.LastOrderAmount;
+                        vItem.SelectedVendor = nextRecentVendor;
                     }
                     else
                     {

@@ -204,7 +204,7 @@ namespace BuddhaBowls
 
             _models.POContainer.AddItem(po);
             if (IsReceipt)
-                po.Receive();
+                _models.POContainer.RecieveOrder(po);
 
             _models.VIContainer.UpdateVendorItems(OrderVendor, _displayItems);
 
@@ -358,7 +358,7 @@ namespace BuddhaBowls
             foreach (InventoryItem item in items)
             {
                 VendorInventoryItem vItem = _models.VIContainer.Items.FirstOrDefault(x => x.Id == item.Id);
-                if (vItem != null && order.OrderDate > vItem.LastPurchasedDate)
+                if (vItem != null && order.ReceivedDate > vItem.LastPurchasedDate)
                 {
                     vItem.SetVendorItem(vend, item);
                     vItem.LastVendorId = vend.Id;

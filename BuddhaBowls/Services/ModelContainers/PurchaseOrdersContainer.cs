@@ -23,7 +23,6 @@ namespace BuddhaBowls.Services
             if (_isMaster)
             {
                 Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
-                _viContainer.NewOrderAdded(item);
             }
 
             return order;
@@ -32,7 +31,7 @@ namespace BuddhaBowls.Services
         public override void RemoveItem(PurchaseOrder item)
         {
             base.RemoveItem(item);
-            _viContainer.OrderRemoved(item, Items);
+            _viContainer.UpdateMasterItemOrderRemoved(item, Items);
             if (_isMaster)
             {
                 Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
@@ -42,9 +41,23 @@ namespace BuddhaBowls.Services
         public override void Update(PurchaseOrder order)
         {
             base.Update(order);
-            PurchaseOrder newLatestOrder = Items.OrderByDescending(x => x.ReceivedDate).FirstOrDefault();
-            _viContainer.OrderRemoved(order, Items);
-            _viContainer.NewOrderAdded(newLatestOrder);
+            _viContainer.UpdateMasterItemOrderChanged(order, Items);
+            if (_isMaster)
+            {
+                Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
+            }
+        }
+
+        public void RecieveOrder(PurchaseOrder order)
+        {
+            order.Receive();
+            _viContainer.UpdateMasterItemOrderAdded(order);
+        }
+
+        public void ReOpenOrder(PurchaseOrder order)
+        {
+            order.ReOpen();
+            _viContainer.UpdateMasterItemOrderRemoved(order, Items);
         }
     }
 }

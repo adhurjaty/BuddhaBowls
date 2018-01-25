@@ -84,6 +84,8 @@ namespace BuddhaBowls.Models
             {
                 if (GetPropertyValue(propNames[i]) != null)
                     mapping[propNames[i]] = GetPropertyValue(propNames[i]).ToString();
+                else
+                    mapping[propNames[i]] = "";
             }
 
             return mapping;

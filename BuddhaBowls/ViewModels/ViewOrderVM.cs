@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -92,8 +93,8 @@ namespace BuddhaBowls
 
             SaveCommand = new RelayCommand(SaveEdits, x => SaveButtonCanExecute);
             CancelCommand = new RelayCommand(CancelView);
-            AddNewItemCommand = new RelayCommand(AddVendorItem);
-            DeleteItemCommand = new RelayCommand(DeleteVendorItem);
+            AddNewItemCommand = new RelayCommand(AddPOItem);
+            DeleteItemCommand = new RelayCommand(DeletePOItem);
 
             _invItemsContainer = po.GetItemsContainer().Copy();
             //_displayedItems = po.ItemList;
@@ -114,10 +115,15 @@ namespace BuddhaBowls
             _order.GetItemsContainer().SyncCopy(_invItemsContainer);
             _order.Update();
             UpdateLatestVendorOrder();
+            OverwriteExcelPO(_order, _models.VContainer.Items.First(x => x.Name == _order.VendorName));
+
+            _models.VIContainer.UpdateMasterItemOrderAdded(_order);
+            Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
+
             Close();
         }
 
-        private void AddVendorItem(object obj)
+        private void AddPOItem(object obj)
         {
             List<VendorInventoryItem> vendorItemIds = _models.VIContainer.Items.Where(x => x.Vendors.Select(y => y.Name)
                                                                                             .Contains(_order.VendorName)).ToList();
@@ -127,7 +133,7 @@ namespace BuddhaBowls
             ParentContext.ModalContext = modal;
         }
 
-        private void DeleteVendorItem(object obj)
+        private void DeletePOItem(object obj)
         {
             MessageBoxResult result = MessageBox.Show("Are you sure you want to remove " + BreakdownContext.SelectedItem.Name + " from PO?",
                                                       "Remove " + BreakdownContext.SelectedItem.Name + "?", MessageBoxButton.YesNo);
@@ -186,9 +192,20 @@ namespace BuddhaBowls
         /// <param name="item"></param>
         private void AddInvItemToVendor(InventoryItem item)
         {
-            item.LastOrderAmount = 0;
+            item.LastOrderAmount = 1;
             _invItemsContainer.AddItem(item);
-            BreakdownContext.UpdateDisplay();
+            UpdateBreakdown();
+        }
+
+        private void OverwriteExcelPO(PurchaseOrder po, Vendor vendor)
+        {
+            new Thread(delegate ()
+            {
+                ReportGenerator generator = new ReportGenerator(_models);
+                string xlsPath = generator.GenerateOrder(po, vendor);
+                generator.GenerateReceivingList(po, vendor);
+                generator.Close();
+            }).Start();
         }
     }
 }
