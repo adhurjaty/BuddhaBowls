@@ -128,7 +128,9 @@ namespace BuddhaBowls.Models
                     return _vendorDict.Values.Max(x => x.LastPurchasedDate);
                 return _invItem.LastPurchasedDate;
             }
-            set { _invItem.LastPurchasedDate = value;
+            set
+            {
+                _invItem.LastPurchasedDate = value;
                 NotifyPropertyChanged("LastPurchasedDate");
             }
         }

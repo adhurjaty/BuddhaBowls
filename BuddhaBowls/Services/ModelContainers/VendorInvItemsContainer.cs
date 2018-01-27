@@ -370,12 +370,14 @@ namespace BuddhaBowls.Services
             foreach (InventoryItem invItem in order.ItemList)
             {
                 VendorInventoryItem vItem = Items.First(x => x.Id == invItem.Id);
-                if (vItem.LastPurchasedDate <= order.ReceivedDate)
+                // check that the date needs to be updated and that the vendor still sells the item (for legacy orders)
+                if (vItem.LastPurchasedDate <= order.ReceivedDate && vItem.Vendors.Select(x => x.Id).Contains(vend.Id))
                 {
                     vItem.SelectedVendor = vend;
                     vItem.LastVendorId = vend.Id;
                     vItem.LastPurchasedDate = order.ReceivedDate;
                     vItem.LastOrderAmount = invItem.LastOrderAmount;
+                    vItem.LastPurchasedPrice = invItem.LastPurchasedPrice;
                     vItem.Update();
                 }
             }
@@ -398,10 +400,13 @@ namespace BuddhaBowls.Services
                 {
                     Vendor nextRecentVendor = _vendorsContainer.Items.First(x => x.Name == nextRecentOrder.VendorName);
                     InventoryItem nextOrderInvItem = nextRecentOrder.ItemList.First(x => x.Id == invItem.Id);
-                    vItem.LastVendorId = nextRecentVendor.Id;
                     vItem.LastPurchasedDate = nextRecentOrder.ReceivedDate;
                     vItem.LastOrderAmount = nextOrderInvItem.LastOrderAmount;
-                    vItem.SelectedVendor = nextRecentVendor;
+                    if (vItem.Vendors.FirstOrDefault(x => x.Id == nextRecentVendor.Id) != null)
+                    {
+                        vItem.LastVendorId = nextRecentVendor.Id;
+                        vItem.SelectedVendor = nextRecentVendor;
+                    }
                 }
                 else
                 {
@@ -430,14 +435,17 @@ namespace BuddhaBowls.Services
                 if (vItem.SelectedVendor == vend)
                 {
                     PurchaseOrder nextRecentOrder = sortedOrders.FirstOrDefault(x => x.ItemList.Select(y => y.Id).Contains(invItem.Id));
-                    if(nextRecentOrder != null)
+                    if (nextRecentOrder != null)
                     {
                         Vendor nextRecentVendor = _vendorsContainer.Items.First(x => x.Name == nextRecentOrder.VendorName);
                         InventoryItem nextOrderInvItem = nextRecentOrder.ItemList.First(x => x.Id == invItem.Id);
-                        vItem.LastVendorId = nextRecentVendor.Id;
                         vItem.LastPurchasedDate = nextRecentOrder.ReceivedDate;
                         vItem.LastOrderAmount = nextOrderInvItem.LastOrderAmount;
-                        vItem.SelectedVendor = nextRecentVendor;
+                        if (vItem.Vendors.FirstOrDefault(x => x.Id == nextRecentVendor.Id) != null)
+                        {
+                            vItem.LastVendorId = nextRecentVendor.Id;
+                            vItem.SelectedVendor = nextRecentVendor;
+                        }
                     }
                     else
                     {
@@ -446,6 +454,18 @@ namespace BuddhaBowls.Services
                         vItem.LastPurchasedDate = null;
                         vItem.SelectedVendor = null;
                     }
+
+                    PurchaseOrder lastOrderFromVendor = sortedOrders.FirstOrDefault(x => x.VendorName == vend.Name &&
+                                                                                    x.ItemList.Select(y => y.Id).Contains(invItem.Id));
+                    if(lastOrderFromVendor != null)
+                    {
+                        InventoryItem prevOrderItem = lastOrderFromVendor.ItemList.First(x => x.Id == vItem.Id);
+                        InventoryItem prevItem = vItem.GetInvItemFromVendor(vend);
+                        prevItem.LastPurchasedPrice = prevOrderItem.LastPurchasedPrice;
+                        prevItem.LastPurchasedDate = lastOrderFromVendor.ReceivedDate ?? lastOrderFromVendor.OrderDate;
+                        prevItem.LastOrderAmount = prevOrderItem.LastOrderAmount;
+                    }
+
                     vItem.Update();
                 }
             }

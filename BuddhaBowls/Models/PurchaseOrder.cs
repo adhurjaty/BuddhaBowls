@@ -130,10 +130,10 @@ namespace BuddhaBowls.Models
             OrderDate = orderDate;
 
             // update the items' last purchased date if the orderDate is the latest
-            foreach (InventoryItem item in inventoryItems)
-            {
-                item.LastPurchasedDate = item.LastPurchasedDate == null || item.LastPurchasedDate < orderDate ? orderDate : item.LastPurchasedDate;
-            }
+            //foreach (InventoryItem item in inventoryItems)
+            //{
+            //    item.LastPurchasedDate = item.LastPurchasedDate == null || item.LastPurchasedDate < orderDate ? orderDate : item.LastPurchasedDate;
+            //}
             _invItemsContainer = new InventoryItemsContainer(inventoryItems);
         }
 

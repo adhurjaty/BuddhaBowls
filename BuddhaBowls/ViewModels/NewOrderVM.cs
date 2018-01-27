@@ -206,7 +206,7 @@ namespace BuddhaBowls
             if (IsReceipt)
                 _models.POContainer.RecieveOrder(po);
 
-            _models.VIContainer.UpdateVendorItems(OrderVendor, _displayItems);
+            Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
 
             Close();
         }

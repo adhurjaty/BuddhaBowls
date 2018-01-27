@@ -24,9 +24,7 @@ namespace BuddhaBowls
     {
         private PurchaseOrder _order;
         private InventoryItemsContainer _invItemsContainer;
-        //private List<InventoryItem> _displayedItems;
-        //private List<InventoryItem> _editedItems;
-        //private RefreshDel RefreshOrders;
+        private Vendor _vendor;
 
         #region Content Binders
         private OrderBreakdownVM _breakdownContext;
@@ -87,7 +85,7 @@ namespace BuddhaBowls
         public ViewOrderVM(PurchaseOrder po)
         {
             _order = po;
-            _tabControl = new ViewOrderTabControl(this);
+            _vendor = _models.VContainer.Items.First(x => x.Name == _order.VendorName); _tabControl = new ViewOrderTabControl(this);
             Header = "View " + po.VendorName + " Order";
             //RefreshOrders = refresh;
 
@@ -115,8 +113,9 @@ namespace BuddhaBowls
             _order.GetItemsContainer().SyncCopy(_invItemsContainer);
             _order.Update();
             UpdateLatestVendorOrder();
-            OverwriteExcelPO(_order, _models.VContainer.Items.First(x => x.Name == _order.VendorName));
+            OverwriteExcelPO(_order);
 
+            _models.VIContainer.UpdateVendorItems(_vendor, _order.ItemList);
             _models.VIContainer.UpdateMasterItemOrderAdded(_order);
             Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
 
@@ -172,14 +171,14 @@ namespace BuddhaBowls
         /// </summary>
         private void UpdateLatestVendorOrder()
         {
-            Vendor vend = _models.VContainer.Items.First(x => x.Name == _order.VendorName);
+            
             foreach (InventoryItem item in _invItemsContainer.Items)
             {
                 VendorInventoryItem vItem = _models.VIContainer.Items.FirstOrDefault(x => x.Id == item.Id);
                 if (_order.OrderDate > item.LastPurchasedDate && vItem != null)
                 {
-                    vItem.SetVendorItem(vend, item);
-                    item.LastVendorId = vend.Id;
+                    vItem.SetVendorItem(_vendor, item);
+                    item.LastVendorId = _vendor.Id;
                     item.Update();
                 }
             }
@@ -197,13 +196,13 @@ namespace BuddhaBowls
             UpdateBreakdown();
         }
 
-        private void OverwriteExcelPO(PurchaseOrder po, Vendor vendor)
+        private void OverwriteExcelPO(PurchaseOrder po)
         {
             new Thread(delegate ()
             {
                 ReportGenerator generator = new ReportGenerator(_models);
-                string xlsPath = generator.GenerateOrder(po, vendor);
-                generator.GenerateReceivingList(po, vendor);
+                string xlsPath = generator.GenerateOrder(po, _vendor);
+                generator.GenerateReceivingList(po, _vendor);
                 generator.Close();
             }).Start();
         }
