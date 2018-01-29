@@ -42,7 +42,7 @@ namespace BuddhaBowls
             }
             set
             {
-                _yield = value;
+                _yield = (float)Math.Round(value, 1);
                 Item.Yield = _yield / 100f;
                 NotifyPropertyChanged("Yield");
             }
