@@ -261,12 +261,8 @@ namespace BuddhaBowls
 
         public void VendorItemChanged(InventoryItem item)
         {
-            _models.VIContainer.UpdateItem(item, SelectedVendor);
-            //item.NotifyChanges();
-            //VendorInventoryItem vendItem = _models.VendorInvItems.First(x => x.Id == item.Id);
-            //vendItem.SetVendorItem(SelectedVendor, item);
-            //item.Update();
-            //ParentContext.InvItemChanged(vendItem);
+            SelectedVendor.Update();
+            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
         }
         #endregion
     }

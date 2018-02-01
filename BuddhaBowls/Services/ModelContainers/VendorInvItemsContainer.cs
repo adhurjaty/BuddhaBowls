@@ -402,6 +402,7 @@ namespace BuddhaBowls.Services
                     InventoryItem nextOrderInvItem = nextRecentOrder.ItemList.First(x => x.Id == invItem.Id);
                     vItem.LastPurchasedDate = nextRecentOrder.ReceivedDate;
                     vItem.LastOrderAmount = nextOrderInvItem.LastOrderAmount;
+                    vItem.LastPurchasedPrice = nextOrderInvItem.LastPurchasedPrice;
                     if (vItem.Vendors.FirstOrDefault(x => x.Id == nextRecentVendor.Id) != null)
                     {
                         vItem.LastVendorId = nextRecentVendor.Id;
