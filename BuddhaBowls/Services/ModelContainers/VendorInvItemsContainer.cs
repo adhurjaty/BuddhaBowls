@@ -120,6 +120,7 @@ namespace BuddhaBowls.Services
 
             UpdateCopies(vItem);
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, vItem);
+            Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED);
             return vItem;
         }
 
@@ -144,6 +145,9 @@ namespace BuddhaBowls.Services
                 item.Update();
             _vendorsContainer.UpdateItem(item);
             _items[Items.FindIndex(x => x.Id == item.Id)] = item;
+
+            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
+            Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED);
 
             UpdateCopies(item);
         }
@@ -382,6 +386,7 @@ namespace BuddhaBowls.Services
                 }
             }
 
+            vend.Update();
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
         }
 
@@ -392,6 +397,7 @@ namespace BuddhaBowls.Services
 
             Vendor vend = _vendorsContainer.Items.First(x => x.Name == order.VendorName);
             List<PurchaseOrder> sortedOrders = allOrders.OrderByDescending(x => x.ReceivedDate).ToList();
+            HashSet<Vendor> affectedVendors = new HashSet<Vendor>();
             foreach (InventoryItem invItem in order.ItemList)
             {
                 VendorInventoryItem vItem = Items.First(x => x.Id == invItem.Id);
@@ -408,6 +414,7 @@ namespace BuddhaBowls.Services
                         vItem.LastVendorId = nextRecentVendor.Id;
                         vItem.SelectedVendor = nextRecentVendor;
                     }
+                    affectedVendors.Add(nextRecentVendor);
                 }
                 else
                 {
@@ -417,6 +424,11 @@ namespace BuddhaBowls.Services
                     vItem.SelectedVendor = null;
                 }
                 vItem.Update();
+            }
+
+            foreach (Vendor v in affectedVendors)
+            {
+                v.Update();
             }
 
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
@@ -430,6 +442,7 @@ namespace BuddhaBowls.Services
         {
             Vendor vend = _vendorsContainer.Items.First(x => x.Name == removedOrder.VendorName);
             List<PurchaseOrder> sortedOrders = orders.OrderByDescending(x => x.ReceivedDate).ToList();
+            HashSet<Vendor> affectedVendors = new HashSet<Vendor>();
             foreach (InventoryItem invItem in removedOrder.ItemList)
             {
                 VendorInventoryItem vItem = Items.First(x => x.Id == invItem.Id);
@@ -447,6 +460,7 @@ namespace BuddhaBowls.Services
                             vItem.LastVendorId = nextRecentVendor.Id;
                             vItem.SelectedVendor = nextRecentVendor;
                         }
+                        affectedVendors.Add(nextRecentVendor);
                     }
                     else
                     {
@@ -469,6 +483,11 @@ namespace BuddhaBowls.Services
 
                     vItem.Update();
                 }
+            }
+
+            foreach (Vendor v in affectedVendors)
+            {
+                v.Update();
             }
 
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);

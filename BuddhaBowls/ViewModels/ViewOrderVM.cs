@@ -95,8 +95,6 @@ namespace BuddhaBowls
             DeleteItemCommand = new RelayCommand(DeletePOItem);
 
             _invItemsContainer = po.GetItemsContainer().Copy();
-            //_displayedItems = po.ItemList;
-            //_editedItems = new List<InventoryItem>();
             UpdateBreakdown();
         }
 
@@ -115,7 +113,8 @@ namespace BuddhaBowls
             UpdateLatestVendorOrder();
             OverwriteExcelPO(_order);
 
-            _models.VIContainer.UpdateVendorItems(_vendor, _order.ItemList);
+            _models.VIContainer.AddVendorAssociations(_vendor, _order.ItemList);
+            _vendor.Update();
             _models.VIContainer.UpdateMasterItemOrderAdded(_order);
             Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
 

@@ -15,6 +15,7 @@ using System.Windows;
 using System.IO;
 using BuddhaBowls.Square;
 using BuddhaBowls.Services;
+using BuddhaBowls.Messengers;
 
 namespace BuddhaBowls
 {
@@ -167,17 +168,15 @@ namespace BuddhaBowls
             List<VendorInventoryItem> breads = _models.VIContainer.Items.Where(x => x.Category == "Bread").ToList();
             foreach (VendorInventoryItem item in breads)
             {
-                BreadOrder bo = _breadWeek.Week.FirstOrDefault(x => x.Date == DateTime.Today);
+                BreadOrder bo = _breadWeek.Week.FirstOrDefault(x => x.Date.Date == DateTime.Today);
                 if (bo != null && bo.BreadDescDict.ContainsKey(item.Name))
                 {
                     BreadDescriptor bread = bo.BreadDescDict[item.Name];
-                    VendorInventoryItem newItem = item;
-                    newItem.Count = bread.BeginInventory + bread.FreezerCount;
-                    //_models.AddUpdateInventoryItem(ref newItem);
+                    item.Count = bread.BeginInventory + bread.FreezerCount;
+                    item.Update();
                 }
             }
-
-            //ParentContext.ReportTab.UpdateBreadOrder();
+            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
         }
 
         public void ChangeBreadWeek(PeriodMarker period, WeekMarker week)
