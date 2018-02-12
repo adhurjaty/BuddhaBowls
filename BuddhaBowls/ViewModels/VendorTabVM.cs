@@ -255,7 +255,7 @@ namespace BuddhaBowls
 
         public void AddInvItemToVendor(InventoryItem item)
         {
-            _models.VIContainer.UpdateItem(item, SelectedVendor);
+            _models.VIContainer.UpdateItem((InventoryItem)item.Copy(), SelectedVendor);
             SelectedVendor.Update();
         }
 

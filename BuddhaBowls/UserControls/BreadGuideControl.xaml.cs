@@ -23,9 +23,9 @@ namespace BuddhaBowls.UserControls
     {
         private string[] _topHeaders = new string[] { "GrossSales", "SalesForecast" };
         private string[] _typeHeaders = new string[] { "Kitchen Rack", "Freezer Count", "Delivery", "{0}-Par", "Buffer",
-                                                       "Projected Order", "Freezer Adj", "Useage" };
+                                                       "Projected Order", "Freezer Adj", "Usage" };
         private string[] _breadDescProps = new string[] { "BeginInventory", "FreezerCount", "Delivery", "Par", "Buffer",
-                                                          "ProjectedOrder", "WalkIn", "Useage" };
+                                                          "ProjectedOrder", "WalkIn", "Usage" };
         private string[] _editableFields = new string[] { "BeginInventory", "Delivery", "FreezerCount" };
 
         private TextBlock _editingTextBlock;
@@ -336,20 +336,6 @@ namespace BuddhaBowls.UserControls
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             ((BreadGuideVM)DataContext).UpdateBackup();
-            //TextBox box = (TextBox)sender;
-            //int outInt = 0;
-            //if (int.TryParse(box.Text, out outInt))
-            //{
-            //    box.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-            //    for (int i = 0; i < 7; i++)
-            //    {
-            //        ((BreadGuideVM)DataContext).UpdateValue(i);
-            //    }
-            //}
-            //else if (box.Text.Length > 0)
-            //{
-            //    box.Text = box.Text.Substring(0, box.Text.Length);
-            //}
         }
     }
 }

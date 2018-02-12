@@ -217,7 +217,7 @@ namespace BuddhaBowls
             if (populatedBreadOrders.Count == 0)    // if there are no inventory entries for this week, get Sunday's count
                 breadDay = _models.GetBreadWeek(InvDate.AddDays(-7)).Items[6];
             else
-                breadDay = populatedBreadOrders.FirstOrDefault(x => x.Date.Date == InvDate) ??
+                breadDay = populatedBreadOrders.FirstOrDefault(x => x.Date.Date == InvDate.Date) ??
                            populatedBreadOrders.Where(x => x.Date.Date < InvDate).Last();
 
             VendorInvItemsContainer listVmContainer = InvListVM.GetItemsContainer();
@@ -225,7 +225,6 @@ namespace BuddhaBowls
             {
                 item.Count = breadDay.GetBreadDescriptor(item.Name).BeginInventory + breadDay.BreadDescDict[item.Name].FreezerCount;
             }
-            //listVmContainer.PushChange();
         }
 
         #endregion

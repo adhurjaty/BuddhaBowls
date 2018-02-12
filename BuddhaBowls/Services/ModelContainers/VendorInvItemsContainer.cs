@@ -147,7 +147,6 @@ namespace BuddhaBowls.Services
             _items[Items.FindIndex(x => x.Id == item.Id)] = item;
 
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
-            Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED);
 
             UpdateCopies(item);
         }
@@ -205,7 +204,8 @@ namespace BuddhaBowls.Services
                 else
                     _copies[i].Items[idx] = (VendorInventoryItem)item.Copy();
             }
-            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
+            if(_copies.Count > 0)
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
         }
 
         /// <summary>

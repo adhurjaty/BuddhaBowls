@@ -471,10 +471,10 @@ namespace BuddhaBowls.Services
                             usageDict[kvp.Key] = 0;
                         }
 
-                        if (kvp.Value.Useage > 0)
+                        if (kvp.Value.Usage > 0)
                         {
                             salesDict[kvp.Key] += bo.GrossSales;
-                            usageDict[kvp.Key] += kvp.Value.Useage;
+                            usageDict[kvp.Key] += kvp.Value.Usage;
                         }
                     }
                 }

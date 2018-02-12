@@ -22,7 +22,6 @@ namespace BuddhaBowls
     public class BreadGuideVM : TabVM
     {
         private BreadGuideControl _control;
-        private BackgroundWorker _worker;
         private BreadWeekContainer _breadWeek;
 
         #region Content Binders
@@ -138,16 +137,27 @@ namespace BuddhaBowls
             _control = breadGuideControl;
         }
 
-        private void InitSquareSales()
+        private async void InitSquareSales()
         {
-            // TODO: Change to Async pattern
-            _worker = new BackgroundWorker();
-            _worker.DoWork += _worker_DoWork;
-            _worker.RunWorkerCompleted += _worker_RunWorkerCompleted;
-            _worker.WorkerSupportsCancellation = true;
-
             SquareProgMessage = "Updating from Square...";
-            _worker.RunWorkerAsync();
+            await Task.Run(() =>
+            {
+                SquareService ss = new SquareService();
+                Parallel.ForEach(BreadOrderList.Take(7).Where(x => x.Date < DateTime.Now), order =>
+                {
+                    try
+                    {
+                        order.GrossSales = ss.ListTransactions(order.Date, order.Date.AddDays(1)).Sum(x => x.GrossSales);
+                        order.Update();
+                    }
+                    catch (Exception ex)
+                    {
+                        order.GrossSales = 0;
+                    }
+                });
+                ((BreadOrderTotal)BreadOrderList[7]).UpdateDetails();
+            });
+            SquareProgMessage = "";
         }
 
         #endregion
@@ -188,29 +198,6 @@ namespace BuddhaBowls
             NotifyPropertyChanged("BreadOrderList");
         }
         #endregion
-
-        private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            SquareProgMessage = "";
-        }
-
-        private void _worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            SquareService ss = new SquareService();
-            Parallel.ForEach(BreadOrderList.Take(7).Where(x => x.Date < DateTime.Now), order =>
-            {
-                try
-                {
-                    order.GrossSales = ss.ListTransactions(order.Date, order.Date.AddDays(1)).Sum(x => x.GrossSales);
-                    order.Update();
-                }
-                catch (Exception ex)
-                {
-                    order.GrossSales = 0;
-                }
-            });
-            ((BreadOrderTotal)BreadOrderList[7]).UpdateDetails();
-        }
 
         public void UpdateBackup()
         {

@@ -299,7 +299,6 @@ namespace BuddhaBowls
             UpdateInvValue();
             SetCommandsAndControl();
             Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(DatasetChanged));
-
         }
 
         #region ICommand Helpers
@@ -392,29 +391,12 @@ namespace BuddhaBowls
             }
             FilterText = "";
             CollectionChanged();
-            //_invItemsContainer.AddUpdateBinding(CollectionChanged);
-            //_invItemsContainer.AddUpdateBinding(UpdateInvValue);
-            //_invItemsContainer.PushChange();
         }
 
         public void CollectionChanged()
         {
             FilteredItems = new ObservableCollection<VendorInventoryItem>(_invItemsContainer.Items);
         }
-
-        /// <summary>
-        /// Sync the copy inventory list with the master. Maintain count values however
-        /// </summary>
-        //public void SyncCopyInvList()
-        //{
-        //    Dictionary<int, float> vCountDict = _invItemsContainer.Items.ToDictionary(x => x.Id, x => x.Count);
-        //    InitContainer();
-        //    foreach (VendorInventoryItem item in _invItemsContainer.Items)
-        //    {
-        //        if (vCountDict.ContainsKey(item.Id))
-        //            item.Count = vCountDict[item.Id];
-        //    }
-        //}
 
         public void MoveDown(VendorInventoryItem item)
         {
@@ -447,13 +429,6 @@ namespace BuddhaBowls
         /// <param name="item"></param>
         public void RowEdited(VendorInventoryItem item)
         {
-            //if (IsMasterList)
-            //{
-            //    item.Update();
-            //    _models.VIContainer.UpdateCopies(item);
-            //}
-            //_invItemsContainer.UpdateCopies(item);
-            //item.NotifyAllChanges();
             _invItemsContainer.Update(item);
             UpdateInvValue();
         }
