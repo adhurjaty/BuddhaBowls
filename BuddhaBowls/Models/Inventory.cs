@@ -15,16 +15,10 @@ namespace BuddhaBowls.Models
 
         public DateTime Date { get; set; }
 
-        //private Dictionary<string, List<InventoryItem>> _categoryItemsDict;
         public Dictionary<string, List<InventoryItem>> CategoryItemsDict
         {
             get
             {
-                if (InvItemsContainer == null)
-                {
-                    return GetInvItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
-                    //_invChanged = false;
-                }
                 return InvItemsContainer.Items.GroupBy(x => x.Category).ToDictionary(x => x.Key, y => y.ToList());
             }
         }
@@ -52,11 +46,6 @@ namespace BuddhaBowls.Models
         public Inventory(DateTime date) : this()
         {
             Date = date;
-        }
-
-        public Inventory(DateTime date, InventoryItemsContainer viContainer) : this(date)
-        {
-            InvItemsContainer = viContainer;
         }
 
         /// <summary>
@@ -117,6 +106,11 @@ namespace BuddhaBowls.Models
         public void SetInvItemsContainer(InventoryItemsContainer container)
         {
             InvItemsContainer = container;
+        }
+
+        public void SetInvItemsContainer(VendorInvItemsContainer container)
+        {
+            InvItemsContainer = new InventoryItemsContainer(container.Items.Select(x => x.ToInventoryItem()).ToList());
         }
 
         /// <summary>

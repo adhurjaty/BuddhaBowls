@@ -203,6 +203,20 @@ namespace BuddhaBowls.Models
             }
         }
 
+        private string _measure;
+        public string Measure
+        {
+            get
+            {
+                return _measure;
+            }
+            set
+            {
+                _measure = value;
+                NotifyPropertyChanged("Measure");
+            }
+        }
+
         /// <summary>
         /// Total price of inventory on-hand
         /// </summary>
@@ -307,7 +321,7 @@ namespace BuddhaBowls.Models
         /// <returns></returns>
         public override string[] GetPropertiesDB(string[] omit = null)
         {
-            string[] theseOmissions = new string[] { "PriceExtension", "CountPrice", "PurchaseExtension" };
+            string[] theseOmissions = new string[] { "PriceExtension", "CountPrice", "PurchaseExtension", "Measure" };
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
 
@@ -323,7 +337,7 @@ namespace BuddhaBowls.Models
 
         public RecipeItem ToRecipeItem()
         {
-            return new RecipeItem() { InventoryItemId = Id, Name = Name, Quantity = Count };
+            return new RecipeItem() { InventoryItemId = Id, Name = Name, Quantity = Count, Measure = Measure };
         }
     }
 }

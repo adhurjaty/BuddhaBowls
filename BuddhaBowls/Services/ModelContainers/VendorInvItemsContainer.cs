@@ -42,20 +42,20 @@ namespace BuddhaBowls.Services
         /// <summary>
         /// Instantiate the container. Should only be called in the DBCache class
         /// </summary>
-        /// <param name="items">List of vendor inventory items to contain</param>
+        /// <param name="container">List of vendor inventory items to contain</param>
         /// <param name="vContainer">Vendor container</param>
-        public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer) : this()
+        public VendorInvItemsContainer(InventoryItemsContainer container, VendorsContainer vContainer, bool isMaster) : this()
         {
-            _invItemsContainer = items;
             _vendorsContainer = vContainer;
-            SetItems(_invItemsContainer);
-            Messenger.Instance.Register<Message>(MessageTypes.VENDORS_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
-            Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_ITEM_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
-        }
-
-        public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer, bool isMaster) : this(items, vContainer)
-        {
             _isMaster = isMaster;
+            if (_isMaster)
+            {
+                SetItems(container);
+                Messenger.Instance.Register<Message>(MessageTypes.VENDORS_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
+                Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_ITEM_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
+            }
+            else
+                SetItemsOldInv(container);
         }
 
         public void SetItems(InventoryItemsContainer itemsCont)
@@ -68,6 +68,14 @@ namespace BuddhaBowls.Services
         public void SetItems(List<VendorInventoryItem> items)
         {
             Items = items;
+            _invItemsContainer = new InventoryItemsContainer(items.Select(x => x.ToInventoryItem()).ToList());
+            UpdateCopies();
+        }
+
+        public void SetItemsOldInv(InventoryItemsContainer itemsCont)
+        {
+            _invItemsContainer = itemsCont;
+            Items = _invItemsContainer.Items.Select(x => new VendorInventoryItem(x, _vendorsContainer.Items.FirstOrDefault(y => y.Id == x.LastVendorId) ?? new Vendor())).ToList();
             UpdateCopies();
         }
 
@@ -119,8 +127,11 @@ namespace BuddhaBowls.Services
             }
 
             UpdateCopies(vItem);
-            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, vItem);
-            Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED);
+            if (_isMaster)
+            {
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, vItem);
+                Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED, vItem.ToInventoryItem());
+            }
             return vItem;
         }
 
@@ -135,18 +146,25 @@ namespace BuddhaBowls.Services
 
             _invItemsContainer.RemoveItem(item.ToInventoryItem());
             Items.Remove(item);
-            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
+            if(_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
             UpdateCopies();
         }
 
         public void Update(VendorInventoryItem item)
         {
             if (_isMaster)
+            {
                 item.Update();
-            _vendorsContainer.UpdateItem(item);
+                _vendorsContainer.UpdateItem(item);
+            }
             _items[Items.FindIndex(x => x.Id == item.Id)] = item;
 
-            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
+            if (_isMaster)
+            {
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
+                Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED, item.ToInventoryItem());
+            }
 
             UpdateCopies(item);
         }
@@ -171,7 +189,8 @@ namespace BuddhaBowls.Services
         {
             VendorInvItemsContainer viic = new VendorInvItemsContainer();
             viic.SetInventoryContainer(_invItemsContainer.Copy());
-            viic.SetVendorContainer(_vendorsContainer.Copy());
+            if(_vendorsContainer != null)
+                viic.SetVendorContainer(_vendorsContainer.Copy());
             viic.SetItems(Items.Select(x => (VendorInventoryItem)x.Copy()).ToList());
             _copies.Add(viic);
             return viic;
@@ -215,7 +234,8 @@ namespace BuddhaBowls.Services
         public void SyncCopy(VendorInvItemsContainer container)
         {
             _invItemsContainer = container.GetInvItemsContainer();
-            _vendorsContainer = container.GetVendorsContainer();
+            if(container.GetVendorsContainer() != null)
+                _vendorsContainer = container.GetVendorsContainer();
             SetItems(container.Items);
             RemoveCopy(container);
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
@@ -282,7 +302,8 @@ namespace BuddhaBowls.Services
         public void RemoveCopy(VendorInvItemsContainer viContainer)
         {
             _invItemsContainer.RemoveCopy(viContainer.GetInvItemsContainer());
-            _vendorsContainer.RemoveCopy(viContainer.GetVendorsContainer());
+            if(_vendorsContainer != null)
+                _vendorsContainer.RemoveCopy(viContainer.GetVendorsContainer());
             _copies.Remove(viContainer);
         }
 

@@ -157,6 +157,19 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public string Measure
+        {
+            get
+            {
+                return _invItem.Measure;
+            }
+            set
+            {
+                _invItem.Measure = value;
+                NotifyPropertyChanged("Measure");
+            }
+        }
+
         public float PurchaseExtension
         {
             get
@@ -229,10 +242,7 @@ namespace BuddhaBowls.Models
         /// <param name="v"></param>
         public VendorInventoryItem(InventoryItem item, Vendor v)
         {
-            foreach (string property in item.GetPropertiesDB())
-            {
-                SetProperty(property, item.GetPropertyValue(property));
-            }
+            _invItem = item;
             Id = item.Id;
             LastVendorId = v.Id;
             _vendorDict = new Dictionary<Vendor, InventoryItem>();

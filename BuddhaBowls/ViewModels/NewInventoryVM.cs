@@ -141,7 +141,7 @@ namespace BuddhaBowls
                 Inv.Date = InvDate;
                 Inv.DestroyTable();
 
-                Inv.SetInvItemsContainer(InvListVM.GetItemsContainer().GetInvItemsContainer());
+                Inv.SetInvItemsContainer(InvListVM.GetItemsContainer());
                 Inv = _models.InContainer.AddItem(Inv);
 
                 // if this is the latest date inventory, change item counts for current inv items

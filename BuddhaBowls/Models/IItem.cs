@@ -11,6 +11,7 @@ namespace BuddhaBowls.Models
         string RecipeUnit { get; set; }
         float? RecipeUnitConversion { get; set; }
         float Count { get; set; }
+        string Measure { get; set; }
 
         float CostPerRU { get; }
         float RecipeCost { get; }

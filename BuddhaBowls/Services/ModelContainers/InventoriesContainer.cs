@@ -34,11 +34,12 @@ namespace BuddhaBowls.Services
             {
                 inv.Id = Items[idx].Id;
                 base.Update(inv);
-                return inv;
             }
-
-            inv = base.AddItem(inv);
-            if(_isMaster)
+            else
+            {
+                inv = base.AddItem(inv);
+            }
+            if (_isMaster)
                 Messenger.Instance.NotifyColleagues(MessageTypes.INVENTORY_CHANGED);
             return inv;
         }

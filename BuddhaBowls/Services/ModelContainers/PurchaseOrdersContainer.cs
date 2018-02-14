@@ -22,7 +22,7 @@ namespace BuddhaBowls.Services
             PurchaseOrder order = base.AddItem(item);
             if (_isMaster)
             {
-                Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
+                Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED, item);
             }
 
             return order;
@@ -34,7 +34,7 @@ namespace BuddhaBowls.Services
             _viContainer.UpdateMasterItemOrderRemoved(item, Items);
             if (_isMaster)
             {
-                Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
+                Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED, item);
             }
         }
 
@@ -44,7 +44,7 @@ namespace BuddhaBowls.Services
             _viContainer.UpdateMasterItemOrderChanged(order, Items);
             if (_isMaster)
             {
-                Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
+                Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED, order);
             }
         }
 
@@ -52,6 +52,8 @@ namespace BuddhaBowls.Services
         {
             order.Receive();
             _viContainer.UpdateMasterItemOrderAdded(order);
+            if (_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED, order);
         }
 
         public void ReOpenOrder(PurchaseOrder order)

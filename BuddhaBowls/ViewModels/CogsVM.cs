@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using System;
@@ -112,8 +113,8 @@ namespace BuddhaBowls
             StartInvCommand = new RelayCommand(OpenStartInv);
             EndInvCommand = new RelayCommand(OpenEndInv);
 
-            //_models.InContainer.AddUpdateBinding(delegate () { CalculateCogs(PeriodSelector.SelectedWeek); });
-            //_models.POContainer.AddUpdateBinding(delegate () { CalculateCogs(PeriodSelector.SelectedWeek); });
+            Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_CHANGED, (msg) => InventoryChanged());
+            Messenger.Instance.Register(MessageTypes.PO_CHANGED, new Action<Message>(POChanged));
         }
 
         #region ICommand Helpers
@@ -197,6 +198,12 @@ namespace BuddhaBowls
 
         private void SetInvAndOrders(PeriodMarker timeFrame)
         {
+            SetInv(timeFrame);
+            InitRecOrdersDict(timeFrame);
+        }
+
+        private void SetInv(PeriodMarker timeFrame)
+        {
             List<Inventory> inventoryList = _models.InContainer.Items.OrderByDescending(x => x.Date).ToList();
             List<Inventory> periodInvList = inventoryList.Where(x => timeFrame.StartDate <= x.Date && x.Date <= timeFrame.EndDate).ToList();
 
@@ -204,10 +211,10 @@ namespace BuddhaBowls
             _endInventory = inventoryList.Where(x => x.Date > timeFrame.EndDate).OrderBy(x => x.Date).FirstOrDefault();
 
             // fallback to the last inventory of the week
-            if(_endInventory == null)
+            if (_endInventory == null)
                 _endInventory = inventoryList.Where(x => x.Date <= timeFrame.EndDate).OrderByDescending(x => x.Date).FirstOrDefault();
 
-                if (periodInvList.Count == 0)
+            if (periodInvList.Count == 0)
                 periodInvList.Add(_endInventory);
 
             if (_endInventory != null)
@@ -220,7 +227,6 @@ namespace BuddhaBowls
                 if (_startInventory == null)
                     _startInventory = _endInventory;
             }
-            InitRecOrdersDict(timeFrame);
         }
 
         private void InitRecOrdersDict(PeriodMarker timeFrame)
@@ -265,22 +271,45 @@ namespace BuddhaBowls
 
             return invDict.Values.ToList();
         }
+
+        private void POChanged(Message msg)
+        {
+            PurchaseOrder order = (PurchaseOrder)msg.Payload;
+            if(order.Received && PeriodSelector.SelectedWeek.StartDate <= order.ReceivedDate && order.ReceivedDate <= PeriodSelector.SelectedWeek.EndDate)
+            {
+                InitRecOrdersDict(PeriodSelector.SelectedWeek);
+                foreach (CogsCategory cogs in CategoryList.Where(x => x.Name != "Bread"))
+                {
+                    cogs.SetPOItems(_recOrdersDict[cogs.Name]);
+                }
+            }
+        }
+
+        private void InventoryChanged()
+        {
+            Inventory prevStartInv = _startInventory;
+            Inventory prevEndInv = _endInventory;
+
+            SetInv(PeriodSelector.SelectedWeek);
+            
+            foreach (CogsCategory cogs in CategoryList.Where(x => x.Name != "Bread"))
+            {
+                if (prevStartInv != _startInventory)
+                    cogs.SetStartInventory(_startInventory, silent: true);
+                if (prevEndInv != _endInventory)
+                    cogs.SetEndInventory(_endInventory, silent: true);
+                cogs.UpdateProperties();
+            }
+        }
+
     }
 
-    public class CogsCategory : INotifyPropertyChanged
+    public class CogsCategory : ObservableObject
     {
         private Inventory _startInv;
         private Inventory _endInv;
         private List<InventoryItem> _purchases;
         private List<InventoryItem> _breadOrders;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         public string Name { get; set; }
 
@@ -289,8 +318,6 @@ namespace BuddhaBowls
             get
             {
                 List<InventoryItem> startInvItems = GetInvItems(_startInv);
-                if (startInvItems == null)
-                    return 0;
                 return startInvItems.Sum(x => x.PriceExtension);
             }
         }
@@ -300,8 +327,6 @@ namespace BuddhaBowls
             get
             {
                 List<InventoryItem> endInvItems = GetInvItems(_endInv);
-                if (endInvItems == null)
-                    return 0;
                 return endInvItems.Sum(x => x.PriceExtension);
             }
         }
@@ -366,6 +391,27 @@ namespace BuddhaBowls
             _breadOrders = purchases;
         }
 
+        public void SetStartInventory(Inventory inv, bool silent = false)
+        {
+            _startInv = inv;
+            if(!silent)
+                UpdateProperties();
+        }
+
+        public void SetEndInventory(Inventory inv, bool silent = false)
+        {
+            _endInv = inv;
+            if(!silent)
+                UpdateProperties();
+        }
+
+        public void SetPOItems(List<InventoryItem> items, bool silent = false)
+        {
+            _purchases = items;
+            if(!silent)
+                UpdateProperties();
+        }
+
         private List<InventoryItem> GetInvItems(Inventory inv)
         {
             Dictionary<string, List<InventoryItem>> catDict = inv.CategoryItemsDict;
@@ -377,6 +423,7 @@ namespace BuddhaBowls
                 return new List<InventoryItem>();
             return catDict[Name];
         }
+
     }
 
     public class CatItem

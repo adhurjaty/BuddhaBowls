@@ -42,6 +42,24 @@ namespace BuddhaBowls.Services
             }
         }
 
+        /// <summary>
+        /// Get the PriceExtension value of each category of items
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string, float> GetCategoryValues()
+        {
+            Dictionary<string, float> costDict = new Dictionary<string, float>();
+
+            foreach (InventoryItem item in _items)
+            {
+                if (!costDict.Keys.Contains(item.Category))
+                    costDict[item.Category] = 0;
+                costDict[item.Category] += item.PriceExtension;
+            }
+
+            return costDict;
+        }
+
         protected override void UpdateCopies()
         {
             for (int i = 0; i < _copies.Count; i++)

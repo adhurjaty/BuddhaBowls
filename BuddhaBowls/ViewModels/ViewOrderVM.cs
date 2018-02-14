@@ -116,7 +116,7 @@ namespace BuddhaBowls
             _models.VIContainer.AddVendorAssociations(_vendor, _order.ItemList);
             _vendor.Update();
             _models.VIContainer.UpdateMasterItemOrderAdded(_order);
-            Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED);
+            Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED, _order);
 
             Close();
         }

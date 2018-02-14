@@ -10,8 +10,6 @@
         INVENTORY_ITEM_CHANGED,
         INVENTORY_CHANGED,
         VENDORS_CHANGED,
-        PO_ADDED,
-        PO_REMOVED,
         PO_CHANGED,
         RECIPE_ADDED,
         RECIPE_REMOVED,

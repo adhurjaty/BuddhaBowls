@@ -291,7 +291,7 @@ namespace BuddhaBowls
         public InventoryListVM(Inventory inv, StatusUpdatedDel countDel) : base()
         {
             _inventory = inv;
-            _models.LoadInvContainer(_inventory);
+            //_models.LoadInvContainer(_inventory);
             CountChanged = countDel;
             IsMasterList = false;
 
@@ -387,7 +387,7 @@ namespace BuddhaBowls
                 if (_inventory == null)
                     _invItemsContainer = _models.VIContainer.Copy();
                 else
-                    _invItemsContainer = new VendorInvItemsContainer(_inventory.InvItemsContainer, _models.VContainer);
+                    _invItemsContainer = new VendorInvItemsContainer(_inventory.InvItemsContainer, _models.VContainer, false);
             }
             FilterText = "";
             CollectionChanged();

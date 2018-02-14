@@ -23,6 +23,7 @@ namespace BuddhaBowls
     {
         private BreadGuideControl _control;
         private BreadWeekContainer _breadWeek;
+        private readonly int OFFSET_HOURS = 4;
 
         #region Content Binders
 
@@ -147,7 +148,8 @@ namespace BuddhaBowls
                 {
                     try
                     {
-                        order.GrossSales = ss.ListTransactions(order.Date, order.Date.AddDays(1)).Sum(x => x.GrossSales);
+                        DateTime startTime = order.Date.AddHours(OFFSET_HOURS);
+                        order.GrossSales = ss.ListTransactions(startTime, startTime.AddDays(1)).Sum(x => x.GrossSales);
                         order.Update();
                     }
                     catch (Exception ex)

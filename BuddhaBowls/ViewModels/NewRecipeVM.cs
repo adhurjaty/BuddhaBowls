@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
@@ -20,7 +21,7 @@ namespace BuddhaBowls
     /// </summary>
     public class NewRecipeVM : WizardVM
     {
-        private Action Cleanup;
+        //private Action Cleanup;
         private bool _newItem;
         //private AddItemDel<Recipe> SaveItem;
         //protected List<RecipeItem> _recipeItems;
@@ -241,7 +242,7 @@ namespace BuddhaBowls
 
             Item = (Recipe)recipe.Copy();
             // HACK: best way I could think to remove the recipe copies containers
-            Cleanup = new Action(() => recipe.RemoveCopy(Item));
+            //Cleanup = new Action(() => recipe.RemoveCopy(Item));
             //Refresh();
         }
 
@@ -307,7 +308,7 @@ namespace BuddhaBowls
 
         protected override void Cancel(object obj)
         {
-            Cleanup?.Invoke();
+            //Cleanup?.Invoke();
             base.Cancel(obj);
         }
 
@@ -316,7 +317,7 @@ namespace BuddhaBowls
             if (ValidateInputs())
             {
                 _models.RContainer.AddItem(Item);
-                Cleanup?.Invoke();
+                //Cleanup?.Invoke();
                 Close();
             }
         }
@@ -343,8 +344,8 @@ namespace BuddhaBowls
 
         public void CountChanged()
         {
-            NotifyPropertyChanged("RecipeCost");
-            NotifyPropertyChanged("ProportionDetails");
+            NotifyPropertyChanged("Item");
+            //Item.UpdateProperties();
         }
 
         #endregion
