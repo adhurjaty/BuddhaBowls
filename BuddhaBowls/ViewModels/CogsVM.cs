@@ -115,6 +115,7 @@ namespace BuddhaBowls
 
             Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_CHANGED, (msg) => InventoryChanged());
             Messenger.Instance.Register(MessageTypes.PO_CHANGED, new Action<Message>(POChanged));
+            Messenger.Instance.Register<Message>(MessageTypes.BREAD_CHANGED, (msg) => HandleBread((BreadWeekContainer)msg.Payload));
         }
 
         #region ICommand Helpers
@@ -200,6 +201,8 @@ namespace BuddhaBowls
         {
             SetInv(timeFrame);
             InitRecOrdersDict(timeFrame);
+            if (timeFrame.GetType() == typeof(WeekMarker))
+                HandleBread(_models.GetBreadWeek((WeekMarker)timeFrame), (WeekMarker)timeFrame);
         }
 
         private void SetInv(PeriodMarker timeFrame)
@@ -239,7 +242,6 @@ namespace BuddhaBowls
             {
                 _recOrdersDict[itemDict.Key].AddRange(itemDict.Value);
             }
-            _recOrdersDict["Bread"] = _models.GetBreadPeriodOrders(timeFrame).ToList();
             _recOrdersDict["Total"] = _recOrdersDict.Values.SelectMany(x => x).ToList();
             _recOrdersDict["Food Total"] = _recOrdersDict.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key))
                                                          .SelectMany(x => x.Value).ToList();
@@ -281,6 +283,36 @@ namespace BuddhaBowls
                 foreach (CogsCategory cogs in CategoryList.Where(x => x.Name != "Bread"))
                 {
                     cogs.SetPOItems(_recOrdersDict[cogs.Name]);
+                }
+            }
+        }
+
+        private void HandleBread(BreadWeekContainer container, WeekMarker timeframe = null)
+        {
+            DateTime endDate = container.Week[0].Date.Date;
+            timeframe = timeframe ?? PeriodSelector.SelectedWeek;
+            if (endDate <= timeframe.EndDate && endDate >= timeframe.StartDate)
+            {
+                List<InventoryItem> breadItems = container.GetWeekAsInvItems().ToList();
+
+                _recOrdersDict["Bread"] = breadItems;
+
+                int idx = 0;
+                foreach (string breadType in container.Week[0].BreadDescDict.Keys)
+                {
+                    int invIdx = _startInventory.InvItemsContainer.Items.FindIndex(x => x.Name == breadType);
+                    _startInventory.InvItemsContainer.Items[invIdx] = breadItems[idx];
+                    invIdx = _endInventory.InvItemsContainer.Items.FindIndex(x => x.Name == breadType);
+                    _endInventory.InvItemsContainer.Items[invIdx] = breadItems[breadItems.Count - container.Week[0].BreadDescDict.Count + idx];
+                    idx++;
+                }
+
+                if (CategoryList != null)
+                {
+                    CogsCategory breadCategory = CategoryList.FirstOrDefault(x => x.Name == "Bread");
+                    breadCategory.SetStartInventory(_startInventory, true);
+                    breadCategory.SetEndInventory(_endInventory, true);
+                    breadCategory.SetPOItems(_recOrdersDict["Bread"]);
                 }
             }
         }
@@ -426,15 +458,109 @@ namespace BuddhaBowls
 
     }
 
-    public class CatItem
+    public class CatItem : ObservableObject
     {
-        public string Name { get; set; }
-        public float StartCount { get; set; }
-        public float StartValue { get; set; }
-        public float RecCount { get; set; }
-        public float RecValue { get; set; }
-        public float EndCount { get; set; }
-        public float EndValue { get; set; }
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+                NotifyPropertyChanged("Name");
+            }
+        }
+
+        private float _startCount;
+        public float StartCount
+        {
+            get
+            {
+                return _startCount;
+            }
+            set
+            {
+                _startCount = value;
+                NotifyPropertyChanged("StartCount");
+                NotifyPropertyChanged("Usage");
+            }
+        }
+
+        private float _startValue;
+        public float StartValue
+        {
+            get
+            {
+                return _startValue;
+            }
+            set
+            {
+                _startValue = value;
+                NotifyPropertyChanged("StartValue");
+            }
+        }
+
+        private float _recCount;
+        public float RecCount
+        {
+            get
+            {
+                return _recCount;
+            }
+            set
+            {
+                _recCount = value;
+                NotifyPropertyChanged("RecCount");
+                NotifyPropertyChanged("Usage");
+            }
+        }
+
+        private float _recValue;
+        public float RecValue
+        {
+            get
+            {
+                return _recValue;
+            }
+            set
+            {
+                _recValue = value;
+                NotifyPropertyChanged("RecValue");
+            }
+        }
+
+        private float _endCount;
+        public float EndCount
+        {
+            get
+            {
+                return _endCount;
+            }
+            set
+            {
+                _endCount = value;
+                NotifyPropertyChanged("EndCount");
+                NotifyPropertyChanged("Usage");
+            }
+        }
+
+        private float _endValue;
+        public float EndValue
+        {
+            get
+            {
+                return _endValue;
+            }
+            set
+            {
+                _endValue = value;
+                NotifyPropertyChanged("EndValue");
+            }
+        }
+
         public float Usage
         {
             get

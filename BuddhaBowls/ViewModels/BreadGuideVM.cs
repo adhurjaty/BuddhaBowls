@@ -189,6 +189,7 @@ namespace BuddhaBowls
                 }
             }
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
+            Messenger.Instance.NotifyColleagues(MessageTypes.BREAD_CHANGED, _breadWeek);
         }
 
         public void ChangeBreadWeek(PeriodMarker period, WeekMarker week)

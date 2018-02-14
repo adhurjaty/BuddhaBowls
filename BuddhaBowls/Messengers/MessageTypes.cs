@@ -14,6 +14,7 @@
         RECIPE_ADDED,
         RECIPE_REMOVED,
         RECIPE_CHANGED,
-        VENDOR_INV_ITEMS_CHANGED
+        VENDOR_INV_ITEMS_CHANGED,
+        BREAD_CHANGED
     };
 }
