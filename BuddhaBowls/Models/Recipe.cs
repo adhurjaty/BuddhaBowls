@@ -183,7 +183,7 @@ namespace BuddhaBowls.Models
         public Recipe() : base()
         {
             _tableName = "Recipe";
-            Messenger.Instance.Register(MessageTypes.RECIPE_CHANGED, new Action<Message>(RecipeChanged));
+            Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(RecipeChanged));
         }
 
         public Recipe(Dictionary<string, string> searchParams) : this()
@@ -337,10 +337,10 @@ namespace BuddhaBowls.Models
         private void RecipeChanged(Message msg)
         {
             InventoryItem item = (InventoryItem)msg.Payload;
-            if(ItemList.FirstOrDefault(x => x.GetType() == item.GetType() && x.Id == item.Id) != null)
-            {
+            //if(item == null || ItemList.FirstOrDefault(x => x.GetType() == item.GetType() && x.Id == item.Id) != null)
+            //{
                 ItemList = null;
-            }
+            //}
         }
 
         private string GetRecipeTableName()

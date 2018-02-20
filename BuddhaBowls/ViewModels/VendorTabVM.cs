@@ -263,7 +263,6 @@ namespace BuddhaBowls
         {
             SelectedVendor.Update();
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
-            Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED, item);
         }
         #endregion
     }

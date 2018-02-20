@@ -108,14 +108,16 @@ namespace BuddhaBowls
 
         private void SaveEdits(object obj)
         {
+            // make sure there are no 0 qty items
+            _invItemsContainer.SetItems(_invItemsContainer.Items.Where(x => x.LastOrderAmount > 0).ToList());
+
             _order.GetItemsContainer().SyncCopy(_invItemsContainer);
             _order.Update();
-            UpdateLatestVendorOrder();
             OverwriteExcelPO(_order);
 
-            _models.VIContainer.AddVendorAssociations(_vendor, _order.ItemList);
-            _vendor.Update();
-            _models.VIContainer.UpdateMasterItemOrderAdded(_order);
+            if (_order.Received)
+                _models.VIContainer.UpdateMasterItemOrderAdded(_order);
+
             Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED, _order);
 
             Close();
@@ -157,8 +159,9 @@ namespace BuddhaBowls
 
         private void OrderEdited(InventoryItem item)
         {
+            if (item.LastOrderAmount == 0)
+                _invItemsContainer.RemoveItem(item);
             BreakdownContext.UpdateDisplay();
-
             // check whether the item being edited is the latest order from this vendor. If so, then change the properties of the current
             // inventory item (last order price, last order qty...)
             

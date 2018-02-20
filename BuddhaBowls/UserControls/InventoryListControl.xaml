@@ -75,7 +75,7 @@
                 <DataGridTemplateColumn Header="Vendor" Width="3*"> <!--Visibility="{Binding Path=Data.EditVendorVisibility, Source={StaticResource proxy}}">-->
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Vendors}" SelectedItem="{Binding SelectedVendor}" SelectionChanged="ComboBox_Selected"
+                            <ComboBox ItemsSource="{Binding Vendors}" SelectedItem="{Binding SelectedVendor}" SelectionChanged="ComboBox_Selected" PreviewMouseDown="ComboBox_PreviewMouseDown"
                                       DisplayMemberPath="Name" Margin="0, 0, 10, 0" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

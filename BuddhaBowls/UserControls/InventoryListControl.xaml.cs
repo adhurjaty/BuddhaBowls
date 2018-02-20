@@ -21,6 +21,8 @@ namespace BuddhaBowls.UserControls
     /// </summary>
     public partial class InventoryListControl : UserControl
     {
+        private bool _isUserInteraction = false;
+        
         public InventoryListControl()
         {
             InitializeComponent();
@@ -68,7 +70,17 @@ namespace BuddhaBowls.UserControls
 
         private void ComboBox_Selected(object sender, RoutedEventArgs e)
         {
-            ((VendorInventoryItem)((ComboBox)sender).DataContext).SelectedVendor = (Vendor)((ComboBox)sender).SelectedItem;
+            VendorInventoryItem item = (VendorInventoryItem)((ComboBox)sender).DataContext;
+            Vendor selectedVendor = (Vendor)((ComboBox)sender).SelectedItem;
+            item.SelectedVendor = selectedVendor;
+            if (item.SelectedVendor != null && _isUserInteraction)
+                ((InventoryListVM)DataContext).RowEdited(item);
+            _isUserInteraction = false;
+        }
+
+        private void ComboBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _isUserInteraction = true;
         }
     }
 }

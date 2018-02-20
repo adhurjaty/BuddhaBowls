@@ -130,7 +130,6 @@ namespace BuddhaBowls.Services
             if (_isMaster)
             {
                 Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, vItem);
-                Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED, vItem.ToInventoryItem());
             }
             return vItem;
         }
@@ -163,7 +162,6 @@ namespace BuddhaBowls.Services
             if (_isMaster)
             {
                 Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
-                Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED, item.ToInventoryItem());
             }
 
             UpdateCopies(item);

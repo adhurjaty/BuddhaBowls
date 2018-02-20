@@ -51,9 +51,11 @@ namespace BuddhaBowls.Services
         public void RecieveOrder(PurchaseOrder order)
         {
             order.Receive();
-            _viContainer.UpdateMasterItemOrderAdded(order);
             if (_isMaster)
+            {
+                _viContainer.UpdateMasterItemOrderAdded(order);
                 Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED, order);
+            }
         }
 
         public void ReOpenOrder(PurchaseOrder order)

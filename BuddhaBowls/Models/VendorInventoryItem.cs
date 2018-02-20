@@ -371,18 +371,8 @@ namespace BuddhaBowls.Models
         public override void Update()
         {
             //InventoryItem item = ToInventoryItem();
-
-            //foreach (Vendor v in Vendors)
-            //{
-            //    v.Update();
-            //}
-            //if (SelectedVendor != null)
-            //{
-            //    SelectedVendor.Update(item);
-            //    _vendorDict[SelectedVendor] = item;
-            //}
-            //NotifyAllChanges();
-            //item.Update();
+            if(SelectedVendor != null)
+                _invItem.LastVendorId = SelectedVendor.Id;
             _invItem.Update();
         }
 

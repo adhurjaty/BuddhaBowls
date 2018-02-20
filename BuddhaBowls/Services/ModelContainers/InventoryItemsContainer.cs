@@ -18,9 +18,14 @@ namespace BuddhaBowls.Services
 
         public InventoryItemsContainer Copy()
         {
-            InventoryItemsContainer iic = new InventoryItemsContainer(_items.Select(x => x.Copy<InventoryItem>()).ToList());
+            InventoryItemsContainer iic = CleanCopy();
             _copies.Add(iic);
             return iic;
+        }
+
+        public InventoryItemsContainer CleanCopy()
+        {
+            return new InventoryItemsContainer(_items.Select(x => x.Copy<InventoryItem>()).ToList());
         }
 
         public override InventoryItem AddItem(InventoryItem item)
@@ -64,7 +69,7 @@ namespace BuddhaBowls.Services
         {
             for (int i = 0; i < _copies.Count; i++)
             {
-                _copies[i] = Copy();
+                _copies[i] = CleanCopy();
             }
         }
 
