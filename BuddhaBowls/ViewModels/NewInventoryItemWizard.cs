@@ -109,7 +109,7 @@ namespace BuddhaBowls
             Item = item.ToInventoryItem();
             Header = "Edit Inventory Item";
 
-            Yield = (item.Yield ?? 1) * 100;
+            Yield = (float)Math.Round(item.Yield ?? 1, 1) * 100;
 
             VendorList = new ObservableCollection<VendorInfo>();
             foreach (Vendor vend in item.Vendors)

@@ -72,9 +72,12 @@ namespace BuddhaBowls.UserControls
         {
             VendorInventoryItem item = (VendorInventoryItem)((ComboBox)sender).DataContext;
             Vendor selectedVendor = (Vendor)((ComboBox)sender).SelectedItem;
-            item.SelectedVendor = selectedVendor;
-            if (item.SelectedVendor != null && _isUserInteraction)
-                ((InventoryListVM)DataContext).RowEdited(item);
+            if (selectedVendor != null)
+            {
+                item.SelectedVendor = selectedVendor;
+                if (item.SelectedVendor != null && _isUserInteraction)
+                    ((InventoryListVM)DataContext).RowEdited(item);
+            }
             _isUserInteraction = false;
         }
 

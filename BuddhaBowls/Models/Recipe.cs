@@ -336,7 +336,7 @@ namespace BuddhaBowls.Models
 
         private void RecipeChanged(Message msg)
         {
-            InventoryItem item = (InventoryItem)msg.Payload;
+            //InventoryItem item = (InventoryItem)msg.Payload;
             //if(item == null || ItemList.FirstOrDefault(x => x.GetType() == item.GetType() && x.Id == item.Id) != null)
             //{
                 ItemList = null;

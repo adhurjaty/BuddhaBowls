@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuddhaBowls.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,15 +10,8 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class PAndLSummarySection : INotifyPropertyChanged
+    public class PAndLSummarySection : ObservableObject
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         public string SummaryType { get; set; }
         public int WeekNumber { get; set; }
         public bool CanEdit { get; set; }

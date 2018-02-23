@@ -86,6 +86,8 @@ namespace BuddhaBowls
         public ICommand AddPrepCommand { get; set; }
         public ICommand DeletePrepCommand { get; set; }
         public ICommand EditPrepCommand { get; set; }
+        // TEMPORARY - REMOVE IN NEXT BUILD
+        public ICommand FixYieldCommand { get; set; }
 
         public bool DeleteEditCanExecute
         {
@@ -111,12 +113,43 @@ namespace BuddhaBowls
             DeleteCommand = new RelayCommand(DeleteInventory, x => DeleteEditCanExecute && DBConnection);
             ViewCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute && DBConnection);
             InvListCommand = new RelayCommand(GenerateInvList, x => DBConnection);
+            FixYieldCommand = new RelayCommand(FixYields);
 
             Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_CHANGED, (msg) => ShowSelectedWeek(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek));
 
             if (DBConnection)
                 PeriodSelector = new PeriodSelectorVM(_models, ShowSelectedWeek);
             // rest of initialization in ChangePageState called from base()
+        }
+
+        private void FixYields(object obj)
+        {
+            string[] paths = new string[] { Path.Combine(Properties.Settings.Default.DBLocation, "InventoryItem.csv") }
+                                .Concat(Directory.GetFiles(Path.Combine(Properties.Settings.Default.DBLocation, "Vendors"))).ToArray();
+            foreach (string path in paths)
+            {
+                string[][] contents = File.ReadAllLines(path).Select(x => x.Split(',')).ToArray();
+                string[] header = contents[0];
+                int yieldIdx = Array.IndexOf(header, "Yield");
+                if(yieldIdx > -1)
+                {
+                    for (int i = 1; i < contents.Length; i++)
+                    {
+                        string yieldStr = contents[i][yieldIdx];
+                        float yieldVal = 100;
+                        float.TryParse(yieldStr, out yieldVal);
+                        if(yieldVal > 8)
+                        {
+                            int factor = (int)Math.Round(Math.Log10(yieldVal));
+                            contents[i][yieldIdx] = Math.Round((yieldVal * (Math.Pow(10, -factor))), 2).ToString();
+                        }
+                        
+                    }
+                }
+
+                string fileContents = string.Join("\n", contents.Select(x => string.Join(",", x)));
+                File.WriteAllText(path, fileContents);
+            }
         }
 
         #region ICommand Helpers

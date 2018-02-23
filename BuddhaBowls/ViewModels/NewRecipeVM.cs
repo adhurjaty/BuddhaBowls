@@ -225,6 +225,7 @@ namespace BuddhaBowls
             Header = "New " + (isBatch ? "Batch Recipe" : "Menu Item");
 
             Item = new Recipe();
+            Item.SetContainer(_models.RContainer);
             Item.IsBatch = isBatch;
             Item.RecipeUnitConversion = 1;
         }
