@@ -1,0 +1,165 @@
+12/14/17 - 15:47:48 - INFO - Loading models
+12/14/17 - 15:47:49 - INFO - Models loaded
+12/14/17 - 15:47:51 - INFO - Inserted BreadOrder: 104
+12/14/17 - 15:47:51 - INFO - Inserted BreadOrder: 105
+12/14/17 - 15:47:51 - INFO - Inserted BreadOrder: 106
+12/14/17 - 15:47:51 - INFO - Inserted BreadOrder: 107
+12/14/17 - 15:47:51 - INFO - Inserted BreadOrder: 108
+12/14/17 - 15:47:51 - INFO - Inserted BreadOrder: 109
+12/14/17 - 15:47:51 - INFO - Inserted BreadOrder: 110
+12/14/17 - 15:47:51 - INFO - Upating BreadOrder: 104
+12/14/17 - 15:47:51 - INFO - Upating BreadOrder: 105
+12/14/17 - 15:47:51 - INFO - Upating BreadOrder: 106
+12/14/17 - 15:47:51 - INFO - Upating BreadOrder: 107
+12/14/17 - 15:47:51 - INFO - Upating BreadOrder: 108
+12/14/17 - 15:47:51 - INFO - Upating BreadOrder: 109
+12/14/17 - 15:47:51 - INFO - Upating BreadOrder: 110
+12/14/17 - 15:47:51 - INFO - Upating BreadOrder: 104
+12/14/17 - 15:47:51 - INFO - Upating BreadOrder: 105
+12/14/17 - 15:47:52 - INFO - Upating BreadOrder: 106
+12/14/17 - 15:47:52 - INFO - Upating BreadOrder: 107
+12/14/17 - 15:47:52 - INFO - Upating BreadOrder: 108
+12/14/17 - 15:47:52 - INFO - Upating BreadOrder: 109
+12/14/17 - 15:47:52 - INFO - Upating BreadOrder: 110
+12/14/17 - 15:47:52 - INFO - Adding temp tab: NewInventoryItemWizard
+12/14/17 - 15:48:14 - INFO - Inserted InventoryItem: 77
+12/14/17 - 15:52:59 - INFO - Loading models
+12/14/17 - 15:52:59 - INFO - Models loaded
+12/14/17 - 15:53:02 - INFO - Adding temp tab: NewInventoryItemWizard
+12/14/17 - 15:53:07 - INFO - Inserted InventoryItem: 77
+12/14/17 - 15:53:37 - INFO - Upating Vendor: 4
+12/14/17 - 15:53:44 - INFO - Upating Vendor: 0
+12/14/17 - 15:59:02 - INFO - Removing temp tab
+12/14/17 - 15:59:10 - INFO - Upating BreadOrder: 107
+12/14/17 - 15:59:27 - INFO - Upating BreadOrder: 105
+12/14/17 - 15:59:27 - INFO - Upating BreadOrder: 106
+12/14/17 - 15:59:27 - INFO - Upating BreadOrder: 104
+12/14/17 - 15:59:29 - INFO - Destroying InventoryItem: 77
+12/14/17 - 16:00:26 - INFO - Loading models
+12/14/17 - 16:00:26 - INFO - Models loaded
+12/14/17 - 16:00:29 - INFO - Adding temp tab: NewInventoryItemWizard
+12/14/17 - 16:00:32 - INFO - Inserted InventoryItem: 77
+12/14/17 - 16:00:38 - INFO - Upating Vendor: 4
+12/14/17 - 16:00:38 - INFO - Upating Vendor: 0
+12/14/17 - 16:00:38 - INFO - Removing temp tab
+12/14/17 - 16:00:48 - INFO - Upating BreadOrder: 105
+12/14/17 - 16:00:48 - INFO - Upating BreadOrder: 106
+12/14/17 - 16:00:48 - INFO - Upating BreadOrder: 104
+12/14/17 - 16:00:49 - INFO - Upating BreadOrder: 107
+12/14/17 - 16:02:30 - INFO - Destroying InventoryItem: 77
+12/14/17 - 16:05:09 - INFO - Loading models
+12/14/17 - 16:05:10 - INFO - Models loaded
+12/14/17 - 16:05:12 - INFO - Adding temp tab: NewInventoryItemWizard
+12/14/17 - 16:05:12 - INFO - Inserted InventoryItem: 77
+12/14/17 - 16:05:12 - INFO - Upating Vendor: 4
+12/14/17 - 16:05:12 - INFO - Upating Vendor: 0
+12/14/17 - 16:05:12 - INFO - Removing temp tab
+12/14/17 - 16:05:16 - INFO - Upating BreadOrder: 105
+12/14/17 - 16:05:16 - INFO - Upating BreadOrder: 104
+12/14/17 - 16:05:16 - INFO - Upating BreadOrder: 107
+12/14/17 - 16:05:16 - INFO - Upating BreadOrder: 106
+12/14/17 - 16:05:27 - INFO - Destroying InventoryItem: 77
+12/14/17 - 16:05:42 - INFO - Loading models
+12/14/17 - 16:05:42 - INFO - Models loaded
+12/14/17 - 16:05:44 - INFO - Adding temp tab: NewInventoryItemWizard
+12/14/17 - 16:05:44 - INFO - Inserted InventoryItem: 77
+12/14/17 - 16:05:44 - INFO - Upating Vendor: 4
+12/14/17 - 16:05:44 - INFO - Upating Vendor: 0
+12/14/17 - 16:05:44 - INFO - Removing temp tab
+12/14/17 - 16:05:46 - INFO - Upating BreadOrder: 107
+12/14/17 - 16:05:46 - INFO - Destroying InventoryItem: 77
+12/14/17 - 16:06:08 - INFO - Loading models
+12/14/17 - 16:06:09 - INFO - Models loaded
+12/14/17 - 16:06:11 - INFO - Adding temp tab: NewInventoryItemWizard
+12/14/17 - 16:06:11 - INFO - Inserted InventoryItem: 77
+12/14/17 - 16:06:11 - INFO - Upating Vendor: 4
+12/14/17 - 16:06:11 - INFO - Upating Vendor: 0
+12/14/17 - 16:06:11 - INFO - Removing temp tab
+12/14/17 - 16:06:16 - INFO - Destroying InventoryItem: 77
+12/14/17 - 16:06:16 - INFO - Upating BreadOrder: 107
+12/14/17 - 16:06:38 - INFO - Loading models
+12/14/17 - 16:06:38 - INFO - Models loaded
+12/14/17 - 16:21:46 - INFO - Loading models
+12/14/17 - 16:21:47 - INFO - Models loaded
+12/14/17 - 16:23:41 - INFO - Loading models
+12/14/17 - 16:23:42 - INFO - Models loaded
+12/14/17 - 16:27:42 - INFO - Loading models
+12/14/17 - 16:27:43 - INFO - Models loaded
+12/14/17 - 16:29:21 - INFO - Loading models
+12/14/17 - 16:29:22 - INFO - Models loaded
+12/14/17 - 16:31:01 - INFO - Loading models
+12/14/17 - 16:31:01 - INFO - Models loaded
+12/14/17 - 16:31:24 - INFO - Adding temp tab: NewInventoryVM
+12/14/17 - 16:37:33 - INFO - Loading models
+12/14/17 - 16:37:34 - INFO - Models loaded
+12/14/17 - 16:37:42 - INFO - Adding temp tab: NewInventoryVM
+12/14/17 - 16:37:56 - INFO - Upating Vendor: 1
+12/14/17 - 16:37:56 - INFO - Upating Vendor: 1
+12/14/17 - 16:37:56 - INFO - Upating Vendor: 1
+12/14/17 - 16:37:56 - INFO - Upating Vendor: 2
+12/14/17 - 16:37:56 - INFO - Upating Vendor: 2
+12/14/17 - 16:38:02 - INFO - Inserted InventoryItem: 77
+12/14/17 - 16:38:02 - INFO - Upating Vendor: 4
+12/14/17 - 16:38:02 - INFO - Upating Vendor: 0
+12/14/17 - 16:40:11 - INFO - Loading models
+12/14/17 - 16:40:12 - INFO - Models loaded
+12/14/17 - 16:40:18 - INFO - Adding temp tab: NewInventoryVM
+12/14/17 - 16:40:22 - INFO - Upating Vendor: 1
+12/14/17 - 16:40:22 - INFO - Upating Vendor: 1
+12/14/17 - 16:40:22 - INFO - Upating Vendor: 1
+12/14/17 - 16:40:22 - INFO - Upating Vendor: 2
+12/14/17 - 16:40:22 - INFO - Upating Vendor: 2
+12/14/17 - 16:40:42 - INFO - Upating BreadOrder: 107
+12/14/17 - 16:40:42 - INFO - Upating BreadOrder: 106
+12/14/17 - 16:40:42 - INFO - Upating BreadOrder: 104
+12/14/17 - 16:40:42 - INFO - Upating BreadOrder: 105
+12/14/17 - 16:40:43 - INFO - Destroying InventoryItem: 77
+12/14/17 - 16:40:56 - INFO - Loading models
+12/14/17 - 16:40:56 - INFO - Models loaded
+12/14/17 - 16:40:58 - INFO - Adding temp tab: NewInventoryVM
+12/14/17 - 16:40:58 - INFO - Upating Vendor: 1
+12/14/17 - 16:40:58 - INFO - Upating Vendor: 1
+12/14/17 - 16:40:59 - INFO - Upating Vendor: 1
+12/14/17 - 16:40:59 - INFO - Upating Vendor: 2
+12/14/17 - 16:40:59 - INFO - Upating Vendor: 2
+12/14/17 - 16:40:59 - INFO - Inserted InventoryItem: 77
+12/14/17 - 16:40:59 - INFO - Upating Vendor: 4
+12/14/17 - 16:40:59 - INFO - Upating Vendor: 0
+12/14/17 - 16:41:26 - INFO - Loading models
+12/14/17 - 16:41:27 - INFO - Models loaded
+12/14/17 - 16:41:29 - INFO - Adding temp tab: NewInventoryVM
+12/14/17 - 16:41:29 - INFO - Upating Vendor: 1
+12/14/17 - 16:41:29 - INFO - Upating Vendor: 1
+12/14/17 - 16:41:29 - INFO - Upating Vendor: 1
+12/14/17 - 16:41:29 - INFO - Upating Vendor: 2
+12/14/17 - 16:41:29 - INFO - Upating Vendor: 2
+12/14/17 - 16:41:29 - INFO - Inserted InventoryItem: 77
+12/14/17 - 16:41:29 - INFO - Upating Vendor: 4
+12/14/17 - 16:41:29 - INFO - Upating Vendor: 0
+12/14/17 - 16:42:18 - INFO - Loading models
+12/14/17 - 16:42:18 - INFO - Models loaded
+12/14/17 - 16:42:25 - INFO - Adding temp tab: NewInventoryVM
+12/14/17 - 16:42:25 - INFO - Upating Vendor: 1
+12/14/17 - 16:42:25 - INFO - Upating Vendor: 1
+12/14/17 - 16:42:25 - INFO - Upating Vendor: 1
+12/14/17 - 16:42:25 - INFO - Upating Vendor: 2
+12/14/17 - 16:42:25 - INFO - Upating Vendor: 2
+12/14/17 - 16:42:25 - INFO - Inserted InventoryItem: 77
+12/14/17 - 16:42:25 - INFO - Upating Vendor: 4
+12/14/17 - 16:42:25 - INFO - Upating Vendor: 0
+12/14/17 - 16:48:50 - INFO - Loading models
+12/14/17 - 16:48:51 - INFO - Models loaded
+12/14/17 - 16:48:53 - INFO - Adding temp tab: NewInventoryVM
+12/14/17 - 16:48:53 - INFO - Upating Vendor: 1
+12/14/17 - 16:48:53 - INFO - Upating Vendor: 1
+12/14/17 - 16:48:53 - INFO - Upating Vendor: 1
+12/14/17 - 16:48:53 - INFO - Upating Vendor: 2
+12/14/17 - 16:48:53 - INFO - Upating Vendor: 2
+12/14/17 - 16:48:54 - INFO - Inserted InventoryItem: 77
+12/14/17 - 16:48:54 - INFO - Upating Vendor: 4
+12/14/17 - 16:48:54 - INFO - Upating Vendor: 0
+12/14/17 - 16:48:55 - INFO - Upating BreadOrder: 106
+12/14/17 - 16:48:55 - INFO - Upating BreadOrder: 105
+12/14/17 - 16:48:55 - INFO - Upating BreadOrder: 104
+12/14/17 - 16:48:55 - INFO - Upating BreadOrder: 107
+12/14/17 - 16:48:55 - INFO - Destroying InventoryItem: 77

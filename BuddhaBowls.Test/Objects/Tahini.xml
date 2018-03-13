@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>148.18</LastPurchasedPrice>
+  <Name>Tahini</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>40lbs</PurchasedUnit>
+  <Count>36.4</Count>
+  <CountUnit>LB</CountUnit>
+  <Conversion>40</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>640</RecipeUnitConversion>
+  <Yield>0.98</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>40</Id>
+</InventoryItem>

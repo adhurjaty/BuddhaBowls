@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>99.49</LastPurchasedPrice>
+  <Name>Chopped Clams</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>12x48oz CANS</PurchasedUnit>
+  <Count>1.5</Count>
+  <CountUnit>CAN</CountUnit>
+  <Conversion>12</Conversion>
+  <RecipeUnit>EA</RecipeUnit>
+  <RecipeUnitConversion>12</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>24</Id>
+</InventoryItem>

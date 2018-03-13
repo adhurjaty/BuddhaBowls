@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>68.7</LastPurchasedPrice>
+  <Name>Chicken Breast</Name>
+  <Category>Poultry</Category>
+  <PurchasedUnit>40lb CASE</PurchasedUnit>
+  <Count>40</Count>
+  <CountUnit>CASE</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>640</RecipeUnitConversion>
+  <Yield>0.85</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>72</Id>
+</InventoryItem>

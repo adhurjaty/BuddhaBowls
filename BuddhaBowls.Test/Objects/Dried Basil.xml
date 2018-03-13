@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>7.71</LastPurchasedPrice>
+  <Name>Dried Basil</Name>
+  <Category>Herbs</Category>
+  <PurchasedUnit>24oz</PurchasedUnit>
+  <Count>1</Count>
+  <CountUnit>OZ-wt</CountUnit>
+  <Conversion>24</Conversion>
+  <RecipeUnit>TBL</RecipeUnit>
+  <RecipeUnitConversion>274.29</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>43</Id>
+</InventoryItem>

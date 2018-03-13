@@ -1,0 +1,13 @@
+Id,Name,InventoryItemId,Measure,Quantity,IsBatch
+0,Butter,3,1 lb,16,FALSE
+1,Heavy Cream,5,8 Cups,8,FALSE
+2,Chopped Clams,22,1.5 Cans,1.5,FALSE
+3,Clam Juice,24,2 Cans,2,FALSE
+4,Flour,34,6 Cups,6,FALSE
+5,Thyme,41,3 TBL,3,FALSE
+6,Pepper,45,3 TBL,3,FALSE
+7,Salt,46,6 TBL,6,FALSE
+8,Old Bay Seasoning,49,1.5 TBL,1.5,FALSE
+9,Yellow Onions,51,1/2 Pan,100,FALSE
+10,Potatoes,53,2 (1/6) Pans,120,FALSE
+11,Celery,61,2 Bunches,2,FALSE

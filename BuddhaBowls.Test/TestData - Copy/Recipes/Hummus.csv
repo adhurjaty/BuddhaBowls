@@ -1,0 +1,9 @@
+Id,Name,InventoryItemId,Measure,Quantity,IsBatch
+0,Garbanzo Beans,16,4 CANS,4,False
+1,Olive Oil,36,3 CUPS,24,False
+2,Tahini,40,5 CUPS,36.4,False
+3,Lemon Juice,42,5 CUPS,40,False
+4,Cumin,46,1/4 CUP,4,False
+5,Pepper,48,1/4 CUP,4,False
+6,Salt,49,1 CUP,16,False
+7,Garlic Peeled,71,1 CUP,16,False

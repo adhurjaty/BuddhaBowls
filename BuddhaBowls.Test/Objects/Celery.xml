@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>2.05</LastPurchasedPrice>
+  <Name>Celery</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>1/2 CASE</PurchasedUnit>
+  <Count>2</Count>
+  <CountUnit>1/2 CASE</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>BUNCH</RecipeUnit>
+  <RecipeUnitConversion>12</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>63</Id>
+</InventoryItem>

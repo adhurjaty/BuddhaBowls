@@ -54,17 +54,17 @@ namespace BuddhaBowls
 
         public void Execute(object parameter)
         {
-            try
-            {
-                Logger.Info(string.Format("Executing {0}#{1}", _execute.Method.DeclaringType.Name, _execute.Method.Name));
+            //try
+            //{
+            //    Logger.Info(string.Format("Executing {0}#{1}", _execute.Method.DeclaringType.Name, _execute.Method.Name));
                 _execute(parameter);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e.Message);
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-}
+            //}
+            //catch (Exception e)
+            //{
+            //    Logger.Error(e.Message);
+            //    MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
+        }
 
         public void OnCanExecuteChanged()
         {

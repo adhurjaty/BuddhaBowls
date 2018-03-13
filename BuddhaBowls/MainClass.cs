@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using LibGit2Sharp;
 using Squirrel;
 using System;
 using System.Diagnostics;
@@ -58,6 +59,26 @@ namespace BuddhaBowls
         protected override void OnExit(ExitEventArgs e)
         {
             Logger.Info("Application closing");
+
+            // commit DB repo on close
+            Repository repo;
+            try
+            {
+                repo = new Repository(BuddhaBowls.Properties.Settings.Default.DBLocation);
+            }
+            catch (RepositoryNotFoundException)
+            {
+                string rootedPath = Repository.Init(BuddhaBowls.Properties.Settings.Default.DBLocation);
+                repo = new Repository(BuddhaBowls.Properties.Settings.Default.DBLocation);
+            }
+            Commands.Stage(repo, "*");
+            // Create the committer's signature and commit
+            Signature author = new Signature("Anil Dhurjaty", "adhurjaty@gmail.com", DateTime.Now);
+            Signature committer = author;
+
+            // Commit to the repository
+            Commit commit = repo.Commit("Data backup", author, committer);
+
             base.OnExit(e);
 
             _mv.SaveSettings();

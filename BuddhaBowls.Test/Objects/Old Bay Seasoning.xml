@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>0</LastPurchasedPrice>
+  <Name>Old Bay Seasoning</Name>
+  <Category>Herbs</Category>
+  <PurchasedUnit>null</PurchasedUnit>
+  <Count>1.5</Count>
+  <CountUnit>null</CountUnit>
+  <Conversion>0</Conversion>
+  <RecipeUnit>TBL</RecipeUnit>
+  <RecipeUnitConversion>null</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>52</Id>
+</InventoryItem>

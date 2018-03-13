@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>4.69</LastPurchasedPrice>
+  <Name>Whole Milk</Name>
+  <Category>Dairy</Category>
+  <PurchasedUnit>2 GALLON</PurchasedUnit>
+  <Count>6</Count>
+  <CountUnit>GALLON</CountUnit>
+  <Conversion>2</Conversion>
+  <RecipeUnit>CUP</RecipeUnit>
+  <RecipeUnitConversion>32</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>9</Id>
+</InventoryItem>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>3.55</LastPurchasedPrice>
+  <Name>Jalapenos</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>2lb BAG</PurchasedUnit>
+  <Count>8</Count>
+  <CountUnit>BAG</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>32</RecipeUnitConversion>
+  <Yield>0.95</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>65</Id>
+</InventoryItem>

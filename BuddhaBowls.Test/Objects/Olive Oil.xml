@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>67</LastPurchasedPrice>
+  <Name>Olive Oil</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>6 GAL</PurchasedUnit>
+  <Count>3</Count>
+  <CountUnit>JUG</CountUnit>
+  <Conversion>6</Conversion>
+  <RecipeUnit>OZ-fl</RecipeUnit>
+  <RecipeUnitConversion>768</RecipeUnitConversion>
+  <Yield>0.99</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>36</Id>
+</InventoryItem>

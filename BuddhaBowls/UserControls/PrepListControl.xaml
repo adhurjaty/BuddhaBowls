@@ -21,17 +21,17 @@
                  Height="25"  Width="200" Controls:TextBoxHelper.Watermark="Filter by item name..." TextChanged="FilterItems_TextChanged" />
         <Button Grid.Row="1" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Bottom" Margin="35, 0" Command="{Binding AddPrepCommand}">
-            <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <iconPacks:PackIconFontAwesome Kind="PlusSolid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
         <Button Grid.Row="1" Height="30" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Bottom" Margin="5, 0" Command="{Binding DeletePrepCommand}">
-            <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="MinusSolid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
         <Button Grid.Row="1" Height="30" Width="70" Content="Edit" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="70, 0"
                 Command="{Binding EditPrepCommand}" />
         <Expander Grid.Row="1" Grid.RowSpan="3" VerticalAlignment="Top" HorizontalAlignment="Left" Width="250" Background="AliceBlue"
-                  Header="{Binding InvList.TotalValueMessage}" IsExpanded="False" Panel.ZIndex="1">
-            <ItemsControl ItemsSource="{Binding InvList.CategoryPrices}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                  Header="{Binding InvListVM.TotalValueMessage}" IsExpanded="False" Panel.ZIndex="1">
+            <ItemsControl ItemsSource="{Binding InvListVM.CategoryPrices}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type parent:PriceExpanderItem}">
                         <Grid Background="AliceBlue">
@@ -55,7 +55,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Product" Binding="{Binding Name}" Width="2*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Prep Unit" Binding="{Binding CountUnit}" Width="2*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Unit Cost" Binding="{Binding Cost}" Width="1*"/>
+                <DataGridTextColumn Header="Unit Cost" Binding="{Binding Path=Cost, StringFormat=c}" Width="1*"/>
                 <DataGridTextColumn Header="Line Count" Binding="{Binding LineCount}" Width="1*"/>
                 <DataGridTextColumn Header="Walk-in Count" Binding="{Binding WalkInCount}" Width="1*"/>
                 <DataGridTextColumn Header="Total" Binding="{Binding TotalCount}" Width="1*" IsReadOnly="True"/>

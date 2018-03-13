@@ -1,0 +1,4 @@
+Name,Category,PurchasedUnit,Count,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate,Id
+Artichoke Hearts,Dry Goods,6# CANS,6,CAN,6,OZ-wt,324,1,53.22,2,12/16/2016 1:20:01 PM,18
+Avocado,Produce,1/2 CASE,5,EACH,24,EA,24,1,38,3,12/16/2016 1:20:01 PM,62
+Blueberries (Costco),Produce,BASKET,0,BASKET,1,OZ-wt,32,0.85,5.29,4,12/16/2016 1:20:01 PM,70

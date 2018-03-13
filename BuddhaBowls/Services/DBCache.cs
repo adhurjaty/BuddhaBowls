@@ -28,6 +28,7 @@ namespace BuddhaBowls.Services
         public InventoriesContainer InContainer { get; private set; }
         public RecipesContainer RContainer { get; private set; }
         public ExpenseItemsContainer EIContainer { get; private set; }
+        public PrepItemsContainer PIContainer { get; set; }
 
         /// <summary>
         /// Constructor. Initialize containers, settings and ordering information
@@ -59,6 +60,7 @@ namespace BuddhaBowls.Services
             POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder"), VIContainer, true);
             InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory"), true);
             RContainer = new RecipesContainer(ModelHelper.InstantiateList<Recipe>("Recipe"), VIContainer, true);
+            PIContainer = new PrepItemsContainer(ModelHelper.InstantiateList<PrepItem>("PrepItem"), VIContainer, RContainer, true);
             EIContainer = new ExpenseItemsContainer(ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem"), true);
             DSContainer = new DailySalesContainer(ModelHelper.InstantiateList<DailySale>("DailySale"));
             //AddRecipeItems();
@@ -161,7 +163,7 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public List<string> GetCountUnits()
         {
-            return MainHelper.EnsureCaseInsensitive(new HashSet<string>(VIContainer.Items.Select(x => x.CountUnit)
+            return MainHelper.EnsureCaseInsensitive(new HashSet<string>(VIContainer.Items.Select(x => x.CountUnit).Concat(PIContainer.Items.Select(x => x.CountUnit))
                                                                            .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
@@ -209,7 +211,8 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public List<IItem> GetAllIItems()
         {
-            return VIContainer.Items.Select(x => (IItem)x.ToInventoryItem()).Concat(RContainer.Items.Where(x => x.IsBatch)).ToList();
+            //return VIContainer.Items.Select(x => (IItem)x.ToInventoryItem()).Concat(RContainer.Items.Where(x => x.IsBatch)).ToList();
+            return VIContainer.Items.Select(x => (IItem)x).Concat(RContainer.Items.Where(x => x.IsBatch)).ToList();
         }
 
         /// <summary>

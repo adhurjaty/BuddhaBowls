@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>17</LastPurchasedPrice>
+  <Name>Garlic Peeled</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>5lb JAR</PurchasedUnit>
+  <Count>4</Count>
+  <CountUnit>JAR</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>114.29</RecipeUnitConversion>
+  <Yield>0.98</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>71</Id>
+</InventoryItem>

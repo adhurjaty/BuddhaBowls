@@ -1,0 +1,10 @@
+Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Count,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate
+0,Mozzarella,Dairy,CASE 30lb,5lb BAG,6,OZ-wt,480,6,1,59,2,2/27/2017 2:33:00 PM
+1,Cheddar,Dairy,CASE 20lb,5lb BAG,4,OZ-wt,320,14,1,20,3,2/27/2017 2:33:00 PM
+2,Feta,Dairy,CASE 20lb,5lb BAG,4,OZ-wt,160,4,1E+08,69.69,5,3/19/2017 10:37:00 PM
+3,Butter,Dairy,CASE 30lb,1lb,30,OZ-wt,480,32,1,76.99,0,2/27/2017 2:33:00 PM
+8,Whole Milk,Dairy,2 GALLON,GALLON,2,CUP,32,7,1,18.5,0,2/27/2017 2:33:00 PM
+10,Pesto,Dairy,4/33.5,BUCKET,4,OZ-wt,4,5,0.97,126,0,2/27/2017 2:33:00 PM
+23,Tomato Juice,Dry Goods,12x48oz CANS,CAN,12,EA,12,24,1,13.24,0,2/27/2017 2:33:00 PM
+33,Olive Oil,Dry Goods,6 GAL,JUG,6,OZ-fl,768,7.5,0.99,67,0,2/27/2017 2:33:00 PM
+51,Yellow Onions,Produce,50lb,BAG,1,OZ-wt,800,1,0.85,10.5,0,2/27/2017 2:33:00 PM

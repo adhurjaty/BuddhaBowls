@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Recipe>
+  <Name>Hummus</Name>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>424</RecipeUnitConversion>
+  <Category>SAUCES+DRESSINGS</Category>
+  <Count>0</Count>
+  <Price>null</Price>
+  <IsBatch>True</IsBatch>
+  <Id>8</Id>
+</Recipe>

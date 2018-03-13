@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>20.01</LastPurchasedPrice>
+  <Name>Canola Oil Bottles</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>EACH</PurchasedUnit>
+  <Count>2</Count>
+  <CountUnit>BOTTLE</CountUnit>
+  <Conversion>18</Conversion>
+  <RecipeUnit>null</RecipeUnit>
+  <RecipeUnitConversion>null</RecipeUnitConversion>
+  <Yield>0</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>35</Id>
+</InventoryItem>

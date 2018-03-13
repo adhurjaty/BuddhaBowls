@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>17.5</LastPurchasedPrice>
+  <Name>Mushrooms</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>10lb</PurchasedUnit>
+  <Count>27.25</Count>
+  <CountUnit>FLAT</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>160</RecipeUnitConversion>
+  <Yield>0.95</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>59</Id>
+</InventoryItem>

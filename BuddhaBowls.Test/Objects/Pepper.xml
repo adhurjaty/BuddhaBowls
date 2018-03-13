@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>45</LastPurchasedPrice>
+  <Name>Pepper</Name>
+  <Category>Herbs</Category>
+  <PurchasedUnit>5lbs</PurchasedUnit>
+  <Count>1</Count>
+  <CountUnit>OZ-wt</CountUnit>
+  <Conversion>80</Conversion>
+  <RecipeUnit>TBL</RecipeUnit>
+  <RecipeUnitConversion>312.2</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>12/28/2016 11:52:40 AM</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>48</Id>
+</InventoryItem>

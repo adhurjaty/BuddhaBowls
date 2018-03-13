@@ -1,0 +1,26 @@
+Id,Name,Category,PurchasedUnit,Count,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate,LastVendorId
+2,Feta,Dairy,CASE 10lb,4,5lb BAG,2,OZ-wt,160,1,57.53,5,,
+5,Heavy Cream,Dairy,6 1/2 Gallon,3,1/2 GALLON,6,CUP,48,1,35.95,0,,2
+7,Eggs,Dairy,15 DOZEN,6,TRAY,6,EA,180,0.95,19.91,0,,2
+8,Whole Milk,Dairy,2 GALLON,7,GALLON,2,CUP,32,1,5.69,12,1/31/2017 6:10:00 PM,
+12,Pizza Sauce,Dry Goods,6# CANS,9,CAN,6,EA,6,1,20.03,0,,2
+13,Stewed Tomatoes,Dry Goods,6# CANS,2,CAN,6,EA,6,1,13.62,0,,2
+14,Black Beans,Dry Goods,6# CANS,6,CAN,6,EA,6,1,19.29,0,,2
+15,Garbanzo Beans,Dry Goods,6# CANS,12,CAN,6,EA,6,1,21.63,0,,2
+16,Pinto Beans,Dry Goods,6# CANS,8,CAN,6,EA,6,1,22.33,0,,2
+17,Artichoke Hearts,Dry Goods,6# CANS,77,CAN,6,OZ-wt,324,1,44.95,1,12/28/2016 11:52:00 AM,
+18,BBQ Sauce,Dry Goods,CS 39.5lbs,77,JUG,4,OZ-wt,632,0.98,33.88,0,,2
+19,Macaroni,Dry Goods,2lb,7,BAG,2,EA,320,2.41,14.29,0,,2
+21,Roasted Bell Peppers,Dry Goods,6# CANS,2,CAN,6,OZ-wt,360,0.98,30.06,0,,2
+22,Chopped Clams,Dry Goods,12x48oz CANS,4,CAN,12,EA,12,1,83.6,0,,2
+23,Tomato Juice,Dry Goods,12x48oz CANS,24,CAN,12,EA,12,1,20.71,1,,
+24,Clam Juice,Dry Goods,12x48oz CANS,6,CAN,12,EA,12,1,28.86,0,,2
+31,Canola Oil,Dry Goods,30lb JUG,0.6,JUG,1,OZ-wt,800,0.99,20.44,0,,2
+33,Olive Oil,Dry Goods,6 GAL,7.5,JUG,6,OZ-fl,768,0.99,52.59,3,1/31/2017 6:10:00 PM,
+37,Tahini,Dry Goods,40lbs,0.2,LB,40,OZ-wt,640,0.98,60.69,0,,2
+38,Kalamata Olives,Dry Goods,EACH,0,JAR,1,OZ-wt,64.8,1,46.49,0,,2
+39,Lemon Juice,Dry Goods,1 Gal,1.1,GAL,1,OZ-wt,128,1,10.2,0,,2
+54,Spinach,Produce,10lb,0,BAG,4,OZ-wt,160,0.99,12.5,0,,2
+69,Chicken Breast,Poultry,40lb CASE,3,CASE,1,OZ-wt,640,0.85,68.7,0,,2
+70,Ground Beef,Meats,20lb CASE,3,LOG,2,EA,2,1,25.42,0,,2
+72,Bacon Bits,Meats,10lb CASE,77,BAG,2,OZ-wt,160,1,70,0,,2

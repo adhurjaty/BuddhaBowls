@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>2.99</LastPurchasedPrice>
+  <Name>Pineapple</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>EACH</PurchasedUnit>
+  <Count>10</Count>
+  <CountUnit>EACH</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>44</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>66</Id>
+</InventoryItem>

@@ -230,6 +230,14 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public float CountPrice
+        {
+            get
+            {
+                return _invItem.CountPrice;
+            }
+        }
+
         public VendorInventoryItem()
         {
             _vendorDict = new Dictionary<Vendor, InventoryItem>();

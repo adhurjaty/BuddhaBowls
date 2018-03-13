@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>3.49</LastPurchasedPrice>
+  <Name>Strawberries (Costco)</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>2lbs</PurchasedUnit>
+  <Count>0</Count>
+  <CountUnit>BASKET</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>32</RecipeUnitConversion>
+  <Yield>0.85</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>68</Id>
+</InventoryItem>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>43.78</LastPurchasedPrice>
+  <Name>Pepper Jack</Name>
+  <Category>Dairy</Category>
+  <PurchasedUnit>CASE 20lb</PurchasedUnit>
+  <Count>2</Count>
+  <CountUnit>5lb BAG</CountUnit>
+  <Conversion>4</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>320</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>2</LastOrderAmount>
+  <LastPurchasedDate>12/28/2016 11:52:40 AM</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>2</Id>
+</InventoryItem>

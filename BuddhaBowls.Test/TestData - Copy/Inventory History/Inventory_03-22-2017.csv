@@ -1,0 +1,81 @@
+Id,LastOrderAmount,Name,Category,PurchasedUnit,Count,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Yield,LastPurchasedPrice,LastPurchasedDate,LastVendorId
+0,2,Mozzarella,Dairy,CASE 30lb,111,5lb BAG,6,OZ-wt,480,1,53,,4
+1,3,Cheddar,Dairy,CASE 20lb,1,NewUnit,4,OZ-wt,320,1,20,,0
+2,2,Pepper Jack,Dairy,CASE 20lb,2,5lb BAG,4,CUP,320,1,44.19,12/28/2016 11:52:00 AM,0
+3,5,Feta,Dairy,CASE 10lb,4,5lb BAG,2,OZ-wt,160,1,57.53,,2
+4,2,Butter,Dairy,CASE 30lb,1,1lb,30,OZ-wt,480,1,76.99,,0
+5,3,Sour Cream,Dairy,CASE 10lb,1,5lb BUCKET,2,OZ-wt,160,0.95,32.4,,4
+6,4,Heavy Cream,Dairy,6 1/2 Gallon,1,1/2 GALLON,6,CUP,48,1,35.95,,2
+7,0,Whipped Cream,Dairy,CS 3 each,5,CAN,3,OZ-wt,32,1,9.39,,
+8,0,Eggs,Dairy,15 DOZEN,1,TRAY,6,EA,180,0.95,19.91,,2
+9,0,Whole Milk,Dairy,2 GALLON,4,GALLON,2,CUP,32,1,18.5,,0
+10,0,Yogurt,Dairy,6 QUARTS,1,QUART,6,OZ-wt,18,1,14.5,,
+11,0,Pesto,Dairy,4/33.5,4,BUCKET,4,OZ-wt,4,0.97,126,,0
+12,0,Cookie Dough,Dairy,BUCKET,4,BUCKET,1,OZ-wt,,1,9.29,12/28/2016 11:52:00 AM,
+13,0,Pizza Sauce,Dry Goods,6# CANS,4,CAN,6,EA,6,1,20.03,,2
+14,0,Stewed Tomatoes,Dry Goods,6# CANS,4,CAN,6,EA,6,1,13.62,,2
+15,0,Black Beans,Dry Goods,6# CANS,4,CAN,6,EA,6,1,19.29,,2
+16,0,Garbanzo Beans,Dry Goods,6# CANS,4,CAN,6,EA,6,1,21.63,,2
+17,0,Pinto Beans,Dry Goods,6# CANS,2,CAN,6,EA,6,1,22.33,,2
+18,20,Artichoke Hearts,Dry Goods,6# CANS,8,CAN,6,OZ-wt,324,1,44.95,12/28/2016 11:52:00 AM,1
+19,0,Mayonnaise,Dry Goods,4 GAL,1,JUG,4,EA,4,1,23.01,,2
+20,0,BBQ Sauce,Dry Goods,CS 39.5lbs,2,JUG,4,OZ-wt,632,0.98,33.88,,2
+21,0,Macaroni,Dry Goods,2lb,44.2,BAG,2,EA,320,2.41,14.29,,2
+22,0,Granola,Dry Goods,25lb bag,3,6" PAN,12,OZ-wt,400,1,56.32,,
+23,0,Roasted Bell Peppers,Dry Goods,6# CANS,38,CAN,6,OZ-wt,360,0.98,30.06,,2
+24,0,Chopped Clams,Dry Goods,12x48oz CANS,1.5,CAN,12,EA,12,1,83.6,,2
+25,0,Tomato Juice,Dry Goods,12x48oz CANS,8,CAN,12,EA,12,1,13.24,,0
+26,0,Clam Juice,Dry Goods,12x48oz CANS,2,CAN,12,EA,12,1,28.86,,2
+27,0,Nutella,Dry Goods,53oz,11,JAR,2,OZ-wt,53,0.9,11.99,,
+28,0,Honey,Dry Goods,5lbs,1,JUG,1,OZ-wt,80,0.95,13.93,,
+29,0,Vanilla,Dry Goods,EA,0,5lb BUCKET,700,Oz-fl,16,100,80,,1
+30,20,Balsamic Vinegar,Dry Goods,5 LITER,16,JUG,1,OZ-wt,169.07,1,17.89,12/28/2016 11:52:00 AM,
+31,0,Tapatio,Dry Goods,12 EACH,8,BOTTLE,12,EA,12,1,17.74,,
+32,0,Sriracha,Dry Goods,12 EACH,12,BOTTLE,12,EA,12,1,21.38,,
+33,0,Chicken Broth,Dry Goods,4 EA,4,BOTTLE,4,,,0,40,,
+34,0,Canola Oil,Dry Goods,30lb JUG,2.1,JUG,1,OZ-wt,800,0.99,20.44,,2
+35,0,Canola Oil Bottles,Dry Goods,EACH,2,BOTTLE,18,,,0,20.01,,
+36,0,Olive Oil,Dry Goods,6 GAL,3,JUG,6,OZ-fl,768,0.99,67,,0
+37,0,Flour,Dry Goods,25lb,6,BAG,1,CUP,66.67,1,6.67,,
+38,0,Sugar (BROWN),Dry Goods,Sugar (Brown),1.5,QUART,16,CUP,62.5,1,13.99,12/28/2016 11:52:00 AM,
+39,0,Sugar (POWDERED),Dry Goods,7lbs,0,EACH,1,OZ-wt,112,1,4.69,12/28/2016 11:52:00 AM,
+40,0,Tahini,Dry Goods,40lbs,36.4,LB,40,OZ-wt,640,0.98,60.69,,2
+41,0,Kalamata Olives,Dry Goods,EACH,1,JAR,1,OZ-wt,64.8,1,46.49,,2
+42,0,Lemon Juice,Dry Goods,1 Gal,40,GAL,1,OZ-wt,128,1,10.2,,2
+43,0,Dried Basil,Herbs,24oz,1,OZ-wt,24,TBL,274.29,1,7.71,,
+44,0,Thyme,Herbs,2lbs,1,OZ-wt,32,TBL,243.81,1,13.3,,
+45,0,Oregano,Herbs,1lb,1,OZ-wt,16,TBL,232.73,1,10.3,12/28/2016 11:52:00 AM,
+46,0,Cumin,Herbs,4.5lbs,1,OZ-wt,72,TBL,360,1,29.37,,
+47,0,Cayenne Pepper,Herbs,,1,OZ-wt,0,TBL,1,1,0,,
+48,0,Pepper,Herbs,5lbs,1,OZ-wt,80,TBL,312.2,1,45,12/28/2016 11:52:00 AM,
+49,0,Salt,Herbs,25lbs,1,Container,8.9,TBL,615,1,5.12,,
+50,0,Chili Powder,Herbs,20oz,5,OZ-wt,20,TBL,78.05,1,5.49,,
+51,0,Paprika,Herbs,8.5oz,2,OZ-wt,8.5,TBL,36.96,1,3.79,12/28/2016 11:52:00 AM,
+52,0,Old Bay Seasoning,Herbs,,1.5,,0,TBL,,1,0,,
+53,0,Cinnamon,Herbs,10.7oz,1,Container,1,OZ-wt,32,1,2.59,,
+54,0,Yellow Onions,Produce,50lb,1,BAG,1,OZ-wt,800,0.85,10.5,,0
+55,0,Red Onions,Produce,25lb,0.2,BAG,1,OZ-wt,400,0.85,13.5,,
+56,0,Potatoes,Produce,1/2 CASE,2,1/2 CASE,1,OZ-wt,800,0.85,12.5,,
+57,0,Spinach,Produce,10lb,20.2,BAG,4,OZ-wt,160,0.99,12.5,,2
+58,0,Mixed Greens,Produce,3lb,0,BAG,1,OZ-wt,48,0.98,5.99,,
+59,0,Mushrooms,Produce,10lb,1,FLAT,1,OZ-wt,160,0.95,17.5,,
+60,0,Cucumbers,Produce,36 COUNT,0.75,CASE,1,OZ-wt,420,0.95,22.5,,
+61,0,Tomatoes,Produce,25lb,1,CASE,1,OZ-wt,400,0.97,13.95,,
+62,0,Avocado,Produce,1/2 CASE,9,EACH,24,EA,24,1,38,12/28/2016 11:52:00 AM,1
+63,0,Celery,Produce,1/2 CASE,2,1/2 CASE,1,BUNCH,12,1,2.05,,1
+64,0,Fresh Basil,Produce,1lb,4,BAG,1,OZ-wt,16,0.65,4.95,,2
+65,0,Jalapenos,Produce,2lb BAG,8,BAG,1,OZ-wt,32,0.95,3.55,,
+66,0,Pineapple,Produce,EACH,10,EACH,1,OZ-wt,44,1,2.99,,
+67,0,Strawberries (Produce A),Produce,1lb,2,BASKET,1,OZ-wt,16,0.85,3.75,12/28/2016 11:52:00 AM,
+68,0,Strawberries (Costco),Produce,2lbs,0,BASKET,1,OZ-wt,32,0.85,3.49,,
+69,0,Blueberries (PA),Produce,BASKET,3,BASKET,1,OZ-wt,16,0.85,4.95,,
+70,100,Blueberries (Costco),Produce,BASKET,8,BASKET,1,OZ-wt,32,0.85,5.29,,
+71,0,Garlic Peeled,Produce,5lb JAR,4,JAR,1,OZ-wt,114.29,0.98,17,,
+72,0,Chicken Breast,Poultry,40lb CASE,3,CASE,1,OZ-wt,640,0.85,68.7,,2
+73,0,Ground Beef,Meats,20lb CASE,0.5,LOG,2,EA,2,1,25.42,,2
+74,0,Italian Sausage,Meats,10lb CASE,11,BAG,2,OZ-wt,160,0.91,17.54,12/28/2016 11:52:00 AM,2
+75,0,Bacon Bits,Meats,10lb CASE,4,BAG,2,OZ-wt,160,1,70,,2
+76,0,Sourdough,Bread,EACH,183,EACH,1,EA,1,1,0.75,,
+77,0,Whole Wheat,Bread,EACH,84,EACH,1,EA,1,1,0.75,,
+78,40,Biopack #4,Paper Goods,Stack,8,EACH,4,EA,4,1,10,,
+79,0,Allspice,Herbs,CS 3 each,20,OZ-wt,400,TBL,50,100,12,,0

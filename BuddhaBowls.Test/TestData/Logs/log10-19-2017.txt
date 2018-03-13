@@ -1,0 +1,1237 @@
+10/19/17 - 16:50:03 - INFO - Loading models
+10/19/17 - 16:50:03 - INFO - Models loaded
+10/19/17 - 16:50:03 - INFO - Loading models
+10/19/17 - 16:50:03 - INFO - Models loaded
+10/19/17 - 16:50:03 - INFO - Loading models
+10/19/17 - 16:50:03 - INFO - Models loaded
+10/19/17 - 16:50:03 - INFO - Loading models
+10/19/17 - 16:50:04 - INFO - Models loaded
+10/19/17 - 16:50:04 - INFO - Loading models
+10/19/17 - 16:50:04 - INFO - Models loaded
+10/19/17 - 16:50:04 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:04 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:50:04 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:04 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:50:04 - INFO - Loading models
+10/19/17 - 16:50:04 - INFO - Models loaded
+10/19/17 - 16:50:04 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:04 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:04 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:04 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:04 - INFO - Upating InventoryItem: 76
+10/19/17 - 16:50:04 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:04 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:04 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:04 - INFO - Upating InventoryItem: 76
+10/19/17 - 16:50:04 - INFO - Loading models
+10/19/17 - 16:50:05 - INFO - Models loaded
+10/19/17 - 16:50:05 - INFO - Inserted Vendor: 5
+10/19/17 - 16:50:05 - INFO - Loading models
+10/19/17 - 16:50:05 - INFO - Models loaded
+10/19/17 - 16:50:05 - INFO - Loading models
+10/19/17 - 16:50:05 - INFO - Models loaded
+10/19/17 - 16:50:05 - INFO - Loading models
+10/19/17 - 16:50:05 - INFO - Models loaded
+10/19/17 - 16:50:05 - INFO - Upating TestModel: 1
+10/19/17 - 16:50:05 - INFO - Destroying TestModel: 1
+10/19/17 - 16:50:05 - INFO - Inserted TestModel: 4
+10/19/17 - 16:50:05 - INFO - Inserted Inventory: 7
+10/19/17 - 16:50:05 - INFO - Destroying Inventory: 7
+10/19/17 - 16:50:05 - INFO - Upating Inventory: -1
+10/19/17 - 16:50:05 - INFO - Upating Inventory: -1
+10/19/17 - 16:50:05 - INFO - Inserted Vendor: 6
+10/19/17 - 16:50:05 - INFO - Destroying Vendor: 6
+10/19/17 - 16:50:05 - INFO - Inserted Vendor: 6
+10/19/17 - 16:50:05 - INFO - Upating Vendor: 6
+10/19/17 - 16:50:05 - INFO - Destroying Vendor: 6
+10/19/17 - 16:50:05 - INFO - Inserted Vendor: 6
+10/19/17 - 16:50:05 - INFO - Destroying Vendor: 6
+10/19/17 - 16:50:05 - INFO - Inserted Vendor: 6
+10/19/17 - 16:50:05 - INFO - Upating Vendor: 6
+10/19/17 - 16:50:05 - INFO - Destroying Vendor: 6
+10/19/17 - 16:50:05 - INFO - Loading models
+10/19/17 - 16:50:05 - INFO - Models loaded
+10/19/17 - 16:50:05 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:05 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:05 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:05 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:05 - INFO - Upating InventoryItem: 2
+10/19/17 - 16:50:05 - INFO - Loading models
+10/19/17 - 16:50:06 - INFO - Models loaded
+10/19/17 - 16:50:06 - INFO - Inserted PurchaseOrder: 4
+10/19/17 - 16:50:06 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:06 - INFO - Destroying PurchaseOrder: 4
+10/19/17 - 16:50:06 - INFO - Inserted PurchaseOrder: 4
+10/19/17 - 16:50:06 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:06 - INFO - Upating PurchaseOrder: 4
+10/19/17 - 16:50:06 - INFO - Destroying PurchaseOrder: 4
+10/19/17 - 16:50:06 - INFO - Inserted PurchaseOrder: 4
+10/19/17 - 16:50:06 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:06 - INFO - Upating PurchaseOrder: 4
+10/19/17 - 16:50:06 - INFO - Upating PurchaseOrder: 4
+10/19/17 - 16:50:06 - INFO - Destroying PurchaseOrder: 4
+10/19/17 - 16:50:06 - INFO - Inserted Recipe: 15
+10/19/17 - 16:50:06 - INFO - Destroying Recipe: 15
+10/19/17 - 16:50:06 - INFO - Inserted Recipe: 15
+10/19/17 - 16:50:06 - INFO - Destroying Recipe: 15
+10/19/17 - 16:50:06 - INFO - Inserted Recipe: 15
+10/19/17 - 16:50:06 - INFO - Upating Recipe: 15
+10/19/17 - 16:50:06 - INFO - Destroying Recipe: 15
+10/19/17 - 16:50:06 - INFO - Inserted Recipe: 15
+10/19/17 - 16:50:06 - INFO - Upating Recipe: 15
+10/19/17 - 16:50:06 - INFO - Destroying Recipe: 15
+10/19/17 - 16:50:06 - INFO - Loading models
+10/19/17 - 16:50:06 - INFO - Models loaded
+10/19/17 - 16:50:08 - INFO - Loading models
+10/19/17 - 16:50:08 - INFO - Models loaded
+10/19/17 - 16:50:08 - INFO - Loading models
+10/19/17 - 16:50:08 - INFO - Models loaded
+10/19/17 - 16:50:08 - INFO - Loading models
+10/19/17 - 16:50:09 - INFO - Models loaded
+10/19/17 - 16:50:09 - INFO - Loading models
+10/19/17 - 16:50:09 - INFO - Models loaded
+10/19/17 - 16:50:09 - INFO - Loading models
+10/19/17 - 16:50:09 - INFO - Models loaded
+10/19/17 - 16:50:09 - INFO - Loading models
+10/19/17 - 16:50:09 - INFO - Models loaded
+10/19/17 - 16:50:09 - INFO - Loading models
+10/19/17 - 16:50:09 - INFO - Models loaded
+10/19/17 - 16:50:09 - INFO - Loading models
+10/19/17 - 16:50:09 - INFO - Models loaded
+10/19/17 - 16:50:09 - INFO - Loading models
+10/19/17 - 16:50:09 - INFO - Models loaded
+10/19/17 - 16:50:10 - INFO - Loading models
+10/19/17 - 16:50:10 - INFO - Models loaded
+10/19/17 - 16:50:10 - INFO - Loading models
+10/19/17 - 16:50:10 - INFO - Models loaded
+10/19/17 - 16:50:10 - INFO - Loading models
+10/19/17 - 16:50:10 - INFO - Models loaded
+10/19/17 - 16:50:10 - INFO - Loading models
+10/19/17 - 16:50:10 - INFO - Models loaded
+10/19/17 - 16:50:10 - INFO - Loading models
+10/19/17 - 16:50:10 - INFO - Models loaded
+10/19/17 - 16:50:10 - INFO - Loading models
+10/19/17 - 16:50:11 - INFO - Models loaded
+10/19/17 - 16:50:11 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:50:11 - INFO - Loading models
+10/19/17 - 16:50:11 - INFO - Models loaded
+10/19/17 - 16:50:11 - INFO - Loading models
+10/19/17 - 16:50:11 - INFO - Models loaded
+10/19/17 - 16:50:11 - INFO - Loading models
+10/19/17 - 16:50:11 - INFO - Models loaded
+10/19/17 - 16:50:11 - INFO - Loading models
+10/19/17 - 16:50:11 - INFO - Models loaded
+10/19/17 - 16:50:11 - INFO - Loading models
+10/19/17 - 16:50:11 - INFO - Models loaded
+10/19/17 - 16:50:12 - INFO - Loading models
+10/19/17 - 16:50:12 - INFO - Upating BreadOrder: 93
+10/19/17 - 16:50:12 - INFO - Models loaded
+10/19/17 - 16:50:12 - INFO - Loading models
+10/19/17 - 16:50:12 - INFO - Upating BreadOrder: 92
+10/19/17 - 16:50:12 - INFO - Models loaded
+10/19/17 - 16:50:12 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:50:12 - INFO - Loading models
+10/19/17 - 16:50:12 - INFO - Models loaded
+10/19/17 - 16:50:12 - INFO - Loading models
+10/19/17 - 16:50:12 - INFO - Models loaded
+10/19/17 - 16:50:12 - INFO - Loading models
+10/19/17 - 16:50:12 - INFO - Models loaded
+10/19/17 - 16:50:12 - INFO - Loading models
+10/19/17 - 16:50:13 - INFO - Models loaded
+10/19/17 - 16:50:13 - INFO - Loading models
+10/19/17 - 16:50:13 - INFO - Models loaded
+10/19/17 - 16:50:13 - INFO - Loading models
+10/19/17 - 16:50:13 - INFO - Models loaded
+10/19/17 - 16:50:13 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:50:13 - INFO - Loading models
+10/19/17 - 16:50:13 - INFO - Models loaded
+10/19/17 - 16:50:13 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:50:13 - INFO - Loading models
+10/19/17 - 16:50:13 - INFO - Models loaded
+10/19/17 - 16:50:13 - INFO - Loading models
+10/19/17 - 16:50:14 - INFO - Models loaded
+10/19/17 - 16:50:14 - INFO - Loading models
+10/19/17 - 16:50:14 - INFO - Models loaded
+10/19/17 - 16:50:25 - INFO - Loading models
+10/19/17 - 16:50:25 - INFO - Models loaded
+10/19/17 - 16:50:52 - INFO - Loading models
+10/19/17 - 16:50:53 - INFO - Models loaded
+10/19/17 - 16:50:53 - INFO - Loading models
+10/19/17 - 16:50:53 - INFO - Models loaded
+10/19/17 - 16:50:53 - INFO - Loading models
+10/19/17 - 16:50:53 - INFO - Models loaded
+10/19/17 - 16:50:55 - INFO - Executing MainViewModel#SaveSettingsHelper
+10/19/17 - 16:50:55 - INFO - Loading models
+10/19/17 - 16:50:55 - INFO - Models loaded
+10/19/17 - 16:50:55 - INFO - Loading models
+10/19/17 - 16:50:55 - INFO - Models loaded
+10/19/17 - 16:50:56 - INFO - Executing ChangeableTabVM#SwitchPage
+10/19/17 - 16:50:56 - INFO - Loading models
+10/19/17 - 16:50:56 - INFO - Models loaded
+10/19/17 - 16:50:56 - INFO - Executing MainViewModel#SaveSettingsHelper
+10/19/17 - 16:50:56 - INFO - Loading models
+10/19/17 - 16:50:56 - INFO - Models loaded
+10/19/17 - 16:50:56 - INFO - Loading models
+10/19/17 - 16:50:56 - INFO - Models loaded
+10/19/17 - 16:50:56 - INFO - Loading models
+10/19/17 - 16:50:56 - INFO - Models loaded
+10/19/17 - 16:50:56 - INFO - Executing ChangeableTabVM#SwitchPage
+10/19/17 - 16:50:56 - INFO - Executing InventoryTabVM#StartNewInventory
+10/19/17 - 16:50:56 - INFO - Adding temp tab: NewInventoryVM
+10/19/17 - 16:50:56 - INFO - Executing NewInventoryVM#SaveInventory
+10/19/17 - 16:50:56 - INFO - Inserted Inventory: 7
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 76
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 17
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 59
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 60
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 72
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 18
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 75
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 14
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 67
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 66
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 3
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 31
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 32
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 44
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 61
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 1
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 69
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 30
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 47
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 22
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 50
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 24
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 11
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 57
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 43
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 40
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 7
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 34
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 15
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 68
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 20
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 70
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 5
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 26
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 71
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 62
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 38
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 39
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 19
+10/19/17 - 16:50:56 - INFO - Upating InventoryItem: 55
+10/19/17 - 16:50:56 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 0
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 56
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 25
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 49
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 33
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 42
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 48
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 45
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 10
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 63
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 16
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 12
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 53
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 52
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 21
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 46
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 4
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 73
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 54
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 29
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 13
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 65
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 64
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 35
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 36
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 37
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 28
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 41
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 23
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 58
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 27
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 6
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 8
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 74
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 51
+10/19/17 - 16:50:57 - INFO - Upating InventoryItem: 9
+10/19/17 - 16:50:57 - INFO - Removing temp tab
+10/19/17 - 16:50:57 - INFO - Executing InventoryTabVM#DeleteInventory
+10/19/17 - 16:50:58 - INFO - Destroying Inventory: 7
+10/19/17 - 16:50:58 - INFO - Loading models
+10/19/17 - 16:50:58 - INFO - Models loaded
+10/19/17 - 16:50:58 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:50:58 - INFO - Executing InventoryTabVM#StartNewInventory
+10/19/17 - 16:50:59 - INFO - Adding temp tab: NewInventoryVM
+10/19/17 - 16:50:59 - INFO - Executing NewInventoryVM#SaveInventory
+10/19/17 - 16:50:59 - INFO - Inserted Inventory: 7
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 76
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 17
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 59
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 60
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 72
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 18
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 75
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 14
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 67
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 66
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 3
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 31
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 32
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 44
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 61
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 1
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 69
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 30
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 47
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 22
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 50
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 24
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 11
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 57
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 43
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 40
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 7
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 34
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 15
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 68
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 20
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 70
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 5
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 26
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 71
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 62
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 38
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 39
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 19
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 55
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 56
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 25
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 49
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 33
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 42
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 48
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 45
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 10
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 63
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 16
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 12
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 53
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 52
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 21
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 46
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 4
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 73
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 54
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 29
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 13
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 65
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 64
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 35
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 36
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 37
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 28
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 41
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 23
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 58
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 1
+10/19/17 - 16:50:59 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:50:59 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 27
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 6
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 8
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 74
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 51
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 9
+10/19/17 - 16:50:59 - INFO - Removing temp tab
+10/19/17 - 16:50:59 - INFO - Executing InventoryTabVM#ViewInventory
+10/19/17 - 16:50:59 - INFO - Adding temp tab: NewInventoryVM
+10/19/17 - 16:50:59 - INFO - Executing NewInventoryVM#SaveInventory
+10/19/17 - 16:50:59 - INFO - Upating Inventory: 7
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 1
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 3
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 4
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 4
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 5
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 6
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 7
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 8
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 9
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 0
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 10
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 11
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 12
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 13
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating Vendor: 2
+10/19/17 - 16:50:59 - INFO - Upating InventoryItem: 14
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 15
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 16
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 17
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 18
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 19
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 20
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 21
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 22
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 23
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 24
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 25
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 26
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 27
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 28
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 29
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 30
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 31
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 32
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 33
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 34
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 35
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 36
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 37
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 38
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 39
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 40
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 41
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 42
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 43
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 44
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 45
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 46
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 47
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 48
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 49
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 50
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 51
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 52
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 53
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 54
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 55
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 56
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 57
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 58
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 59
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 60
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 61
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 62
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 63
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 64
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 65
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 66
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 67
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 68
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 69
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 70
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 71
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 72
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 73
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 74
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 75
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:00 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:00 - INFO - Upating InventoryItem: 76
+10/19/17 - 16:51:00 - INFO - Removing temp tab
+10/19/17 - 16:51:00 - INFO - Executing InventoryTabVM#DeleteInventory
+10/19/17 - 16:51:01 - INFO - Upating BreadOrder: 93
+10/19/17 - 16:51:01 - INFO - Destroying Inventory: 7
+10/19/17 - 16:51:01 - INFO - Loading models
+10/19/17 - 16:51:01 - INFO - Models loaded
+10/19/17 - 16:51:01 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:51:01 - INFO - Adding temp tab: NewInventoryItemWizard
+10/19/17 - 16:51:01 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:01 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:01 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:01 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:01 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:01 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:51:01 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:01 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:01 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:01 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:01 - INFO - Removing temp tab
+10/19/17 - 16:51:01 - INFO - Executing InventoryListVM#DeleteInventoryItem
+10/19/17 - 16:51:01 - INFO - Upating BreadOrder: 92
+10/19/17 - 16:51:02 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:51:02 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:51:02 - INFO - Loading models
+10/19/17 - 16:51:02 - INFO - Models loaded
+10/19/17 - 16:51:02 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:51:02 - INFO - Adding temp tab: NewInventoryItemWizard
+10/19/17 - 16:51:02 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:02 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:02 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:02 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:02 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:02 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:02 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:51:02 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:02 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:02 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:02 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:02 - INFO - Removing temp tab
+10/19/17 - 16:51:02 - INFO - Executing InventoryListVM#DeleteInventoryItem
+10/19/17 - 16:51:03 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:51:03 - INFO - Loading models
+10/19/17 - 16:51:03 - INFO - Models loaded
+10/19/17 - 16:51:03 - INFO - Executing InventoryTabVM#StartNewInventory
+10/19/17 - 16:51:03 - INFO - Adding temp tab: NewInventoryVM
+10/19/17 - 16:51:03 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:51:03 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:03 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:03 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:03 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:03 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:03 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:51:03 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:03 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:03 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:03 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:03 - INFO - Executing InventoryListVM#DeleteInventoryItem
+10/19/17 - 16:51:04 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:51:04 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:51:04 - INFO - Loading models
+10/19/17 - 16:51:04 - INFO - Models loaded
+10/19/17 - 16:51:05 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:51:05 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:05 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:05 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:05 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:05 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:05 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:51:05 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:05 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:05 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:05 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:05 - INFO - Executing InventoryListVM#EditInventoryItem
+10/19/17 - 16:51:05 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:05 - INFO - Executing NewInventoryItemWizard#DeleteVendor
+10/19/17 - 16:51:05 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:05 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:05 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:51:05 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:05 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:05 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:05 - INFO - Upating InventoryItem: 77
+10/19/17 - 16:51:05 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:05 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:51:05 - INFO - Loading models
+10/19/17 - 16:51:05 - INFO - Models loaded
+10/19/17 - 16:51:05 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:05 - INFO - Loading models
+10/19/17 - 16:51:05 - INFO - Models loaded
+10/19/17 - 16:51:05 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:51:05 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:05 - INFO - Loading models
+10/19/17 - 16:51:06 - INFO - Models loaded
+10/19/17 - 16:51:06 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:06 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:06 - INFO - Loading models
+10/19/17 - 16:51:06 - INFO - Models loaded
+10/19/17 - 16:51:06 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:06 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:51:06 - INFO - Executing NewOrderVM#ClearOrderAmounts
+10/19/17 - 16:51:06 - INFO - Loading models
+10/19/17 - 16:51:06 - INFO - Models loaded
+10/19/17 - 16:51:06 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:06 - INFO - Executing NewOrderVM#ClearOrderAmounts
+10/19/17 - 16:51:06 - INFO - Executing NewOrderVM#SaveOrder
+10/19/17 - 16:51:06 - INFO - Inserted PurchaseOrder: 4
+10/19/17 - 16:51:06 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:06 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:06 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:06 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:06 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:07 - INFO - Upating InventoryItem: 17
+10/19/17 - 16:51:07 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:07 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:07 - INFO - Upating InventoryItem: 59
+10/19/17 - 16:51:07 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:07 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:07 - INFO - Upating InventoryItem: 27
+10/19/17 - 16:51:07 - INFO - Executing OrderTabVM#RemoveOpenOrder
+10/19/17 - 16:51:07 - INFO - Upating BreadOrder: 92
+10/19/17 - 16:51:07 - INFO - Destroying PurchaseOrder: 4
+10/19/17 - 16:51:07 - INFO - Loading models
+10/19/17 - 16:51:08 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:51:08 - INFO - Models loaded
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 125
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 126
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 127
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 128
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 129
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 130
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 131
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 132
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 133
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 134
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 135
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 136
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 137
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 138
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 139
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 140
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 141
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 142
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 143
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 144
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 145
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 146
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 147
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 148
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 149
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 150
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 151
+10/19/17 - 16:51:08 - INFO - Inserted BreadOrder: 152
+10/19/17 - 16:51:08 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:08 - INFO - Executing NewOrderVM#ClearOrderAmounts
+10/19/17 - 16:51:08 - INFO - Executing NewOrderVM#SaveOrder
+10/19/17 - 16:51:08 - INFO - Inserted PurchaseOrder: 4
+10/19/17 - 16:51:08 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:08 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:08 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:08 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:08 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:08 - INFO - Upating InventoryItem: 17
+10/19/17 - 16:51:08 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:08 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:08 - INFO - Upating InventoryItem: 59
+10/19/17 - 16:51:08 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:08 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:08 - INFO - Upating InventoryItem: 27
+10/19/17 - 16:51:08 - INFO - Executing OrderTabVM#MoveToReceivedOrders
+10/19/17 - 16:51:08 - INFO - Upating PurchaseOrder: 4
+10/19/17 - 16:51:08 - INFO - Destroying PurchaseOrder: 4
+10/19/17 - 16:51:08 - INFO - Loading models
+10/19/17 - 16:51:09 - INFO - Models loaded
+10/19/17 - 16:51:09 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:09 - INFO - Executing NewOrderVM#ClearOrderAmounts
+10/19/17 - 16:51:09 - INFO - Executing NewOrderVM#SaveOrder
+10/19/17 - 16:51:09 - INFO - Inserted PurchaseOrder: 4
+10/19/17 - 16:51:09 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:09 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:09 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:09 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:09 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:09 - INFO - Upating InventoryItem: 17
+10/19/17 - 16:51:09 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:09 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:09 - INFO - Upating InventoryItem: 59
+10/19/17 - 16:51:09 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:09 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:09 - INFO - Upating InventoryItem: 27
+10/19/17 - 16:51:09 - INFO - Executing OrderTabVM#MoveToReceivedOrders
+10/19/17 - 16:51:09 - INFO - Upating PurchaseOrder: 4
+10/19/17 - 16:51:09 - INFO - Executing OrderTabVM#ReOpenOrder
+10/19/17 - 16:51:10 - INFO - Upating PurchaseOrder: 4
+10/19/17 - 16:51:10 - INFO - Destroying PurchaseOrder: 4
+10/19/17 - 16:51:10 - INFO - Loading models
+10/19/17 - 16:51:10 - INFO - Models loaded
+10/19/17 - 16:51:10 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:10 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:51:10 - INFO - Executing NewOrderVM#ClearOrderAmounts
+10/19/17 - 16:51:10 - INFO - Executing NewOrderVM#SaveOrder
+10/19/17 - 16:51:10 - INFO - Inserted PurchaseOrder: 4
+10/19/17 - 16:51:10 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:10 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:10 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:10 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:10 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:10 - INFO - Upating InventoryItem: 17
+10/19/17 - 16:51:11 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:11 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:11 - INFO - Upating InventoryItem: 59
+10/19/17 - 16:51:11 - INFO - Upating BreadOrder: 93
+10/19/17 - 16:51:11 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:11 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:11 - INFO - Upating InventoryItem: 27
+10/19/17 - 16:51:11 - INFO - Executing OrderTabVM#ViewOpenOrder
+10/19/17 - 16:51:11 - INFO - Destroying PurchaseOrder: 4
+10/19/17 - 16:51:11 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:51:11 - INFO - Loading models
+10/19/17 - 16:51:11 - INFO - Models loaded
+10/19/17 - 16:51:11 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:11 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:12 - INFO - Executing NewOrderVM#ClearOrderAmounts
+10/19/17 - 16:51:12 - INFO - Executing NewOrderVM#SaveOrder
+10/19/17 - 16:51:12 - INFO - Inserted PurchaseOrder: 4
+10/19/17 - 16:51:12 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:12 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:12 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:12 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:12 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:12 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:12 - INFO - Upating InventoryItem: 17
+10/19/17 - 16:51:12 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:12 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:12 - INFO - Upating InventoryItem: 59
+10/19/17 - 16:51:12 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:12 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:12 - INFO - Upating InventoryItem: 27
+10/19/17 - 16:51:12 - INFO - Executing OrderTabVM#MoveToReceivedOrders
+10/19/17 - 16:51:12 - INFO - Upating PurchaseOrder: 4
+10/19/17 - 16:51:12 - INFO - Executing OrderTabVM#ViewReceivedOrder
+10/19/17 - 16:51:13 - INFO - Destroying PurchaseOrder: 4
+10/19/17 - 16:51:13 - INFO - Loading models
+10/19/17 - 16:51:13 - INFO - Models loaded
+10/19/17 - 16:51:13 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:13 - INFO - Executing NewOrderVM#ClearOrderAmounts
+10/19/17 - 16:51:13 - INFO - Executing NewOrderVM#SaveOrder
+10/19/17 - 16:51:13 - INFO - Inserted PurchaseOrder: 4
+10/19/17 - 16:51:13 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:14 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:14 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:14 - INFO - Upating Vendor: 2
+10/19/17 - 16:51:14 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:14 - INFO - Upating InventoryItem: 17
+10/19/17 - 16:51:14 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:14 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:14 - INFO - Upating InventoryItem: 59
+10/19/17 - 16:51:14 - INFO - Upating BreadOrder: 92
+10/19/17 - 16:51:14 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:14 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:14 - INFO - Upating InventoryItem: 27
+10/19/17 - 16:51:14 - INFO - Executing OrderTabVM#MoveToReceivedOrders
+10/19/17 - 16:51:14 - INFO - Upating PurchaseOrder: 4
+10/19/17 - 16:51:14 - INFO - Executing OrderTabVM#ViewReceivedOrder
+10/19/17 - 16:51:14 - INFO - Upating Vendor: 1
+10/19/17 - 16:51:14 - INFO - Executing ViewOrderVM#SaveEdits
+10/19/17 - 16:51:14 - INFO - Executing OrderTabVM#ViewReceivedOrder
+10/19/17 - 16:51:14 - INFO - Destroying PurchaseOrder: 4
+10/19/17 - 16:51:14 - INFO - Loading models
+10/19/17 - 16:51:14 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:15 - INFO - Models loaded
+10/19/17 - 16:51:15 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:51:15 - INFO - Loading models
+10/19/17 - 16:51:15 - INFO - Models loaded
+10/19/17 - 16:51:16 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:16 - INFO - Executing VendorTabVM#AddVendor
+10/19/17 - 16:51:16 - INFO - Executing NewVendorWizardVM#FinishWizard
+10/19/17 - 16:51:16 - INFO - Inserted Vendor: 6
+10/19/17 - 16:51:16 - INFO - Executing VendorTabVM#EditVendor
+10/19/17 - 16:51:16 - INFO - Executing NewVendorWizardVM#DeleteVendor
+10/19/17 - 16:51:17 - INFO - Destroying Vendor: 6
+10/19/17 - 16:51:17 - INFO - Loading models
+10/19/17 - 16:51:17 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:17 - INFO - Upating BreadOrder: 93
+10/19/17 - 16:51:18 - INFO - Loading models
+10/19/17 - 16:51:18 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:51:18 - INFO - Loading models
+10/19/17 - 16:51:18 - INFO - Models loaded
+10/19/17 - 16:51:18 - INFO - Upating BreadOrder: 92
+10/19/17 - 16:51:19 - INFO - Executing VendorTabVM#AddVendor
+10/19/17 - 16:51:19 - INFO - Executing NewVendorWizardVM#FinishWizard
+10/19/17 - 16:51:19 - INFO - Inserted Vendor: 6
+10/19/17 - 16:51:19 - INFO - Executing VendorTabVM#EditVendor
+10/19/17 - 16:51:19 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:19 - INFO - Executing NewVendorWizardVM#FinishWizard
+10/19/17 - 16:51:19 - INFO - Upating Vendor: 6
+10/19/17 - 16:51:19 - INFO - Destroying Vendor: 6
+10/19/17 - 16:51:19 - INFO - Loading models
+10/19/17 - 16:51:19 - INFO - Models loaded
+10/19/17 - 16:51:20 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:20 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:20 - INFO - Executing VendorTabVM#AddVendor
+10/19/17 - 16:51:20 - INFO - Executing NewVendorWizardVM#FinishWizard
+10/19/17 - 16:51:20 - INFO - Inserted Vendor: 6
+10/19/17 - 16:51:20 - INFO - Upating Vendor: 6
+10/19/17 - 16:51:20 - INFO - Executing VendorTabVM#EditVendor
+10/19/17 - 16:51:20 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:20 - INFO - Destroying Vendor: 6
+10/19/17 - 16:51:20 - INFO - Loading models
+10/19/17 - 16:51:20 - INFO - Upating BreadOrder: 92
+10/19/17 - 16:51:20 - INFO - Models loaded
+10/19/17 - 16:51:21 - INFO - Executing VendorTabVM#AddVendor
+10/19/17 - 16:51:21 - INFO - Executing NewVendorWizardVM#FinishWizard
+10/19/17 - 16:51:21 - INFO - Inserted Vendor: 6
+10/19/17 - 16:51:21 - INFO - Upating Vendor: 6
+10/19/17 - 16:51:21 - INFO - Executing VendorTabVM#DeleteVendorItem
+10/19/17 - 16:51:21 - INFO - Upating Vendor: 6
+10/19/17 - 16:51:21 - INFO - Destroying Vendor: 6
+10/19/17 - 16:51:21 - INFO - Loading models
+10/19/17 - 16:51:21 - INFO - Models loaded
+10/19/17 - 16:51:21 - INFO - Loading models
+10/19/17 - 16:51:21 - INFO - Models loaded
+10/19/17 - 16:51:21 - INFO - Executing ChangeableTabVM#SwitchPage
+10/19/17 - 16:51:21 - INFO - Executing RecipeTabVM#AddItem
+10/19/17 - 16:51:22 - INFO - Executing NewRecipeVM#FinishWizard
+10/19/17 - 16:51:22 - INFO - Inserted Recipe: 15
+10/19/17 - 16:51:22 - INFO - Executing RecipeTabVM#DeleteItem
+10/19/17 - 16:51:22 - INFO - Upating BreadOrder: 92
+10/19/17 - 16:51:23 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:23 - INFO - Destroying Recipe: 15
+10/19/17 - 16:51:23 - INFO - Loading models
+10/19/17 - 16:51:23 - INFO - Models loaded
+10/19/17 - 16:51:23 - INFO - Upating BreadOrder: 92
+10/19/17 - 16:51:23 - INFO - Executing ChangeableTabVM#SwitchPage
+10/19/17 - 16:51:23 - INFO - Executing RecipeTabVM#AddItem
+10/19/17 - 16:51:23 - INFO - Executing NewRecipeVM#FinishWizard
+10/19/17 - 16:51:23 - INFO - Inserted Recipe: 15
+10/19/17 - 16:51:23 - INFO - Executing RecipeTabVM#EditRecipe
+10/19/17 - 16:51:23 - INFO - Executing NewRecipeVM#ModalOk
+10/19/17 - 16:51:23 - INFO - Executing NewRecipeVM#FinishWizard
+10/19/17 - 16:51:23 - INFO - Upating Recipe: 15
+10/19/17 - 16:51:23 - INFO - Destroying Recipe: 15
+10/19/17 - 16:51:23 - INFO - Loading models
+10/19/17 - 16:51:24 - INFO - Models loaded
+10/19/17 - 16:51:24 - INFO - Upating BreadOrder: 93
+10/19/17 - 16:51:24 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:51:24 - INFO - Upating BreadOrder: 92
+10/19/17 - 16:51:25 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:51:25 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:25 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:25 - INFO - Upating BreadOrder: 93
+10/19/17 - 16:51:25 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:25 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:26 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:26 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:26 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:51:26 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:26 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:26 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:27 - INFO - Upating BreadOrder: 92
+10/19/17 - 16:51:27 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:27 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:27 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:27 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:27 - INFO - Upating InventoryItem: 77
+10/19/17 - 16:51:27 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:27 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:27 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:27 - INFO - Upating InventoryItem: 77
+10/19/17 - 16:51:27 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:51:27 - INFO - Upating BreadOrder: 92
+10/19/17 - 16:51:27 - INFO - Loading models
+10/19/17 - 16:51:27 - INFO - Models loaded
+10/19/17 - 16:51:28 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:51:28 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:28 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:28 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:28 - INFO - Upating BreadOrder: 93
+10/19/17 - 16:51:28 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:28 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:28 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:51:28 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:28 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:28 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:29 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:29 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:51:29 - INFO - Loading models
+10/19/17 - 16:51:29 - INFO - Models loaded
+10/19/17 - 16:51:30 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:51:30 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:30 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:30 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:30 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:30 - INFO - Executing InventoryTabVM#StartNewInventory
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:30 - INFO - Upating InventoryItem: 77
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:30 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:30 - INFO - Upating InventoryItem: 77
+10/19/17 - 16:51:30 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:51:30 - INFO - Loading models
+10/19/17 - 16:51:30 - INFO - Models loaded
+10/19/17 - 16:51:30 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:51:30 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:30 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:30 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:31 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:31 - INFO - Executing InventoryTabVM#StartNewInventory
+10/19/17 - 16:51:31 - INFO - Upating BreadOrder: 93
+10/19/17 - 16:51:31 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:51:31 - INFO - Loading models
+10/19/17 - 16:51:31 - INFO - Models loaded
+10/19/17 - 16:51:31 - INFO - Upating BreadOrder: 93
+10/19/17 - 16:51:31 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:51:31 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:31 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:31 - INFO - Upating BreadOrder: 90
+10/19/17 - 16:51:31 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:31 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:31 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:31 - INFO - Executing InventoryTabVM#StartNewInventory
+10/19/17 - 16:51:31 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:51:31 - INFO - Loading models
+10/19/17 - 16:51:32 - INFO - Upating BreadOrder: 91
+10/19/17 - 16:51:32 - INFO - Models loaded
+10/19/17 - 16:51:32 - INFO - Upating BreadOrder: 146
+10/19/17 - 16:51:32 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:51:32 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:32 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:32 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:32 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:33 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:33 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:51:33 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:33 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:33 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:33 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:33 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:33 - INFO - Upating BreadOrder: 132
+10/19/17 - 16:51:33 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:33 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:33 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:33 - INFO - Upating InventoryItem: 77
+10/19/17 - 16:51:33 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:33 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:33 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:33 - INFO - Upating InventoryItem: 77
+10/19/17 - 16:51:33 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:51:33 - INFO - Loading models
+10/19/17 - 16:51:33 - INFO - Upating BreadOrder: 93
+10/19/17 - 16:51:34 - INFO - Models loaded
+10/19/17 - 16:51:34 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:51:34 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:34 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:51:34 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:51:34 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:34 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:34 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:51:34 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:34 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:34 - INFO - Upating Vendor: 4
+10/19/17 - 16:51:34 - INFO - Upating Vendor: 0
+10/19/17 - 16:51:34 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:51:34 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:52:25 - INFO - Loading models
+10/19/17 - 16:52:26 - INFO - Models loaded
+10/19/17 - 16:52:28 - INFO - Executing InventoryTabVM#StartNewInventory
+10/19/17 - 16:52:28 - INFO - Adding temp tab: NewInventoryVM
+10/19/17 - 16:52:28 - INFO - Executing VendorTabVM#AddVendor
+10/19/17 - 16:52:28 - INFO - Executing NewVendorWizardVM#FinishWizard
+10/19/17 - 16:52:28 - INFO - Inserted Vendor: 5
+10/19/17 - 16:52:32 - INFO - Executing VendorTabVM#EditVendor
+10/19/17 - 16:52:32 - INFO - Executing NewVendorWizardVM#DeleteVendor
+10/19/17 - 16:52:34 - INFO - Upating BreadOrder: 147
+10/19/17 - 16:52:34 - INFO - Destroying Vendor: 5
+10/19/17 - 16:52:45 - INFO - Loading models
+10/19/17 - 16:52:45 - INFO - Models loaded
+10/19/17 - 16:52:47 - INFO - Executing InventoryTabVM#StartNewInventory
+10/19/17 - 16:52:47 - INFO - Adding temp tab: NewInventoryVM
+10/19/17 - 16:52:47 - INFO - Executing VendorTabVM#AddVendor
+10/19/17 - 16:52:47 - INFO - Executing NewVendorWizardVM#FinishWizard
+10/19/17 - 16:52:47 - INFO - Inserted Vendor: 5
+10/19/17 - 16:52:47 - INFO - Executing VendorTabVM#EditVendor
+10/19/17 - 16:52:47 - INFO - Executing NewVendorWizardVM#DeleteVendor
+10/19/17 - 16:52:48 - INFO - Destroying Vendor: 5
+10/19/17 - 16:52:59 - INFO - Loading models
+10/19/17 - 16:53:00 - INFO - Models loaded
+10/19/17 - 16:53:02 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:53:02 - INFO - Adding temp tab: NewInventoryItemWizard
+10/19/17 - 16:53:02 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:53:02 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:53:02 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:53:02 - INFO - Upating Vendor: 4
+10/19/17 - 16:53:02 - INFO - Upating Vendor: 0
+10/19/17 - 16:53:02 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:53:02 - INFO - Upating Vendor: 4
+10/19/17 - 16:53:02 - INFO - Upating Vendor: 0
+10/19/17 - 16:53:02 - INFO - Upating Vendor: 4
+10/19/17 - 16:53:02 - INFO - Upating Vendor: 0
+10/19/17 - 16:53:02 - INFO - Removing temp tab
+10/19/17 - 16:53:02 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:53:02 - INFO - Adding temp tab: NewOrderVM
+10/19/17 - 16:56:47 - INFO - Loading models
+10/19/17 - 16:56:47 - INFO - Models loaded
+10/19/17 - 16:56:50 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:56:50 - INFO - Adding temp tab: NewInventoryItemWizard
+10/19/17 - 16:56:50 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:56:50 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:56:50 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:56:50 - INFO - Upating Vendor: 4
+10/19/17 - 16:56:50 - INFO - Upating Vendor: 0
+10/19/17 - 16:56:50 - INFO - Inserted InventoryItem: 77
+10/19/17 - 16:56:50 - INFO - Upating Vendor: 4
+10/19/17 - 16:56:50 - INFO - Upating Vendor: 0
+10/19/17 - 16:56:50 - INFO - Upating Vendor: 4
+10/19/17 - 16:56:50 - INFO - Upating Vendor: 0
+10/19/17 - 16:56:50 - INFO - Removing temp tab
+10/19/17 - 16:56:50 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:56:50 - INFO - Adding temp tab: NewOrderVM
+10/19/17 - 16:58:32 - INFO - Loading models
+10/19/17 - 16:58:32 - INFO - Models loaded
+10/19/17 - 16:58:35 - INFO - Executing InventoryListVM#NewInventoryHelper
+10/19/17 - 16:58:35 - INFO - Adding temp tab: NewInventoryItemWizard
+10/19/17 - 16:58:35 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:58:35 - INFO - Executing WizardVM#NextPage
+10/19/17 - 16:58:35 - INFO - Executing NewInventoryItemWizard#FinishWizard
+10/19/17 - 16:58:35 - INFO - Executing OrderTabVM#StartNewOrder
+10/19/17 - 16:58:35 - INFO - Destroying InventoryItem: 77
+10/19/17 - 16:58:47 - INFO - Loading models
+10/19/17 - 16:58:48 - INFO - Models loaded
+10/19/17 - 16:58:50 - INFO - Executing VendorTabVM#AddVendor
+10/19/17 - 16:58:50 - INFO - Adding temp tab: NewVendorWizardVM
+10/19/17 - 16:58:50 - INFO - Executing NewVendorWizardVM#FinishWizard
+10/19/17 - 16:58:50 - INFO - Inserted Vendor: 5
+10/19/17 - 16:58:50 - INFO - Removing temp tab
+10/19/17 - 16:58:50 - INFO - Executing VendorTabVM#EditVendor
+10/19/17 - 16:58:50 - INFO - Adding temp tab: NewVendorWizardVM
+10/19/17 - 16:58:50 - INFO - Executing NewVendorWizardVM#ShowAll
+10/19/17 - 16:58:50 - INFO - Executing NewVendorWizardVM#FinishWizard
+10/19/17 - 16:58:50 - INFO - Upating Vendor: 5
+10/19/17 - 16:58:50 - INFO - Removing temp tab
+10/19/17 - 16:58:50 - INFO - Destroying Vendor: 5

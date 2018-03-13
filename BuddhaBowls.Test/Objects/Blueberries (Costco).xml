@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>5.29</LastPurchasedPrice>
+  <Name>Blueberries (Costco)</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>BASKET</PurchasedUnit>
+  <Count>8</Count>
+  <CountUnit>BASKET</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>32</RecipeUnitConversion>
+  <Yield>0.85</Yield>
+  <LastOrderAmount>100</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>70</Id>
+</InventoryItem>

@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Models;
+﻿using BuddhaBowls.Messengers;
+using BuddhaBowls.Models;
 using BuddhaBowls.UserControls;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ namespace BuddhaBowls
 {
     public class NewPrepItemVM : WizardVM
     {
-        private AddItemDel<PrepItem> SaveItem;
         private bool _newItem;
 
         #region Content Binders
@@ -30,17 +30,32 @@ namespace BuddhaBowls
             }
         }
 
-        private List<string> _nameList;
-        public List<string> NameList
+        private List<IItem> _itemList;
+        public List<IItem> ItemList
         {
             get
             {
-                return _nameList;
+                return _itemList;
             }
             set
             {
-                _nameList = value;
-                NotifyPropertyChanged("NameList");
+                _itemList = value;
+                NotifyPropertyChanged("ItemList");
+            }
+        }
+
+        private IItem _selectedBaseItem;
+        public IItem SelectedBaseItem
+        {
+            get
+            {
+                return _selectedBaseItem;
+            }
+            set
+            {
+                _selectedBaseItem = value;
+                Item.SetItem(SelectedBaseItem);
+                NotifyPropertyChanged("SelectedBaseItem");
             }
         }
 
@@ -58,40 +73,26 @@ namespace BuddhaBowls
             }
         }
 
-        //private int _nameError;
-        //public int NameError
-        //{
-        //    get
-        //    {
-        //        return _nameError;
-        //    }
-        //    set
-        //    {
-        //        _nameError = value;
-        //        NotifyPropertyChanged("NameError");
-        //    }
-        //}
-
         #endregion
 
         #region ICommand and CanExecute
 
         #endregion
 
-        public NewPrepItemVM(AddItemDel<PrepItem> addDel) : base()
+        public NewPrepItemVM() : base()
         {
-            SaveItem = addDel;
             Item = new PrepItem();
             Header = "New Prep Item";
             _newItem = true;
-            NameList = _models.GetAllIItems().Select(x => x.Name).ToList();
-            PrepCountUnitList = _models.GetPrepCountUnits();
+            ItemList = _models.GetAllIItems();
+            PrepCountUnitList = _models.GetCountUnits();
             FinishVisibility = Visibility.Visible;
         }
 
-        public NewPrepItemVM(PrepItem item, AddItemDel<PrepItem> addDel) : this(addDel)
+        public NewPrepItemVM(PrepItem item) : this()
         {
             Item = item;
+            SelectedBaseItem = item.GetBaseItem();
             Header = "Edit " + item.Name;
             _newItem = false;
         }
@@ -118,16 +119,7 @@ namespace BuddhaBowls
         {
             if (ValidateInputs())
             {
-                if(_newItem)
-                {
-                    Item.Insert();
-                    _models.PrepItems.Add(Item);
-                }
-                else
-                {
-                    Item.Update();
-                }
-                SaveItem(Item);
+                _models.PIContainer.AddItem(Item);
                 base.FinishWizard(obj);
             }
         }
@@ -139,7 +131,7 @@ namespace BuddhaBowls
                 ErrorMessage = "Must supply prep item name";
                 return false;
             }
-            if (_newItem && _models.PrepItems.Select(x => x.Name.ToUpper().Replace(" ", "")).Contains(Item.Name.ToUpper().Replace(" ", "")))
+            if (_newItem && _models.PIContainer.Items.FirstOrDefault(x => x.Name.ToUpper().Replace(" ", "") == Item.Name) != null)
             {
                 ErrorMessage = Item.Name + " already exists as a prep item";
                 return false;

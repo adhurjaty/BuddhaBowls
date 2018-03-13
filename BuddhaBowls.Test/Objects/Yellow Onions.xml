@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>10.5</LastPurchasedPrice>
+  <Name>Yellow Onions</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>50lb</PurchasedUnit>
+  <Count>100</Count>
+  <CountUnit>BAG</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>800</RecipeUnitConversion>
+  <Yield>0.85</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>54</Id>
+</InventoryItem>

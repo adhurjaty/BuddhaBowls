@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>22.5</LastPurchasedPrice>
+  <Name>Cucumbers</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>36 COUNT</PurchasedUnit>
+  <Count>0.75</Count>
+  <CountUnit>CASE</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>420</RecipeUnitConversion>
+  <Yield>0.95</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>60</Id>
+</InventoryItem>

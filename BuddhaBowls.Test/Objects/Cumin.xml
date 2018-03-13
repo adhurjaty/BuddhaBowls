@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>29.37</LastPurchasedPrice>
+  <Name>Cumin</Name>
+  <Category>Herbs</Category>
+  <PurchasedUnit>4.5lbs</PurchasedUnit>
+  <Count>4</Count>
+  <CountUnit>OZ-wt</CountUnit>
+  <Conversion>72</Conversion>
+  <RecipeUnit>TBL</RecipeUnit>
+  <RecipeUnitConversion>360</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>46</Id>
+</InventoryItem>

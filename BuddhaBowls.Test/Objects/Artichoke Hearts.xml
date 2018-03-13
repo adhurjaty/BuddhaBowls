@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>53.22</LastPurchasedPrice>
+  <Name>Artichoke Hearts</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>6# CANS</PurchasedUnit>
+  <Count>8</Count>
+  <CountUnit>CAN</CountUnit>
+  <Conversion>6</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>324</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>20</LastOrderAmount>
+  <LastPurchasedDate>12/28/2016 11:52:40 AM</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>18</Id>
+</InventoryItem>

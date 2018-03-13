@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>0</LastPurchasedPrice>
+  <Name>Vanilla</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>null</PurchasedUnit>
+  <Count>0</Count>
+  <CountUnit>null</CountUnit>
+  <Conversion>0</Conversion>
+  <RecipeUnit>Oz-fl</RecipeUnit>
+  <RecipeUnitConversion>16</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>29</Id>
+</InventoryItem>

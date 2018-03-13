@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>20.85</LastPurchasedPrice>
+  <Name>Canola Oil</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>30lb JUG</PurchasedUnit>
+  <Count>2.1</Count>
+  <CountUnit>JUG</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>800</RecipeUnitConversion>
+  <Yield>0.99</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>34</Id>
+</InventoryItem>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>13.93</LastPurchasedPrice>
+  <Name>Honey</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>5lbs</PurchasedUnit>
+  <Count>1</Count>
+  <CountUnit>JUG</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>80</RecipeUnitConversion>
+  <Yield>0.95</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>28</Id>
+</InventoryItem>

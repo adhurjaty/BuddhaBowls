@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>13.99</LastPurchasedPrice>
+  <Name>Sugar (BROWN)</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>Sugar (Brown)</PurchasedUnit>
+  <Count>1.5</Count>
+  <CountUnit>QUART</CountUnit>
+  <Conversion>16</Conversion>
+  <RecipeUnit>CUP</RecipeUnit>
+  <RecipeUnitConversion>62.5</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>12/28/2016 11:52:40 AM</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>38</Id>
+</InventoryItem>

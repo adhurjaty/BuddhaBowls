@@ -22,7 +22,7 @@ namespace BuddhaBowls
     /// <summary>
     /// Permanent tab showing the current inventory and the inventory history
     /// </summary>
-    public class InventoryTabVM : ChangeableTabVM
+    public partial class InventoryTabVM : ChangeableTabVM
     {
 
         #region Content Binders
@@ -83,9 +83,6 @@ namespace BuddhaBowls
         // Compare button
         public ICommand CompareCommand { get; set; }
         public ICommand InvListCommand { get; set; }
-        public ICommand AddPrepCommand { get; set; }
-        public ICommand DeletePrepCommand { get; set; }
-        public ICommand EditPrepCommand { get; set; }
         // TEMPORARY - REMOVE IN NEXT BUILD
         public ICommand FixYieldCommand { get; set; }
 
@@ -107,15 +104,20 @@ namespace BuddhaBowls
         {
             Header = "Inventory";
 
-            InitSwitchButtons(new string[] { "Master", "History" });
+            InitSwitchButtons(new string[] { "Master", "Prep Item", "History" });
 
             AddCommand = new RelayCommand(StartNewInventory, x => DBConnection);
             DeleteCommand = new RelayCommand(DeleteInventory, x => DeleteEditCanExecute && DBConnection);
             ViewCommand = new RelayCommand(ViewInventory, x => DeleteEditCanExecute && DBConnection);
             InvListCommand = new RelayCommand(GenerateInvList, x => DBConnection);
-            FixYieldCommand = new RelayCommand(FixYields);
+            AddPrepCommand = new RelayCommand(AddNewPrepItem, x => DBConnection);
+            EditPrepCommand = new RelayCommand(EditPrepItem, x => SelectedPrepItem != null && DBConnection);
+            DeletePrepCommand = new RelayCommand(DeletePrepItem, x => SelectedPrepItem != null && DBConnection);
+
+            FixYieldCommand = new RelayCommand(FixYields, x => DBConnection);
 
             Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_CHANGED, (msg) => ShowSelectedWeek(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek));
+            Messenger.Instance.Register<Message>(MessageTypes.PREP_ITEM_CHANGED, (msg) => Refresh());
 
             if (DBConnection)
                 PeriodSelector = new PeriodSelectorVM(_models, ShowSelectedWeek);
@@ -185,7 +187,6 @@ namespace BuddhaBowls
                 SelectedInventory.Destroy();
                 _models.InContainer.RemoveItem(SelectedInventory);
                 SelectedInventory = null;
-                //ParentContext.ReportTab.Refresh();
                 Refresh();
             }
         }
@@ -252,12 +253,6 @@ namespace BuddhaBowls
 
         #region Update UI Methods
 
-        public override void FilterItems(string filterStr)
-        {
-            //PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
-            //                                                              .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
-        }
-
         /// <summary>
         /// Called when Master List is edited
         /// </summary>
@@ -271,7 +266,7 @@ namespace BuddhaBowls
             ShowSelectedWeek(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
             if(InvListVM != null)
                 InvListVM.InitContainer();
-            //PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderByDescending(x => x.Name));
+            PrepItemList = new ObservableCollection<PrepItem>(_models.PIContainer.Items.OrderByDescending(x => x.Name));
         }
 
         private void ShowSelectedWeek(PeriodMarker period, WeekMarker week)
@@ -294,12 +289,12 @@ namespace BuddhaBowls
                         InvListVM = new InventoryListVM();
                     TabControl = _tabCache[0] ?? new MasterInventoryControl(this);
                     break;
-                //case 1:
-                //    if (PrepItemList == null)
-                //        PrepItemList = new ObservableCollection<PrepItem>(_models.PrepItems.OrderBy(x => x.Name));
-                //    TabControl = _tabCache[1] ?? new PrepListControl(this);
-                //    break;
                 case 1:
+                    if (PrepItemList == null)
+                        PrepItemList = new ObservableCollection<PrepItem>(_models.PIContainer.Items.OrderBy(x => x.Name));
+                    TabControl = _tabCache[1] ?? new PrepListControl(this);
+                    break;
+                case 2:
                     if (InventoryList == null)
                         InventoryList = new ObservableCollection<Inventory>(_models.InContainer.Items.OrderByDescending(x => x.Date));
                     TabControl = _tabCache[2] ?? new InventoryHistoryControl(this);

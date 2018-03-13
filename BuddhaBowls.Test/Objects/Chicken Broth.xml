@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>40</LastPurchasedPrice>
+  <Name>Chicken Broth</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>4 EA</PurchasedUnit>
+  <Count>4</Count>
+  <CountUnit>BOTTLE</CountUnit>
+  <Conversion>4</Conversion>
+  <RecipeUnit>null</RecipeUnit>
+  <RecipeUnitConversion>null</RecipeUnitConversion>
+  <Yield>0</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>33</Id>
+</InventoryItem>

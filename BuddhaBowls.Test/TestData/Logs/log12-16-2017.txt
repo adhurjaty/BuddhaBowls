@@ -1,0 +1,3 @@
+12/16/17 - 14:21:18 - INFO - Loading models
+12/16/17 - 14:21:18 - INFO - Models loaded
+12/16/17 - 14:21:28 - INFO - Adding temp tab: NewRecipeVM

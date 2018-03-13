@@ -1,0 +1,4 @@
+Id,Name,Category,PurchasedUnit,Count,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate,LastVendorId
+17,Artichoke Hearts,Dry Goods,6# CANS,8,CAN,0,OZ-wt,324,1,0,44,5/17/2017 12:00:00 AM,1
+27,Vanilla,Dry Goods,EA,0,5lb BUCKET,0,Oz-fl,16,100,0,11,5/17/2017 12:00:00 AM,1
+59,Avocado,Produce,1/2 CASE,24,EACH,0,EA,24,1,0,22,5/17/2017 12:00:00 AM,1

@@ -130,6 +130,14 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public float CountPrice
+        {
+            get
+            {
+                return CostPerRU;
+            }
+        }
+
         public float TotalCost
         {
             get

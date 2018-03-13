@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>66.76</LastPurchasedPrice>
+  <Name>Mozzarella</Name>
+  <Category>Dairy</Category>
+  <PurchasedUnit>CASE 30lb</PurchasedUnit>
+  <Count>1</Count>
+  <CountUnit>5lb BAG</CountUnit>
+  <Conversion>6</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>480</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>2</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>0</Id>
+</InventoryItem>

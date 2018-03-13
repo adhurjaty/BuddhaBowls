@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>5.49</LastPurchasedPrice>
+  <Name>Chili Powder</Name>
+  <Category>Herbs</Category>
+  <PurchasedUnit>20oz</PurchasedUnit>
+  <Count>5</Count>
+  <CountUnit>OZ-wt</CountUnit>
+  <Conversion>20</Conversion>
+  <RecipeUnit>TBL</RecipeUnit>
+  <RecipeUnitConversion>78.05</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>50</Id>
+</InventoryItem>
