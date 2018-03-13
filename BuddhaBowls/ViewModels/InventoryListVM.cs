@@ -265,6 +265,7 @@ namespace BuddhaBowls
 
             SetCommandsAndControl();
             Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(DatasetChanged));
+            Messenger.Instance.Register<Message>(MessageTypes.PREP_ITEM_CHANGED, (msg) => UpdateInvValue());
         }
 
         /// <summary>
@@ -280,7 +281,7 @@ namespace BuddhaBowls
             UpdateInvValue();
             SetCommandsAndControl();
             Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(DatasetChanged));
-
+            Messenger.Instance.Register<Message>(MessageTypes.PREP_ITEM_CHANGED, (msg) => UpdateInvValue());
         }
 
         /// <summary>
@@ -299,6 +300,7 @@ namespace BuddhaBowls
             UpdateInvValue();
             SetCommandsAndControl();
             Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(DatasetChanged));
+            Messenger.Instance.Register<Message>(MessageTypes.PREP_ITEM_CHANGED, (msg) => UpdateInvValue());
         }
 
         #region ICommand Helpers
@@ -396,6 +398,7 @@ namespace BuddhaBowls
         public void CollectionChanged()
         {
             FilteredItems = new ObservableCollection<VendorInventoryItem>(_invItemsContainer.Items);
+            UpdateInvValue();
         }
 
         public void MoveDown(VendorInventoryItem item)
@@ -460,7 +463,8 @@ namespace BuddhaBowls
         {
             List<PriceExpanderItem> items = new List<PriceExpanderItem>();
             float totalValue = 0;
-            foreach (KeyValuePair<string, float> kvp in _invItemsContainer.GetCategoryValues())
+            Dictionary<string, float> catDict = MainHelper.MergeDicts(_invItemsContainer.GetCategoryValues(), _models.PIContainer.GetCategoryValues(), (x, y) => x + y);
+            foreach (KeyValuePair<string, float> kvp in catDict)
             {
                 items.Add(new PriceExpanderItem() { Label = kvp.Key + " Value:", Price = kvp.Value });
                 totalValue += kvp.Value;

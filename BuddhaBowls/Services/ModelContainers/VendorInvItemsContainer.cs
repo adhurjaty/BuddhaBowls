@@ -326,9 +326,7 @@ namespace BuddhaBowls.Services
 
             foreach (VendorInventoryItem item in _items)
             {
-                if (!costDict.Keys.Contains(item.Category))
-                    costDict[item.Category] = 0;
-                costDict[item.Category] += item.PriceExtension;
+                MainHelper.AddToDict(ref costDict, item.Category, item.PriceExtension, (x, y) => x + y);
             }
 
             return costDict;

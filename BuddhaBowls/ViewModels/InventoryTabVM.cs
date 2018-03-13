@@ -266,7 +266,10 @@ namespace BuddhaBowls
             ShowSelectedWeek(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek);
             if(InvListVM != null)
                 InvListVM.InitContainer();
-            PrepItemList = new ObservableCollection<PrepItem>(_models.PIContainer.Items.OrderByDescending(x => x.Name));
+
+
+            FilterText = "";
+            FilterItems("");
         }
 
         private void ShowSelectedWeek(PeriodMarker period, WeekMarker week)
@@ -291,7 +294,7 @@ namespace BuddhaBowls
                     break;
                 case 1:
                     if (PrepItemList == null)
-                        PrepItemList = new ObservableCollection<PrepItem>(_models.PIContainer.Items.OrderBy(x => x.Name));
+                        Refresh();
                     TabControl = _tabCache[1] ?? new PrepListControl(this);
                     break;
                 case 2:

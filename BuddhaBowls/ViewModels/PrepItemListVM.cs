@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,20 @@ namespace BuddhaBowls
             {
                 _selectedPrepItem = value;
                 NotifyPropertyChanged("SelectedPrepItem");
+            }
+        }
+
+        private string _filterText;
+        public string FilterText
+        {
+            get
+            {
+                return _filterText;
+            }
+            set
+            {
+                _filterText = value;
+                NotifyPropertyChanged("FilterText");
             }
         }
 
@@ -91,13 +106,12 @@ namespace BuddhaBowls
         public override void FilterItems(string filterStr)
         {
             PrepItemList = new ObservableCollection<PrepItem>(_models.PIContainer.Items.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
-                                                                          .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())));
+                                                                          .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())).ThenBy(x => x.Name));
         }
 
         public void PrepRowEdited(PrepItem item)
         {
             _models.PIContainer.Update(item);
-            InvListVM.UpdateInvValue();
         }
     }
 }

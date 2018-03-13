@@ -192,5 +192,20 @@ namespace BuddhaBowls.Models
         {
             return _refItem;
         }
+
+        public Dictionary<string, float> GetCategoryCosts()
+        {
+            if (_refItem.GetType() == typeof(VendorInventoryItem))
+                return new Dictionary<string, float>() { { _refItem.Category, _refItem.CountPrice * TotalCount * Conversion } };
+
+            Dictionary<string, float> catCosts = _refItem.GetCategoryCosts();
+            List<string> keys = catCosts.Keys.ToList();
+            foreach (string k in keys)
+            {
+                catCosts[k] *= TotalCount * Conversion;
+            }
+
+            return catCosts;
+        }
     }
 }

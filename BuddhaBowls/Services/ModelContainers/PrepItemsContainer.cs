@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Messengers;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,25 @@ namespace BuddhaBowls.Services
             base.RemoveItem(item);
             if (_isMaster)
                 Messenger.Instance.NotifyColleagues(MessageTypes.PREP_ITEM_CHANGED);
+        }
+
+        public override void Update(PrepItem item)
+        {
+            base.Update(item);
+            if (_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.PREP_ITEM_CHANGED);
+        }
+
+        public Dictionary<string, float> GetCategoryValues()
+        {
+            Dictionary<string, float> costDict = new Dictionary<string, float>();
+
+            foreach (PrepItem item in Items)
+            {
+                costDict = MainHelper.MergeDicts(costDict, item.GetCategoryCosts(), (x, y) => x + y);
+            }
+
+            return costDict;
         }
     }
 }

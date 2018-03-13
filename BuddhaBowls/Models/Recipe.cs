@@ -134,7 +134,7 @@ namespace BuddhaBowls.Models
         {
             get
             {
-                return CostPerRU;
+                return TotalCost;
             }
         }
 
@@ -171,17 +171,9 @@ namespace BuddhaBowls.Models
         {
             get
             {
-                List<Dictionary<string, float>> catCosts = ItemList.Select(x => x.GetCategoryCosts()).ToList();
-                Dictionary<string, float> combinedCatCosts = new Dictionary<string, float>();
-                foreach (Dictionary<string, float> dict in catCosts)
-                {
-                    foreach (KeyValuePair<string, float> kvp in dict)
-                    {
-                        if (!combinedCatCosts.ContainsKey(kvp.Key))
-                            combinedCatCosts[kvp.Key] = 0;
-                        combinedCatCosts[kvp.Key] += kvp.Value;
-                    }
-                }
+                //Dictionary<string, float> combinedCatCosts = ItemList.Select(x => x.GetCategoryCosts())
+                //                                                     .Aggregate((result, item) => MainHelper.MergeDicts(result, item, (x, y) => x + y));
+                Dictionary<string, float> combinedCatCosts = GetCategoryCosts();
                 float total = combinedCatCosts.Sum(x => x.Value);
                 return combinedCatCosts.Select(x => new CategoryProportion(x.Key, x.Value, total))
                                        .OrderByDescending(x => x.CostProportion).ToList();
@@ -213,29 +205,32 @@ namespace BuddhaBowls.Models
 
         public Dictionary<string, float> GetCategoryCosts()
         {
-            Dictionary<string, float> costDict = new Dictionary<string, float>();
+            if(ItemList.Count > 0)
+                return ItemList.Select(x => x.GetCategoryCosts()).Aggregate((result, item) => MainHelper.MergeDicts(result, item, (x, y) => x + y));
+            return new Dictionary<string, float>();
+            //Dictionary<string, float> costDict = new Dictionary<string, float>();
 
-            foreach (IItem item in ItemList)
-            {
-                if (item.GetType() == typeof(Recipe))
-                {
-                    Dictionary<string, float> subCostDict = ((Recipe)item).GetCategoryCosts();
-                    foreach (KeyValuePair<string, float> kvp in subCostDict)
-                    {
-                        if (!costDict.Keys.Contains(kvp.Key))
-                            costDict[kvp.Key] = 0;
-                        costDict[kvp.Key] += kvp.Value;
-                    }
-                }
-                else
-                {
-                    if (!costDict.Keys.Contains(item.Category))
-                        costDict[item.Category] = 0;
-                    costDict[item.Category] += item.GetCost();
-                }
-            }
+            //foreach (IItem item in ItemList)
+            //{
+            //    if (item.GetType() == typeof(Recipe))
+            //    {
+            //        Dictionary<string, float> subCostDict = ((Recipe)item).GetCategoryCosts();
+            //        foreach (KeyValuePair<string, float> kvp in subCostDict)
+            //        {
+            //            if (!costDict.Keys.Contains(kvp.Key))
+            //                costDict[kvp.Key] = 0;
+            //            costDict[kvp.Key] += kvp.Value;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (!costDict.Keys.Contains(item.Category))
+            //            costDict[item.Category] = 0;
+            //        costDict[item.Category] += item.GetCost();
+            //    }
+            //}
 
-            return costDict;
+            //return costDict;
         }
 
         public override void Update()

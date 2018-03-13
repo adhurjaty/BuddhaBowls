@@ -338,5 +338,99 @@ namespace BuddhaBowls.Test
 
             CollectionAssert.AreEqual(refLabels, labels);
         }
+
+        [TestMethod]
+        public void MergeFloatDictsTest()
+        {
+            Dictionary<string, float> dict1 = new Dictionary<string, float>()
+            {
+                { "a", 3 },
+                { "b", 5 },
+                { "c", 8 }
+            };
+
+            Dictionary<string, float> dict2 = new Dictionary<string, float>()
+            {
+                { "b", 5 },
+                { "c", 8 },
+                { "d", 2 }
+            };
+
+            Dictionary<string, float> refDict = new Dictionary<string, float>()
+            {
+                { "a", 3 },
+                { "b", 10 },
+                { "c", 16 },
+                { "d", 2 }
+            };
+
+            Dictionary<string, float> outDict = MainHelper.MergeDicts(dict1, dict2, (x, y) => x + y);
+
+            CollectionAssert.AreEquivalent(refDict.Keys, outDict.Keys);
+            foreach (string key in refDict.Keys)
+            {
+                Assert.AreEqual(refDict[key], outDict[key]);
+            }
+        }
+
+        [TestMethod]
+        public void MergeListDictsTest()
+        {
+            Dictionary<string, List<int>> dict1 = new Dictionary<string, List<int>>()
+            {
+                { "a", new List<int>() { 3, 5 } },
+                { "b", new List<int>() { 5, 1 } },
+                { "c", new List<int>() { 8 } }
+            };
+
+            Dictionary<string, List<int>> dict2 = new Dictionary<string, List<int>>()
+            {
+                { "b", new List<int>() { 5, 8, 7 } },
+                { "c", new List<int>() { 8, 1, 1, 1, 1 } },
+                { "d", new List<int>() { 2 } }
+            };
+
+            Dictionary<string, List<int>> refDict = new Dictionary<string, List<int>>()
+            {
+                { "a", new List<int>() { 3, 5 } },
+                { "b", new List<int>() { 5, 1, 5, 8, 7 } },
+                { "c", new List<int>() { 8, 8, 1, 1, 1, 1 } },
+                { "d", new List<int>() { 2 } }
+            };
+
+            Dictionary<string, List<int>> outDict = MainHelper.MergeDicts(dict1, dict2, (x, y) => x.Concat(y).ToList());
+
+            CollectionAssert.AreEquivalent(refDict.Keys, outDict.Keys);
+            foreach (string key in refDict.Keys)
+            {
+                CollectionAssert.AreEqual(refDict[key], outDict[key]);
+            }
+        }
+
+        [TestMethod]
+        public void AddToDictTest()
+        {
+            Dictionary<string, int> outDict = new Dictionary<string, int>();
+            List<string> keys = new List<string>() { "a", "b", "a", "c", "b", "a" };
+            List<int> vals = new List<int>() { 1, 4, 6, 5, 1, 9 };
+
+            Dictionary<string, int> refDict = new Dictionary<string, int>()
+            {
+                { "a", 16 },
+                { "b", 5 },
+                { "c", 5 }
+            };
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                MainHelper.AddToDict(ref outDict, keys[i], vals[i], (x, y) => x + y);
+            }
+
+            CollectionAssert.AreEquivalent(refDict.Keys, outDict.Keys);
+            foreach (string key in refDict.Keys)
+            {
+                Assert.AreEqual(refDict[key], outDict[key]);
+            }
+        }
     }
 }
