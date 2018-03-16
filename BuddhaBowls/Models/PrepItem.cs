@@ -87,6 +87,8 @@ namespace BuddhaBowls.Models
             {
                 if (_refItem == null)
                     return 0;
+                if (_refItem.GetType() == typeof(Recipe))
+                    return _refItem.CostPerRU * Conversion;
                 return _refItem.CountPrice * Conversion;
             }
         }
@@ -202,7 +204,14 @@ namespace BuddhaBowls.Models
             List<string> keys = catCosts.Keys.ToList();
             foreach (string k in keys)
             {
-                catCosts[k] *= TotalCount * Conversion;
+                try
+                {
+                    catCosts[k] *= TotalCount * Conversion / (float)_refItem.RecipeUnitConversion;
+                }
+                catch(DivideByZeroException e)
+                {
+                    continue;
+                }
             }
 
             return catCosts;

@@ -118,6 +118,8 @@ namespace BuddhaBowls
 
             Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_CHANGED, (msg) => ShowSelectedWeek(PeriodSelector.SelectedPeriod, PeriodSelector.SelectedWeek));
             Messenger.Instance.Register<Message>(MessageTypes.PREP_ITEM_CHANGED, (msg) => Refresh());
+            Messenger.Instance.Register<Message>(MessageTypes.VENDOR_INV_ITEMS_CHANGED, (msg) => Refresh());
+            Messenger.Instance.Register<Message>(MessageTypes.RECIPE_CHANGED, (msg) => Refresh());
 
             if (DBConnection)
                 PeriodSelector = new PeriodSelectorVM(_models, ShowSelectedWeek);
