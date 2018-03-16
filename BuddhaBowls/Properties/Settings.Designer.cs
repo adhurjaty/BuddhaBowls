@@ -103,5 +103,16 @@ namespace BuddhaBowls.Properties {
                 this["FoodCategories"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Generic.List<System.String> PrepItemOrder {
+            get {
+                return ((global::System.Collections.Generic.List<System.String>)(this["PrepItemOrder"]));
+            }
+            set {
+                this["PrepItemOrder"] = value;
+            }
+        }
     }
 }

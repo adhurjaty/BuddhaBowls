@@ -150,6 +150,7 @@ namespace BuddhaBowls.Models
             if (TotalSalesItem == null)
             {
                 TotalSalesItem = new ExpenseItem("Sales", "Total", DateTime.Now);
+                Summaries.Add(TotalSalesItem);
                 UpdateTotal();
             }
             FoodTotal = items.FirstOrDefault(x => x.Name == "Food");

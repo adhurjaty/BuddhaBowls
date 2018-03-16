@@ -79,6 +79,11 @@ namespace BuddhaBowls.Helpers
                         .ThenBy(x => x.Name);
         }
 
+        public static List<PrepItem> SortPrepItems(IEnumerable<PrepItem> items)
+        {
+            return items.OrderBy(x => SortValue(x, Properties.Settings.Default.PrepItemOrder)).ThenBy(x => x.Name).ToList();
+        }
+
         private static int SortValue<T>(T item, List<string> itemOrder) where T : ISortable
         {
             int value = itemOrder.IndexOf(item.Name);

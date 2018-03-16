@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BuddhaBowls.Models
 {
-    public class PrepItem : Model
+    public class PrepItem : Model, ISortable
     {
         private IItem _refItem;
 

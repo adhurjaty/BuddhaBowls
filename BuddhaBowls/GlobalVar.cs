@@ -18,5 +18,6 @@ namespace BuddhaBowls
         public const string BLANK_COLOR = "FFFFFF";
         public const string INV_ORDER_FILE = "InventoryOrder.txt";
         public const string FOOD_CAT_FILE = "FoodCategories.txt";
+        public const string PREP_ORDER_FILE = "PrepItemOrder.txt";
     }
 }

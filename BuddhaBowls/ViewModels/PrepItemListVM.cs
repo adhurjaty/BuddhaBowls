@@ -105,8 +105,7 @@ namespace BuddhaBowls
 
         public override void FilterItems(string filterStr)
         {
-            PrepItemList = new ObservableCollection<PrepItem>(_models.PIContainer.Items.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))
-                                                                          .OrderBy(x => x.Name.ToUpper().IndexOf(filterStr.ToUpper())).ThenBy(x => x.Name));
+            PrepItemList = new ObservableCollection<PrepItem>(MainHelper.SortPrepItems(_models.PIContainer.Items.Where(x => x.Name.ToUpper().Contains(filterStr.ToUpper()))));
         }
 
         public void PrepRowEdited(PrepItem item)

@@ -208,29 +208,6 @@ namespace BuddhaBowls.Models
             if(ItemList.Count > 0)
                 return ItemList.Select(x => x.GetCategoryCosts()).Aggregate((result, item) => MainHelper.MergeDicts(result, item, (x, y) => x + y));
             return new Dictionary<string, float>();
-            //Dictionary<string, float> costDict = new Dictionary<string, float>();
-
-            //foreach (IItem item in ItemList)
-            //{
-            //    if (item.GetType() == typeof(Recipe))
-            //    {
-            //        Dictionary<string, float> subCostDict = ((Recipe)item).GetCategoryCosts();
-            //        foreach (KeyValuePair<string, float> kvp in subCostDict)
-            //        {
-            //            if (!costDict.Keys.Contains(kvp.Key))
-            //                costDict[kvp.Key] = 0;
-            //            costDict[kvp.Key] += kvp.Value;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (!costDict.Keys.Contains(item.Category))
-            //            costDict[item.Category] = 0;
-            //        costDict[item.Category] += item.GetCost();
-            //    }
-            //}
-
-            //return costDict;
         }
 
         public override void Update()

@@ -36,12 +36,9 @@ namespace BuddhaBowls.Services
         public DBCache()
         {
             InitializeModels();
-            InitializeInventoryOrder();
+            InitializeItemsOrder();
             InitializeFoodCategories();
-            //if (InventoryItems != null)
-            //{
             SetCategoryColors();
-            //}
         }
 
         /// <summary>
@@ -67,6 +64,7 @@ namespace BuddhaBowls.Services
 
             _breadWeekDict = new Dictionary<DateTime, BreadWeekContainer>();
             InitBreadOrders();
+
             Logger.Info("Models loaded");
         }
 
@@ -84,13 +82,18 @@ namespace BuddhaBowls.Services
         /// <summary>
         /// Sets the desired ordering for inventory items by the inventory order file. Alphabetical otherwise
         /// </summary>
-        private void InitializeInventoryOrder()
+        private void InitializeItemsOrder()
         {
             string orderPath = Path.Combine(Properties.Settings.Default.DBLocation, "Settings", GlobalVar.INV_ORDER_FILE);
             if (File.Exists(orderPath))
                 Properties.Settings.Default.InventoryOrder = new List<string>(File.ReadAllLines(orderPath));
             else
                 Properties.Settings.Default.InventoryOrder = new List<string>(VIContainer.Items.Select(x => x.Name).OrderBy(x => x));
+            orderPath = Path.Combine(Properties.Settings.Default.DBLocation, "Settings", GlobalVar.PREP_ORDER_FILE);
+            if (File.Exists(orderPath))
+                Properties.Settings.Default.PrepItemOrder = new List<string>(File.ReadAllLines(orderPath));
+            else
+                Properties.Settings.Default.PrepItemOrder = new List<string>(PIContainer.Items.Select(x => x.Name).OrderBy(x => x));
             Properties.Settings.Default.Save();
         }
 
@@ -416,16 +419,10 @@ namespace BuddhaBowls.Services
                 {
                     foreach (KeyValuePair<string, BreadDescriptor> kvp in bo.BreadDescDict)
                     {
-                        if (!salesDict.ContainsKey(kvp.Key))
-                        {
-                            salesDict[kvp.Key] = 0;
-                            usageDict[kvp.Key] = 0;
-                        }
-
                         if (kvp.Value.Usage > 0)
                         {
-                            salesDict[kvp.Key] += bo.GrossSales;
-                            usageDict[kvp.Key] += kvp.Value.Usage;
+                            MainHelper.AddToDict(ref salesDict, kvp.Key, bo.GrossSales, (x, y) => x + y);
+                            MainHelper.AddToDict(ref usageDict, kvp.Key, kvp.Value.Usage, (x, y) => x + y);
                         }
                     }
                 }

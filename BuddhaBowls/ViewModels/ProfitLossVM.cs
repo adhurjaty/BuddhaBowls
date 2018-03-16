@@ -236,23 +236,35 @@ namespace BuddhaBowls
                                                                                         .ToList());
             SalesPAndL sales = new SalesPAndL(week.Period, sectionDict["Sales"]);
             SummarySections[0] = sales;
-            if (sectionDict.ContainsKey("Cost of Sales"))
+            if (sectionDict.ContainsKey("Cost of Sales") && sectionDict["Cost of Sales"].FirstOrDefault(x => x.Name == "Total") != null)
                 SummarySections[1] = new CogsPAndL(week.Period, sectionDict["Cost of Sales"], sales.FoodTotal);
             else
                 PopulateCogs(week);
-            SummarySections[2] = new PayrollPAndL(week.Period, sectionDict["Payroll"], sales.FoodTotal,
-                                                  SummarySections[1].Summaries.First(x => x.Name == "Total"));
-            SummarySections[3] = new OverheadPAndL(week.Period, sectionDict["Overhead Expense"], sales.FoodTotal);
-
-            // temporary check to create blank takeaway in case the other records exist and this type does not
-            if (!sectionDict.ContainsKey("Takeaway"))
+            if (sectionDict.ContainsKey("Payroll"))
             {
-                PopulateTakeaway(GetTakeawaySummaryItems(period, week), week);
-                SummarySections[4].Insert();
+                SummarySections[2] = new PayrollPAndL(week.Period, sectionDict["Payroll"], sales.FoodTotal,
+                                                      SummarySections[1].Summaries.First(x => x.Name == "Total"));
             }
             else
             {
+                SummarySections[2] = new PayrollPAndL(week.Period, GetPayrollSummaryItems(period, week),
+                                                      SummarySections[0].TotalSalesItem, SummarySections[1].Summaries.First(x => x.Name == "Total"));
+            }
+            if(sectionDict.ContainsKey("Overhead Expense"))
+                SummarySections[3] = new OverheadPAndL(week.Period, sectionDict["Overhead Expense"], sales.FoodTotal);
+            else
+                SummarySections[3] = new OverheadPAndL(week.Period, GetOverheadSummaryItems(period, week), SummarySections[0].TotalSalesItem);
+
+
+            // temporary check to create blank takeaway in case the other records exist and this type does not
+            if (sectionDict.ContainsKey("Takeaway"))
+            {
                 PopulateTakeaway(sectionDict["Takeaway"], week);
+            }
+            else
+            {
+                PopulateTakeaway(GetTakeawaySummaryItems(period, week), week);
+                SummarySections[4].Insert();
             }
 
             for (int i = 0; i < SummarySections.Count; i++)
@@ -366,30 +378,23 @@ namespace BuddhaBowls
             // dictionary mapping item name to category
             Dictionary<string, string> itemCategoryCache = new Dictionary<string, string>();
 
-            _otherWeekSquare["Credit Card Processing"] = 0;
-            _otherPeriodSquare["Credit Card Processing"] = 0;
             // fill dictionaries with historical data from database
             foreach (DailySale sale in _models.DSContainer.Items.Where(x => x.Date < lastUpdated))
             {
                 if (!itemCategoryCache.ContainsKey(sale.Name))
                     itemCategoryCache[sale.Name] = sale.Category;
-                if (!periodRevenueDict.ContainsKey(sale.Category))
-                {
-                    periodRevenueDict[sale.Category] = 0;
-                    weekRevenueDict[sale.Category] = 0;
-                    prevPeriodRevenueDict[sale.Category] = 0;
-                }
-                periodRevenueDict[sale.Category] += sale.GrossTotal;
+
+                MainHelper.AddToDict(ref periodRevenueDict, sale.Category, sale.GrossTotal, (x, y) => x + y);
 
                 if (week.StartDate <= sale.Date && sale.Date <= week.EndDate)
                 {
-                    weekRevenueDict[sale.Category] += sale.GrossTotal;
-                    _otherWeekSquare["Credit Card Processing"] += sale.ChargeFee;
+                    MainHelper.AddToDict(ref weekRevenueDict, sale.Category, sale.GrossTotal, (x, y) => x + y);
+                    MainHelper.AddToDict(ref _otherWeekSquare, "Credit Card Processing", sale.ChargeFee, (x, y) => x + y);
                 }
                 if (sale.Date < week.StartDate)
                 {
-                    prevPeriodRevenueDict[sale.Category] += sale.GrossTotal;
-                    _otherPeriodSquare["Credit Card Processing"] += sale.ChargeFee;
+                    MainHelper.AddToDict(ref prevPeriodRevenueDict, sale.Category, sale.GrossTotal, (x, y) => x + y);
+                    MainHelper.AddToDict(ref _otherPeriodSquare, "Credit Card Processing", sale.ChargeFee, (x, y) => x + y);
                 }
             }
 
@@ -409,7 +414,7 @@ namespace BuddhaBowls
                         {
                             // average the charge fee per itemization
                             float chargeFee = sale.ChargeFee / sale.Itemizations.Count;
-                            _otherWeekSquare["Credit Card Processing"] += chargeFee;
+                            MainHelper.AddToDict(ref _otherWeekSquare, "Credit Card Processing", sale.ChargeFee, (x, y) => x + y);
 
                             cancelToken.ThrowIfCancellationRequested();
                             if (!itemCategoryCache.ContainsKey(itemization.Name))
@@ -420,21 +425,15 @@ namespace BuddhaBowls
                                 else
                                     itemCategoryCache[itemization.Name] = "Other";
                             }
-                            if (!periodRevenueDict.ContainsKey(itemCategoryCache[itemization.Name]))
-                            {
-                                periodRevenueDict[itemCategoryCache[itemization.Name]] = 0;
-                                weekRevenueDict[itemCategoryCache[itemization.Name]] = 0;
-                                prevPeriodRevenueDict[itemCategoryCache[itemization.Name]] = 0;
-                            }
-                            periodRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
+                            MainHelper.AddToDict(ref periodRevenueDict, itemCategoryCache[itemization.Name], itemization.NetTotal, (x, y) => x + y);
 
                             if (week.StartDate <= sale.TransactionTime && sale.TransactionTime <= week.EndDate)
                             {
-                                weekRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
+                                MainHelper.AddToDict(ref weekRevenueDict, itemCategoryCache[itemization.Name], itemization.NetTotal, (x, y) => x + y);
                             }
                             if (sale.TransactionTime < week.StartDate)
                             {
-                                prevPeriodRevenueDict[itemCategoryCache[itemization.Name]] += itemization.NetTotal;
+                                MainHelper.AddToDict(ref prevPeriodRevenueDict, itemCategoryCache[itemization.Name], itemization.NetTotal, (x, y) => x + y);
                             }
 
                             DailySale existingSale = salesToSave[i].FirstOrDefault(x => x.Name == itemization.Name);
