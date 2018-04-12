@@ -55,7 +55,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Product" Binding="{Binding Name}" Width="2*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Prep Unit" Binding="{Binding CountUnit}" Width="2*" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Unit Cost" Binding="{Binding Path=Cost, StringFormat=c}" Width="1*"/>
+                <DataGridTextColumn Header="Unit Cost" Binding="{Binding Path=Cost, StringFormat=c}" Width="1*" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Line Count" Binding="{Binding LineCount}" Width="1*"/>
                 <DataGridTextColumn Header="Walk-in Count" Binding="{Binding WalkInCount}" Width="1*"/>
                 <DataGridTextColumn Header="Total" Binding="{Binding TotalCount}" Width="1*" IsReadOnly="True"/>

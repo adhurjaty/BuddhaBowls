@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using System.IO;
 
 namespace BuddhaBowls.Services
 {
@@ -61,6 +63,30 @@ namespace BuddhaBowls.Services
             }
 
             return costDict;
+        }
+
+        public void UpdateCounts(IEnumerable<PrepItem> prepItems)
+        {
+            foreach (PrepItem item in prepItems)
+            {
+                PrepItem masterItem = Items.First(x => x.Id == item.Id);
+                masterItem.LineCount = item.LineCount;
+                masterItem.WalkInCount = item.WalkInCount;
+                if (_isMaster)
+                    masterItem.Update();
+            }
+
+            Messenger.Instance.NotifyColleagues(MessageTypes.PREP_ITEM_CHANGED);
+        }
+
+        public List<PrepItem> GetInvPrepItems(Inventory inv)
+        {
+            if (File.Exists(Path.Combine(Properties.Settings.Default.DBLocation, inv.GetPrepTableName() + ".csv")))
+            {
+                List<CountPrepItem> countPis = ModelHelper.InstantiateList<CountPrepItem>(inv.GetPrepTableName(), false);
+                return Items.Select(x => x.FromCountPrep(countPis.First(y => y.Id == x.Id))).ToList();
+            }
+            return new List<PrepItem>();
         }
     }
 }

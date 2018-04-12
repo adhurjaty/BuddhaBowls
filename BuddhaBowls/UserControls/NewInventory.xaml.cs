@@ -30,5 +30,10 @@ namespace BuddhaBowls.UserControls
             if (string.IsNullOrWhiteSpace(tb.Text))
                 tb.Text = "0";
         }
+
+        private void PrepGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            ((NewInventoryVM)DataContext).PrepItemCountChanged();
+        }
     }
 }

@@ -467,7 +467,14 @@ namespace BuddhaBowls
                 foreach (DailySale sale in sales)
                 {
                     lock (_lock)
-                        sale.Insert();
+                        try
+                        {
+                            sale.Insert();
+                        }
+                        catch (Exception)
+                        {
+                            continue;
+                        }
                 }
             }
 
@@ -477,6 +484,11 @@ namespace BuddhaBowls
 
             foreach (string key in periodRevenueDict.Keys)
             {
+                if (!weekRevenueDict.ContainsKey(key))
+                    weekRevenueDict[key] = 0;
+                if (!periodRevenueDict.ContainsKey(key))
+                    periodRevenueDict[key] = 0;
+
                 revenueItems.Add(new ExpenseItem()
                 {
                     Name = key,
@@ -731,10 +743,9 @@ namespace BuddhaBowls
                     latestItem.PeriodPBudget = 0;
 
                 if (_otherWeekSquare.ContainsKey(key))
-                {
                     latestItem.WeekSales = _otherWeekSquare[key];
+                if (_otherPeriodSquare.ContainsKey(key))
                     latestItem.PrevPeriodSales = _otherPeriodSquare[key];
-                }
 
                 summary.Add(latestItem);
             }

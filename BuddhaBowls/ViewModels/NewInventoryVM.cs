@@ -40,6 +40,7 @@ namespace BuddhaBowls
         }
 
         private DateTime _invDate;
+
         public DateTime InvDate
         {
             get
@@ -65,6 +66,20 @@ namespace BuddhaBowls
             {
                 _inventoryControl = value;
                 NotifyPropertyChanged("InventoryControl");
+            }
+        }
+
+        private ObservableCollection<PrepItem> _prepItems;
+        public ObservableCollection<PrepItem> PrepItems
+        {
+            get
+            {
+                return _prepItems;
+            }
+            set
+            {
+                _prepItems = value;
+                NotifyPropertyChanged("PrepItems");
             }
         }
 
@@ -94,6 +109,8 @@ namespace BuddhaBowls
             InventoryControl = InvListVM.TabControl;
             Inv = new Inventory(DateTime.Now);
             InvDate = Inv.Date;
+
+            PrepItems = new ObservableCollection<PrepItem>(_models.PIContainer.Items.Select(x => x.Copy()).ToList());
             
             InitICommand();
             Header = "New Inventory";
@@ -110,6 +127,8 @@ namespace BuddhaBowls
             InvListVM = new InventoryListVM(inv, InventoryItemCountChanged);
             InventoryControl = InvListVM.TabControl;
             InvDate = Inv.Date;
+
+            PrepItems = new ObservableCollection<PrepItem>(_models.PIContainer.GetInvPrepItems(Inv));
 
             InitICommand();
             Header = "Edit Inventory " + Inv.Date.ToShortDateString();
@@ -144,11 +163,25 @@ namespace BuddhaBowls
                 Inv.SetInvItemsContainer(InvListVM.GetItemsContainer());
                 Inv = _models.InContainer.AddItem(Inv);
 
+                // handle old inventories with no prep items
+                if (PrepItems.Count > 0)
+                {
+                    // insert count prep items into spreadsheet
+                    List<CountPrepItem> countPIs = PrepItems.Select(x => x.ToCountPrepItem()).ToList();
+                    ModelHelper.CreateTable(countPIs, Inv.GetPrepTableName());
+                }
+
                 // if this is the latest date inventory, change item counts for current inv items
                 if (Inv.Date >= _models.InContainer.Items.Max(x => x.Date))
                 {
                     //_models.VIContainer.SetItems(InvListVM.GetItemsContainer().GetInvItemsContainer());
                     _models.VIContainer.SyncCopy(InvListVM.GetItemsContainer());
+
+                    if (PrepItems.Count > 0)
+                    {
+                        // update the prep item in master
+                        _models.PIContainer.UpdateCounts(PrepItems);
+                    }
                 }
             }
         }
@@ -161,7 +194,7 @@ namespace BuddhaBowls
 
         private bool CheckUniqueInvDate()
         {
-            Inventory existingInv = _models.InContainer.Items.FirstOrDefault(x => x.Date.Date == Inv.Date.Date);
+            Inventory existingInv = _models.InContainer.Items.FirstOrDefault(x => x.Date.Date == InvDate);
             if(existingInv != null && existingInv.Id != Inv.Id)
             {
                 if (MessageBox.Show("Inventory with that date already exists. Do you wish to replace it?", "Replace Inventory",
@@ -190,6 +223,11 @@ namespace BuddhaBowls
         /// Enables reset and save buttons
         /// </summary>
         public void InventoryItemCountChanged()
+        {
+            ChangeCountCanExecute = true;
+        }
+
+        public void PrepItemCountChanged()
         {
             ChangeCountCanExecute = true;
         }

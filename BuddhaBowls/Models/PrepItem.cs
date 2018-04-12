@@ -93,8 +93,8 @@ namespace BuddhaBowls.Models
             }
         }
 
-        private int _lineCount;
-        public int LineCount
+        private float _lineCount;
+        public float LineCount
         {
             get
             {
@@ -109,8 +109,8 @@ namespace BuddhaBowls.Models
             }
         }
 
-        private int _walkInCount;
-        public int WalkInCount
+        private float _walkInCount;
+        public float WalkInCount
         {
             get
             {
@@ -125,7 +125,7 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public int TotalCount
+        public float TotalCount
         {
             get
             {
@@ -174,6 +174,13 @@ namespace BuddhaBowls.Models
             NotifyPropertyChanged("Name");
         }
 
+        public PrepItem Copy()
+        {
+            PrepItem outItem = Copy<PrepItem>();
+            outItem.SetItem(_refItem);
+            return outItem;
+        }
+
         public override int Insert()
         {
             if (_refItem != null)
@@ -193,6 +200,20 @@ namespace BuddhaBowls.Models
         public IItem GetBaseItem()
         {
             return _refItem;
+        }
+
+        public CountPrepItem ToCountPrepItem()
+        {
+            return new CountPrepItem(this);
+        }
+
+        public PrepItem FromCountPrep(CountPrepItem item)
+        {
+            PrepItem outItem = Copy();
+            outItem.WalkInCount = item.WalkInCount;
+            outItem.LineCount = item.LineCount;
+
+            return outItem;
         }
 
         public Dictionary<string, float> GetCategoryCosts()

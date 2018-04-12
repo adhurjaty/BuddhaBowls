@@ -126,5 +126,12 @@ namespace BuddhaBowls.Models
         {
             return @"Inventory History\Inventory_" + Date.ToString("MM-dd-yyyy");
         }
+
+        internal string GetPrepTableName()
+        {
+            if (Id < 0)
+                throw new Exception("Id has not been set");
+            return @"Inventory History\Inventory_" + Id.ToString();
+        }
     }
 }

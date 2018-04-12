@@ -18,8 +18,24 @@
         <TextBlock x:Name="textBlock" Grid.Row="0" Margin="0" Text="{Binding Header}" VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="30"/>
         <DatePicker Grid.Row="1" SelectedDate="{Binding InvDate}" Height="25" Width="130" HorizontalAlignment="Left" VerticalAlignment="Top"
-                    Margin="10, 35, 0, 0"/>
-        <ContentControl Content="{Binding InventoryControl}" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    Margin="10, 35, 0, 0" Panel.ZIndex="1"/>
+        <ScrollViewer Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <StackPanel Orientation="Vertical"  Panel.ZIndex="0">
+                <ContentControl Content="{Binding InventoryControl}" Grid.Row="1" HorizontalAlignment="Stretch" />
+                <DataGrid HorizontalAlignment="Stretch" ItemsSource="{Binding PrepItems}" SelectedItem="{Binding SelectedOrderItem, UpdateSourceTrigger=PropertyChanged}"
+                                          AutoGenerateColumns="False" RowEditEnding="PrepGrid_RowEditEnding" CanUserAddRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Product" Binding="{Binding Name}" Width="2*" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Prep Unit" Binding="{Binding CountUnit}" Width="2*" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Unit Cost" Binding="{Binding Path=Cost, StringFormat=c}" Width="1*" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Line Count" Binding="{Binding LineCount}" Width="1*"/>
+                        <DataGridTextColumn Header="Walk-in Count" Binding="{Binding WalkInCount}" Width="1*"/>
+                        <DataGridTextColumn Header="Total" Binding="{Binding TotalCount}" Width="1*" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Extension" Binding="{Binding Path=Extension, StringFormat=c}" Width="1*" IsReadOnly="True"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </ScrollViewer>
         <Button Grid.Row="2" Height ="25" Width="80" Content="Cancel" HorizontalAlignment="Right" Margin="5, 0" Command="{Binding CancelCommand}" />
         <Button Grid.Row="2" Height ="25" Width="80" Content="Save" HorizontalAlignment="Right" Margin="85, 0" Command="{Binding SaveCountCommand}" />
         <Button Grid.Row="2" Height ="25" Width="80" Content="Reset" HorizontalAlignment="Left" Margin="5, 0" Command="{Binding ResetCountCommand}" />
