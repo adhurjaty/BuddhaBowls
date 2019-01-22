@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>13.3</LastPurchasedPrice>
+  <Name>Thyme</Name>
+  <Category>Herbs</Category>
+  <PurchasedUnit>2lbs</PurchasedUnit>
+  <Count>0.25</Count>
+  <CountUnit>OZ-wt</CountUnit>
+  <Conversion>32</Conversion>
+  <RecipeUnit>TBL</RecipeUnit>
+  <RecipeUnitConversion>243.81</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>44</Id>
+</InventoryItem>

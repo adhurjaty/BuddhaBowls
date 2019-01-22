@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Services;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,8 @@ namespace BuddhaBowls.Models
 {
     public class Recipe : Model, IItem
     {
-        private InventoryItemsContainer _invItemsContainer;
         private RecipesContainer _recipesContainer;
+        //private List<RecipeItem> _recipeItems;
 
         private string _name;
         public string Name
@@ -88,6 +89,20 @@ namespace BuddhaBowls.Models
             }
         }
 
+        private string _measure;
+        public string Measure
+        {
+            get
+            {
+                return _measure;
+            }
+            set
+            {
+                _measure = value;
+                NotifyPropertyChanged("Measure");
+            }
+        }
+
         public bool IsBatch { get; set; }
 
         public float RecipeCost
@@ -115,6 +130,14 @@ namespace BuddhaBowls.Models
             }
         }
 
+        public float CountPrice
+        {
+            get
+            {
+                return TotalCost;
+            }
+        }
+
         public float TotalCost
         {
             get
@@ -123,14 +146,24 @@ namespace BuddhaBowls.Models
             }
         }
 
+        private ObservableCollection<IItem> _itemList;
         public ObservableCollection<IItem> ItemList
         {
             get
             {
-                if(_invItemsContainer == null || _recipesContainer == null)
-                    SetContainers();
-
-                return new ObservableCollection<IItem>(_invItemsContainer.Items.Select(x => (IItem)x).Concat(_recipesContainer.Items.Select(x => (IItem)x)).ToList());
+                if (_itemList == null)
+                {
+                    _itemList = new ObservableCollection<IItem>(GetRecipeInvItems());
+                    NotifyPropertyChanged("ProportionDetails");
+                    NotifyPropertyChanged("TotalCost");
+                }
+                return _itemList;
+            }
+            set
+            {
+                _itemList = value;
+                NotifyPropertyChanged("ItemList");
+                NotifyPropertyChanged("ProportionDetails");
             }
         }
 
@@ -138,17 +171,9 @@ namespace BuddhaBowls.Models
         {
             get
             {
-                List<Dictionary<string, float>> catCosts = ItemList.Select(x => x.GetCategoryCosts()).ToList();
-                Dictionary<string, float> combinedCatCosts = new Dictionary<string, float>();
-                foreach (Dictionary<string, float> dict in catCosts)
-                {
-                    foreach (KeyValuePair<string, float> kvp in dict)
-                    {
-                        if (!combinedCatCosts.ContainsKey(kvp.Key))
-                            combinedCatCosts[kvp.Key] = 0;
-                        combinedCatCosts[kvp.Key] += kvp.Value;
-                    }
-                }
+                //Dictionary<string, float> combinedCatCosts = ItemList.Select(x => x.GetCategoryCosts())
+                //                                                     .Aggregate((result, item) => MainHelper.MergeDicts(result, item, (x, y) => x + y));
+                Dictionary<string, float> combinedCatCosts = GetCategoryCosts();
                 float total = combinedCatCosts.Sum(x => x.Value);
                 return combinedCatCosts.Select(x => new CategoryProportion(x.Key, x.Value, total))
                                        .OrderByDescending(x => x.CostProportion).ToList();
@@ -158,6 +183,7 @@ namespace BuddhaBowls.Models
         public Recipe() : base()
         {
             _tableName = "Recipe";
+            Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(RecipeChanged));
         }
 
         public Recipe(Dictionary<string, string> searchParams) : this()
@@ -169,6 +195,7 @@ namespace BuddhaBowls.Models
                 InitializeObject(record);
                 GetRecipeItems();
             }
+
         }
 
         public float GetCost()
@@ -178,42 +205,22 @@ namespace BuddhaBowls.Models
 
         public Dictionary<string, float> GetCategoryCosts()
         {
-            Dictionary<string, float> costDict = new Dictionary<string, float>();
-
-            foreach (IItem item in ItemList)
-            {
-                if (item.GetType() == typeof(Recipe))
-                {
-                    Dictionary<string, float> subCostDict = ((Recipe)item).GetCategoryCosts();
-                    foreach (KeyValuePair<string, float> kvp in subCostDict)
-                    {
-                        if (!costDict.Keys.Contains(kvp.Key))
-                            costDict[kvp.Key] = 0;
-                        costDict[kvp.Key] += kvp.Value;
-                    }
-                }
-                else
-                {
-                    if (!costDict.Keys.Contains(item.Category))
-                        costDict[item.Category] = 0;
-                    costDict[item.Category] += item.GetCost();
-                }
-            }
-
-            return costDict;
+            if(ItemList.Count > 0)
+                return ItemList.Select(x => x.GetCategoryCosts()).Aggregate((result, item) => MainHelper.MergeDicts(result, item, (x, y) => x + y));
+            return new Dictionary<string, float>();
         }
 
         public override void Update()
         {
             if (ItemList.Count > 0)
-                ModelHelper.CreateTable(ConvToRecipeItems(ItemList.ToList()), GetRecipeTableName());
+                ModelHelper.CreateTable(ConvToRecipeItems(), GetRecipeTableName());
             base.Update();
         }
 
         public override int Insert()
         {
             if (ItemList.Count > 0)
-                ModelHelper.CreateTable(ConvToRecipeItems(ItemList.ToList()).ToList(), GetRecipeTableName());
+                ModelHelper.CreateTable(ConvToRecipeItems().ToList(), GetRecipeTableName());
             return base.Insert();
         }
 
@@ -225,53 +232,36 @@ namespace BuddhaBowls.Models
 
         public override string[] GetPropertiesDB(string[] omit = null)
         {
-            string[] theseOmissions = new string[] { "RecipeCost" };
+            string[] theseOmissions = new string[] { "RecipeCost", "Measure" };
             return base.GetPropertiesDB(ModelHelper.CombineArrays(omit, theseOmissions));
         }
 
         public IItem Copy()
         {
             Recipe rec = Copy<Recipe>();
-            if (_invItemsContainer == null || _recipesContainer == null)
-                SetContainers();
-            rec.SetContainers(_invItemsContainer.Copy(), _recipesContainer.Copy());
+            rec.SetContainer(_recipesContainer);
 
             return rec;
         }
 
-        public void RemoveCopy(Recipe item)
-        {
-            _invItemsContainer.RemoveCopy(item.GetInvContainer());
-            _recipesContainer.RemoveCopy(item.GetRecContainer());
-        }
-
         public void AddItem(IItem item)
         {
-            if (item.GetType() == typeof(InventoryItem))
-                _invItemsContainer.AddItem((InventoryItem)item);
-            else
-                _recipesContainer.AddItem((Recipe)item);
-            NotifyPropertyChanged("ItemList");
-            NotifyPropertyChanged("ProportionDetails");
+            ItemList.Add(item.Copy());
+            ItemList = new ObservableCollection<IItem>(MainHelper.SortItems(ItemList));
+            UpdateProperties();
 
         }
 
         public void RemoveItem(IItem item)
         {
-            if (item.GetType() == typeof(InventoryItem))
-                _invItemsContainer.RemoveItem((InventoryItem)item);
-            else
-                _recipesContainer.RemoveItem((Recipe)item);
-            NotifyPropertyChanged("ItemList");
-            NotifyPropertyChanged("ProportionDetails");
+            ItemList.Remove(ItemList.FirstOrDefault(x => x.GetType() == item.GetType() && x.Id == item.Id));
+            UpdateProperties();
         }
 
-        public void SetContainers(InventoryItemsContainer invContainer, RecipesContainer recContainer)
+        public void SetContainer(RecipesContainer recContainer)
         {
-            _invItemsContainer = invContainer;
             _recipesContainer = recContainer;
-            NotifyPropertyChanged("ItemList");
-            NotifyPropertyChanged("ProportionDetails");
+            UpdateProperties();
         }
 
         private List<RecipeItem> GetRecipeItems()
@@ -279,43 +269,22 @@ namespace BuddhaBowls.Models
             return ModelHelper.InstantiateList<RecipeItem>(GetRecipeTableName(), false);
         }
 
-        public void SetRecipeItems(List<RecipeItem> items)
+        private IEnumerable<IItem> GetRecipeInvItems()
         {
-            Dictionary<Type, List<IItem>> itemsByType = items.Select(x => x.GetIItem())
-                                                                 .Where(x => x != null)
-                                                                 .GroupBy(x => x.GetType())
-                                                                 .ToDictionary(x => x.Key, x => x.ToList());
-            if (itemsByType.ContainsKey(typeof(InventoryItem)))
-                _invItemsContainer = new InventoryItemsContainer(itemsByType[typeof(InventoryItem)].Select(x => (InventoryItem)x).ToList());
-            if (itemsByType.ContainsKey(typeof(Recipe)))
-                _recipesContainer = new RecipesContainer(itemsByType[typeof(Recipe)].Select(x => (Recipe)x).ToList());
-
-            NotifyPropertyChanged("ItemList");
-            NotifyPropertyChanged("ProportionDetails");
+            return _recipesContainer.GetRecipeInvItems(GetRecipeItems());
         }
 
         public RecipeItem ToRecipeItem()
         {
-            return new RecipeItem() { Name = Name, Quantity = Count, InventoryItemId = null };
+            return new RecipeItem() { Name = Name, Quantity = Count, InventoryItemId = null, Measure = Measure };
         }
 
-        private void SetContainers()
-        {
-            _invItemsContainer = new InventoryItemsContainer(new List<InventoryItem>());
-            _recipesContainer = new RecipesContainer(new List<Recipe>());
-            List<RecipeItem> items = GetRecipeItems();
-            if (items != null)
-            {
-                SetRecipeItems(items);
-            }
-        }
-
-        private List<RecipeItem> ConvToRecipeItems(List<IItem> items)
+        private List<RecipeItem> ConvToRecipeItems()
         {
             List<RecipeItem> recItems = new List<RecipeItem>();
-            for(int i = 0; i < items.Count; i++)
+            for(int i = 0; i < ItemList.Count; i++)
             {
-                RecipeItem ri = items[i].ToRecipeItem();
+                RecipeItem ri = ItemList[i].ToRecipeItem();
                 ri.Id = i;
                 recItems.Add(ri);
             }
@@ -325,8 +294,6 @@ namespace BuddhaBowls.Models
 
         public IEnumerable<InventoryItem> GetAllItems()
         {
-            if (_invItemsContainer == null || _recipesContainer == null)
-                SetContainers();
             foreach (IItem item in ItemList)
             {
                 if (item.GetType() == typeof(InventoryItem))
@@ -339,6 +306,21 @@ namespace BuddhaBowls.Models
                     }
                 }
             }
+        }
+
+        public void UpdateProperties()
+        {
+            NotifyPropertyChanged("ItemList");
+            NotifyPropertyChanged("ProportionDetails");
+        }
+
+        private void RecipeChanged(Message msg)
+        {
+            //InventoryItem item = (InventoryItem)msg.Payload;
+            //if(item == null || ItemList.FirstOrDefault(x => x.GetType() == item.GetType() && x.Id == item.Id) != null)
+            //{
+                ItemList = null;
+            //}
         }
 
         private string GetRecipeTableName()
@@ -367,15 +349,14 @@ namespace BuddhaBowls.Models
             return propDict;
         }
 
-        public InventoryItemsContainer GetInvContainer()
-        {
-            return _invItemsContainer;
-        }
-
         public RecipesContainer GetRecContainer()
         {
             return _recipesContainer;
         }
 
+        public void SetRecipeItems(List<RecipeItem> recipeItems)
+        {
+            ItemList = new ObservableCollection<IItem>(_recipesContainer.GetRecipeInvItems(recipeItems));
+        }
     }
 }

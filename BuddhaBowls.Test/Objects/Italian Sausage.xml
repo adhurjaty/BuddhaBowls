@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>27.16</LastPurchasedPrice>
+  <Name>Italian Sausage</Name>
+  <Category>Meats</Category>
+  <PurchasedUnit>10lb CASE</PurchasedUnit>
+  <Count>11</Count>
+  <CountUnit>BAG</CountUnit>
+  <Conversion>2</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>160</RecipeUnitConversion>
+  <Yield>0.91</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>12/28/2016 11:52:40 AM</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>74</Id>
+</InventoryItem>

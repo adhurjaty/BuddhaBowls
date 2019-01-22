@@ -22,11 +22,11 @@
             </Grid.ColumnDefinitions>
             <Button Grid.Row="0" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Top" Margin="0, 5, 135, 0" Command="{Binding AddNewItemCommand}">
-                <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <iconPacks:PackIconFontAwesome Kind="PlusSolid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </Button>
             <Button Grid.Row="0" Height="30" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Top" Margin="0, 5, 105, 0" Command="{Binding DeleteItemCommand}">
-                <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="MinusSolid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </Button>
             <local:BreakdownDisplay Grid.Column="0" DataContext="{Binding BreakdownContext}" />
             <Grid Grid.Column="1">

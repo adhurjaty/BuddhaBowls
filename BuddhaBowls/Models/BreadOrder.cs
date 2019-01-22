@@ -332,7 +332,7 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public virtual int Useage
+        public virtual int Usage
         {
             get
             {
@@ -422,7 +422,7 @@ namespace BuddhaBowls.Models
         public void UpdateProperties()
         {
             NotifyPropertyChanged("ProjectedOrder");
-            NotifyPropertyChanged("Useage");
+            NotifyPropertyChanged("Usage");
             NotifyPropertyChanged("Par");
             NotifyPropertyChanged("Buffer");
             NotifyPropertyChanged("WalkIn");

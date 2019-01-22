@@ -20,16 +20,21 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public ExpenseItemsContainer Copy()
         {
-            ExpenseItemsContainer eic = new ExpenseItemsContainer(_items.Select(x => x.Copy<ExpenseItem>()).ToList());
+            ExpenseItemsContainer eic = CleanCopy();
             _copies.Add(eic);
             return eic;
+        }
+
+        public ExpenseItemsContainer CleanCopy()
+        {
+            return new ExpenseItemsContainer(_items.Select(x => x.Copy<ExpenseItem>()).ToList());
         }
 
         protected override void UpdateCopies()
         {
             for (int i = 0; i < _copies.Count; i++)
             {
-                _copies[i] = Copy();
+                _copies[i] = CleanCopy();
             }
         }
     }

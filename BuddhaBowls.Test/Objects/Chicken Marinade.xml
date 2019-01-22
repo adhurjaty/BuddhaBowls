@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Recipe>
+  <Name>Chicken Marinade</Name>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>208</RecipeUnitConversion>
+  <Category>MAC + SOUPS</Category>
+  <Count>0</Count>
+  <Price>null</Price>
+  <IsBatch>True</IsBatch>
+  <Id>2</Id>
+</Recipe>

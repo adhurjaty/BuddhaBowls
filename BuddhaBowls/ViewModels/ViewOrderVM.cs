@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -23,9 +24,7 @@ namespace BuddhaBowls
     {
         private PurchaseOrder _order;
         private InventoryItemsContainer _invItemsContainer;
-        //private List<InventoryItem> _displayedItems;
-        //private List<InventoryItem> _editedItems;
-        //private RefreshDel RefreshOrders;
+        private Vendor _vendor;
 
         #region Content Binders
         private OrderBreakdownVM _breakdownContext;
@@ -86,18 +85,16 @@ namespace BuddhaBowls
         public ViewOrderVM(PurchaseOrder po)
         {
             _order = po;
-            _tabControl = new ViewOrderTabControl(this);
+            _vendor = _models.VContainer.Items.First(x => x.Name == _order.VendorName); _tabControl = new ViewOrderTabControl(this);
             Header = "View " + po.VendorName + " Order";
             //RefreshOrders = refresh;
 
             SaveCommand = new RelayCommand(SaveEdits, x => SaveButtonCanExecute);
             CancelCommand = new RelayCommand(CancelView);
-            AddNewItemCommand = new RelayCommand(AddVendorItem);
-            DeleteItemCommand = new RelayCommand(DeleteVendorItem);
+            AddNewItemCommand = new RelayCommand(AddPOItem);
+            DeleteItemCommand = new RelayCommand(DeletePOItem);
 
             _invItemsContainer = po.GetItemsContainer().Copy();
-            //_displayedItems = po.ItemList;
-            //_editedItems = new List<InventoryItem>();
             UpdateBreakdown();
         }
 
@@ -111,13 +108,22 @@ namespace BuddhaBowls
 
         private void SaveEdits(object obj)
         {
+            // make sure there are no 0 qty items
+            _invItemsContainer.SetItems(_invItemsContainer.Items.Where(x => x.LastOrderAmount > 0).ToList());
+
             _order.GetItemsContainer().SyncCopy(_invItemsContainer);
             _order.Update();
-            UpdateLatestVendorOrder();
+            OverwriteExcelPO(_order);
+
+            if (_order.Received)
+                _models.VIContainer.UpdateMasterItemOrderAdded(_order);
+
+            Messenger.Instance.NotifyColleagues(MessageTypes.PO_CHANGED, _order);
+
             Close();
         }
 
-        private void AddVendorItem(object obj)
+        private void AddPOItem(object obj)
         {
             List<VendorInventoryItem> vendorItemIds = _models.VIContainer.Items.Where(x => x.Vendors.Select(y => y.Name)
                                                                                             .Contains(_order.VendorName)).ToList();
@@ -127,7 +133,7 @@ namespace BuddhaBowls
             ParentContext.ModalContext = modal;
         }
 
-        private void DeleteVendorItem(object obj)
+        private void DeletePOItem(object obj)
         {
             MessageBoxResult result = MessageBox.Show("Are you sure you want to remove " + BreakdownContext.SelectedItem.Name + " from PO?",
                                                       "Remove " + BreakdownContext.SelectedItem.Name + "?", MessageBoxButton.YesNo);
@@ -153,8 +159,9 @@ namespace BuddhaBowls
 
         private void OrderEdited(InventoryItem item)
         {
+            if (item.LastOrderAmount == 0)
+                _invItemsContainer.RemoveItem(item);
             BreakdownContext.UpdateDisplay();
-
             // check whether the item being edited is the latest order from this vendor. If so, then change the properties of the current
             // inventory item (last order price, last order qty...)
             
@@ -166,14 +173,14 @@ namespace BuddhaBowls
         /// </summary>
         private void UpdateLatestVendorOrder()
         {
-            Vendor vend = _models.VContainer.Items.First(x => x.Name == _order.VendorName);
+            
             foreach (InventoryItem item in _invItemsContainer.Items)
             {
                 VendorInventoryItem vItem = _models.VIContainer.Items.FirstOrDefault(x => x.Id == item.Id);
                 if (_order.OrderDate > item.LastPurchasedDate && vItem != null)
                 {
-                    vItem.SetVendorItem(vend, item);
-                    item.LastVendorId = vend.Id;
+                    vItem.SetVendorItem(_vendor, item);
+                    item.LastVendorId = _vendor.Id;
                     item.Update();
                 }
             }
@@ -186,9 +193,20 @@ namespace BuddhaBowls
         /// <param name="item"></param>
         private void AddInvItemToVendor(InventoryItem item)
         {
-            item.LastOrderAmount = 0;
+            item.LastOrderAmount = 1;
             _invItemsContainer.AddItem(item);
-            BreakdownContext.UpdateDisplay();
+            UpdateBreakdown();
+        }
+
+        private void OverwriteExcelPO(PurchaseOrder po)
+        {
+            new Thread(delegate ()
+            {
+                ReportGenerator generator = new ReportGenerator(_models);
+                string xlsPath = generator.GenerateOrder(po, _vendor);
+                generator.GenerateReceivingList(po, _vendor);
+                generator.Close();
+            }).Start();
         }
     }
 }

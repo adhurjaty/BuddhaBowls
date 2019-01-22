@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>10.95</LastPurchasedPrice>
+  <Name>Eggs</Name>
+  <Category>Dairy</Category>
+  <PurchasedUnit>15 DOZEN</PurchasedUnit>
+  <Count>2</Count>
+  <CountUnit>TRAY</CountUnit>
+  <Conversion>6</Conversion>
+  <RecipeUnit>EA</RecipeUnit>
+  <RecipeUnitConversion>180</RecipeUnitConversion>
+  <Yield>0.95</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>8</Id>
+</InventoryItem>

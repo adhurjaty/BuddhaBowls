@@ -1,0 +1,6 @@
+Id,Name,InventoryItemId,Measure,Quantity,IsBatch
+0,Olive Oil,36,1 TBL,0.5,False
+1,Pepper,48,1/4 TBL,0.0625,False
+2,Salt,49,1/4 TBL,0.0625,False
+3,Spinach,57,1/2 CAMBRO,20.2,False
+4,Garlic Peeled,71,1 TBL,1,False

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>39.06</LastPurchasedPrice>
+  <Name>BBQ Sauce</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>CS 39.5lbs</PurchasedUnit>
+  <Count>2</Count>
+  <CountUnit>JUG</CountUnit>
+  <Conversion>4</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>632</RecipeUnitConversion>
+  <Yield>0.98</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>20</Id>
+</InventoryItem>

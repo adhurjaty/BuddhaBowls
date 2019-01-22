@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>56.32</LastPurchasedPrice>
+  <Name>Granola</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>25lb bag</PurchasedUnit>
+  <Count>3</Count>
+  <CountUnit>6" PAN</CountUnit>
+  <Conversion>12</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>400</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>22</Id>
+</InventoryItem>

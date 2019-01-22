@@ -1,0 +1,172 @@
+12/26/17 - 12:31:52 - INFO - Loading models
+12/26/17 - 12:31:53 - INFO - Models loaded
+12/26/17 - 12:31:55 - INFO - Inserted BreadOrder: 28
+12/26/17 - 12:31:55 - INFO - Inserted BreadOrder: 29
+12/26/17 - 12:31:55 - INFO - Inserted BreadOrder: 30
+12/26/17 - 12:31:55 - INFO - Inserted BreadOrder: 31
+12/26/17 - 12:31:55 - INFO - Inserted BreadOrder: 32
+12/26/17 - 12:31:55 - INFO - Inserted BreadOrder: 33
+12/26/17 - 12:31:55 - INFO - Inserted BreadOrder: 34
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 28
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 29
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 30
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 31
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 32
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 33
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 34
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 28
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 29
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 30
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 31
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 32
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 33
+12/26/17 - 12:31:55 - INFO - Upating BreadOrder: 34
+12/26/17 - 12:31:56 - INFO - Adding temp tab: NewOrderVM
+12/26/17 - 12:31:56 - INFO - Inserted PurchaseOrder: 4
+12/26/17 - 12:31:56 - INFO - Upating InventoryItem: 17
+12/26/17 - 12:31:56 - INFO - Upating BreadOrder: 29
+12/26/17 - 12:31:56 - INFO - Upating InventoryItem: 59
+12/26/17 - 12:31:56 - INFO - Upating BreadOrder: 28
+12/26/17 - 12:31:56 - INFO - Upating InventoryItem: 27
+12/26/17 - 12:31:56 - INFO - Upating Vendor: 1
+12/26/17 - 12:31:56 - INFO - Removing temp tab
+12/26/17 - 12:31:56 - INFO - Upating PurchaseOrder: 4
+12/26/17 - 12:32:23 - INFO - Destroying PurchaseOrder: 4
+12/26/17 - 12:44:59 - INFO - Loading models
+12/26/17 - 12:44:59 - INFO - Models loaded
+12/26/17 - 12:45:02 - INFO - Adding temp tab: NewOrderVM
+12/26/17 - 12:45:02 - INFO - Inserted PurchaseOrder: 4
+12/26/17 - 12:45:02 - INFO - Upating Vendor: 1
+12/26/17 - 12:45:02 - INFO - Removing temp tab
+12/26/17 - 12:45:02 - INFO - Upating PurchaseOrder: 4
+12/26/17 - 12:45:03 - INFO - Destroying PurchaseOrder: 4
+12/26/17 - 12:45:03 - INFO - Upating BreadOrder: 28
+12/26/17 - 12:45:03 - INFO - Upating BreadOrder: 29
+12/26/17 - 12:46:26 - INFO - Loading models
+12/26/17 - 12:46:27 - INFO - Models loaded
+12/26/17 - 12:46:29 - INFO - Adding temp tab: NewOrderVM
+12/26/17 - 12:46:29 - INFO - Inserted PurchaseOrder: 4
+12/26/17 - 12:46:29 - INFO - Upating Vendor: 1
+12/26/17 - 12:46:29 - INFO - Removing temp tab
+12/26/17 - 12:46:29 - INFO - Upating PurchaseOrder: 4
+12/26/17 - 12:46:29 - INFO - Upating PurchaseOrder: 4
+12/26/17 - 12:46:29 - INFO - Destroying PurchaseOrder: 4
+12/26/17 - 12:46:29 - INFO - Upating BreadOrder: 28
+12/26/17 - 12:46:29 - INFO - Upating BreadOrder: 29
+12/26/17 - 12:46:47 - INFO - Loading models
+12/26/17 - 12:46:47 - INFO - Models loaded
+12/26/17 - 12:46:50 - INFO - Adding temp tab: NewOrderVM
+12/26/17 - 12:46:50 - INFO - Inserted PurchaseOrder: 4
+12/26/17 - 12:46:50 - INFO - Upating Vendor: 1
+12/26/17 - 12:46:50 - INFO - Removing temp tab
+12/26/17 - 12:46:50 - INFO - Upating PurchaseOrder: 4
+12/26/17 - 12:46:50 - INFO - Upating PurchaseOrder: 4
+12/26/17 - 12:46:50 - INFO - Destroying PurchaseOrder: 4
+12/26/17 - 12:47:10 - INFO - Inserted Vendor: 5
+12/26/17 - 12:47:10 - INFO - Destroying Vendor: 5
+12/26/17 - 12:47:22 - INFO - Loading models
+12/26/17 - 12:47:22 - INFO - Models loaded
+12/26/17 - 12:47:24 - INFO - Loading models
+12/26/17 - 12:47:24 - INFO - Models loaded
+12/26/17 - 12:47:24 - INFO - Loading models
+12/26/17 - 12:47:24 - INFO - Models loaded
+12/26/17 - 12:47:35 - INFO - Loading models
+12/26/17 - 12:47:35 - INFO - Models loaded
+12/26/17 - 12:47:37 - INFO - Loading models
+12/26/17 - 12:47:37 - INFO - Models loaded
+12/26/17 - 12:47:37 - INFO - Loading models
+12/26/17 - 12:47:38 - INFO - Models loaded
+12/26/17 - 12:52:04 - INFO - Loading models
+12/26/17 - 12:52:04 - INFO - Models loaded
+12/26/17 - 12:52:07 - INFO - Loading models
+12/26/17 - 12:52:07 - INFO - Models loaded
+12/26/17 - 12:52:07 - INFO - Loading models
+12/26/17 - 12:52:07 - INFO - Models loaded
+12/26/17 - 12:53:02 - INFO - Loading models
+12/26/17 - 12:53:03 - INFO - Models loaded
+12/26/17 - 12:53:05 - INFO - Loading models
+12/26/17 - 12:53:05 - INFO - Models loaded
+12/26/17 - 12:53:05 - INFO - Loading models
+12/26/17 - 12:53:05 - INFO - Models loaded
+12/26/17 - 12:53:31 - INFO - Loading models
+12/26/17 - 12:53:32 - INFO - Models loaded
+12/26/17 - 12:53:34 - INFO - Inserted Vendor: 5
+12/26/17 - 12:53:34 - INFO - Adding temp tab: NewOrderVM
+12/26/17 - 12:53:53 - INFO - Destroying Vendor: 5
+12/26/17 - 12:54:27 - INFO - Loading models
+12/26/17 - 12:54:28 - INFO - Models loaded
+12/26/17 - 12:54:30 - INFO - Adding temp tab: NewOrderVM
+12/26/17 - 12:55:53 - INFO - Loading models
+12/26/17 - 12:55:53 - INFO - Models loaded
+12/26/17 - 12:56:06 - INFO - Loading models
+12/26/17 - 12:56:07 - INFO - Models loaded
+12/26/17 - 12:59:00 - INFO - Upating Inventory: -1
+12/26/17 - 12:59:04 - INFO - Upating Inventory: -1
+12/26/17 - 12:59:26 - INFO - Upating TestModel: 1
+12/26/17 - 12:59:35 - INFO - Inserted Recipe: 15
+12/26/17 - 12:59:35 - INFO - Upating Recipe: 15
+12/26/17 - 13:02:32 - INFO - Destroying Recipe: 15
+12/26/17 - 13:06:39 - INFO - Inserted Recipe: 15
+12/26/17 - 13:06:39 - INFO - Upating Recipe: 15
+12/26/17 - 13:06:41 - INFO - Destroying Recipe: 15
+12/26/17 - 13:07:15 - INFO - Inserted Recipe: 15
+12/26/17 - 13:07:15 - INFO - Upating Recipe: 15
+12/26/17 - 13:07:16 - INFO - Destroying Recipe: 15
+12/26/17 - 13:08:36 - INFO - Inserted Recipe: 15
+12/26/17 - 13:08:39 - INFO - Upating Recipe: 15
+12/26/17 - 13:08:43 - INFO - Destroying Recipe: 15
+12/26/17 - 13:08:59 - INFO - Inserted Recipe: 15
+12/26/17 - 13:08:59 - INFO - Upating Recipe: 15
+12/26/17 - 13:08:59 - INFO - Destroying Recipe: 15
+12/26/17 - 13:09:10 - INFO - Inserted Recipe: 15
+12/26/17 - 13:09:10 - INFO - Upating Recipe: 15
+12/26/17 - 13:09:18 - INFO - Destroying Recipe: 15
+12/26/17 - 13:11:31 - INFO - Inserted Recipe: 15
+12/26/17 - 13:11:31 - INFO - Upating Recipe: 15
+12/26/17 - 13:11:31 - INFO - Destroying Recipe: 15
+12/26/17 - 13:11:56 - INFO - Loading models
+12/26/17 - 13:11:57 - INFO - Models loaded
+12/26/17 - 13:11:57 - INFO - Upating InventoryItem: 2
+12/26/17 - 13:19:06 - INFO - Loading models
+12/26/17 - 13:19:07 - INFO - Models loaded
+12/26/17 - 13:19:07 - INFO - Upating InventoryItem: 2
+12/26/17 - 13:24:26 - INFO - Loading models
+12/26/17 - 13:24:27 - INFO - Models loaded
+12/26/17 - 13:24:27 - INFO - Upating InventoryItem: 2
+12/26/17 - 13:24:43 - INFO - Loading models
+12/26/17 - 13:24:43 - INFO - Models loaded
+12/26/17 - 13:24:43 - INFO - Upating Vendor: 0
+12/26/17 - 13:24:55 - INFO - Inserted Vendor: 5
+12/26/17 - 13:24:55 - INFO - Upating Vendor: 5
+12/26/17 - 13:24:56 - INFO - Destroying Vendor: 5
+12/26/17 - 13:25:08 - INFO - Loading models
+12/26/17 - 13:25:09 - INFO - Models loaded
+12/26/17 - 13:25:11 - INFO - Adding temp tab: NewOrderVM
+12/26/17 - 13:25:11 - INFO - Inserted PurchaseOrder: 4
+12/26/17 - 13:25:11 - INFO - Upating Vendor: 1
+12/26/17 - 13:25:11 - INFO - Removing temp tab
+12/26/17 - 13:25:14 - INFO - Adding temp tab: ViewOrderVM
+12/26/17 - 13:25:14 - INFO - Destroying PurchaseOrder: 4
+12/26/17 - 13:26:05 - INFO - Loading models
+12/26/17 - 13:26:05 - INFO - Models loaded
+12/26/17 - 13:26:08 - INFO - Adding temp tab: NewOrderVM
+12/26/17 - 13:26:08 - INFO - Inserted PurchaseOrder: 4
+12/26/17 - 13:26:08 - INFO - Upating Vendor: 1
+12/26/17 - 13:26:08 - INFO - Removing temp tab
+12/26/17 - 13:26:08 - INFO - Adding temp tab: ViewOrderVM
+12/26/17 - 13:26:08 - INFO - Destroying PurchaseOrder: 4
+12/26/17 - 13:26:08 - INFO - Upating BreadOrder: 29
+12/26/17 - 13:26:08 - INFO - Upating BreadOrder: 28
+12/26/17 - 13:26:24 - INFO - Loading models
+12/26/17 - 13:26:25 - INFO - Models loaded
+12/26/17 - 13:26:27 - INFO - Adding temp tab: NewOrderVM
+12/26/17 - 13:26:27 - INFO - Inserted PurchaseOrder: 4
+12/26/17 - 13:26:28 - INFO - Upating BreadOrder: 29
+12/26/17 - 13:26:28 - INFO - Upating BreadOrder: 28
+12/26/17 - 13:26:28 - INFO - Upating Vendor: 1
+12/26/17 - 13:26:28 - INFO - Removing temp tab
+12/26/17 - 13:26:28 - INFO - Upating PurchaseOrder: 4
+12/26/17 - 13:26:28 - INFO - Adding temp tab: ViewOrderVM
+12/26/17 - 13:26:28 - INFO - Destroying PurchaseOrder: 4
+12/26/17 - 13:27:29 - INFO - Loading models
+12/26/17 - 13:27:29 - INFO - Models loaded

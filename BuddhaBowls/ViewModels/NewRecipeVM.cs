@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using BuddhaBowls.UserControls;
@@ -20,7 +21,7 @@ namespace BuddhaBowls
     /// </summary>
     public class NewRecipeVM : WizardVM
     {
-        private Action Cleanup;
+        //private Action Cleanup;
         private bool _newItem;
         //private AddItemDel<Recipe> SaveItem;
         //protected List<RecipeItem> _recipeItems;
@@ -209,6 +210,7 @@ namespace BuddhaBowls
 
             CategoryList = _models.RContainer.GetRecipeCategories();
             FinishVisibility = Visibility.Visible;
+            Messenger.Instance.Register<Message>(MessageTypes.VENDOR_INV_ITEMS_CHANGED, (msg) => CountChanged());
         }
 
         /// <summary>
@@ -223,9 +225,9 @@ namespace BuddhaBowls
             Header = "New " + (isBatch ? "Batch Recipe" : "Menu Item");
 
             Item = new Recipe();
+            Item.SetContainer(_models.RContainer);
             Item.IsBatch = isBatch;
             Item.RecipeUnitConversion = 1;
-            //Refresh();
         }
 
         /// <summary>
@@ -240,9 +242,6 @@ namespace BuddhaBowls
             Header = "Edit " + recipe.Name;
 
             Item = (Recipe)recipe.Copy();
-            // HACK: best way I could think to remove the recipe copies containers
-            Cleanup = new Action(() => recipe.RemoveCopy(Item));
-            //Refresh();
         }
 
         #region ICommand Helpers
@@ -259,11 +258,13 @@ namespace BuddhaBowls
         private void RemoveItem(object obj)
         {
             Item.RemoveItem(SelectedItem);
+            CountChanged();
         }
 
         private void ModalOk(object obj)
         {
             Item.AddItem(ItemToAdd);
+            CountChanged();
             ModalVisibility = Visibility.Hidden;
         }
 
@@ -307,7 +308,7 @@ namespace BuddhaBowls
 
         protected override void Cancel(object obj)
         {
-            Cleanup?.Invoke();
+            //Cleanup?.Invoke();
             base.Cancel(obj);
         }
 
@@ -316,7 +317,7 @@ namespace BuddhaBowls
             if (ValidateInputs())
             {
                 _models.RContainer.AddItem(Item);
-                Cleanup?.Invoke();
+                Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED);
                 Close();
             }
         }
@@ -343,8 +344,8 @@ namespace BuddhaBowls
 
         public void CountChanged()
         {
-            NotifyPropertyChanged("RecipeCost");
-            NotifyPropertyChanged("ProportionDetails");
+            NotifyPropertyChanged("Item");
+            //Item.UpdateProperties();
         }
 
         #endregion

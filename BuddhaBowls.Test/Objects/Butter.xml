@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>76.99</LastPurchasedPrice>
+  <Name>Butter</Name>
+  <Category>Dairy</Category>
+  <PurchasedUnit>CASE 30lb</PurchasedUnit>
+  <Count>2</Count>
+  <CountUnit>1lb</CountUnit>
+  <Conversion>30</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>480</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>2</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>4</Id>
+</InventoryItem>

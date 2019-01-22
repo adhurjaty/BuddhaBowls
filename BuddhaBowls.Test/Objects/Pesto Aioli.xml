@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Recipe>
+  <Name>Pesto Aioli</Name>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>265</RecipeUnitConversion>
+  <Category>SAUCES+DRESSINGS</Category>
+  <Count>0</Count>
+  <Price>null</Price>
+  <IsBatch>True</IsBatch>
+  <Id>11</Id>
+</Recipe>

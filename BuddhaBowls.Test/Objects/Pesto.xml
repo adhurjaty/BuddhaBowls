@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>126</LastPurchasedPrice>
+  <Name>Pesto</Name>
+  <Category>Dairy</Category>
+  <PurchasedUnit>4/33.5</PurchasedUnit>
+  <Count>2</Count>
+  <CountUnit>BUCKET</CountUnit>
+  <Conversion>4</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>4</RecipeUnitConversion>
+  <Yield>0.97</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>11</Id>
+</InventoryItem>

@@ -397,7 +397,6 @@ namespace BuddhaBowls
 
         public void SaveSettings()
         {
-            // TODO: add settings to save
             Properties.Settings.Default.DBLocation = DataFileFolder;
             Properties.Settings.Default.Save();
         }

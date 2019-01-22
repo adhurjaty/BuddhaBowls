@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>3.75</LastPurchasedPrice>
+  <Name>Strawberries (Produce A)</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>1lb</PurchasedUnit>
+  <Count>2</Count>
+  <CountUnit>BASKET</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>16</RecipeUnitConversion>
+  <Yield>0.85</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>12/28/2016 11:52:40 AM</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>67</Id>
+</InventoryItem>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>3.79</LastPurchasedPrice>
+  <Name>Paprika</Name>
+  <Category>Herbs</Category>
+  <PurchasedUnit>8.5oz</PurchasedUnit>
+  <Count>2</Count>
+  <CountUnit>OZ-wt</CountUnit>
+  <Conversion>8.5</Conversion>
+  <RecipeUnit>TBL</RecipeUnit>
+  <RecipeUnitConversion>36.96</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>12/28/2016 11:52:40 AM</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>51</Id>
+</InventoryItem>

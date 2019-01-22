@@ -291,9 +291,9 @@ namespace BuddhaBowls.Test
 
             List<string> refLabels = new List<string>()
             {
-                "WK1 12/4-12/11",
-                "WK2 12/11-12/18",
-                "WK3 12/18-12/25",
+                "WK1 12/4-12/10",
+                "WK2 12/11-12/17",
+                "WK3 12/18-12/24",
                 "WK4 12/25-12/31"
             };
 
@@ -321,22 +321,116 @@ namespace BuddhaBowls.Test
             List<string> refLabels = new List<string>()
             {
                 "P0 1/1-1/1",
-                "P1 1/2-1/30",
-                "P2 1/30-2/27",
-                "P3 2/27-3/27",
-                "P4 3/27-4/24",
-                "P5 4/24-5/22",
-                "P6 5/22-6/19",
-                "P7 6/19-7/17",
-                "P8 7/17-8/14",
-                "P9 8/14-9/11",
-                "P10 9/11-10/9",
-                "P11 10/9-11/6",
-                "P12 11/6-12/4",
+                "P1 1/2-1/29",
+                "P2 1/30-2/26",
+                "P3 2/27-3/26",
+                "P4 3/27-4/23",
+                "P5 4/24-5/21",
+                "P6 5/22-6/18",
+                "P7 6/19-7/16",
+                "P8 7/17-8/13",
+                "P9 8/14-9/10",
+                "P10 9/11-10/8",
+                "P11 10/9-11/5",
+                "P12 11/6-12/3",
                 "P13 12/4-12/31"
             };
 
             CollectionAssert.AreEqual(refLabels, labels);
+        }
+
+        [TestMethod]
+        public void MergeFloatDictsTest()
+        {
+            Dictionary<string, float> dict1 = new Dictionary<string, float>()
+            {
+                { "a", 3 },
+                { "b", 5 },
+                { "c", 8 }
+            };
+
+            Dictionary<string, float> dict2 = new Dictionary<string, float>()
+            {
+                { "b", 5 },
+                { "c", 8 },
+                { "d", 2 }
+            };
+
+            Dictionary<string, float> refDict = new Dictionary<string, float>()
+            {
+                { "a", 3 },
+                { "b", 10 },
+                { "c", 16 },
+                { "d", 2 }
+            };
+
+            Dictionary<string, float> outDict = MainHelper.MergeDicts(dict1, dict2, (x, y) => x + y);
+
+            CollectionAssert.AreEquivalent(refDict.Keys, outDict.Keys);
+            foreach (string key in refDict.Keys)
+            {
+                Assert.AreEqual(refDict[key], outDict[key]);
+            }
+        }
+
+        [TestMethod]
+        public void MergeListDictsTest()
+        {
+            Dictionary<string, List<int>> dict1 = new Dictionary<string, List<int>>()
+            {
+                { "a", new List<int>() { 3, 5 } },
+                { "b", new List<int>() { 5, 1 } },
+                { "c", new List<int>() { 8 } }
+            };
+
+            Dictionary<string, List<int>> dict2 = new Dictionary<string, List<int>>()
+            {
+                { "b", new List<int>() { 5, 8, 7 } },
+                { "c", new List<int>() { 8, 1, 1, 1, 1 } },
+                { "d", new List<int>() { 2 } }
+            };
+
+            Dictionary<string, List<int>> refDict = new Dictionary<string, List<int>>()
+            {
+                { "a", new List<int>() { 3, 5 } },
+                { "b", new List<int>() { 5, 1, 5, 8, 7 } },
+                { "c", new List<int>() { 8, 8, 1, 1, 1, 1 } },
+                { "d", new List<int>() { 2 } }
+            };
+
+            Dictionary<string, List<int>> outDict = MainHelper.MergeDicts(dict1, dict2, (x, y) => x.Concat(y).ToList());
+
+            CollectionAssert.AreEquivalent(refDict.Keys, outDict.Keys);
+            foreach (string key in refDict.Keys)
+            {
+                CollectionAssert.AreEqual(refDict[key], outDict[key]);
+            }
+        }
+
+        [TestMethod]
+        public void AddToDictTest()
+        {
+            Dictionary<string, int> outDict = new Dictionary<string, int>();
+            List<string> keys = new List<string>() { "a", "b", "a", "c", "b", "a" };
+            List<int> vals = new List<int>() { 1, 4, 6, 5, 1, 9 };
+
+            Dictionary<string, int> refDict = new Dictionary<string, int>()
+            {
+                { "a", 16 },
+                { "b", 5 },
+                { "c", 5 }
+            };
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                MainHelper.AddToDict(ref outDict, keys[i], vals[i], (x, y) => x + y);
+            }
+
+            CollectionAssert.AreEquivalent(refDict.Keys, outDict.Keys);
+            foreach (string key in refDict.Keys)
+            {
+                Assert.AreEqual(refDict[key], outDict[key]);
+            }
         }
     }
 }

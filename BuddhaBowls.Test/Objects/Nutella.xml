@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>11.99</LastPurchasedPrice>
+  <Name>Nutella</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>53oz</PurchasedUnit>
+  <Count>11</Count>
+  <CountUnit>JAR</CountUnit>
+  <Conversion>2</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>53</RecipeUnitConversion>
+  <Yield>0.9</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>27</Id>
+</InventoryItem>

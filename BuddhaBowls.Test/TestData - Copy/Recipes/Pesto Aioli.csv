@@ -1,0 +1,3 @@
+Id,Name,InventoryItemId,Measure,Quantity,IsBatch
+0,Pesto,11,1 BUCKET,1,False
+1,Mayonnaise,19,1 BUCKET,1,False

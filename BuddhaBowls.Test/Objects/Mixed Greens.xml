@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>5.99</LastPurchasedPrice>
+  <Name>Mixed Greens</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>3lb</PurchasedUnit>
+  <Count>0</Count>
+  <CountUnit>BAG</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>48</RecipeUnitConversion>
+  <Yield>0.98</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>58</Id>
+</InventoryItem>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>22.89</LastPurchasedPrice>
+  <Name>Mayonnaise</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>4 GAL</PurchasedUnit>
+  <Count>4</Count>
+  <CountUnit>JUG</CountUnit>
+  <Conversion>4</Conversion>
+  <RecipeUnit>EA</RecipeUnit>
+  <RecipeUnitConversion>4</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>19</Id>
+</InventoryItem>

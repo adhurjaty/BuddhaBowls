@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>10.3</LastPurchasedPrice>
+  <Name>Oregano</Name>
+  <Category>Herbs</Category>
+  <PurchasedUnit>1lb</PurchasedUnit>
+  <Count>1</Count>
+  <CountUnit>OZ-wt</CountUnit>
+  <Conversion>16</Conversion>
+  <RecipeUnit>TBL</RecipeUnit>
+  <RecipeUnitConversion>232.73</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>12/28/2016 11:52:40 AM</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>45</Id>
+</InventoryItem>

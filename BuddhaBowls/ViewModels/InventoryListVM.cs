@@ -265,6 +265,7 @@ namespace BuddhaBowls
 
             SetCommandsAndControl();
             Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(DatasetChanged));
+            Messenger.Instance.Register<Message>(MessageTypes.PREP_ITEM_CHANGED, (msg) => UpdateInvValue());
         }
 
         /// <summary>
@@ -280,7 +281,7 @@ namespace BuddhaBowls
             UpdateInvValue();
             SetCommandsAndControl();
             Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(DatasetChanged));
-
+            Messenger.Instance.Register<Message>(MessageTypes.PREP_ITEM_CHANGED, (msg) => UpdateInvValue());
         }
 
         /// <summary>
@@ -291,7 +292,7 @@ namespace BuddhaBowls
         public InventoryListVM(Inventory inv, StatusUpdatedDel countDel) : base()
         {
             _inventory = inv;
-            _models.LoadInvContainer(_inventory);
+            //_models.LoadInvContainer(_inventory);
             CountChanged = countDel;
             IsMasterList = false;
 
@@ -299,7 +300,7 @@ namespace BuddhaBowls
             UpdateInvValue();
             SetCommandsAndControl();
             Messenger.Instance.Register(MessageTypes.VENDOR_INV_ITEMS_CHANGED, new Action<Message>(DatasetChanged));
-
+            Messenger.Instance.Register<Message>(MessageTypes.PREP_ITEM_CHANGED, (msg) => UpdateInvValue());
         }
 
         #region ICommand Helpers
@@ -388,33 +389,17 @@ namespace BuddhaBowls
                 if (_inventory == null)
                     _invItemsContainer = _models.VIContainer.Copy();
                 else
-                    _invItemsContainer = new VendorInvItemsContainer(_inventory.InvItemsContainer, _models.VContainer);
+                    _invItemsContainer = new VendorInvItemsContainer(_inventory.InvItemsContainer, _models.VContainer, false);
             }
             FilterText = "";
             CollectionChanged();
-            //_invItemsContainer.AddUpdateBinding(CollectionChanged);
-            //_invItemsContainer.AddUpdateBinding(UpdateInvValue);
-            //_invItemsContainer.PushChange();
         }
 
         public void CollectionChanged()
         {
             FilteredItems = new ObservableCollection<VendorInventoryItem>(_invItemsContainer.Items);
+            UpdateInvValue();
         }
-
-        /// <summary>
-        /// Sync the copy inventory list with the master. Maintain count values however
-        /// </summary>
-        //public void SyncCopyInvList()
-        //{
-        //    Dictionary<int, float> vCountDict = _invItemsContainer.Items.ToDictionary(x => x.Id, x => x.Count);
-        //    InitContainer();
-        //    foreach (VendorInventoryItem item in _invItemsContainer.Items)
-        //    {
-        //        if (vCountDict.ContainsKey(item.Id))
-        //            item.Count = vCountDict[item.Id];
-        //    }
-        //}
 
         public void MoveDown(VendorInventoryItem item)
         {
@@ -447,13 +432,6 @@ namespace BuddhaBowls
         /// <param name="item"></param>
         public void RowEdited(VendorInventoryItem item)
         {
-            //if (IsMasterList)
-            //{
-            //    item.Update();
-            //    _models.VIContainer.UpdateCopies(item);
-            //}
-            //_invItemsContainer.UpdateCopies(item);
-            //item.NotifyAllChanges();
             _invItemsContainer.Update(item);
             UpdateInvValue();
         }
@@ -485,7 +463,8 @@ namespace BuddhaBowls
         {
             List<PriceExpanderItem> items = new List<PriceExpanderItem>();
             float totalValue = 0;
-            foreach (KeyValuePair<string, float> kvp in _invItemsContainer.GetCategoryValues())
+            Dictionary<string, float> catDict = MainHelper.MergeDicts(_invItemsContainer.GetCategoryValues(), _models.PIContainer.GetCategoryValues(), (x, y) => x + y);
+            foreach (KeyValuePair<string, float> kvp in catDict)
             {
                 items.Add(new PriceExpanderItem() { Label = kvp.Key + " Value:", Price = kvp.Value });
                 totalValue += kvp.Value;

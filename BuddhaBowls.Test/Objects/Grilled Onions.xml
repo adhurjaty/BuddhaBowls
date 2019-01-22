@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Recipe>
+  <Name>Grilled Onions</Name>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>50.35</RecipeUnitConversion>
+  <Category>MAC + SOUPS</Category>
+  <Count>0</Count>
+  <Price>null</Price>
+  <IsBatch>True</IsBatch>
+  <Id>7</Id>
+</Recipe>

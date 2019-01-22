@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using BuddhaBowls.Services;
 using System;
@@ -112,8 +113,9 @@ namespace BuddhaBowls
             StartInvCommand = new RelayCommand(OpenStartInv);
             EndInvCommand = new RelayCommand(OpenEndInv);
 
-            //_models.InContainer.AddUpdateBinding(delegate () { CalculateCogs(PeriodSelector.SelectedWeek); });
-            //_models.POContainer.AddUpdateBinding(delegate () { CalculateCogs(PeriodSelector.SelectedWeek); });
+            Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_CHANGED, (msg) => InventoryChanged());
+            Messenger.Instance.Register(MessageTypes.PO_CHANGED, new Action<Message>(POChanged));
+            Messenger.Instance.Register<Message>(MessageTypes.BREAD_CHANGED, (msg) => HandleBread((BreadWeekContainer)msg.Payload));
         }
 
         #region ICommand Helpers
@@ -197,6 +199,14 @@ namespace BuddhaBowls
 
         private void SetInvAndOrders(PeriodMarker timeFrame)
         {
+            SetInv(timeFrame);
+            InitRecOrdersDict(timeFrame);
+            if (timeFrame.GetType() == typeof(WeekMarker))
+                HandleBread(_models.GetBreadWeek((WeekMarker)timeFrame), (WeekMarker)timeFrame);
+        }
+
+        private void SetInv(PeriodMarker timeFrame)
+        {
             List<Inventory> inventoryList = _models.InContainer.Items.OrderByDescending(x => x.Date).ToList();
             List<Inventory> periodInvList = inventoryList.Where(x => timeFrame.StartDate <= x.Date && x.Date <= timeFrame.EndDate).ToList();
 
@@ -204,10 +214,10 @@ namespace BuddhaBowls
             _endInventory = inventoryList.Where(x => x.Date > timeFrame.EndDate).OrderBy(x => x.Date).FirstOrDefault();
 
             // fallback to the last inventory of the week
-            if(_endInventory == null)
+            if (_endInventory == null)
                 _endInventory = inventoryList.Where(x => x.Date <= timeFrame.EndDate).OrderByDescending(x => x.Date).FirstOrDefault();
 
-                if (periodInvList.Count == 0)
+            if (periodInvList.Count == 0)
                 periodInvList.Add(_endInventory);
 
             if (_endInventory != null)
@@ -220,7 +230,6 @@ namespace BuddhaBowls
                 if (_startInventory == null)
                     _startInventory = _endInventory;
             }
-            InitRecOrdersDict(timeFrame);
         }
 
         private void InitRecOrdersDict(PeriodMarker timeFrame)
@@ -233,7 +242,6 @@ namespace BuddhaBowls
             {
                 _recOrdersDict[itemDict.Key].AddRange(itemDict.Value);
             }
-            _recOrdersDict["Bread"] = _models.GetBreadPeriodOrders(timeFrame).ToList();
             _recOrdersDict["Total"] = _recOrdersDict.Values.SelectMany(x => x).ToList();
             _recOrdersDict["Food Total"] = _recOrdersDict.Where(x => Properties.Settings.Default.FoodCategories.Contains(x.Key))
                                                          .SelectMany(x => x.Value).ToList();
@@ -265,22 +273,75 @@ namespace BuddhaBowls
 
             return invDict.Values.ToList();
         }
+
+        private void POChanged(Message msg)
+        {
+            PurchaseOrder order = (PurchaseOrder)msg.Payload;
+            if(order.Received && PeriodSelector.SelectedWeek.StartDate <= order.ReceivedDate && order.ReceivedDate <= PeriodSelector.SelectedWeek.EndDate)
+            {
+                InitRecOrdersDict(PeriodSelector.SelectedWeek);
+                foreach (CogsCategory cogs in CategoryList.Where(x => x.Name != "Bread"))
+                {
+                    cogs.SetPOItems(_recOrdersDict[cogs.Name]);
+                }
+            }
+        }
+
+        private void HandleBread(BreadWeekContainer container, WeekMarker timeframe = null)
+        {
+            DateTime endDate = container.Week[0].Date.Date;
+            timeframe = timeframe ?? PeriodSelector.SelectedWeek;
+            if (endDate <= timeframe.EndDate && endDate >= timeframe.StartDate)
+            {
+                List<InventoryItem> breadItems = container.GetWeekAsInvItems().ToList();
+
+                _recOrdersDict["Bread"] = breadItems;
+
+                int idx = 0;
+                foreach (string breadType in container.Week[0].BreadDescDict.Keys)
+                {
+                    int invIdx = _startInventory.InvItemsContainer.Items.FindIndex(x => x.Name == breadType);
+                    _startInventory.InvItemsContainer.Items[invIdx] = breadItems[idx];
+                    invIdx = _endInventory.InvItemsContainer.Items.FindIndex(x => x.Name == breadType);
+                    _endInventory.InvItemsContainer.Items[invIdx] = breadItems[breadItems.Count - container.Week[0].BreadDescDict.Count + idx];
+                    idx++;
+                }
+
+                if (CategoryList != null)
+                {
+                    CogsCategory breadCategory = CategoryList.FirstOrDefault(x => x.Name == "Bread");
+                    breadCategory.SetStartInventory(_startInventory, true);
+                    breadCategory.SetEndInventory(_endInventory, true);
+                    breadCategory.SetPOItems(_recOrdersDict["Bread"]);
+                }
+            }
+        }
+
+        private void InventoryChanged()
+        {
+            Inventory prevStartInv = _startInventory;
+            Inventory prevEndInv = _endInventory;
+
+            SetInv(PeriodSelector.SelectedWeek);
+            
+            foreach (CogsCategory cogs in CategoryList.Where(x => x.Name != "Bread"))
+            {
+                if (prevStartInv != _startInventory)
+                    cogs.SetStartInventory(_startInventory, silent: true);
+                if (prevEndInv != _endInventory)
+                    cogs.SetEndInventory(_endInventory, silent: true);
+                cogs.UpdateProperties();
+            }
+        }
+
     }
 
-    public class CogsCategory : INotifyPropertyChanged
+    public class CogsCategory : ObservableObject
     {
         private Inventory _startInv;
         private Inventory _endInv;
         private List<InventoryItem> _purchases;
         private List<InventoryItem> _breadOrders;
-
-        // INotifyPropertyChanged event and method
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         public string Name { get; set; }
 
@@ -289,8 +350,6 @@ namespace BuddhaBowls
             get
             {
                 List<InventoryItem> startInvItems = GetInvItems(_startInv);
-                if (startInvItems == null)
-                    return 0;
                 return startInvItems.Sum(x => x.PriceExtension);
             }
         }
@@ -300,8 +359,6 @@ namespace BuddhaBowls
             get
             {
                 List<InventoryItem> endInvItems = GetInvItems(_endInv);
-                if (endInvItems == null)
-                    return 0;
                 return endInvItems.Sum(x => x.PriceExtension);
             }
         }
@@ -366,6 +423,27 @@ namespace BuddhaBowls
             _breadOrders = purchases;
         }
 
+        public void SetStartInventory(Inventory inv, bool silent = false)
+        {
+            _startInv = inv;
+            if(!silent)
+                UpdateProperties();
+        }
+
+        public void SetEndInventory(Inventory inv, bool silent = false)
+        {
+            _endInv = inv;
+            if(!silent)
+                UpdateProperties();
+        }
+
+        public void SetPOItems(List<InventoryItem> items, bool silent = false)
+        {
+            _purchases = items;
+            if(!silent)
+                UpdateProperties();
+        }
+
         private List<InventoryItem> GetInvItems(Inventory inv)
         {
             Dictionary<string, List<InventoryItem>> catDict = inv.CategoryItemsDict;
@@ -377,17 +455,112 @@ namespace BuddhaBowls
                 return new List<InventoryItem>();
             return catDict[Name];
         }
+
     }
 
-    public class CatItem
+    public class CatItem : ObservableObject
     {
-        public string Name { get; set; }
-        public float StartCount { get; set; }
-        public float StartValue { get; set; }
-        public float RecCount { get; set; }
-        public float RecValue { get; set; }
-        public float EndCount { get; set; }
-        public float EndValue { get; set; }
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                _name = value;
+                NotifyPropertyChanged("Name");
+            }
+        }
+
+        private float _startCount;
+        public float StartCount
+        {
+            get
+            {
+                return _startCount;
+            }
+            set
+            {
+                _startCount = value;
+                NotifyPropertyChanged("StartCount");
+                NotifyPropertyChanged("Usage");
+            }
+        }
+
+        private float _startValue;
+        public float StartValue
+        {
+            get
+            {
+                return _startValue;
+            }
+            set
+            {
+                _startValue = value;
+                NotifyPropertyChanged("StartValue");
+            }
+        }
+
+        private float _recCount;
+        public float RecCount
+        {
+            get
+            {
+                return _recCount;
+            }
+            set
+            {
+                _recCount = value;
+                NotifyPropertyChanged("RecCount");
+                NotifyPropertyChanged("Usage");
+            }
+        }
+
+        private float _recValue;
+        public float RecValue
+        {
+            get
+            {
+                return _recValue;
+            }
+            set
+            {
+                _recValue = value;
+                NotifyPropertyChanged("RecValue");
+            }
+        }
+
+        private float _endCount;
+        public float EndCount
+        {
+            get
+            {
+                return _endCount;
+            }
+            set
+            {
+                _endCount = value;
+                NotifyPropertyChanged("EndCount");
+                NotifyPropertyChanged("Usage");
+            }
+        }
+
+        private float _endValue;
+        public float EndValue
+        {
+            get
+            {
+                return _endValue;
+            }
+            set
+            {
+                _endValue = value;
+                NotifyPropertyChanged("EndValue");
+            }
+        }
+
         public float Usage
         {
             get

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>41.5</LastPurchasedPrice>
+  <Name>Heavy Cream</Name>
+  <Category>Dairy</Category>
+  <PurchasedUnit>6 1/2 Gallon</PurchasedUnit>
+  <Count>3</Count>
+  <CountUnit>1/2 GALLON</CountUnit>
+  <Conversion>6</Conversion>
+  <RecipeUnit>CUP</RecipeUnit>
+  <RecipeUnitConversion>48</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>4</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>6</Id>
+</InventoryItem>

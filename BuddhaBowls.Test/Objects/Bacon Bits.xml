@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>48.44</LastPurchasedPrice>
+  <Name>Bacon Bits</Name>
+  <Category>Meats</Category>
+  <PurchasedUnit>10lb CASE</PurchasedUnit>
+  <Count>4</Count>
+  <CountUnit>BAG</CountUnit>
+  <Conversion>2</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>160</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>75</Id>
+</InventoryItem>

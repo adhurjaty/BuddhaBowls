@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>14.5</LastPurchasedPrice>
+  <Name>Yogurt</Name>
+  <Category>Dairy</Category>
+  <PurchasedUnit>6 QUARTS</PurchasedUnit>
+  <Count>1</Count>
+  <CountUnit>QUART</CountUnit>
+  <Conversion>6</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>18</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>10</Id>
+</InventoryItem>

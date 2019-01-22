@@ -28,6 +28,7 @@ namespace BuddhaBowls.Services
         public InventoriesContainer InContainer { get; private set; }
         public RecipesContainer RContainer { get; private set; }
         public ExpenseItemsContainer EIContainer { get; private set; }
+        public PrepItemsContainer PIContainer { get; set; }
 
         /// <summary>
         /// Constructor. Initialize containers, settings and ordering information
@@ -35,12 +36,9 @@ namespace BuddhaBowls.Services
         public DBCache()
         {
             InitializeModels();
-            InitializeInventoryOrder();
+            InitializeItemsOrder();
             InitializeFoodCategories();
-            //if (InventoryItems != null)
-            //{
             SetCategoryColors();
-            //}
         }
 
         /// <summary>
@@ -58,13 +56,15 @@ namespace BuddhaBowls.Services
             VIContainer = new VendorInvItemsContainer(invItems, VContainer, true);
             POContainer = new PurchaseOrdersContainer(ModelHelper.InstantiateList<PurchaseOrder>("PurchaseOrder"), VIContainer, true);
             InContainer = new InventoriesContainer(ModelHelper.InstantiateList<Inventory>("Inventory"), true);
-            RContainer = new RecipesContainer(ModelHelper.InstantiateList<Recipe>("Recipe"), true);
+            RContainer = new RecipesContainer(ModelHelper.InstantiateList<Recipe>("Recipe"), VIContainer, true);
+            PIContainer = new PrepItemsContainer(ModelHelper.InstantiateList<PrepItem>("PrepItem"), VIContainer, RContainer, true);
             EIContainer = new ExpenseItemsContainer(ModelHelper.InstantiateList<ExpenseItem>("ExpenseItem"), true);
             DSContainer = new DailySalesContainer(ModelHelper.InstantiateList<DailySale>("DailySale"));
             //AddRecipeItems();
 
             _breadWeekDict = new Dictionary<DateTime, BreadWeekContainer>();
             InitBreadOrders();
+
             Logger.Info("Models loaded");
         }
 
@@ -82,13 +82,18 @@ namespace BuddhaBowls.Services
         /// <summary>
         /// Sets the desired ordering for inventory items by the inventory order file. Alphabetical otherwise
         /// </summary>
-        private void InitializeInventoryOrder()
+        private void InitializeItemsOrder()
         {
             string orderPath = Path.Combine(Properties.Settings.Default.DBLocation, "Settings", GlobalVar.INV_ORDER_FILE);
             if (File.Exists(orderPath))
                 Properties.Settings.Default.InventoryOrder = new List<string>(File.ReadAllLines(orderPath));
             else
                 Properties.Settings.Default.InventoryOrder = new List<string>(VIContainer.Items.Select(x => x.Name).OrderBy(x => x));
+            orderPath = Path.Combine(Properties.Settings.Default.DBLocation, "Settings", GlobalVar.PREP_ORDER_FILE);
+            if (File.Exists(orderPath))
+                Properties.Settings.Default.PrepItemOrder = new List<string>(File.ReadAllLines(orderPath));
+            else
+                Properties.Settings.Default.PrepItemOrder = new List<string>(PIContainer.Items.Select(x => x.Name).OrderBy(x => x));
             Properties.Settings.Default.Save();
         }
 
@@ -161,7 +166,7 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public List<string> GetCountUnits()
         {
-            return MainHelper.EnsureCaseInsensitive(new HashSet<string>(VIContainer.Items.Select(x => x.CountUnit)
+            return MainHelper.EnsureCaseInsensitive(new HashSet<string>(VIContainer.Items.Select(x => x.CountUnit).Concat(PIContainer.Items.Select(x => x.CountUnit))
                                                                            .Where(x => !string.IsNullOrEmpty(x)))).ToList();
         }
 
@@ -209,7 +214,8 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public List<IItem> GetAllIItems()
         {
-            return VIContainer.Items.Select(x => (IItem)x.ToInventoryItem()).Concat(RContainer.Items.Where(x => x.IsBatch)).ToList();
+            //return VIContainer.Items.Select(x => (IItem)x.ToInventoryItem()).Concat(RContainer.Items.Where(x => x.IsBatch)).ToList();
+            return VIContainer.Items.Select(x => (IItem)x).Concat(RContainer.Items.Where(x => x.IsBatch)).ToList();
         }
 
         /// <summary>
@@ -241,66 +247,6 @@ namespace BuddhaBowls.Services
                 }
             }
         }
-
-        // don't know if the prep item concept is coming back. Leave in for now
-        /// <summary>
-        /// Gets the all category breakdown of the value of inventory (inventory and prep items)
-        /// </summary>
-        /// <returns></returns>
-        //public Dictionary<string, float> GetCategoryValues()
-        //{
-        //    Dictionary<string, float> costDict = new Dictionary<string, float>();
-        //    foreach (VendorInventoryItem item in VIContainer.Items)
-        //    {
-        //        if (!costDict.Keys.Contains(item.Category))
-        //            costDict[item.Category] = 0;
-        //        costDict[item.Category] += item.PriceExtension;
-        //    }
-
-        //    foreach(KeyValuePair<string, float> kvp in GetPrepCatValues())
-        //    {
-        //        if (!costDict.Keys.Contains(kvp.Key))
-        //            costDict[kvp.Key] = 0;
-        //        costDict[kvp.Key] += kvp.Value;
-        //    }
-
-        //    return costDict;
-        //}
-
-        //public Dictionary<string, float> GetPrepCatValues()
-        //{
-        //    Dictionary<string, float> costDict = new Dictionary<string, float>();
-
-        //    foreach (PrepItem item in PrepItems)
-        //    {
-        //        InventoryItem invItem = VIContainer.Items.FirstOrDefault(x => x.Name == item.Name);
-        //        if (invItem != null)
-        //        {
-        //            if (!costDict.Keys.Contains(invItem.Category))
-        //                costDict[invItem.Category] = 0;
-        //            costDict[invItem.Category] += item.Extension;
-        //            continue;
-        //        }
-
-        //        // separate prep item extension costs among the categories
-        //        Recipe recipe = Recipes.FirstOrDefault(x => x.Name == item.Name);
-        //        if (recipe != null)
-        //        {
-        //            Dictionary<string, float> recipeCatProps = recipe.GetCatCostProportions();
-        //            if (recipeCatProps != null)
-        //            {
-        //                foreach (KeyValuePair<string, float> kvp in recipeCatProps)
-        //                {
-        //                    if (!costDict.Keys.Contains(kvp.Key))
-        //                        costDict[kvp.Key] = 0;
-        //                    costDict[kvp.Key] += kvp.Value * item.Extension;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return costDict;
-        //}
 
         /// <summary>
         /// Initializes bread order container dictionary
@@ -341,7 +287,7 @@ namespace BuddhaBowls.Services
                     Array.Copy(breadWeek, tempBreadWeek, 7);
                     breadWeek[7] = new BreadOrderTotal(ref tempBreadWeek);
                     
-                    _breadWeekDict[weekStartDate] = new BreadWeekContainer(breadWeek.ToList());
+                    _breadWeekDict[weekStartDate] = new BreadWeekContainer(breadWeek.ToList(), VIContainer.Items.Where(x => x.Category == "Bread").ToList());
                     day = 0;
                     Array.Clear(breadWeek, 0, breadWeek.Length);
                     continue;
@@ -361,16 +307,24 @@ namespace BuddhaBowls.Services
         /// <returns></returns>
         public IEnumerable<InventoryItem> GetBreadPeriodOrders(PeriodMarker period)
         {
-            foreach (WeekMarker week in MainHelper.GetWeeksInPeriod(period).Where(x => x.StartDate < DateTime.Now))
-            {
-                foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeek(week).WeekNoTotal.Where(x => x.BreadDescDict != null)
-                                                                                            .SelectMany(x => x.BreadDescDict.ToList()))
-                {
-                    InventoryItem item = VIContainer.Items.First(x => x.Name == descKvp.Key).Copy<InventoryItem>();
-                    item.LastOrderAmount = descKvp.Value.Delivery;
-                    yield return item;
-                }
-            }
+            return MainHelper.GetWeeksInPeriod(period).Where(x => x.StartDate < DateTime.Now).SelectMany(week => GetBreadWeek(week).GetWeekAsInvItems());
+            //foreach (WeekMarker week in MainHelper.GetWeeksInPeriod(period).Where(x => x.StartDate < DateTime.Now))
+            //{
+            //    //foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeek(week).WeekNoTotal.Where(x => x.BreadDescDict != null)
+            //    //                                                                            .SelectMany(x => x.BreadDescDict.ToList()))
+            //    //{
+            //    //    InventoryItem item = VIContainer.Items.First(x => x.Name == descKvp.Key).Copy<InventoryItem>();
+            //    //    item.LastOrderAmount = descKvp.Value.Delivery;
+            //    //    yield return item;
+            //    //}
+            //    foreach (KeyValuePair<string, BreadDescriptor> descKvp in GetBreadWeek(week).WeekNoTotal.Where(x => x.BreadDescDict != null)
+            //                                                                                .SelectMany(x => x.BreadDescDict.ToList()))
+            //    {
+            //        InventoryItem item = VIContainer.Items.First(x => x.Name == descKvp.Key).Copy<InventoryItem>();
+            //        item.LastOrderAmount = descKvp.Value.Delivery;
+            //        yield return item;
+            //    }
+            //}
         }
 
         /// <summary>
@@ -431,7 +385,7 @@ namespace BuddhaBowls.Services
             Array.Copy(breadWeek, tempBreadWeek, 7);
             breadWeek[7] = new BreadOrderTotal(ref tempBreadWeek);
 
-            return new BreadWeekContainer(breadWeek.ToList());
+            return new BreadWeekContainer(breadWeek.ToList(), VIContainer.Items.Where(x => x.Category == "Bread").ToList());
         }
 
         /// <summary>
@@ -465,16 +419,10 @@ namespace BuddhaBowls.Services
                 {
                     foreach (KeyValuePair<string, BreadDescriptor> kvp in bo.BreadDescDict)
                     {
-                        if (!salesDict.ContainsKey(kvp.Key))
+                        if (kvp.Value.Usage > 0)
                         {
-                            salesDict[kvp.Key] = 0;
-                            usageDict[kvp.Key] = 0;
-                        }
-
-                        if (kvp.Value.Useage > 0)
-                        {
-                            salesDict[kvp.Key] += bo.GrossSales;
-                            usageDict[kvp.Key] += kvp.Value.Useage;
+                            MainHelper.AddToDict(ref salesDict, kvp.Key, bo.GrossSales, (x, y) => x + y);
+                            MainHelper.AddToDict(ref usageDict, kvp.Key, kvp.Value.Usage, (x, y) => x + y);
                         }
                     }
                 }
@@ -483,17 +431,5 @@ namespace BuddhaBowls.Services
             return salesDict.ToDictionary(x => x.Key, x => usageDict[x.Key] > 0 ? x.Value / usageDict[x.Key] : 1);
         }
 
-        //private void InitThisWeekBreadDesc()
-        //{
-        //    DateTime startDate = MainHelper.GetWeek(DateTime.Today).StartDate;
-        //    DateTime prevStartDate = startDate.AddDays(-7);
-        //    List<BreadOrder> prevWeek = _breadWeekDict[prevStartDate].Items;
-
-        //    for (int i = 0; i < 7; i++)
-        //    {
-        //        //_breadWeekDict[startDate].Items[i].BreadDescDict = new Dictionary<string, BreadDescriptor>(prevWeek[i].BreadDescDict);
-        //        _breadWeekDict[startDate].Items[i].BreadDescDict = prevWeek[i].BreadDescDict.ToDictionary(x => x.Key, x => x.Value.;
-        //    }
-        //}
     }
 }

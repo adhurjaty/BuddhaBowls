@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>53</LastPurchasedPrice>
+  <Name>Ground Beef</Name>
+  <Category>Meats</Category>
+  <PurchasedUnit>20lb CASE</PurchasedUnit>
+  <Count>0.5</Count>
+  <CountUnit>LOG</CountUnit>
+  <Conversion>2</Conversion>
+  <RecipeUnit>EA</RecipeUnit>
+  <RecipeUnitConversion>2</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>73</Id>
+</InventoryItem>

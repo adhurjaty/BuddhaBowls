@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>17.74</LastPurchasedPrice>
+  <Name>Tapatio</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>12 EACH</PurchasedUnit>
+  <Count>8</Count>
+  <CountUnit>BOTTLE</CountUnit>
+  <Conversion>12</Conversion>
+  <RecipeUnit>EA</RecipeUnit>
+  <RecipeUnitConversion>12</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>31</Id>
+</InventoryItem>

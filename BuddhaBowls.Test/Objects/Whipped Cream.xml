@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>9.39</LastPurchasedPrice>
+  <Name>Whipped Cream</Name>
+  <Category>Dairy</Category>
+  <PurchasedUnit>CS 3 each</PurchasedUnit>
+  <Count>2</Count>
+  <CountUnit>CAN</CountUnit>
+  <Conversion>3</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>32</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>7</Id>
+</InventoryItem>

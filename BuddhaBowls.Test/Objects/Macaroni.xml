@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>19.88</LastPurchasedPrice>
+  <Name>Macaroni</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>2lb</PurchasedUnit>
+  <Count>44.2</Count>
+  <CountUnit>BAG</CountUnit>
+  <Conversion>2</Conversion>
+  <RecipeUnit>EA</RecipeUnit>
+  <RecipeUnitConversion>320</RecipeUnitConversion>
+  <Yield>2.41</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>21</Id>
+</InventoryItem>

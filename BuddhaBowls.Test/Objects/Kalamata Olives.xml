@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>12.82</LastPurchasedPrice>
+  <Name>Kalamata Olives</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>EACH</PurchasedUnit>
+  <Count>0.5</Count>
+  <CountUnit>JAR</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>64.8</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>41</Id>
+</InventoryItem>

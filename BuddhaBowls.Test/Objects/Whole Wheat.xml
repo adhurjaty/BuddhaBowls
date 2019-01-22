@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>0.75</LastPurchasedPrice>
+  <Name>Whole Wheat</Name>
+  <Category>Bread</Category>
+  <PurchasedUnit>EACH</PurchasedUnit>
+  <Count>84</Count>
+  <CountUnit>EACH</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>EA</RecipeUnit>
+  <RecipeUnitConversion>1</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>77</Id>
+</InventoryItem>

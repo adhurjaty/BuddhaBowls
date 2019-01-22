@@ -1,0 +1,7 @@
+Id,Name,InventoryItemId,Measure,Quantity,IsBatch
+0,Olive Oil,36,10 CUPS,80,False
+1,Lemon Juice,42,15 CUPS,120,False
+2,Thyme,44,2 CUPS,32,False
+3,Oregano,45,1 CUP,16,False
+4,Salt,49,1.5 CUPS,24,False
+5,Garlic Peeled,71,1/2 CUP,8,False

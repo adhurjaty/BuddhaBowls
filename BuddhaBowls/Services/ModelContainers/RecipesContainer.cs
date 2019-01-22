@@ -1,4 +1,5 @@
-﻿using BuddhaBowls.Messengers;
+﻿using BuddhaBowls.Helpers;
+using BuddhaBowls.Messengers;
 using BuddhaBowls.Models;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,15 @@ namespace BuddhaBowls.Services
 {
     public class RecipesContainer : ModelContainer<Recipe>
     {
-        public RecipesContainer(List<Recipe> items, bool isMaster = false) : base(items, isMaster)
-        {
+        private VendorInvItemsContainer _vendInvContainer;
 
+        public RecipesContainer(List<Recipe> items, VendorInvItemsContainer container, bool isMaster = false) : base(items, isMaster)
+        {
+            _vendInvContainer = container;
+            foreach (Recipe item in items)
+            {
+                item.SetContainer(this);
+            }
         }
 
         /// <summary>
@@ -33,7 +40,7 @@ namespace BuddhaBowls.Services
 
         public RecipesContainer Copy()
         {
-            RecipesContainer rc = new RecipesContainer(_items.Select(x => (Recipe)x.Copy()).ToList());
+            RecipesContainer rc = new RecipesContainer(_items.Select(x => (Recipe)x.Copy()).ToList(), _vendInvContainer);
             _copies.Add(rc);
             return rc;
         }
@@ -42,7 +49,7 @@ namespace BuddhaBowls.Services
         {
             Recipe rec = base.AddItem(item);
             if (_isMaster)
-                Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED);
+                Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED, item);
             return rec;
         }
 
@@ -50,7 +57,21 @@ namespace BuddhaBowls.Services
         {
             base.RemoveItem(item);
             if (_isMaster)
-                Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED);
+                Messenger.Instance.NotifyColleagues(MessageTypes.RECIPE_CHANGED, item);
+        }
+
+        public List<IItem> GetRecipeInvItems(List<RecipeItem> items)
+        {
+            List<IItem> outItems = items.Select(x => x.InventoryItemId != null ?
+                                                        _vendInvContainer.Items.First(y => y.Id == x.InventoryItemId).ToInventoryItem().Copy() :
+                                                        Items.First(y => y.Name == x.Name).Copy()).ToList();
+            for (int i = 0; i < items.Count; i++)
+            {
+                outItems[i].Count = items[i].Quantity;
+                outItems[i].Measure = items[i].Measure;
+            }
+
+            return MainHelper.SortItems(outItems).ToList();
         }
     }
 }

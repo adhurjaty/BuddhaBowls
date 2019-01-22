@@ -15,14 +15,15 @@ using System.Windows;
 using System.IO;
 using BuddhaBowls.Square;
 using BuddhaBowls.Services;
+using BuddhaBowls.Messengers;
 
 namespace BuddhaBowls
 {
     public class BreadGuideVM : TabVM
     {
         private BreadGuideControl _control;
-        private BackgroundWorker _worker;
         private BreadWeekContainer _breadWeek;
+        private readonly int OFFSET_HOURS = 4;
 
         #region Content Binders
 
@@ -137,16 +138,28 @@ namespace BuddhaBowls
             _control = breadGuideControl;
         }
 
-        private void InitSquareSales()
+        private async void InitSquareSales()
         {
-            // TODO: Change to Async pattern
-            _worker = new BackgroundWorker();
-            _worker.DoWork += _worker_DoWork;
-            _worker.RunWorkerCompleted += _worker_RunWorkerCompleted;
-            _worker.WorkerSupportsCancellation = true;
-
             SquareProgMessage = "Updating from Square...";
-            _worker.RunWorkerAsync();
+            await Task.Run(() =>
+            {
+                SquareService ss = new SquareService();
+                Parallel.ForEach(BreadOrderList.Take(7).Where(x => x.Date < DateTime.Now), order =>
+                {
+                    try
+                    {
+                        DateTime startTime = order.Date.AddHours(OFFSET_HOURS);
+                        order.GrossSales = ss.ListTransactions(startTime, startTime.AddDays(1)).Sum(x => x.GrossSales);
+                        order.Update();
+                    }
+                    catch (Exception ex)
+                    {
+                        order.GrossSales = 0;
+                    }
+                });
+                ((BreadOrderTotal)BreadOrderList[7]).UpdateDetails();
+            });
+            SquareProgMessage = "";
         }
 
         #endregion
@@ -167,17 +180,16 @@ namespace BuddhaBowls
             List<VendorInventoryItem> breads = _models.VIContainer.Items.Where(x => x.Category == "Bread").ToList();
             foreach (VendorInventoryItem item in breads)
             {
-                BreadOrder bo = _breadWeek.Week.FirstOrDefault(x => x.Date == DateTime.Today);
+                BreadOrder bo = _breadWeek.Week.FirstOrDefault(x => x.Date.Date == DateTime.Today);
                 if (bo != null && bo.BreadDescDict.ContainsKey(item.Name))
                 {
                     BreadDescriptor bread = bo.BreadDescDict[item.Name];
-                    VendorInventoryItem newItem = item;
-                    newItem.Count = bread.BeginInventory + bread.FreezerCount;
-                    //_models.AddUpdateInventoryItem(ref newItem);
+                    item.Count = bread.BeginInventory + bread.FreezerCount;
+                    item.Update();
                 }
             }
-
-            //ParentContext.ReportTab.UpdateBreadOrder();
+            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
+            Messenger.Instance.NotifyColleagues(MessageTypes.BREAD_CHANGED, _breadWeek);
         }
 
         public void ChangeBreadWeek(PeriodMarker period, WeekMarker week)
@@ -189,29 +201,6 @@ namespace BuddhaBowls
             NotifyPropertyChanged("BreadOrderList");
         }
         #endregion
-
-        private void _worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            SquareProgMessage = "";
-        }
-
-        private void _worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            SquareService ss = new SquareService();
-            Parallel.ForEach(BreadOrderList.Take(7).Where(x => x.Date < DateTime.Now), order =>
-            {
-                try
-                {
-                    order.GrossSales = ss.ListTransactions(order.Date, order.Date.AddDays(1)).Sum(x => x.GrossSales);
-                    order.Update();
-                }
-                catch (Exception ex)
-                {
-                    order.GrossSales = 0;
-                }
-            });
-            ((BreadOrderTotal)BreadOrderList[7]).UpdateDetails();
-        }
 
         public void UpdateBackup()
         {

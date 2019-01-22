@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>12.4</LastPurchasedPrice>
+  <Name>Sour Cream</Name>
+  <Category>Dairy</Category>
+  <PurchasedUnit>CASE 10lb</PurchasedUnit>
+  <Count>4</Count>
+  <CountUnit>5lb BUCKET</CountUnit>
+  <Conversion>2</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>160</RecipeUnitConversion>
+  <Yield>0.95</Yield>
+  <LastOrderAmount>3</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>5</Id>
+</InventoryItem>

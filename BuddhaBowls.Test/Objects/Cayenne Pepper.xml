@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>0</LastPurchasedPrice>
+  <Name>Cayenne Pepper</Name>
+  <Category>Herbs</Category>
+  <PurchasedUnit>null</PurchasedUnit>
+  <Count>4</Count>
+  <CountUnit>OZ-wt</CountUnit>
+  <Conversion>0</Conversion>
+  <RecipeUnit>TBL</RecipeUnit>
+  <RecipeUnitConversion>1</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>47</Id>
+</InventoryItem>

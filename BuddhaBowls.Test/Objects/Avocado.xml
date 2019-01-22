@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>38</LastPurchasedPrice>
+  <Name>Avocado</Name>
+  <Category>Produce</Category>
+  <PurchasedUnit>1/2 CASE</PurchasedUnit>
+  <Count>9</Count>
+  <CountUnit>EACH</CountUnit>
+  <Conversion>24</Conversion>
+  <RecipeUnit>EA</RecipeUnit>
+  <RecipeUnitConversion>24</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>12/28/2016 11:52:40 AM</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>62</Id>
+</InventoryItem>

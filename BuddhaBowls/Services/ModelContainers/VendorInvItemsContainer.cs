@@ -42,20 +42,20 @@ namespace BuddhaBowls.Services
         /// <summary>
         /// Instantiate the container. Should only be called in the DBCache class
         /// </summary>
-        /// <param name="items">List of vendor inventory items to contain</param>
+        /// <param name="container">List of vendor inventory items to contain</param>
         /// <param name="vContainer">Vendor container</param>
-        public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer) : this()
+        public VendorInvItemsContainer(InventoryItemsContainer container, VendorsContainer vContainer, bool isMaster) : this()
         {
-            _invItemsContainer = items;
             _vendorsContainer = vContainer;
-            SetItems(_invItemsContainer);
-            Messenger.Instance.Register<Message>(MessageTypes.VENDORS_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
-            Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_ITEM_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
-        }
-
-        public VendorInvItemsContainer(InventoryItemsContainer items, VendorsContainer vContainer, bool isMaster) : this(items, vContainer)
-        {
             _isMaster = isMaster;
+            if (_isMaster)
+            {
+                SetItems(container);
+                Messenger.Instance.Register<Message>(MessageTypes.VENDORS_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
+                Messenger.Instance.Register<Message>(MessageTypes.INVENTORY_ITEM_CHANGED, (msg) => Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, msg));
+            }
+            else
+                SetItemsOldInv(container);
         }
 
         public void SetItems(InventoryItemsContainer itemsCont)
@@ -68,6 +68,14 @@ namespace BuddhaBowls.Services
         public void SetItems(List<VendorInventoryItem> items)
         {
             Items = items;
+            _invItemsContainer = new InventoryItemsContainer(items.Select(x => x.ToInventoryItem()).ToList());
+            UpdateCopies();
+        }
+
+        public void SetItemsOldInv(InventoryItemsContainer itemsCont)
+        {
+            _invItemsContainer = itemsCont;
+            Items = _invItemsContainer.Items.Select(x => new VendorInventoryItem(x, _vendorsContainer.Items.FirstOrDefault(y => y.Id == x.LastVendorId) ?? new Vendor())).ToList();
             UpdateCopies();
         }
 
@@ -119,7 +127,10 @@ namespace BuddhaBowls.Services
             }
 
             UpdateCopies(vItem);
-            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, vItem);
+            if (_isMaster)
+            {
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, vItem);
+            }
             return vItem;
         }
 
@@ -134,16 +145,24 @@ namespace BuddhaBowls.Services
 
             _invItemsContainer.RemoveItem(item.ToInventoryItem());
             Items.Remove(item);
-            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
+            if(_isMaster)
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
             UpdateCopies();
         }
 
         public void Update(VendorInventoryItem item)
         {
             if (_isMaster)
+            {
                 item.Update();
-            _vendorsContainer.UpdateItem(item);
+                _vendorsContainer.UpdateItem(item);
+            }
             _items[Items.FindIndex(x => x.Id == item.Id)] = item;
+
+            if (_isMaster)
+            {
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED, item);
+            }
 
             UpdateCopies(item);
         }
@@ -168,7 +187,8 @@ namespace BuddhaBowls.Services
         {
             VendorInvItemsContainer viic = new VendorInvItemsContainer();
             viic.SetInventoryContainer(_invItemsContainer.Copy());
-            viic.SetVendorContainer(_vendorsContainer.Copy());
+            if(_vendorsContainer != null)
+                viic.SetVendorContainer(_vendorsContainer.Copy());
             viic.SetItems(Items.Select(x => (VendorInventoryItem)x.Copy()).ToList());
             _copies.Add(viic);
             return viic;
@@ -201,7 +221,8 @@ namespace BuddhaBowls.Services
                 else
                     _copies[i].Items[idx] = (VendorInventoryItem)item.Copy();
             }
-            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
+            if(_copies.Count > 0)
+                Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
         }
 
         /// <summary>
@@ -211,7 +232,8 @@ namespace BuddhaBowls.Services
         public void SyncCopy(VendorInvItemsContainer container)
         {
             _invItemsContainer = container.GetInvItemsContainer();
-            _vendorsContainer = container.GetVendorsContainer();
+            if(container.GetVendorsContainer() != null)
+                _vendorsContainer = container.GetVendorsContainer();
             SetItems(container.Items);
             RemoveCopy(container);
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
@@ -278,7 +300,8 @@ namespace BuddhaBowls.Services
         public void RemoveCopy(VendorInvItemsContainer viContainer)
         {
             _invItemsContainer.RemoveCopy(viContainer.GetInvItemsContainer());
-            _vendorsContainer.RemoveCopy(viContainer.GetVendorsContainer());
+            if(_vendorsContainer != null)
+                _vendorsContainer.RemoveCopy(viContainer.GetVendorsContainer());
             _copies.Remove(viContainer);
         }
 
@@ -303,9 +326,7 @@ namespace BuddhaBowls.Services
 
             foreach (VendorInventoryItem item in _items)
             {
-                if (!costDict.Keys.Contains(item.Category))
-                    costDict[item.Category] = 0;
-                costDict[item.Category] += item.PriceExtension;
+                MainHelper.AddToDict(ref costDict, item.Category, item.PriceExtension, (x, y) => x + y);
             }
 
             return costDict;
@@ -361,20 +382,70 @@ namespace BuddhaBowls.Services
         /// Updates the last vendor and selected vendor for VendorInventoryItems when a new order is created
         /// </summary>
         /// <param name="order"></param>
-        public void NewOrderAdded(PurchaseOrder order)
+        public void UpdateMasterItemOrderAdded(PurchaseOrder order)
         {
+            if (!order.Received)
+                return;
+
             Vendor vend = _vendorsContainer.Items.First(x => x.Name == order.VendorName);
             foreach (InventoryItem invItem in order.ItemList)
             {
                 VendorInventoryItem vItem = Items.First(x => x.Id == invItem.Id);
-                if (vItem.LastPurchasedDate < order.OrderDate)
+                // check that the date needs to be updated and that the vendor still sells the item (for legacy orders)
+                if (vItem.LastPurchasedDate <= order.ReceivedDate && vItem.Vendors.Select(x => x.Id).Contains(vend.Id))
                 {
                     vItem.SelectedVendor = vend;
                     vItem.LastVendorId = vend.Id;
-                    vItem.LastPurchasedDate = order.OrderDate;
+                    vItem.LastPurchasedDate = order.ReceivedDate;
                     vItem.LastOrderAmount = invItem.LastOrderAmount;
+                    vItem.LastPurchasedPrice = invItem.LastPurchasedPrice;
                     vItem.Update();
                 }
+            }
+
+            vend.Update();
+            Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
+        }
+
+        public void UpdateMasterItemOrderChanged(PurchaseOrder order, List<PurchaseOrder> allOrders)
+        {
+            if (!order.Received)
+                return;
+
+            Vendor vend = _vendorsContainer.Items.First(x => x.Name == order.VendorName);
+            List<PurchaseOrder> sortedOrders = allOrders.OrderByDescending(x => x.ReceivedDate).ToList();
+            HashSet<Vendor> affectedVendors = new HashSet<Vendor>();
+            foreach (InventoryItem invItem in order.ItemList)
+            {
+                VendorInventoryItem vItem = Items.First(x => x.Id == invItem.Id);
+                PurchaseOrder nextRecentOrder = sortedOrders.FirstOrDefault(x => x.ItemList.Select(y => y.Id).Contains(invItem.Id));
+                if(nextRecentOrder != null)
+                {
+                    Vendor nextRecentVendor = _vendorsContainer.Items.First(x => x.Name == nextRecentOrder.VendorName);
+                    InventoryItem nextOrderInvItem = nextRecentOrder.ItemList.First(x => x.Id == invItem.Id);
+                    vItem.LastPurchasedDate = nextRecentOrder.ReceivedDate;
+                    vItem.LastOrderAmount = nextOrderInvItem.LastOrderAmount;
+                    vItem.LastPurchasedPrice = nextOrderInvItem.LastPurchasedPrice;
+                    if (vItem.Vendors.FirstOrDefault(x => x.Id == nextRecentVendor.Id) != null)
+                    {
+                        vItem.LastVendorId = nextRecentVendor.Id;
+                        vItem.SelectedVendor = nextRecentVendor;
+                    }
+                    affectedVendors.Add(nextRecentVendor);
+                }
+                else
+                {
+                    vItem.LastVendorId = null;
+                    vItem.LastOrderAmount = 0;
+                    vItem.LastPurchasedDate = null;
+                    vItem.SelectedVendor = null;
+                }
+                vItem.Update();
+            }
+
+            foreach (Vendor v in affectedVendors)
+            {
+                v.Update();
             }
 
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);
@@ -384,23 +455,29 @@ namespace BuddhaBowls.Services
         /// Updates the last vendor and selected vendor when an order is deleted
         /// </summary>
         /// <param name="orders"></param>
-        public void OrderRemoved(PurchaseOrder removedOrder, List<PurchaseOrder> orders)
+        public void UpdateMasterItemOrderRemoved(PurchaseOrder removedOrder, List<PurchaseOrder> orders)
         {
             Vendor vend = _vendorsContainer.Items.First(x => x.Name == removedOrder.VendorName);
-            List<PurchaseOrder> sortedOrders = orders.OrderByDescending(x => x.OrderDate).ToList();
+            List<PurchaseOrder> sortedOrders = orders.OrderByDescending(x => x.ReceivedDate).ToList();
+            HashSet<Vendor> affectedVendors = new HashSet<Vendor>();
             foreach (InventoryItem invItem in removedOrder.ItemList)
             {
                 VendorInventoryItem vItem = Items.First(x => x.Id == invItem.Id);
-                if (vItem.LastPurchasedDate == removedOrder.OrderDate)
+                if (vItem.SelectedVendor == vend)
                 {
                     PurchaseOrder nextRecentOrder = sortedOrders.FirstOrDefault(x => x.ItemList.Select(y => y.Id).Contains(invItem.Id));
-                    if(nextRecentOrder != null)
+                    if (nextRecentOrder != null)
                     {
                         Vendor nextRecentVendor = _vendorsContainer.Items.First(x => x.Name == nextRecentOrder.VendorName);
-                        vItem.LastVendorId = vend.Id;
-                        vItem.LastPurchasedDate = nextRecentOrder.OrderDate;
-                        vItem.LastOrderAmount = invItem.LastOrderAmount;
-                        vItem.SelectedVendor = vend;
+                        InventoryItem nextOrderInvItem = nextRecentOrder.ItemList.First(x => x.Id == invItem.Id);
+                        vItem.LastPurchasedDate = nextRecentOrder.ReceivedDate;
+                        vItem.LastOrderAmount = nextOrderInvItem.LastOrderAmount;
+                        if (vItem.Vendors.FirstOrDefault(x => x.Id == nextRecentVendor.Id) != null)
+                        {
+                            vItem.LastVendorId = nextRecentVendor.Id;
+                            vItem.SelectedVendor = nextRecentVendor;
+                        }
+                        affectedVendors.Add(nextRecentVendor);
                     }
                     else
                     {
@@ -409,8 +486,25 @@ namespace BuddhaBowls.Services
                         vItem.LastPurchasedDate = null;
                         vItem.SelectedVendor = null;
                     }
+
+                    PurchaseOrder lastOrderFromVendor = sortedOrders.FirstOrDefault(x => x.VendorName == vend.Name &&
+                                                                                    x.ItemList.Select(y => y.Id).Contains(invItem.Id));
+                    if(lastOrderFromVendor != null)
+                    {
+                        InventoryItem prevOrderItem = lastOrderFromVendor.ItemList.First(x => x.Id == vItem.Id);
+                        InventoryItem prevItem = vItem.GetInvItemFromVendor(vend);
+                        prevItem.LastPurchasedPrice = prevOrderItem.LastPurchasedPrice;
+                        prevItem.LastPurchasedDate = lastOrderFromVendor.ReceivedDate ?? lastOrderFromVendor.OrderDate;
+                        prevItem.LastOrderAmount = prevOrderItem.LastOrderAmount;
+                    }
+
                     vItem.Update();
                 }
+            }
+
+            foreach (Vendor v in affectedVendors)
+            {
+                v.Update();
             }
 
             Messenger.Instance.NotifyColleagues(MessageTypes.VENDOR_INV_ITEMS_CHANGED);

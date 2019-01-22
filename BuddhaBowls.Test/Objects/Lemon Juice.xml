@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>10.2</LastPurchasedPrice>
+  <Name>Lemon Juice</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>1 Gal</PurchasedUnit>
+  <Count>40</Count>
+  <CountUnit>GAL</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>128</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>42</Id>
+</InventoryItem>

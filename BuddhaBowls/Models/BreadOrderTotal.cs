@@ -95,11 +95,11 @@ namespace BuddhaBowls.Models
             }
         }
 
-        public override int Useage
+        public override int Usage
         {
             get
             {
-                return _descWeek.Sum(x => x.Useage);
+                return _descWeek.Sum(x => x.Usage);
             }
         }
 

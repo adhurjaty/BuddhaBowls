@@ -1,0 +1,7 @@
+Id,Name,Category,PurchasedUnit,CountUnit,Conversion,RecipeUnit,RecipeUnitConversion,Count,Yield,LastPurchasedPrice,LastOrderAmount,LastPurchasedDate
+0,Mozzarella,Dairy,CASE 30lb,5lb BAG,6,OZ-wt,480,6,1,53,0,3/19/2017 10:37:00 PM
+1,Cheddar,Dairy,CASE 20lb,5lb BAG,4,OZ-wt,320,5,1,50,7,3/19/2017 10:37:00 PM
+2,Feta,Dairy,CASE 10lb,5lb BAG,2,OZ-wt,160,4,1E+08,69.69,0,3/19/2017 10:37:00 PM
+3,Butter,Dairy,CASE 30lb,1lb,30,OZ-wt,480,4,1,76.99,0,3/19/2017 10:37:00 PM
+4,Sour Cream,Dairy,CASE 10lb,5lb BUCKET,2,OZ-wt,160,4,0.95,32.4,0,3/19/2017 10:37:00 PM
+17,Artichoke Hearts,Dry Goods,6# CANS,CAN,6,OZ-wt,324,8,1,53.22,0,3/19/2017 10:37:00 PM

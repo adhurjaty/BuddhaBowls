@@ -15,16 +15,10 @@ namespace BuddhaBowls.Models
 
         public DateTime Date { get; set; }
 
-        //private Dictionary<string, List<InventoryItem>> _categoryItemsDict;
         public Dictionary<string, List<InventoryItem>> CategoryItemsDict
         {
             get
             {
-                if (InvItemsContainer == null)
-                {
-                    return GetInvItems().GroupBy(x => x.Category).ToDictionary(x => x.Key, x => x.ToList());
-                    //_invChanged = false;
-                }
                 return InvItemsContainer.Items.GroupBy(x => x.Category).ToDictionary(x => x.Key, y => y.ToList());
             }
         }
@@ -52,11 +46,6 @@ namespace BuddhaBowls.Models
         public Inventory(DateTime date) : this()
         {
             Date = date;
-        }
-
-        public Inventory(DateTime date, InventoryItemsContainer viContainer) : this(date)
-        {
-            InvItemsContainer = viContainer;
         }
 
         /// <summary>
@@ -119,6 +108,11 @@ namespace BuddhaBowls.Models
             InvItemsContainer = container;
         }
 
+        public void SetInvItemsContainer(VendorInvItemsContainer container)
+        {
+            InvItemsContainer = new InventoryItemsContainer(container.Items.Select(x => x.ToInventoryItem()).ToList());
+        }
+
         /// <summary>
         /// Gets the inventory list associated with this inventory
         /// </summary>
@@ -131,6 +125,13 @@ namespace BuddhaBowls.Models
         public string GetInventoryTable()
         {
             return @"Inventory History\Inventory_" + Date.ToString("MM-dd-yyyy");
+        }
+
+        internal string GetPrepTableName()
+        {
+            if (Id < 0)
+                throw new Exception("Id has not been set");
+            return @"Inventory History\Inventory_" + Id.ToString();
         }
     }
 }

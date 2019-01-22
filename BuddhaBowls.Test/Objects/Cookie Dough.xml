@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>9.29</LastPurchasedPrice>
+  <Name>Cookie Dough</Name>
+  <Category>Dairy</Category>
+  <PurchasedUnit>BUCKET</PurchasedUnit>
+  <Count>6.5</Count>
+  <CountUnit>BUCKET</CountUnit>
+  <Conversion>1</Conversion>
+  <RecipeUnit>OZ-wt</RecipeUnit>
+  <RecipeUnitConversion>null</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>12/28/2016 11:52:40 AM</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>12</Id>
+</InventoryItem>

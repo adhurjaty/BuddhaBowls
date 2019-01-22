@@ -79,6 +79,11 @@ namespace BuddhaBowls.Helpers
                         .ThenBy(x => x.Name);
         }
 
+        public static List<PrepItem> SortPrepItems(IEnumerable<PrepItem> items)
+        {
+            return items.OrderBy(x => SortValue(x, Properties.Settings.Default.PrepItemOrder)).ThenBy(x => x.Name).ToList();
+        }
+
         private static int SortValue<T>(T item, List<string> itemOrder) where T : ISortable
         {
             int value = itemOrder.IndexOf(item.Name);
@@ -249,6 +254,27 @@ namespace BuddhaBowls.Helpers
         public static bool CompareStrings(string a, string b)
         {
             return a.ToUpper().Replace(" ", "") == b.ToUpper().Replace(" ", "");
+        }
+
+        public static Dictionary<T, V> MergeDicts<T, V>(Dictionary<T, V> dict1, Dictionary<T, V> dict2, Func<V, V, V> onDuplicate)
+        {
+            foreach (T key in dict2.Keys)
+            {
+                if (dict1.ContainsKey(key))
+                    dict1[key] = onDuplicate(dict1[key], dict2[key]);
+                else
+                    dict1[key] = dict2[key];
+            }
+
+            return dict1;
+        }
+
+        public static void AddToDict<T, V>(ref Dictionary<T, V> dict, T key, V val, Func<V, V, V> onDuplicate)
+        {
+            if (dict.ContainsKey(key))
+                dict[key] = onDuplicate(dict[key], val);
+            else
+                dict[key] = val;
         }
     }
 

@@ -64,11 +64,11 @@
         </DataGrid>
         <Button Grid.Row="1" Height="30"  Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Center" Margin="35, 0" Command="{Binding AddNewItemCommand}">
-            <iconPacks:PackIconFontAwesome Kind="Plus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <iconPacks:PackIconFontAwesome Kind="PlusSolid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
         <Button Grid.Row="1" Height="30" Width="30" Background="Transparent" BorderBrush="Transparent" HorizontalAlignment="Right"
                 VerticalAlignment="Center" Margin="5, 0" Command="{Binding DeleteItemCommand}">
-            <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="Minus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <iconPacks:PackIconFontAwesome Grid.Row="2" Kind="MinusSolid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Button>
         <Button Content="View" HorizontalAlignment="Right" Margin="0,0,70,0" Grid.Row="1" VerticalAlignment="Center" Width="60"
                 Command="{Binding EditItemCommand}"/>

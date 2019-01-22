@@ -101,6 +101,7 @@ namespace BuddhaBowls
 
             RecipeUnitList = _models.GetRecipeUnits();
             Messenger.Instance.Register<Message>(MessageTypes.RECIPE_CHANGED, (msg) => RefreshList());
+            Messenger.Instance.Register<Message>(MessageTypes.VENDOR_INV_ITEMS_CHANGED, (msg) => RefreshList());
         }
 
         #region ICommand Helpers

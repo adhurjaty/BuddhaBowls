@@ -1,4 +1,5 @@
 ﻿using BuddhaBowls.Helpers;
+using LibGit2Sharp;
 using Squirrel;
 using System;
 using System.Diagnostics;
@@ -53,11 +54,41 @@ namespace BuddhaBowls
 
             // set tab switching event handler after the tabs have been set up
             _mainWindow.Tabs.SelectionChanged += _mainWindow.Tabs_SelectionChanged;
+
+            //TryCommit();
+        }
+
+        private void TryCommit(int numTries=2)
+        {
+            if (Directory.Exists(BuddhaBowls.Properties.Settings.Default.DBLocation) && numTries > 0)
+            {
+                // commit DB repo on close
+                try
+                {
+                    using (Repository repo = new Repository(BuddhaBowls.Properties.Settings.Default.DBLocation))
+                    {
+                        Commands.Stage(repo, "*");
+                        // Create the committer's signature and commit
+                        Signature author = new Signature("adhurjaty", "@gmail.com", DateTime.Now);
+                        Signature committer = author;
+
+                        // Commit to the repository
+                        Commit commit = repo.Commit("Data backup", author, committer);
+                    }
+                }
+                catch (RepositoryNotFoundException)
+                {
+                    string rootedPath = Repository.Init(BuddhaBowls.Properties.Settings.Default.DBLocation);
+                    TryCommit(numTries - 1);
+                }
+                
+            }
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
             Logger.Info("Application closing");
+
             base.OnExit(e);
 
             _mv.SaveSettings();

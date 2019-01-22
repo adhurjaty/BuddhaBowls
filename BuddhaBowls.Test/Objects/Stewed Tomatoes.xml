@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<InventoryItem>
+  <LastPurchasedPrice>14.94</LastPurchasedPrice>
+  <Name>Stewed Tomatoes</Name>
+  <Category>Dry Goods</Category>
+  <PurchasedUnit>6# CANS</PurchasedUnit>
+  <Count>4</Count>
+  <CountUnit>CAN</CountUnit>
+  <Conversion>6</Conversion>
+  <RecipeUnit>EA</RecipeUnit>
+  <RecipeUnitConversion>6</RecipeUnitConversion>
+  <Yield>1</Yield>
+  <LastOrderAmount>0</LastOrderAmount>
+  <LastPurchasedDate>null</LastPurchasedDate>
+  <LastVendorId>null</LastVendorId>
+  <Id>14</Id>
+</InventoryItem>
