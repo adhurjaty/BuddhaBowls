@@ -213,3 +213,4 @@ ModelManifest.xml
 
 # Password containing files
 *.config
+./BuddhaBowls/Properties/Settings.settings
